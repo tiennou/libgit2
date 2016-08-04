@@ -185,6 +185,13 @@ GIT_EXTERN(int) git_rebase_init(
 	const git_annotated_commit *onto,
 	const git_rebase_options *opts);
 
+GIT_EXTERN(int) git_rebase_init_interactive(
+	git_rebase **out,
+	git_repository *repo,
+	git_rebase_operation *operations,
+	size_t operation_count,
+	const git_rebase_options *opts);
+
 /**
  * Opens an existing rebase that was previously started by either an
  * invocation of `git_rebase_init` or by another client.
