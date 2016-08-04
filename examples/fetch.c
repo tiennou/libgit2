@@ -53,6 +53,36 @@ static int transfer_progress_cb(const git_indexer_progress *stats, void *payload
 	return 0;
 }
 
+int fetch_lookup_remote(git_remote **remote, git_repository *repo, const char *arg)
+{
+	if (arg == NULL) {
+		/* Lookup the current branch's upstream, or "origin" */
+		git_reference *current_ref, *upstream_ref;
+		const char *upstream_branch_name;
+		git_buf remote_name;
+
+		if (git_repository_head(&current_ref, repo) == 0 &&
+			git_branch_upstream(&upstream_ref, current_ref) == 0 &&
+			git_branch_name(&upstream_branch_name, upstream_ref) == 0 &&
+			git_branch_remote_name(&remote_name, repo, upstream_branch_name) == 0) {
+
+			strcpy((char *)&arg, remote_name.ptr);
+			git_buf_dispose(&remote_name);
+		} else {
+			arg = "origin";
+		}
+	}
+
+	/* Figure out whether it's a named remote or a URL */
+	printf("Fetching %s for repo %p\n", arg, repo);
+	if (git_remote_lookup(remote, repo, arg) == 0)
+		return 0;
+	if (git_remote_create_anonymous(remote, repo, arg) == 0)
+		return 0;
+
+	return -1;
+}
+
 /** Entry point for this command */
 int lg2_fetch(git_repository *repo, int argc, char **argv)
 {
@@ -65,11 +95,8 @@ int lg2_fetch(git_repository *repo, int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 
-	/* Figure out whether it's a named remote or a URL */
-	printf("Fetching %s for repo %p\n", argv[1], repo);
-	if (git_remote_lookup(&remote, repo, argv[1]) < 0)
-		if (git_remote_create_anonymous(&remote, repo, argv[1]) < 0)
-			goto on_error;
+	if (fetch_lookup_remote(&remote, repo, argv[1]) < 0)
+		goto on_error;
 
 	/* Set up the callbacks (only update_tips for now) */
 	fetch_opts.callbacks.update_tips = &update_cb;

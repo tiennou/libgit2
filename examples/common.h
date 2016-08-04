@@ -131,4 +131,14 @@ extern int cred_acquire_cb(git_cred **out,
 		unsigned int allowed_types,
 		void *payload);
 
+/**
+ * Construct a remote from a CLI argument.
+ *
+ * If arg is a known remote name, this remote will be loaded.
+ * If arg is NULL, HEAD's remote tracking branch, or "origin" will be loaded.
+ * If there's no remote by that name, arg will be interpreted as a URL used to
+ * build an anonymous remote.
+ */
+extern int fetch_lookup_remote(git_remote **remote, git_repository *repo, const char *arg);
+
 #endif
