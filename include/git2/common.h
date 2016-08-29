@@ -59,6 +59,14 @@ typedef size_t size_t;
 #define GIT_WIN32 1
 #endif
 
+#if defined(__has_feature)
+#if __has_feature(address_sanitizer) || \
+    __has_feature(thread_sanitizer) || \
+    __has_feature(memory_sanitizer)
+#define GIT_SANITIZED 1
+#endif
+#endif
+
 #ifdef __amigaos4__
 #include <netinet/in.h>
 #endif

@@ -20,6 +20,10 @@
  */
 void test_buf_oom__grow(void)
 {
+#ifdef GIT_SANITIZED
+	cl_skip();
+#endif
+
 	git_buf buf = GIT_BUF_INIT;
 
 	git_buf_clear(&buf);
