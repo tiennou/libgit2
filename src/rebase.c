@@ -66,7 +66,6 @@ struct git_rebase {
 	char *state_path;
 
 	int head_detached : 1,
-		quiet : 1,
 		started : 1;
 
 	git_array_t(git_rebase_operation) operations;
@@ -493,7 +492,7 @@ static int rebase_setupfiles(git_rebase *rebase)
 		rebase_setupfile(rebase, HEAD_NAME_FILE, 0, "%s\n", orig_head_name) < 0 ||
 		rebase_setupfile(rebase, ONTO_FILE, 0, "%.*s\n", GIT_OID_HEXSZ, onto) < 0 ||
 		rebase_setupfile(rebase, ORIG_HEAD_FILE, 0, "%.*s\n", GIT_OID_HEXSZ, orig_head) < 0 ||
-		rebase_setupfile(rebase, QUIET_FILE, 0, rebase->quiet ? "t\n" : "\n") < 0)
+		rebase_setupfile(rebase, QUIET_FILE, 0, rebase->options.quiet ? "t\n" : "\n") < 0)
 		return -1;
 
 	return rebase_setupfiles_merge(rebase);
@@ -645,8 +644,6 @@ static int rebase_init_merge(
 
 	rebase->onto_name = git__strdup(rebase_onto_name(onto));
 	GIT_ERROR_CHECK_ALLOC(rebase->onto_name);
-
-	rebase->quiet = rebase->options.quiet;
 
 	git_oid_cpy(&rebase->orig_head_id, git_annotated_commit_id(branch));
 	git_oid_cpy(&rebase->onto_id, git_annotated_commit_id(onto));
