@@ -54,6 +54,7 @@ typedef enum {
 	GIT_REBASE_TYPE_APPLY = 1,
 	GIT_REBASE_TYPE_MERGE = 2,
 	GIT_REBASE_TYPE_INTERACTIVE = 3,
+	GIT_REBASE_TYPE_INMEMORY = 4,
 } git_rebase_type_t;
 
 struct git_rebase {
@@ -65,7 +66,6 @@ struct git_rebase {
 	char *state_path;
 
 	int head_detached : 1,
-		inmemory : 1,
 		quiet : 1,
 		started : 1;
 
@@ -405,7 +405,7 @@ done:
 
 static int rebase_cleanup(git_rebase *rebase)
 {
-	if (!rebase || rebase->inmemory)
+	if (!rebase || rebase->type == GIT_REBASE_TYPE_INMEMORY)
 		return 0;
 
 	return git_path_isdir(rebase->state_path) ?
@@ -728,8 +728,7 @@ int git_rebase_init(
 		return -1;
 
 	rebase->repo = repo;
-	rebase->inmemory = inmemory;
-	rebase->type = GIT_REBASE_TYPE_MERGE;
+	rebase->type = (inmemory ? GIT_REBASE_TYPE_INMEMORY : GIT_REBASE_TYPE_MERGE);
 
 	if ((error = rebase_init_operations(rebase, repo, branch, upstream, onto)) < 0)
 		goto done;
@@ -915,12 +914,20 @@ int git_rebase_next(
 	if ((error = rebase_movenext(rebase)) < 0)
 		return error;
 
-	if (rebase->inmemory)
+	switch (rebase->type) {
+	case GIT_REBASE_TYPE_INMEMORY:
 		error = rebase_next_inmemory(out, rebase);
-	else if (rebase->type == GIT_REBASE_TYPE_MERGE)
+		break;
+
+	case GIT_REBASE_TYPE_MERGE:
 		error = rebase_next_merge(out, rebase);
-	else
-		abort();
+		break;
+
+	default:
+		giterr_set(GITERR_REBASE, "Unsupported rebase type");
+		error = -1;
+		break;
+	}
 
 	return error;
 }
@@ -1088,14 +1095,22 @@ int git_rebase_commit(
 
 	assert(rebase && committer);
 
-	if (rebase->inmemory)
+	switch (rebase->type) {
+	case GIT_REBASE_TYPE_INMEMORY:
 		error = rebase_commit_inmemory(
 			id, rebase, author, committer, message_encoding, message);
-	else if (rebase->type == GIT_REBASE_TYPE_MERGE)
+		break;
+
+	case GIT_REBASE_TYPE_MERGE:
 		error = rebase_commit_merge(
 			id, rebase, author, committer, message_encoding, message);
-	else
-		abort();
+		break;
+
+	default:
+		giterr_set(GITERR_REBASE, "Unsupported rebase type");
+		error = -1;
+		break;
+	}
 
 	return error;
 }
@@ -1108,7 +1123,7 @@ int git_rebase_abort(git_rebase *rebase)
 
 	assert(rebase);
 
-	if (rebase->inmemory)
+	if (rebase->type == GIT_REBASE_TYPE_INMEMORY)
 		return 0;
 
 	error = rebase->head_detached ?
@@ -1321,7 +1336,7 @@ int git_rebase_finish(
 
 	assert(rebase);
 
-	if (rebase->inmemory)
+	if (rebase->type == GIT_REBASE_TYPE_INMEMORY)
 		return 0;
 
 	if (!rebase->head_detached)
