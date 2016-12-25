@@ -31,6 +31,7 @@
 #define HEAD_NAME_FILE      "head-name"
 #define ORIG_HEAD_FILE      "orig-head"
 #define HEAD_FILE           "head"
+#define INTERACTIVE_FILE    "interactive"
 #define ONTO_FILE           "onto"
 #define ONTO_NAME_FILE      "onto_name"
 #define QUIET_FILE          "quiet"
@@ -91,6 +92,7 @@ static int rebase_state_type(
 	git_repository *repo)
 {
 	git_buf path = GIT_BUF_INIT;
+	git_buf interactive_path = GIT_BUF_INIT;
 	git_rebase_type_t type = GIT_REBASE_TYPE_NONE;
 
 	if (git_buf_joinpath(&path, repo->gitdir, REBASE_APPLY_DIR) < 0)
@@ -106,8 +108,12 @@ static int rebase_state_type(
 		return -1;
 
 	if (git_path_isdir(git_buf_cstr(&path))) {
-		type = GIT_REBASE_TYPE_MERGE;
-		goto done;
+		if (git_buf_join3(&interactive_path, '/', repo->path_repository, REBASE_MERGE_DIR, INTERACTIVE_FILE) == 0
+			&& git_path_isfile(git_buf_cstr(&interactive_path))) {
+			type = GIT_REBASE_TYPE_INTERACTIVE;
+		} else {
+			type = GIT_REBASE_TYPE_MERGE;
+		}
 	}
 
 done:
