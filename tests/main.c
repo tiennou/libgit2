@@ -28,5 +28,12 @@ int main(int argc, char *argv[])
 	cl_global_trace_disable();
 	git_libgit2_shutdown();
 
+#ifdef __APPLE__
+	char *leaks_cmd = NULL;
+	asprintf(&leaks_cmd, "leaks %d", getpid());
+	system(leaks_cmd);
+	free(leaks_cmd);
+#endif
+
 	return res;
 }
