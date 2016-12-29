@@ -2526,8 +2526,10 @@ char *apply_insteadof(git_config *config, const char *url, int direction)
 
 	git_config_iterator_free(iter);
 
-	if (match_length == 0)
+	if (match_length == 0) {
+		git__free(replacement);
 		return git__strdup(url);
+	}
 
 	git_buf_printf(&result, "%s%s", replacement, url + match_length);
 
