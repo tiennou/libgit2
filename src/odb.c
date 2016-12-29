@@ -1240,7 +1240,7 @@ int git_odb_write(
 {
 	size_t i;
 	int error = GIT_ERROR;
-	git_odb_stream *stream;
+	git_odb_stream *stream = NULL;
 
 	assert(oid && db);
 
@@ -1338,6 +1338,9 @@ int git_odb_open_wstream(
 	(*stream)->received_bytes = 0;
 
 done:
+	if (error < 0) {
+		fake_wstream__free(*stream); stream = NULL;
+	}
 	return error;
 }
 
