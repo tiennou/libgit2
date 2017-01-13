@@ -35,7 +35,7 @@ static int annotated_commit_init(
 
 	annotated_commit->type = GIT_ANNOTATED_COMMIT_REAL;
 
-	if ((error = git_commit_dup(&annotated_commit->commit, commit)) < 0)
+	if ((error = git_commit_dup(&annotated_commit->commit, commit)) != 0)
 		goto done;
 
 	git_oid_fmt(annotated_commit->id_str, git_commit_id(commit));
@@ -176,7 +176,7 @@ int git_annotated_commit_from_fetchhead(
 {
 	assert(repo && id && branch_name && remote_url);
 
-	if (annotated_commit_init_from_id(out, repo, id, branch_name) < 0)
+	if (annotated_commit_init_from_id(out, repo, id, branch_name) != 0)
 		return -1;
 
 	(*out)->ref_name = git__strdup(branch_name);
