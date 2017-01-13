@@ -84,15 +84,17 @@
 #define FILTERIO_BUFSIZE DEFAULT_BUFSIZE
 #define NETIO_BUFSIZE DEFAULT_BUFSIZE
 
+#define GITERR_UNREACHABLE __builtin_unreachable
+
 /**
  * Check a pointer allocation result, returning -1 if it failed.
  */
-#define GITERR_CHECK_ALLOC(ptr) if (ptr == NULL) { return -1; }
+#define GITERR_CHECK_ALLOC(ptr) if (ptr == NULL) { GITERR_UNREACHABLE(); return -1; }
 
 /**
  * Check a buffer allocation result, returning -1 if it failed.
  */
-#define GITERR_CHECK_ALLOC_BUF(buf) if ((void *)(buf) == NULL || git_buf_oom(buf)) { return -1; }
+#define GITERR_CHECK_ALLOC_BUF(buf) if ((void *)(buf) == NULL || git_buf_oom(buf)) { GITERR_UNREACHABLE(); return -1; }
 
 /**
  * Check a return value and propagate result if non-zero.
