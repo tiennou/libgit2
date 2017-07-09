@@ -5,6 +5,7 @@
 #include "reflog.h"
 #include "refs.h"
 #include "ref_helpers.h"
+#include "reflog/reflog_helpers.h"
 
 static const char *loose_tag_ref_name = "refs/tags/e90810b";
 static const char *packed_head_name = "refs/heads/packed";
@@ -365,4 +366,62 @@ void test_refs_rename__propagate_eexists(void)
 	cl_assert_equal_i(GIT_EEXISTS, git_reference_rename(&new_ref, ref, packed_test_head_name, 0, NULL));
 
 	git_reference_free(ref);
+}
+
+#define VICTIM_REFNAME "refs/heads/victim"
+
+void test_refs_rename__renaming_borked_new_ref_doesnt_delete_old(void)
+{
+	git_reference *head_ref, *current_ref, *renamed_ref;
+	int err;
+	git_oid current_oid, victim_oid;
+	size_t current_reflog_count, victim_reflog_count;
+	git_reference *victim_ref;
+	git_buf victim_path = GIT_BUF_INIT;
+	struct stat victim_stat;
+	__uint32_t victim_flags;
+
+	cl_git_pass(git_repository_head(&head_ref, g_repo));
+	cl_git_pass(git_reference_resolve(&current_ref, head_ref));
+
+	git_oid_cpy(&current_oid, git_reference_target(current_ref));
+
+	cl_git_pass(git_reference_name_to_id(&victim_oid, g_repo, "refs/heads/master"));
+	cl_git_pass(git_reference_create(&victim_ref, g_repo, VICTIM_REFNAME, &victim_oid, 1, "created victim"));
+
+	current_reflog_count = reflog_entrycount(g_repo, git_reference_name(current_ref));
+	victim_reflog_count = reflog_entrycount(g_repo, git_reference_name(victim_ref));
+
+	/* We'll use some BSD dark magic to make the rename fail */
+	git_buf_joinpath(&victim_path, git_repository_path(g_repo), git_reference_name(victim_ref));
+
+	cl_must_pass(p_stat(git_buf_cstr(&victim_path), &victim_stat));
+	victim_flags = victim_stat.st_flags;
+
+	cl_must_pass(chflags(git_buf_cstr(&victim_path), victim_flags|UF_IMMUTABLE));
+
+	err = git_reference_rename(&renamed_ref, current_ref, git_reference_name(victim_ref), 1, NULL);
+
+	cl_must_pass(chflags(git_buf_cstr(&victim_path), victim_flags));
+	git_buf_free(&victim_path);
+
+	git_reference_free(victim_ref);
+	git_reference_free(current_ref);
+
+	/* The rename should have failed */
+	cl_git_fail_with(GIT_ERROR, err);
+
+	/* The victim ref should still be here */
+	cl_git_pass(git_reference_lookup(&victim_ref, g_repo, VICTIM_REFNAME));
+	cl_assert_equal_oid(&victim_oid, git_reference_target(victim_ref));
+
+	/* The current ref should still be here */
+	cl_git_pass(git_reference_resolve(&current_ref, head_ref));
+	cl_assert_equal_oid(&current_oid, git_reference_target(current_ref));
+
+	cl_reflog_check_count(g_repo, git_reference_name(current_ref), current_reflog_count);
+	cl_reflog_check_count(g_repo, git_reference_name(victim_ref), victim_reflog_count);
+
+	git_reference_free(victim_ref);
+	git_reference_free(current_ref);
 }

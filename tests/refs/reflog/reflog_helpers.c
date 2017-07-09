@@ -98,6 +98,28 @@ void cl_reflog_check_entry_(git_repository *repo, const char *reflog, size_t idx
 	git_reflog_free(log);
 }
 
+void cl_reflog_check_count_(git_repository *repo, const char *reflog,
+							size_t count, const char *file, int line)
+{
+	git_reflog *log;
+	size_t reflog_count = 0;
+
+	git_reflog_read(&log, repo, reflog);
+
+	reflog_count = git_reflog_entrycount(log);
+	if (reflog_count != count) {
+		git_buf msg = GIT_BUF_INIT;
+		for (size_t idx = 0; idx < git_reflog_entrycount(log); idx++) {
+			const git_reflog_entry *entry = git_reflog_entry_byindex(log, idx);
+			reflog_entry_tostr(&msg, entry);
+		}
+		clar__fail(file, line, "Reflog count mismatch", git_buf_cstr(&msg), 1);
+		git_buf_free(&msg);
+	}
+
+	git_reflog_free(log);
+}
+
 void reflog_print(git_repository *repo, const char *reflog_name)
 {
 	git_reflog *reflog;
