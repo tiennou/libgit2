@@ -125,10 +125,12 @@ int git_fetch_negotiate(git_remote *remote, const git_fetch_options *opts)
 	 * Now we have everything set up so we can start tell the
 	 * server what we want and what we have.
 	 */
+	remote->nego.refs = (const git_remote_head * const *)remote->refs.contents;
+	remote->nego.count = remote->refs.length;
+
 	return t->negotiate_fetch(t,
 		remote->repo,
-		(const git_remote_head * const *)remote->refs.contents,
-		remote->refs.length);
+		&remote->nego);
 }
 
 int git_fetch_download_pack(git_remote *remote, const git_remote_callbacks *callbacks)
