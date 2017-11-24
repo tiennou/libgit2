@@ -596,6 +596,9 @@ static int buffer_want_with_caps(const git_remote_head *head, transport_smart_ca
 	if (caps->include_tag)
 		git_buf_puts(&str, GIT_CAP_INCLUDE_TAG " ");
 
+	if (caps->deepen_relative)
+		git_buf_puts(&str, GIT_CAP_DEEPEN_RELATIVE " ");
+
 	if (caps->thin_pack)
 		git_buf_puts(&str, GIT_CAP_THIN_PACK " ");
 
@@ -604,6 +607,12 @@ static int buffer_want_with_caps(const git_remote_head *head, transport_smart_ca
 
 	if (caps->shallow)
 		git_buf_puts(&str, GIT_CAP_SHALLOW " ");
+
+	if (caps->deepen_since)
+		git_buf_puts(&str, GIT_CAP_DEEPEN_SINCE " ");
+
+	if (caps->deepen_not)
+		git_buf_puts(&str, GIT_CAP_DEEPEN_NOT " ");
 
 	if (git_buf_oom(&str))
 		return -1;

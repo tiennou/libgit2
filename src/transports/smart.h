@@ -32,6 +32,9 @@
 #define GIT_CAP_THIN_PACK "thin-pack"
 #define GIT_CAP_SYMREF "symref"
 #define GIT_CAP_SHALLOW "shallow"
+#define GIT_CAP_DEEPEN_SINCE "deepen-since"
+#define GIT_CAP_DEEPEN_NOT "deepen-not"
+#define GIT_CAP_DEEPEN_RELATIVE "deepen-relative"
 
 extern bool git_smart__ofs_delta_enabled;
 
@@ -138,7 +141,10 @@ typedef struct transport_smart_caps {
 		delete_refs:1,
 		report_status:1,
 		thin_pack:1,
-		shallow:1;
+		shallow:1,
+		deepen_since:1,
+		deepen_not:1,
+		deepen_relative:1;
 } transport_smart_caps;
 
 typedef int (*packetsize_cb)(size_t received, void *payload);

@@ -208,6 +208,24 @@ int git_smart__detect_caps(git_pkt_ref *pkt, transport_smart_caps *caps, git_vec
 			continue;
 		}
 
+		if (!git__prefixcmp(ptr, GIT_CAP_DEEPEN_SINCE)) {
+			caps->common = caps->deepen_since = 1;
+			ptr += strlen(GIT_CAP_DEEPEN_SINCE);
+			continue;
+		}
+
+		if (!git__prefixcmp(ptr, GIT_CAP_DEEPEN_NOT)) {
+			caps->common = caps->deepen_not = 1;
+			ptr += strlen(GIT_CAP_DEEPEN_NOT);
+			continue;
+		}
+
+		if (!git__prefixcmp(ptr, GIT_CAP_DEEPEN_RELATIVE)) {
+			caps->common = caps->deepen_relative = 1;
+			ptr += strlen(GIT_CAP_DEEPEN_RELATIVE);
+			continue;
+		}
+
 		/* We don't know this capability, so skip it */
 		ptr = strchr(ptr, ' ');
 	}
