@@ -380,8 +380,28 @@ static int setup_caps(transport_smart_caps *caps, const git_fetch_negotiation *w
 	if (wants->depth) {
 		if (!caps->shallow)
 			return cap_not_sup_err(GIT_CAP_SHALLOW);
+
+		if (wants->deepen_relative) {
+			if (!caps->deepen_relative)
+				return cap_not_sup_err(GIT_CAP_DEEPEN_RELATIVE);
+		} else {
+			caps->deepen_relative = false;
+		}
+	} else if (wants->deepen_since != -1) {
+		if (!caps->shallow)
+			return cap_not_sup_err(GIT_CAP_SHALLOW);
+
+		if (wants->deepen_not.count > 0) {
+			if (!caps->deepen_not)
+				return cap_not_sup_err(GIT_CAP_DEEPEN_NOT);
+		} else {
+			caps->deepen_not = 0;
+		}
 	} else {
 		caps->shallow = 0;
+		caps->deepen_since = 0;
+		caps->deepen_relative = false;
+		caps->deepen_not = 0;
 	}
 
 	return 0;

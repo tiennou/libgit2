@@ -135,6 +135,10 @@ int git_fetch_negotiate(git_remote *remote, const git_fetch_options *opts)
 
 	git_repository__shallow_roots(&remote->nego.shallow_roots->array, remote->repo);
 
+	nego.deepen_since = -1;
+	nego.deepen_not = (git_strarray){ .count = 0, .strings = NULL };
+	nego.deepen_relative = false;
+
 	return t->negotiate_fetch(t,
 		remote->repo,
 		&remote->nego);

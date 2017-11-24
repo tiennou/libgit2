@@ -39,6 +39,9 @@ typedef struct {
 	size_t count;
 	git_shallowarray *shallow_roots;
 	int depth;
+	git_time_t deepen_since;
+	git_strarray deepen_not;
+	bool deepen_relative;
 } git_fetch_negotiation;
 
 struct git_transport {

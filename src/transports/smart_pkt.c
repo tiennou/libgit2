@@ -704,6 +704,21 @@ int git_pkt_buffer_wants(
 			return -1;
 	}
 
+	if (wants->deepen_since) {
+
+	}
+	for (size_t i = 0; i < wants->deepen_not.count; i++) {
+		git_buf deepen_ref;
+		git_buf_puts(&deepen_ref, "deepen-not ");
+		git_buf_puts(&deepen_ref, wants->deepen_not.strings[i]);
+		git_buf_putc(&deepen_ref, '\n');
+
+		git_buf_printf(buf, "%04x%s", (unsigned int)git_buf_len(&deepen_ref) + 4, git_buf_cstr(&deepen_ref));
+
+		if (git_buf_oom(buf))
+			return -1;
+	}
+
 	return git_pkt_buffer_flush(buf);
 }
 
