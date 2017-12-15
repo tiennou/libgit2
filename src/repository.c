@@ -2882,22 +2882,53 @@ int git_repository_state_cleanup(git_repository *repo)
 	return git_repository__cleanup_files(repo, state_files, ARRAY_SIZE(state_files));
 }
 
-int git_repository_shallow_roots(git_oidarray *out, git_repository *repo)
+int git_repository__shallow_roots(git_grafts **out, git_repository *repo)
 {
-	git_buf path = GIT_BUF_INIT, contents = GIT_BUF_INIT;
 	int error;
 
 	assert(out && repo);
 
-	memset(out, 0, sizeof(*out));
+	if ((error = git_grafts_refresh(repo->shallow_grafts)) < 0)
+		return error;
 
-	if ((error = git_grafts_refresh(repo->shallow_grafts)) < 0 ||
-	    (error = git_grafts_get_oids(out, repo->shallow_grafts)) < 0)
-		goto error;
+	/* FIXME: concurrency ? */
+	*out = repo->shallow_grafts;
 
-error:
+	return 0;
+}
+
+int git_repository_shallow_roots(git_oidarray *out, git_repository *repo)
+{
+	git_grafts *grafts;
+	int error;
+
+	assert(out && repo);
+
+	if ((error = git_repository__shallow_roots(&grafts, repo)) < 0 &&
+		(error = git_grafts_get_oids(out, grafts)) < 0)
+		return error;
+
+	return 0;
+}
+
+int git_repository__shallow_roots_write(git_repository *repo, git_grafts *grafts)
+{
+	git_buf path = GIT_BUF_INIT;
+	int error = 0;
+
+	assert(repo && grafts);
+
+	if ((error = git_buf_joinpath(&path, repo->gitdir, "shallow")) < 0 ||
+		(error = git_grafts_write_(grafts, git_buf_cstr(&path))) < 0 ||
+		(error = git_grafts_refresh(repo->shallow_grafts)) < 0) {
+		git_error_set(GIT_ERROR_REPOSITORY, "failed to write shallow file");
+		error = -1;
+		goto cleanup;
+	}
+
+cleanup:
 	git_buf_dispose(&path);
-	git_buf_dispose(&contents);
+
 	return error;
 }
 

@@ -7,6 +7,7 @@
 
 #include "grafts.h"
 
+#include "filebuf.h"
 #include "futils.h"
 #include "oidarray.h"
 #include "parse.h"
@@ -100,6 +101,46 @@ int git_grafts_refresh(git_grafts *grafts)
 cleanup:
 	git_buf_dispose(&contents);
 	return error;
+}
+
+int git_grafts_write_(git_grafts *grafts, const char *path)
+{
+	git_filebuf file = GIT_FILEBUF_INIT;
+	git_buf path_buf = GIT_BUF_INIT;
+	int error = 0;
+	size_t idx;
+	const git_oid *oid;
+	git_commit_graft *graft;
+
+	assert(grafts && path);
+
+	if ((error = git_buf_sets(&path_buf, path)) < 0)
+		return error;
+
+	if ((error = git_filebuf_open(&file, git_buf_cstr(&path_buf), GIT_FILEBUF_HASH_CONTENTS, 0666)) < 0)
+		return error;
+
+	while ((error = git_oidmap_iterate((void *)&graft, grafts->commits, &idx, &oid)) == 0) {
+		git_filebuf_write(&file, git_oid_tostr_s(oid), GIT_OID_HEXSZ);
+		git_filebuf_write(&file, "\n", 1);
+	}
+
+	git_filebuf_commit(&file);
+
+	if (git_grafts_refresh(grafts))
+		return -1;
+
+	return 0;
+}
+
+int git_grafts_write(git_grafts *grafts)
+{
+	assert(grafts);
+
+	if (!grafts->path)
+		return -1;
+
+	return git_grafts_write_(grafts, grafts->path);
 }
 
 int git_grafts_parse(git_grafts *grafts, const char *content, size_t contentlen)
@@ -223,18 +264,30 @@ int git_grafts_get(git_commit_graft **out, git_grafts *grafts, const git_oid *oi
 	return 0;
 }
 
-int git_grafts_get_oids(git_oidarray *out, git_grafts *grafts)
+int git_grafts_get_array_oid(git_array_oid_t *out, git_grafts *grafts)
 {
-	git_array_oid_t oids = GIT_ARRAY_INIT;
 	const git_oid *oid;
 	size_t i = 0;
 	int error;
 
+	assert(out && grafts);
+
 	while ((error = git_oidmap_iterate(NULL, grafts->commits, &i, &oid)) == 0) {
-		git_oid *cpy = git_array_alloc(oids);
+		git_oid *cpy = git_array_alloc(*out);
 		GIT_ERROR_CHECK_ALLOC(cpy);
 		git_oid_cpy(cpy, oid);
 	}
+
+	return 0;
+}
+
+int git_grafts_get_oids(git_oidarray *out, git_grafts *grafts)
+{
+	git_array_oid_t oids = GIT_ARRAY_INIT;
+	int error;
+
+	if((error = git_grafts_get_array_oid(&oids, grafts)) < 0)
+		return error;
 
 	git_oidarray__from_array(out, &oids);
 
