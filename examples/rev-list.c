@@ -28,7 +28,7 @@ int main (int argc, char **argv)
 	git_oid oid;
 	const char *path = ".";
 	git_sort_t sort;
-	char buf[GIT_OID_HEXSZ+1];
+//	char buf[GIT_OID_HEXSZ+1];
 
 	git_libgit2_init();
 
@@ -40,9 +40,20 @@ int main (int argc, char **argv)
 	check_lg2(revwalk_parse_revs(repo, walk, &args), "parsing revs", NULL);
 
 	while (!git_revwalk_next(&oid, walk)) {
-		git_oid_fmt(buf, &oid);
-		buf[GIT_OID_HEXSZ] = '\0';
-		printf("%s\n", buf);
+//		git_oid_fmt(buf, &oid);
+
+		git_commit *commit;
+
+		if (git_commit_lookup(&commit, repo, &oid)) {
+			fprintf(stderr, "Failed to lookup commit\n");
+			return 1;
+		}
+
+		printf("%s\n", git_commit_message(commit));
+		git_commit_free(commit);
+
+//		buf[GIT_OID_HEXSZ] = '\0';
+//		printf("%s\n", buf);
 	}
 
 	git_revwalk_free(walk);
