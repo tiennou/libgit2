@@ -45,6 +45,9 @@ int main (int argc, char **argv)
 		printf("%s\n", buf);
 	}
 
+	git_revwalk_free(walk);
+	git_repository_free(repo);
+
 	git_libgit2_shutdown();
 	return 0;
 }
