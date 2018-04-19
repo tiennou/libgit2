@@ -64,22 +64,19 @@ install:
 # Run the Build script and tests
 script:
  - script/cibuild.sh
+ - script/citest.sh
 
 jobs:
   include:
-    - stage: test
+    - stage: valgrind
       script:
         - script/cibuild.sh
-        - script/citest.sh
-    - stage: valgrind
-      script: ./script/cileaks.sh
+        - VALGRIND=1 script/cileaks.sh
       env:
-        - VALGRIND=1
         - OPTIONS="-DBUILD_CLAR=ON -DBUILD_EXAMPLES=OFF -DDEBUG_POOL=ON -DCMAKE_BUILD_TYPE=Debug"
     - stage: coverity
       script: ./script/coverity.sh
-      env:
-        - COVERITY=1
+      if: branch = master
 
 # Only watch the development and master branches
 branches:
