@@ -79,6 +79,7 @@ branches:
  only:
    - master
    - /^maint.*/
+   - /^travis.*/
 
 # Notify development list when needed
 notifications:
