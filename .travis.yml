@@ -68,11 +68,18 @@ script:
 jobs:
   include:
     - stage: test
-      script: script/citest.sh
+      script:
+        - script/cibuild.sh
+        - script/citest.sh
+    - stage: valgrind
+      script: ./script/cileaks.sh
+      env:
+        - VALGRIND=1
+        - OPTIONS="-DBUILD_CLAR=ON -DBUILD_EXAMPLES=OFF -DDEBUG_POOL=ON -DCMAKE_BUILD_TYPE=Debug"
     - stage: coverity
       script: ./script/coverity.sh
-    - stage: valgrind
-      script: VALGRIND=1 ./script/cileaks.sh
+      env:
+        - COVERITY=1
 
 # Only watch the development and master branches
 branches:
