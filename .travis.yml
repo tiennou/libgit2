@@ -44,17 +44,17 @@ matrix:
  exclude:
    - os: osx
      compiler: gcc
- include:
-   - compiler: gcc
-     env: COVERITY=1
-     os: linux
-     dist: trusty
-   - compiler: gcc
-     env:
-       - VALGRIND=1
-         OPTIONS="-DBUILD_CLAR=ON -DBUILD_EXAMPLES=OFF -DDEBUG_POOL=ON -DCMAKE_BUILD_TYPE=Debug"
-     os: linux
-     dist: trusty
+ # include:
+ #   - compiler: gcc
+ #     env: COVERITY=1
+ #     os: linux
+ #     dist: trusty
+ #   - compiler: gcc
+ #     env:
+ #       - VALGRIND=1
+ #         OPTIONS="-DBUILD_CLAR=ON -DBUILD_EXAMPLES=OFF -DDEBUG_POOL=ON -DCMAKE_BUILD_TYPE=Debug"
+ #     os: linux
+ #     dist: trusty
  allow_failures:
    - env: COVERITY=1
 
@@ -65,7 +65,6 @@ install:
 script:
  - script/cibuild.sh
  - script/citest.sh
- - script/cileaks.sh
 
 jobs:
   include:
