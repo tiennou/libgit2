@@ -67,6 +67,13 @@ script:
  - script/citest.sh
  - script/cileaks.sh
 
+jobs:
+  include:
+    - name: coverity
+      script: ./script/coverity.sh
+    - name: valgrind
+      script: VALGRIND=1 ./script/cileaks.sh
+
 # Only watch the development and master branches
 branches:
  only:
