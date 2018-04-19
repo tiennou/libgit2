@@ -62,19 +62,16 @@ install:
   - if [ -f ./script/install-deps-${TRAVIS_OS_NAME}.sh ]; then ./script/install-deps-${TRAVIS_OS_NAME}.sh; fi
 
 # Run the Build script and tests
-# script:
-#  - script/cibuild.sh
-#  - script/citest.sh
+script:
+ - script/cibuild.sh
 
 jobs:
   include:
-    - name: build
-      script: script/cibuild.sh
-    - name: test
+    - stage: test
       script: script/citest.sh
-    - name: coverity
+    - stage: coverity
       script: ./script/coverity.sh
-    - name: valgrind
+    - stage: valgrind
       script: VALGRIND=1 ./script/cileaks.sh
 
 # Only watch the development and master branches
