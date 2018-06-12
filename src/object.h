@@ -22,17 +22,15 @@ struct git_object {
 /* fully free the object; internal method, DO NOT EXPORT */
 void git_object__free(void *object);
 
-int git_object__from_odb_object(
-	git_object **object_out,
-	git_repository *repo,
-	git_odb_object *odb_obj,
-	git_otype type);
+int git_object__from_odb_object(git_object **object_out, git_repository *repo,
+	git_odb_object *odb_obj, git_otype type);
 
 int git_object__resolve_to_type(git_object **obj, git_otype type);
 
 git_otype git_object_stringn2type(const char *str, size_t len);
 
-int git_oid__parse(git_oid *oid, const char **buffer_out, const char *buffer_end, const char *header);
+int git_oid__parse(git_oid *oid, const char **buffer_out,
+	const char *buffer_end, const char *header);
 
 void git_oid__writebuf(git_buf *buf, const char *header, const git_oid *oid);
 

@@ -12,10 +12,10 @@
 #include "git2/index.h"
 #include "git2/sys/filter.h"
 
-#include "fileops.h"
-#include "hash.h"
-#include "filter.h"
 #include "buf_text.h"
+#include "fileops.h"
+#include "filter.h"
+#include "hash.h"
 #include "repository.h"
 
 struct crlf_attrs {
@@ -110,23 +110,19 @@ static int has_cr_in_index(const git_filter_source *src)
 		return false;
 
 	blobcontent = git_blob_rawcontent(blob);
-	blobsize    = git_blob_rawsize(blob);
+	blobsize = git_blob_rawsize(blob);
 	if (!git__is_sizet(blobsize))
 		blobsize = (size_t)-1;
 
-	found_cr = (blobcontent != NULL &&
-		blobsize > 0 &&
+	found_cr = (blobcontent != NULL && blobsize > 0 &&
 		memchr(blobcontent, '\r', (size_t)blobsize) != NULL);
 
 	git_blob_free(blob);
 	return found_cr;
 }
 
-static int crlf_apply_to_odb(
-	struct crlf_attrs *ca,
-	git_buf *to,
-	const git_buf *from,
-	const git_filter_source *src)
+static int crlf_apply_to_odb(struct crlf_attrs *ca, git_buf *to,
+	const git_buf *from, const git_filter_source *src)
 {
 	/* Empty file? Nothing to do */
 	if (!git_buf_len(from))
@@ -150,8 +146,7 @@ static int crlf_apply_to_odb(
 		if (stats.cr != stats.crlf || stats.lf != stats.crlf) {
 			switch (ca->safe_crlf) {
 			case GIT_SAFE_CRLF_FAIL:
-				giterr_set(
-					GITERR_FILTER, "LF would be replaced by CRLF in '%s'",
+				giterr_set(GITERR_FILTER, "LF would be replaced by CRLF in '%s'",
 					git_filter_source_path(src));
 				return -1;
 			case GIT_SAFE_CRLF_WARN:
@@ -228,8 +223,7 @@ line_ending_error:
 	return NULL;
 }
 
-static int crlf_apply_to_workdir(
-	struct crlf_attrs *ca, git_buf *to, const git_buf *from)
+static int crlf_apply_to_workdir(struct crlf_attrs *ca, git_buf *to, const git_buf *from)
 {
 	git_buf_text_stats stats;
 	const char *workdir_ending = NULL;
@@ -254,8 +248,7 @@ static int crlf_apply_to_workdir(
 	if (stats.lf == 0 || stats.lf == stats.crlf)
 		return GIT_PASSTHROUGH;
 
-	if (ca->crlf_action == GIT_CRLF_AUTO ||
-		ca->crlf_action == GIT_CRLF_GUESS) {
+	if (ca->crlf_action == GIT_CRLF_AUTO || ca->crlf_action == GIT_CRLF_GUESS) {
 
 		/* If we have any existing CR or CRLF line endings, do nothing */
 		if (stats.cr > 0 && stats.crlf > 0)
@@ -273,11 +266,9 @@ static int crlf_apply_to_workdir(
 	return git_buf_text_lf_to_crlf(to, from);
 }
 
-static int crlf_check(
-	git_filter        *self,
-	void              **payload, /* points to NULL ptr on entry, may be set */
-	const git_filter_source *src,
-	const char **attr_values)
+static int crlf_check(git_filter *self,
+	void **payload, /* points to NULL ptr on entry, may be set */
+	const git_filter_source *src, const char **attr_values)
 {
 	int error;
 	struct crlf_attrs ca;
@@ -306,21 +297,18 @@ static int crlf_check(
 		return GIT_PASSTHROUGH;
 
 	if (ca.crlf_action == GIT_CRLF_GUESS ||
-		((ca.crlf_action == GIT_CRLF_AUTO ||
-		ca.crlf_action == GIT_CRLF_TEXT) &&
-		git_filter_source_mode(src) == GIT_FILTER_SMUDGE)) {
+		((ca.crlf_action == GIT_CRLF_AUTO || ca.crlf_action == GIT_CRLF_TEXT) &&
+			git_filter_source_mode(src) == GIT_FILTER_SMUDGE)) {
 
 		error = git_repository__cvar(
 			&ca.auto_crlf, git_filter_source_repo(src), GIT_CVAR_AUTO_CRLF);
 		if (error < 0)
 			return error;
 
-		if (ca.crlf_action == GIT_CRLF_GUESS &&
-			ca.auto_crlf == GIT_AUTO_CRLF_FALSE)
+		if (ca.crlf_action == GIT_CRLF_GUESS && ca.auto_crlf == GIT_AUTO_CRLF_FALSE)
 			return GIT_PASSTHROUGH;
 
-		if (ca.auto_crlf == GIT_AUTO_CRLF_INPUT &&
-			ca.eol != GIT_EOL_CRLF &&
+		if (ca.auto_crlf == GIT_AUTO_CRLF_INPUT && ca.eol != GIT_EOL_CRLF &&
 			git_filter_source_mode(src) == GIT_FILTER_SMUDGE)
 			return GIT_PASSTHROUGH;
 	}
@@ -344,12 +332,8 @@ static int crlf_check(
 	return 0;
 }
 
-static int crlf_apply(
-	git_filter    *self,
-	void         **payload, /* may be read and/or set */
-	git_buf       *to,
-	const git_buf *from,
-	const git_filter_source *src)
+static int crlf_apply(git_filter *self, void **payload, /* may be read and/or set */
+	git_buf *to, const git_buf *from, const git_filter_source *src)
 {
 	/* initialize payload in case `check` was bypassed */
 	if (!*payload) {
@@ -364,9 +348,7 @@ static int crlf_apply(
 		return crlf_apply_to_odb(*payload, to, from, src);
 }
 
-static void crlf_cleanup(
-	git_filter *self,
-	void       *payload)
+static void crlf_cleanup(git_filter *self, void *payload)
 {
 	GIT_UNUSED(self);
 	git__free(payload);
@@ -382,9 +364,9 @@ git_filter *git_crlf_filter_new(void)
 	f->f.attributes = "crlf eol text";
 	f->f.initialize = NULL;
 	f->f.shutdown = git_filter_free;
-	f->f.check    = crlf_check;
-	f->f.apply    = crlf_apply;
-	f->f.cleanup  = crlf_cleanup;
+	f->f.check = crlf_check;
+	f->f.apply = crlf_apply;
+	f->f.cleanup = crlf_cleanup;
 
 	return (git_filter *)f;
 }

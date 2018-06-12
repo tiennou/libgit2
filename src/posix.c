@@ -8,8 +8,8 @@
 #include "posix.h"
 
 #include "path.h"
-#include <stdio.h>
 #include <ctype.h>
+#include <stdio.h>
 
 size_t p_fsync__cnt = 0;
 
@@ -17,10 +17,7 @@ size_t p_fsync__cnt = 0;
 
 #ifdef NO_ADDRINFO
 
-int p_getaddrinfo(
-	const char *host,
-	const char *port,
-	struct addrinfo *hints,
+int p_getaddrinfo(const char *host, const char *port, struct addrinfo *hints,
 	struct addrinfo **info)
 {
 	struct addrinfo *ainfo, *ai;
@@ -43,9 +40,8 @@ int p_getaddrinfo(
 	else
 		ainfo->ai_port = htons(atol(port));
 
-	memcpy(&ainfo->ai_addr_in.sin_addr,
-			ainfo->ai_hostent->h_addr_list[0],
-			ainfo->ai_hostent->h_length);
+	memcpy(&ainfo->ai_addr_in.sin_addr, ainfo->ai_hostent->h_addr_list[0],
+		ainfo->ai_hostent->h_length);
 
 	ainfo->ai_protocol = 0;
 	ainfo->ai_socktype = hints->ai_socktype;
@@ -71,8 +67,7 @@ int p_getaddrinfo(
 		}
 		memcpy(ai->ai_next, ainfo, sizeof(struct addrinfo));
 		memcpy(&ai->ai_next->ai_addr_in.sin_addr,
-			ainfo->ai_hostent->h_addr_list[p],
-			ainfo->ai_hostent->h_length);
+			ainfo->ai_hostent->h_addr_list[p], ainfo->ai_hostent->h_length);
 		ai->ai_next->ai_addr = (struct addrinfo *)&ai->ai_next->ai_addr_in;
 		ai = ai->ai_next;
 	}
@@ -87,7 +82,7 @@ void p_freeaddrinfo(struct addrinfo *info)
 
 	p = info;
 
-	while(p != NULL) {
+	while (p != NULL) {
 		next = p->ai_next;
 		free(p);
 		p = next;
@@ -96,10 +91,16 @@ void p_freeaddrinfo(struct addrinfo *info)
 
 const char *p_gai_strerror(int ret)
 {
-	switch(ret) {
-	case -1: return "Out of memory"; break;
-	case -2: return "Address lookup failed"; break;
-	default: return "Unknown error"; break;
+	switch (ret) {
+	case -1:
+		return "Out of memory";
+		break;
+	case -2:
+		return "Address lookup failed";
+		break;
+	default:
+		return "Unknown error";
+		break;
 	}
 }
 
@@ -250,8 +251,7 @@ int p_mmap(git_map *out, size_t len, int prot, int flags, int fd, git_off_t offs
 	out->data = malloc(len);
 	GITERR_CHECK_ALLOC(out->data);
 
-	if (!git__is_ssizet(len) ||
-		(p_lseek(fd, offset, SEEK_SET) < 0) ||
+	if (!git__is_ssizet(len) || (p_lseek(fd, offset, SEEK_SET) < 0) ||
 		(p_read(fd, out->data, len) != (ssize_t)len)) {
 		giterr_set(GITERR_OS, "mmap emulation failed");
 		return -1;

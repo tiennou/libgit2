@@ -11,9 +11,9 @@
 
 #ifndef GIT_WIN32
 
+#include <fcntl.h>
 #include <limits.h>
 #include <stdlib.h>
-#include <fcntl.h>
 #include <unistd.h>
 
 char *p_realpath(const char *pathname, char *resolved)

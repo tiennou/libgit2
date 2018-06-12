@@ -9,10 +9,10 @@
 
 #include "common.h"
 
-#include "git2/blob.h"
-#include "repository.h"
-#include "odb.h"
 #include "fileops.h"
+#include "git2/blob.h"
+#include "odb.h"
+#include "repository.h"
 
 struct git_blob {
 	git_object object;
@@ -23,13 +23,8 @@ void git_blob__free(void *blob);
 int git_blob__parse(void *blob, git_odb_object *obj);
 int git_blob__getbuf(git_buf *buffer, git_blob *blob);
 
-extern int git_blob__create_from_paths(
-	git_oid *out_oid,
-	struct stat *out_st,
-	git_repository *repo,
-	const char *full_path,
-	const char *hint_path,
-	mode_t hint_mode,
-	bool apply_filters);
+extern int git_blob__create_from_paths(git_oid *out_oid, struct stat *out_st,
+	git_repository *repo, const char *full_path, const char *hint_path,
+	mode_t hint_mode, bool apply_filters);
 
 #endif

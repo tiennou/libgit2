@@ -7,10 +7,10 @@
 #ifndef INCLUDE_git_filter_h__
 #define INCLUDE_git_filter_h__
 
-#include "common.h"
-#include "types.h"
-#include "oid.h"
 #include "buffer.h"
+#include "common.h"
+#include "oid.h"
+#include "types.h"
 
 /**
  * @file git2/filter.h
@@ -87,13 +87,10 @@ typedef struct git_filter_list git_filter_list;
  * @return 0 on success (which could still return NULL if no filters are
  *         needed for the requested file), <0 on error
  */
-GIT_EXTERN(int) git_filter_list_load(
-	git_filter_list **filters,
-	git_repository *repo,
+GIT_EXTERN(int)
+git_filter_list_load(git_filter_list **filters, git_repository *repo,
 	git_blob *blob, /* can be NULL */
-	const char *path,
-	git_filter_mode_t mode,
-	uint32_t flags);
+	const char *path, git_filter_mode_t mode, uint32_t flags);
 
 /**
  * Query the filter list to see if a given filter (by name) will run.
@@ -107,9 +104,8 @@ GIT_EXTERN(int) git_filter_list_load(
  * @param name The name of the filter to query
  * @return 1 if the filter is in the list, 0 otherwise
  */
-GIT_EXTERN(int) git_filter_list_contains(
-	git_filter_list *filters,
-	const char *name);
+GIT_EXTERN(int)
+git_filter_list_contains(git_filter_list *filters, const char *name);
 
 /**
  * Apply filter list to a data buffer.
@@ -131,10 +127,8 @@ GIT_EXTERN(int) git_filter_list_contains(
  * @param in Buffer containing the data to filter
  * @return 0 on success, an error code otherwise
  */
-GIT_EXTERN(int) git_filter_list_apply_to_data(
-	git_buf *out,
-	git_filter_list *filters,
-	git_buf *in);
+GIT_EXTERN(int)
+git_filter_list_apply_to_data(git_buf *out, git_filter_list *filters, git_buf *in);
 
 /**
  * Apply a filter list to the contents of a file on disk
@@ -145,11 +139,9 @@ GIT_EXTERN(int) git_filter_list_apply_to_data(
  * @param path the path of the file to filter, a relative path will be
  * taken as relative to the workdir
  */
-GIT_EXTERN(int) git_filter_list_apply_to_file(
-	git_buf *out,
-	git_filter_list *filters,
-	git_repository *repo,
-	const char *path);
+GIT_EXTERN(int)
+git_filter_list_apply_to_file(git_buf *out, git_filter_list *filters,
+	git_repository *repo, const char *path);
 
 /**
  * Apply a filter list to the contents of a blob
@@ -158,10 +150,8 @@ GIT_EXTERN(int) git_filter_list_apply_to_file(
  * @param filters the list of filters to apply
  * @param blob the blob to filter
  */
-GIT_EXTERN(int) git_filter_list_apply_to_blob(
-	git_buf *out,
-	git_filter_list *filters,
-	git_blob *blob);
+GIT_EXTERN(int)
+git_filter_list_apply_to_blob(git_buf *out, git_filter_list *filters, git_blob *blob);
 
 /**
  * Apply a filter list to an arbitrary buffer as a stream
@@ -170,10 +160,9 @@ GIT_EXTERN(int) git_filter_list_apply_to_blob(
  * @param data the buffer to filter
  * @param target the stream into which the data will be written
  */
-GIT_EXTERN(int) git_filter_list_stream_data(
-	git_filter_list *filters,
-	git_buf *data,
-	git_writestream *target);
+GIT_EXTERN(int)
+git_filter_list_stream_data(
+	git_filter_list *filters, git_buf *data, git_writestream *target);
 
 /**
  * Apply a filter list to a file as a stream
@@ -184,11 +173,9 @@ GIT_EXTERN(int) git_filter_list_stream_data(
  * taken as relative to the workdir
  * @param target the stream into which the data will be written
  */
-GIT_EXTERN(int) git_filter_list_stream_file(
-	git_filter_list *filters,
-	git_repository *repo,
-	const char *path,
-	git_writestream *target);
+GIT_EXTERN(int)
+git_filter_list_stream_file(git_filter_list *filters, git_repository *repo,
+	const char *path, git_writestream *target);
 
 /**
  * Apply a filter list to a blob as a stream
@@ -197,10 +184,9 @@ GIT_EXTERN(int) git_filter_list_stream_file(
  * @param blob the blob to filter
  * @param target the stream into which the data will be written
  */
-GIT_EXTERN(int) git_filter_list_stream_blob(
-	git_filter_list *filters,
-	git_blob *blob,
-	git_writestream *target);
+GIT_EXTERN(int)
+git_filter_list_stream_blob(
+	git_filter_list *filters, git_blob *blob, git_writestream *target);
 
 /**
  * Free a git_filter_list

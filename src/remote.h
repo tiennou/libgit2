@@ -10,8 +10,8 @@
 #include "common.h"
 
 #include "git2/remote.h"
-#include "git2/transport.h"
 #include "git2/sys/transport.h"
+#include "git2/transport.h"
 
 #include "refspec.h"
 #include "vector.h"
@@ -36,7 +36,7 @@ struct git_remote {
 	int passed_refspecs;
 };
 
-const char* git_remote__urlfordirection(struct git_remote *remote, int direction);
+const char *git_remote__urlfordirection(struct git_remote *remote, int direction);
 int git_remote__get_http_proxy(git_remote *remote, bool use_ssl, char **proxy_url);
 
 git_refspec *git_remote__matching_refspec(git_remote *remote, const char *refname);

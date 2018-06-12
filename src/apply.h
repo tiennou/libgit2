@@ -9,15 +9,10 @@
 
 #include "common.h"
 
-#include "git2/patch.h"
 #include "buffer.h"
+#include "git2/patch.h"
 
-extern int git_apply__patch(
-	git_buf *out,
-	char **filename,
-	unsigned int *mode,
-	const char *source,
-	size_t source_len,
-	git_patch *patch);
+extern int git_apply__patch(git_buf *out, char **filename, unsigned int *mode,
+	const char *source, size_t source_len, git_patch *patch);
 
 #endif

@@ -8,8 +8,8 @@
 #define INCLUDE_sys_git_refdb_h__
 
 #include "git2/common.h"
-#include "git2/types.h"
 #include "git2/oid.h"
+#include "git2/types.h"
 
 /**
  * @file git2/sys/refs.h
@@ -28,10 +28,8 @@ GIT_BEGIN_DECL
  * @param peel the first non-tag object's OID, or NULL
  * @return the created git_reference or NULL on error
  */
-GIT_EXTERN(git_reference *) git_reference__alloc(
-	const char *name,
-	const git_oid *oid,
-	const git_oid *peel);
+GIT_EXTERN(git_reference *)
+git_reference__alloc(const char *name, const git_oid *oid, const git_oid *peel);
 
 /**
  * Create a new symbolic reference.
@@ -40,9 +38,8 @@ GIT_EXTERN(git_reference *) git_reference__alloc(
  * @param target the target for a symbolic reference
  * @return the created git_reference or NULL on error
  */
-GIT_EXTERN(git_reference *) git_reference__alloc_symbolic(
-	const char *name,
-	const char *target);
+GIT_EXTERN(git_reference *)
+git_reference__alloc_symbolic(const char *name, const char *target);
 
 /** @} */
 GIT_END_DECL

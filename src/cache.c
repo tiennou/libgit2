@@ -7,27 +7,27 @@
 
 #include "cache.h"
 
-#include "repository.h"
 #include "commit.h"
+#include "git2/oid.h"
+#include "object.h"
+#include "odb.h"
+#include "repository.h"
 #include "thread-utils.h"
 #include "util.h"
-#include "odb.h"
-#include "object.h"
-#include "git2/oid.h"
 
 bool git_cache__enabled = true;
 ssize_t git_cache__max_storage = (256 * 1024 * 1024);
-git_atomic_ssize git_cache__current_storage = {0};
+git_atomic_ssize git_cache__current_storage = { 0 };
 
 static size_t git_cache__max_object_size[8] = {
-	0,     /* GIT_OBJ__EXT1 */
-	4096,  /* GIT_OBJ_COMMIT */
-	4096,  /* GIT_OBJ_TREE */
-	0,     /* GIT_OBJ_BLOB */
-	4096,  /* GIT_OBJ_TAG */
-	0,     /* GIT_OBJ__EXT2 */
-	0,     /* GIT_OBJ_OFS_DELTA */
-	0      /* GIT_OBJ_REF_DELTA */
+	0, /* GIT_OBJ__EXT1 */
+	4096, /* GIT_OBJ_COMMIT */
+	4096, /* GIT_OBJ_TREE */
+	0, /* GIT_OBJ_BLOB */
+	4096, /* GIT_OBJ_TAG */
+	0, /* GIT_OBJ__EXT2 */
+	0, /* GIT_OBJ_OFS_DELTA */
+	0 /* GIT_OBJ_REF_DELTA */
 };
 
 int git_cache_set_max_object_size(git_otype type, size_t size)
@@ -48,18 +48,16 @@ void git_cache_dump_stats(git_cache *cache)
 	if (git_cache_size(cache) == 0)
 		return;
 
-	printf("Cache %p: %"PRIuZ" items cached, %"PRIdZ" bytes\n",
-		cache, git_cache_size(cache), cache->used_memory);
+	printf("Cache %p: %" PRIuZ " items cached, %" PRIdZ " bytes\n", cache,
+		git_cache_size(cache), cache->used_memory);
 
-	git_oidmap_foreach_value(cache->map, object, {
+	git_oidmap_foreach_value (cache->map, object, {
 		char oid_str[9];
-		printf(" %s%c %s (%"PRIuZ")\n",
-			git_object_type2string(object->type),
+		printf(" %s%c %s (%" PRIuZ ")\n", git_object_type2string(object->type),
 			object->flags == GIT_CACHE_STORE_PARSED ? '*' : ' ',
-			git_oid_tostr(oid_str, sizeof(oid_str), &object->oid),
-			object->size
-		);
-	});
+			git_oid_tostr(oid_str, sizeof(oid_str), &object->oid), object->size);
+	})
+		;
 }
 
 int git_cache_init(git_cache *cache)
@@ -82,9 +80,9 @@ static void clear_cache(git_cache *cache)
 	if (git_cache_size(cache) == 0)
 		return;
 
-	git_oidmap_foreach_value(cache->map, evict, {
-		git_cached_obj_decref(evict);
-	});
+	git_oidmap_foreach_value (
+		cache->map, evict, { git_cached_obj_decref(evict); })
+		;
 
 	git_oidmap_clear(cache->map);
 	git_atomic_ssize_add(&git_cache__current_storage, -cache->used_memory);

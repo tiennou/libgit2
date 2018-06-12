@@ -9,11 +9,11 @@
 
 #include "common.h"
 
+#include "commit_list.h"
 #include "git2/revwalk.h"
 #include "oidmap.h"
-#include "commit_list.h"
-#include "pqueue.h"
 #include "pool.h"
+#include "pqueue.h"
 #include "vector.h"
 
 #include "oidmap.h"
@@ -33,10 +33,7 @@ struct git_revwalk {
 	int (*get_next)(git_commit_list_node **, git_revwalk *);
 	int (*enqueue)(git_revwalk *, git_commit_list_node *);
 
-	unsigned walking:1,
-		first_parent: 1,
-		did_hide: 1,
-		did_push: 1;
+	unsigned walking : 1, first_parent : 1, did_hide : 1, did_push : 1;
 	unsigned int sorting;
 
 	/* the pushes and hides */

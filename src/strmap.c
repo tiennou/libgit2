@@ -7,7 +7,8 @@
 
 #include "strmap.h"
 
-__KHASH_IMPL(str, static kh_inline, const char *, void *, 1, kh_str_hash_func, kh_str_hash_equal)
+__KHASH_IMPL(str, static kh_inline, const char *, void *, 1, kh_str_hash_func,
+	kh_str_hash_equal)
 
 int git_strmap_alloc(git_strmap **map)
 {
@@ -102,10 +103,7 @@ void git_strmap_delete(git_strmap *map, const char *key)
 		git_strmap_delete_at(map, idx);
 }
 
-int git_strmap_next(
-	void **data,
-	git_strmap_iter* iter,
-	git_strmap *map)
+int git_strmap_next(void **data, git_strmap_iter *iter, git_strmap *map)
 {
 	if (!map)
 		return GIT_ERROR;

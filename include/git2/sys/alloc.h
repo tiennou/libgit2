@@ -57,7 +57,8 @@ typedef struct {
 	 * This function shall be equivalent to `grealloc`, but allocating
 	 * `neleme * elsize` bytes.
 	 */
-	void *(*greallocarray)(void *ptr, size_t nelem, size_t elsize, const char *file, int line);
+	void *(*greallocarray)(
+		void *ptr, size_t nelem, size_t elsize, const char *file, int line);
 
 	/*
 	 * This function shall allocate a new array of `nelem` elements, where

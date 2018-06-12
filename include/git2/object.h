@@ -7,10 +7,10 @@
 #ifndef INCLUDE_git_object_h__
 #define INCLUDE_git_object_h__
 
-#include "common.h"
-#include "types.h"
-#include "oid.h"
 #include "buffer.h"
+#include "common.h"
+#include "oid.h"
+#include "types.h"
 
 /**
  * @file git2/object.h
@@ -39,11 +39,9 @@ GIT_BEGIN_DECL
  * @param type the type of the object
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_object_lookup(
-		git_object **object,
-		git_repository *repo,
-		const git_oid *id,
-		git_otype type);
+GIT_EXTERN(int)
+git_object_lookup(git_object **object, git_repository *repo, const git_oid *id,
+	git_otype type);
 
 /**
  * Lookup a reference to one of the objects in a repository,
@@ -72,12 +70,9 @@ GIT_EXTERN(int) git_object_lookup(
  * @param type the type of the object
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_object_lookup_prefix(
-		git_object **object_out,
-		git_repository *repo,
-		const git_oid *id,
-		size_t len,
-		git_otype type);
+GIT_EXTERN(int)
+git_object_lookup_prefix(git_object **object_out, git_repository *repo,
+	const git_oid *id, size_t len, git_otype type);
 
 
 /**
@@ -90,11 +85,9 @@ GIT_EXTERN(int) git_object_lookup_prefix(
  * @param type type of object desired
  * @return 0 on success, or an error code
  */
-GIT_EXTERN(int) git_object_lookup_bypath(
-		git_object **out,
-		const git_object *treeish,
-		const char *path,
-		git_otype type);
+GIT_EXTERN(int)
+git_object_lookup_bypath(git_object **out, const git_object *treeish,
+	const char *path, git_otype type);
 
 /**
  * Get the id (SHA1) of a repository object
@@ -222,10 +215,8 @@ GIT_EXTERN(size_t) git_object__size(git_otype type);
  * @param target_type The type of the requested object (a GIT_OBJ_ value)
  * @return 0 on success, GIT_EINVALIDSPEC, GIT_EPEEL, or an error code
  */
-GIT_EXTERN(int) git_object_peel(
-	git_object **peeled,
-	const git_object *object,
-	git_otype target_type);
+GIT_EXTERN(int)
+git_object_peel(git_object **peeled, const git_object *object, git_otype target_type);
 
 /**
  * Create an in-memory copy of a Git object. The copy must be

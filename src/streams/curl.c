@@ -11,21 +11,21 @@
 
 #include <curl/curl.h>
 
-#include "stream.h"
-#include "git2/transport.h"
 #include "buffer.h"
+#include "git2/transport.h"
 #include "global.h"
-#include "vector.h"
 #include "proxy.h"
+#include "stream.h"
+#include "vector.h"
 
 /* This is for backwards compatibility with curl<7.45.0. */
 #ifndef CURLINFO_ACTIVESOCKET
-# define CURLINFO_ACTIVESOCKET CURLINFO_LASTSOCKET
-# define GIT_CURL_BADSOCKET -1
-# define git_activesocket_t long
+#define CURLINFO_ACTIVESOCKET CURLINFO_LASTSOCKET
+#define GIT_CURL_BADSOCKET -1
+#define git_activesocket_t long
 #else
-# define GIT_CURL_BADSOCKET CURL_SOCKET_BAD
-# define git_activesocket_t curl_socket_t
+#define GIT_CURL_BADSOCKET CURL_SOCKET_BAD
+#define git_activesocket_t curl_socket_t
 #endif
 
 typedef struct {
@@ -71,10 +71,12 @@ static int apply_proxy_creds(curl_stream *s)
 	if (!s->proxy_cred)
 		return GIT_ENOTFOUND;
 
-	userpass = (git_cred_userpass_plaintext *) s->proxy_cred;
-	if ((res = curl_easy_setopt(s->handle, CURLOPT_PROXYUSERNAME, userpass->username)) != CURLE_OK)
+	userpass = (git_cred_userpass_plaintext *)s->proxy_cred;
+	if ((res = curl_easy_setopt(
+			 s->handle, CURLOPT_PROXYUSERNAME, userpass->username)) != CURLE_OK)
 		return seterr_curl(s);
-	if ((res = curl_easy_setopt(s->handle, CURLOPT_PROXYPASSWORD, userpass->password)) != CURLE_OK)
+	if ((res = curl_easy_setopt(
+			 s->handle, CURLOPT_PROXYPASSWORD, userpass->password)) != CURLE_OK)
 		return seterr_curl(s);
 
 	return 0;
@@ -92,7 +94,8 @@ static int ask_and_apply_proxy_creds(curl_stream *s)
 	git_cred_free(s->proxy_cred);
 	s->proxy_cred = NULL;
 	giterr_clear();
-	error = opts->credentials(&s->proxy_cred, opts->url, NULL, GIT_CREDTYPE_USERPASS_PLAINTEXT, opts->payload);
+	error = opts->credentials(&s->proxy_cred, opts->url, NULL,
+		GIT_CREDTYPE_USERPASS_PLAINTEXT, opts->payload);
 	if (error == GIT_PASSTHROUGH)
 		return error_no_credentials();
 	if (error < 0) {
@@ -111,7 +114,7 @@ static int ask_and_apply_proxy_creds(curl_stream *s)
 
 static int curls_connect(git_stream *stream)
 {
-	curl_stream *s = (curl_stream *) stream;
+	curl_stream *s = (curl_stream *)stream;
 	git_activesocket_t sockextr;
 	long connect_last = 0;
 	int failed_cert = 0, error;
@@ -143,7 +146,8 @@ static int curls_connect(git_stream *stream)
 	if (res == CURLE_PEER_FAILED_VERIFICATION)
 		failed_cert = 1;
 
-	if ((res = curl_easy_getinfo(s->handle, CURLINFO_ACTIVESOCKET, &sockextr)) != CURLE_OK) {
+	if ((res = curl_easy_getinfo(s->handle, CURLINFO_ACTIVESOCKET, &sockextr)) !=
+		CURLE_OK) {
 		return seterr_curl(s);
 	}
 
@@ -167,7 +171,7 @@ static int curls_certificate(git_cert **out, git_stream *stream)
 	struct curl_slist *slist;
 	struct curl_certinfo *certinfo;
 	git_vector strings = GIT_VECTOR_INIT;
-	curl_stream *s = (curl_stream *) stream;
+	curl_stream *s = (curl_stream *)stream;
 
 	if ((res = curl_easy_getinfo(s->handle, CURLINFO_CERTINFO, &certinfo)) != CURLE_OK)
 		return seterr_curl(s);
@@ -175,8 +179,8 @@ static int curls_certificate(git_cert **out, git_stream *stream)
 	/* No information is available, can happen with SecureTransport */
 	if (certinfo->num_of_certs == 0) {
 		s->cert_info.parent.cert_type = GIT_CERT_NONE;
-		s->cert_info.data             = NULL;
-		s->cert_info.len              = 0;
+		s->cert_info.data = NULL;
+		s->cert_info.len = 0;
 		return 0;
 	}
 
@@ -190,12 +194,12 @@ static int curls_certificate(git_cert **out, git_stream *stream)
 	}
 
 	/* Copy the contents of the vector into a strarray so we can expose them */
-	s->cert_info_strings.strings = (char **) strings.contents;
-	s->cert_info_strings.count   = strings.length;
+	s->cert_info_strings.strings = (char **)strings.contents;
+	s->cert_info_strings.count = strings.length;
 
 	s->cert_info.parent.cert_type = GIT_CERT_STRARRAY;
-	s->cert_info.data             = &s->cert_info_strings;
-	s->cert_info.len              = strings.length;
+	s->cert_info.data = &s->cert_info_strings;
+	s->cert_info.len = strings.length;
 
 	*out = &s->cert_info.parent;
 
@@ -206,7 +210,7 @@ static int curls_set_proxy(git_stream *stream, const git_proxy_options *proxy_op
 {
 	int error;
 	CURLcode res;
-	curl_stream *s = (curl_stream *) stream;
+	curl_stream *s = (curl_stream *)stream;
 
 	git_proxy_options_clear(&s->proxy);
 	if ((error = git_proxy_options_dup(&s->proxy, proxy_opts)) < 0)
@@ -250,7 +254,7 @@ static ssize_t curls_write(git_stream *stream, const char *data, size_t len, int
 	int error;
 	size_t off = 0, sent;
 	CURLcode res;
-	curl_stream *s = (curl_stream *) stream;
+	curl_stream *s = (curl_stream *)stream;
 
 	GIT_UNUSED(flags);
 
@@ -274,7 +278,7 @@ static ssize_t curls_read(git_stream *stream, void *data, size_t len)
 	int error;
 	size_t read;
 	CURLcode res;
-	curl_stream *s = (curl_stream *) stream;
+	curl_stream *s = (curl_stream *)stream;
 
 	do {
 		if ((error = wait_for(s->socket, true)) < 0)
@@ -291,7 +295,7 @@ static ssize_t curls_read(git_stream *stream, void *data, size_t len)
 
 static int curls_close(git_stream *stream)
 {
-	curl_stream *s = (curl_stream *) stream;
+	curl_stream *s = (curl_stream *)stream;
 
 	if (!s->handle)
 		return 0;
@@ -305,7 +309,7 @@ static int curls_close(git_stream *stream)
 
 static void curls_free(git_stream *stream)
 {
-	curl_stream *s = (curl_stream *) stream;
+	curl_stream *s = (curl_stream *)stream;
 
 	curls_close(stream);
 	git_strarray_free(&s->cert_info_strings);
@@ -358,7 +362,7 @@ int git_curl_stream_new(git_stream **out, const char *host, const char *port)
 	st->parent.free = curls_free;
 	st->handle = handle;
 
-	*out = (git_stream *) st;
+	*out = (git_stream *)st;
 	return 0;
 }
 

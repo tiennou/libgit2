@@ -30,7 +30,7 @@ GIT_BEGIN_DECL
  * Then for file `xyz.c` looking up attribute "foo" gives a value for
  * which `GIT_ATTR_TRUE(value)` is true.
  */
-#define GIT_ATTR_TRUE(attr)	(git_attr_value(attr) == GIT_ATTR_TRUE_T)
+#define GIT_ATTR_TRUE(attr) (git_attr_value(attr) == GIT_ATTR_TRUE_T)
 
 /**
  * GIT_ATTR_FALSE checks if an attribute is set off.  In core git
@@ -62,7 +62,8 @@ GIT_BEGIN_DECL
  * file `onefile.rb` or looking up "bar" on any file will all give
  * `GIT_ATTR_UNSPECIFIED(value)` of true.
  */
-#define GIT_ATTR_UNSPECIFIED(attr) (git_attr_value(attr) == GIT_ATTR_UNSPECIFIED_T)
+#define GIT_ATTR_UNSPECIFIED(attr) \
+	(git_attr_value(attr) == GIT_ATTR_UNSPECIFIED_T)
 
 /**
  * GIT_ATTR_HAS_VALUE checks if an attribute is set to a value (as
@@ -81,7 +82,7 @@ GIT_BEGIN_DECL
  */
 typedef enum {
 	GIT_ATTR_UNSPECIFIED_T = 0, /**< The attribute has been left unspecified */
-	GIT_ATTR_TRUE_T,  /**< The attribute has been set */
+	GIT_ATTR_TRUE_T, /**< The attribute has been set */
 	GIT_ATTR_FALSE_T, /**< The attribute has been unset */
 	GIT_ATTR_VALUE_T, /**< This attribute has a value */
 } git_attr_t;
@@ -114,9 +115,9 @@ GIT_EXTERN(git_attr_t) git_attr_value(const char *attr);
  * use index only for creating archives or for a bare repo (if an
  * index has been specified for the bare repo).
  */
-#define GIT_ATTR_CHECK_FILE_THEN_INDEX	0
-#define GIT_ATTR_CHECK_INDEX_THEN_FILE	1
-#define GIT_ATTR_CHECK_INDEX_ONLY		2
+#define GIT_ATTR_CHECK_FILE_THEN_INDEX 0
+#define GIT_ATTR_CHECK_INDEX_THEN_FILE 1
+#define GIT_ATTR_CHECK_INDEX_ONLY 2
 
 /**
  * Check attribute flags: Using the system attributes file.
@@ -125,7 +126,7 @@ GIT_EXTERN(git_attr_t) git_attr_value(const char *attr);
  * equivalent) directory for a `gitattributes` file.  Passing this
  * flag will cause attribute checks to ignore that file.
  */
-#define GIT_ATTR_CHECK_NO_SYSTEM		(1 << 2)
+#define GIT_ATTR_CHECK_NO_SYSTEM (1 << 2)
 
 /**
  * Look up the value of one git attribute for path.
@@ -142,12 +143,9 @@ GIT_EXTERN(git_attr_t) git_attr_value(const char *attr);
  *             treated as a plain file (not a directory).
  * @param name The name of the attribute to look up.
  */
-GIT_EXTERN(int) git_attr_get(
-	const char **value_out,
-	git_repository *repo,
-	uint32_t flags,
-	const char *path,
-	const char *name);
+GIT_EXTERN(int)
+git_attr_get(const char **value_out, git_repository *repo, uint32_t flags,
+	const char *path, const char *name);
 
 /**
  * Look up a list of git attributes for path.
@@ -178,13 +176,9 @@ GIT_EXTERN(int) git_attr_get(
  * @param num_attr The number of attributes being looked up
  * @param names An array of num_attr strings containing attribute names.
  */
-GIT_EXTERN(int) git_attr_get_many(
-	const char **values_out,
-	git_repository *repo,
-	uint32_t flags,
-	const char *path,
-	size_t num_attr,
-	const char **names);
+GIT_EXTERN(int)
+git_attr_get_many(const char **values_out, git_repository *repo, uint32_t flags,
+	const char *path, size_t num_attr, const char **names);
 
 /**
  * The callback used with git_attr_foreach.
@@ -217,12 +211,9 @@ typedef int (*git_attr_foreach_cb)(const char *name, const char *value, void *pa
  * @param payload Passed on as extra parameter to callback function.
  * @return 0 on success, non-zero callback return value, or error code
  */
-GIT_EXTERN(int) git_attr_foreach(
-	git_repository *repo,
-	uint32_t flags,
-	const char *path,
-	git_attr_foreach_cb callback,
-	void *payload);
+GIT_EXTERN(int)
+git_attr_foreach(git_repository *repo, uint32_t flags, const char *path,
+	git_attr_foreach_cb callback, void *payload);
 
 /**
  * Flush the gitattributes cache.
@@ -232,8 +223,7 @@ GIT_EXTERN(int) git_attr_foreach(
  * the attributes files to be reloaded the next time that an attribute
  * access function is called.
  */
-GIT_EXTERN(void) git_attr_cache_flush(
-	git_repository *repo);
+GIT_EXTERN(void) git_attr_cache_flush(git_repository *repo);
 
 /**
  * Add a macro definition.
@@ -245,12 +235,9 @@ GIT_EXTERN(void) git_attr_cache_flush(
  *
  *     git_attr_add_macro(repo, "binary", "-diff -crlf");
  */
-GIT_EXTERN(int) git_attr_add_macro(
-	git_repository *repo,
-	const char *name,
-	const char *values);
+GIT_EXTERN(int)
+git_attr_add_macro(git_repository *repo, const char *name, const char *values);
 
 /** @} */
 GIT_END_DECL
 #endif
-

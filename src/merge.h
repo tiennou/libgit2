@@ -9,21 +9,21 @@
 
 #include "common.h"
 
-#include "vector.h"
 #include "commit_list.h"
-#include "pool.h"
 #include "iterator.h"
+#include "pool.h"
+#include "vector.h"
 
-#include "git2/types.h"
 #include "git2/merge.h"
 #include "git2/sys/merge.h"
+#include "git2/types.h"
 
-#define GIT_MERGE_MSG_FILE		"MERGE_MSG"
-#define GIT_MERGE_MODE_FILE		"MERGE_MODE"
-#define GIT_MERGE_FILE_MODE		0666
+#define GIT_MERGE_MSG_FILE "MERGE_MSG"
+#define GIT_MERGE_MODE_FILE "MERGE_MODE"
+#define GIT_MERGE_FILE_MODE 0666
 
-#define GIT_MERGE_DEFAULT_RENAME_THRESHOLD	50
-#define GIT_MERGE_DEFAULT_TARGET_LIMIT		1000
+#define GIT_MERGE_DEFAULT_RENAME_THRESHOLD 50
+#define GIT_MERGE_DEFAULT_TARGET_LIMIT 1000
 
 
 /** Internal merge flags. */
@@ -125,11 +125,8 @@ typedef struct {
 
 } git_merge_diff;
 
-int git_merge__bases_many(
-	git_commit_list **out,
-	git_revwalk *walk,
-	git_commit_list_node *one,
-	git_vector *twos);
+int git_merge__bases_many(git_commit_list **out, git_revwalk *walk,
+	git_commit_list_node *one, git_vector *twos);
 
 /*
  * Three-way tree differencing
@@ -137,31 +134,23 @@ int git_merge__bases_many(
 
 git_merge_diff_list *git_merge_diff_list__alloc(git_repository *repo);
 
-int git_merge_diff_list__find_differences(
-	git_merge_diff_list *merge_diff_list,
-	git_iterator *ancestor_iterator,
-	git_iterator *ours_iter,
+int git_merge_diff_list__find_differences(git_merge_diff_list *merge_diff_list,
+	git_iterator *ancestor_iterator, git_iterator *ours_iter,
 	git_iterator *theirs_iter);
 
-int git_merge_diff_list__find_renames(git_repository *repo, git_merge_diff_list *merge_diff_list, const git_merge_options *opts);
+int git_merge_diff_list__find_renames(git_repository *repo,
+	git_merge_diff_list *merge_diff_list, const git_merge_options *opts);
 
 void git_merge_diff_list__free(git_merge_diff_list *diff_list);
 
 /* Merge metadata setup */
 
-int git_merge__setup(
-	git_repository *repo,
-	const git_annotated_commit *our_head,
-	const git_annotated_commit *heads[],
-	size_t heads_len);
+int git_merge__setup(git_repository *repo, const git_annotated_commit *our_head,
+	const git_annotated_commit *heads[], size_t heads_len);
 
-int git_merge__iterators(
-	git_index **out,
-	git_repository *repo,
-	git_iterator *ancestor_iter,
-	git_iterator *our_iter,
-	git_iterator *their_iter,
-	const git_merge_options *given_opts);
+int git_merge__iterators(git_index **out, git_repository *repo,
+	git_iterator *ancestor_iter, git_iterator *our_iter,
+	git_iterator *their_iter, const git_merge_options *given_opts);
 
 int git_merge__check_result(git_repository *repo, git_index *index_new);
 
@@ -169,10 +158,8 @@ int git_merge__append_conflicts_to_merge_msg(git_repository *repo, git_index *in
 
 /* Merge files */
 
-GIT_INLINE(const char *) git_merge_file__best_path(
-	const char *ancestor,
-	const char *ours,
-	const char *theirs)
+GIT_INLINE(const char *)
+git_merge_file__best_path(const char *ancestor, const char *ours, const char *theirs)
 {
 	if (!ancestor) {
 		if (ours && theirs && strcmp(ours, theirs) == 0)
@@ -183,14 +170,14 @@ GIT_INLINE(const char *) git_merge_file__best_path(
 
 	if (ours && strcmp(ancestor, ours) == 0)
 		return theirs;
-	else if(theirs && strcmp(ancestor, theirs) == 0)
+	else if (theirs && strcmp(ancestor, theirs) == 0)
 		return ours;
 
 	return NULL;
 }
 
-GIT_INLINE(uint32_t) git_merge_file__best_mode(
-	uint32_t ancestor, uint32_t ours, uint32_t theirs)
+GIT_INLINE(uint32_t)
+git_merge_file__best_mode(uint32_t ancestor, uint32_t ours, uint32_t theirs)
 {
 	/*
 	 * If ancestor didn't exist and either ours or theirs is executable,
@@ -198,8 +185,7 @@ GIT_INLINE(uint32_t) git_merge_file__best_mode(
 	 * use that one.
 	 */
 	if (!ancestor) {
-		if (ours == GIT_FILEMODE_BLOB_EXECUTABLE ||
-			theirs == GIT_FILEMODE_BLOB_EXECUTABLE)
+		if (ours == GIT_FILEMODE_BLOB_EXECUTABLE || theirs == GIT_FILEMODE_BLOB_EXECUTABLE)
 			return GIT_FILEMODE_BLOB_EXECUTABLE;
 
 		return GIT_FILEMODE_BLOB;

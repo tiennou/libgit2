@@ -9,11 +9,11 @@
 
 #include "common.h"
 
-#include "git2/pathspec.h"
-#include "buffer.h"
-#include "vector.h"
-#include "pool.h"
 #include "array.h"
+#include "buffer.h"
+#include "git2/pathspec.h"
+#include "pool.h"
+#include "vector.h"
 
 /* public compiled pathspec */
 struct git_pathspec {
@@ -59,12 +59,8 @@ extern void git_pathspec__vfree(git_vector *vspec);
  * The matched pathspec is passed back into the `matched_pathspec` parameter,
  * unless it is passed as NULL by the caller.
  */
-extern bool git_pathspec__match(
-	const git_vector *vspec,
-	const char *path,
-	bool disable_fnmatch,
-	bool casefold,
-	const char **matched_pathspec,
+extern bool git_pathspec__match(const git_vector *vspec, const char *path,
+	bool disable_fnmatch, bool casefold, const char **matched_pathspec,
 	size_t *matched_at);
 
 /* easy pathspec setup */

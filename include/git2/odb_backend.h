@@ -31,7 +31,8 @@ GIT_BEGIN_DECL
  *
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_odb_backend_pack(git_odb_backend **out, const char *objects_dir);
+GIT_EXTERN(int)
+git_odb_backend_pack(git_odb_backend **out, const char *objects_dir);
 
 /**
  * Create a backend for loose objects
@@ -45,12 +46,9 @@ GIT_EXTERN(int) git_odb_backend_pack(git_odb_backend **out, const char *objects_
  *
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_odb_backend_loose(
-	git_odb_backend **out,
-	const char *objects_dir,
-	int compression_level,
-	int do_fsync,
-	unsigned int dir_mode,
+GIT_EXTERN(int)
+git_odb_backend_loose(git_odb_backend **out, const char *objects_dir,
+	int compression_level, int do_fsync, unsigned int dir_mode,
 	unsigned int file_mode);
 
 /**
@@ -64,7 +62,8 @@ GIT_EXTERN(int) git_odb_backend_loose(
  *
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_odb_backend_one_pack(git_odb_backend **out, const char *index_file);
+GIT_EXTERN(int)
+git_odb_backend_one_pack(git_odb_backend **out, const char *index_file);
 
 /** Streaming mode */
 typedef enum {
@@ -124,7 +123,8 @@ struct git_odb_stream {
 struct git_odb_writepack {
 	git_odb_backend *backend;
 
-	int (*append)(git_odb_writepack *writepack, const void *data, size_t size, git_transfer_progress *stats);
+	int (*append)(git_odb_writepack *writepack, const void *data, size_t size,
+		git_transfer_progress *stats);
 	int (*commit)(git_odb_writepack *writepack, git_transfer_progress *stats);
 	void (*free)(git_odb_writepack *writepack);
 };

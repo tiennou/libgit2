@@ -11,15 +11,15 @@
 
 #include <ctype.h>
 
+#include "git2/transport.h"
 #include "global.h"
+#include "netops.h"
 #include "stream.h"
 #include "streams/socket.h"
-#include "netops.h"
-#include "git2/transport.h"
 #include "util.h"
 
 #ifdef GIT_CURL
-# include "streams/curl.h"
+#include "streams/curl.h"
 #endif
 
 #ifndef GIT_DEFAULT_CERT_LOCATION
@@ -27,15 +27,31 @@
 #endif
 
 #include <mbedtls/config.h>
-#include <mbedtls/ssl.h>
-#include <mbedtls/error.h>
-#include <mbedtls/entropy.h>
 #include <mbedtls/ctr_drbg.h>
+#include <mbedtls/entropy.h>
+#include <mbedtls/error.h>
+#include <mbedtls/ssl.h>
 
 mbedtls_ssl_config *git__ssl_conf;
 mbedtls_entropy_context *mbedtls_entropy;
 
-#define GIT_SSL_DEFAULT_CIPHERS "TLS-ECDHE-ECDSA-WITH-AES-128-GCM-SHA256:TLS-ECDHE-RSA-WITH-AES-128-GCM-SHA256:TLS-ECDHE-ECDSA-WITH-AES-256-GCM-SHA384:TLS-ECDHE-RSA-WITH-AES-256-GCM-SHA384:TLS-DHE-RSA-WITH-AES-128-GCM-SHA256:TLS-DHE-DSS-WITH-AES-128-GCM-SHA256:TLS-DHE-RSA-WITH-AES-256-GCM-SHA384:TLS-DHE-DSS-WITH-AES-256-GCM-SHA384:TLS-ECDHE-ECDSA-WITH-AES-128-CBC-SHA256:TLS-ECDHE-RSA-WITH-AES-128-CBC-SHA256:TLS-ECDHE-ECDSA-WITH-AES-128-CBC-SHA:TLS-ECDHE-RSA-WITH-AES-128-CBC-SHA:TLS-ECDHE-ECDSA-WITH-AES-256-CBC-SHA384:TLS-ECDHE-RSA-WITH-AES-256-CBC-SHA384:TLS-ECDHE-ECDSA-WITH-AES-256-CBC-SHA:TLS-ECDHE-RSA-WITH-AES-256-CBC-SHA:TLS-DHE-RSA-WITH-AES-128-CBC-SHA256:TLS-DHE-RSA-WITH-AES-256-CBC-SHA256:TLS-DHE-RSA-WITH-AES-128-CBC-SHA:TLS-DHE-RSA-WITH-AES-256-CBC-SHA:TLS-DHE-DSS-WITH-AES-128-CBC-SHA256:TLS-DHE-DSS-WITH-AES-256-CBC-SHA256:TLS-DHE-DSS-WITH-AES-128-CBC-SHA:TLS-DHE-DSS-WITH-AES-256-CBC-SHA:TLS-RSA-WITH-AES-128-GCM-SHA256:TLS-RSA-WITH-AES-256-GCM-SHA384:TLS-RSA-WITH-AES-128-CBC-SHA256:TLS-RSA-WITH-AES-256-CBC-SHA256:TLS-RSA-WITH-AES-128-CBC-SHA:TLS-RSA-WITH-AES-256-CBC-SHA"
+#define GIT_SSL_DEFAULT_CIPHERS                                                \
+	"TLS-ECDHE-ECDSA-WITH-AES-128-GCM-SHA256:TLS-ECDHE-RSA-WITH-AES-128-GCM-"  \
+	"SHA256:TLS-ECDHE-ECDSA-WITH-AES-256-GCM-SHA384:TLS-ECDHE-RSA-WITH-AES-"   \
+	"256-GCM-SHA384:TLS-DHE-RSA-WITH-AES-128-GCM-SHA256:TLS-DHE-DSS-WITH-AES-" \
+	"128-GCM-SHA256:TLS-DHE-RSA-WITH-AES-256-GCM-SHA384:TLS-DHE-DSS-WITH-AES-" \
+	"256-GCM-SHA384:TLS-ECDHE-ECDSA-WITH-AES-128-CBC-SHA256:TLS-ECDHE-RSA-"    \
+	"WITH-AES-128-CBC-SHA256:TLS-ECDHE-ECDSA-WITH-AES-128-CBC-SHA:TLS-ECDHE-"  \
+	"RSA-WITH-AES-128-CBC-SHA:TLS-ECDHE-ECDSA-WITH-AES-256-CBC-SHA384:TLS-"    \
+	"ECDHE-RSA-WITH-AES-256-CBC-SHA384:TLS-ECDHE-ECDSA-WITH-AES-256-CBC-SHA:"  \
+	"TLS-ECDHE-RSA-WITH-AES-256-CBC-SHA:TLS-DHE-RSA-WITH-AES-128-CBC-SHA256:"  \
+	"TLS-DHE-RSA-WITH-AES-256-CBC-SHA256:TLS-DHE-RSA-WITH-AES-128-CBC-SHA:"    \
+	"TLS-DHE-RSA-WITH-AES-256-CBC-SHA:TLS-DHE-DSS-WITH-AES-128-CBC-SHA256:"    \
+	"TLS-DHE-DSS-WITH-AES-256-CBC-SHA256:TLS-DHE-DSS-WITH-AES-128-CBC-SHA:"    \
+	"TLS-DHE-DSS-WITH-AES-256-CBC-SHA:TLS-RSA-WITH-AES-128-GCM-SHA256:TLS-"    \
+	"RSA-WITH-AES-256-GCM-SHA384:TLS-RSA-WITH-AES-128-CBC-SHA256:TLS-RSA-"     \
+	"WITH-AES-256-CBC-SHA256:TLS-RSA-WITH-AES-128-CBC-SHA:TLS-RSA-WITH-AES-"   \
+	"256-CBC-SHA"
 #define GIT_SSL_DEFAULT_CIPHERS_COUNT 30
 
 /**
@@ -79,16 +95,15 @@ int git_mbedtls_stream_global_init(void)
 
 	git__ssl_conf = git__malloc(sizeof(mbedtls_ssl_config));
 	mbedtls_ssl_config_init(git__ssl_conf);
-	if (mbedtls_ssl_config_defaults(git__ssl_conf,
-		                            MBEDTLS_SSL_IS_CLIENT,
-		                            MBEDTLS_SSL_TRANSPORT_STREAM,
-		                            MBEDTLS_SSL_PRESET_DEFAULT) != 0) {
+	if (mbedtls_ssl_config_defaults(git__ssl_conf, MBEDTLS_SSL_IS_CLIENT,
+			MBEDTLS_SSL_TRANSPORT_STREAM, MBEDTLS_SSL_PRESET_DEFAULT) != 0) {
 		giterr_set(GITERR_SSL, "failed to initialize mbedTLS");
 		goto cleanup;
 	}
 
 	/* configure TLSv1 */
-	mbedtls_ssl_conf_min_version(git__ssl_conf, MBEDTLS_SSL_MAJOR_VERSION_3, MBEDTLS_SSL_MINOR_VERSION_0);
+	mbedtls_ssl_conf_min_version(git__ssl_conf, MBEDTLS_SSL_MAJOR_VERSION_3,
+		MBEDTLS_SSL_MINOR_VERSION_0);
 
 	/* verify_server_cert is responsible for making the check.
 	 * OPTIONAL because REQUIRED drops the certificate as soon as the check
@@ -101,7 +116,8 @@ int git_mbedtls_stream_global_init(void)
 	cipher_string = cipher_string_tmp = git__strdup(GIT_SSL_DEFAULT_CIPHERS);
 	while ((cipher_name = git__strtok(&cipher_string_tmp, ":")) != NULL) {
 		int cipherid = mbedtls_ssl_get_ciphersuite_id(cipher_name);
-		if (cipherid == 0) continue;
+		if (cipherid == 0)
+			continue;
 
 		ciphers_list[ciphers_known++] = cipherid;
 	}
@@ -119,9 +135,8 @@ int git_mbedtls_stream_global_init(void)
 
 	ctr_drbg = git__malloc(sizeof(mbedtls_ctr_drbg_context));
 	mbedtls_ctr_drbg_init(ctr_drbg);
-	if (mbedtls_ctr_drbg_seed(ctr_drbg,
-		                      mbedtls_entropy_func,
-		                      mbedtls_entropy, NULL, 0) != 0) {
+	if (mbedtls_ctr_drbg_seed(
+			ctr_drbg, mbedtls_entropy_func, mbedtls_entropy, NULL, 0) != 0) {
 		giterr_set(GITERR_SSL, "failed to initialize mbedTLS entropy pool");
 		goto cleanup;
 	}
@@ -131,7 +146,8 @@ int git_mbedtls_stream_global_init(void)
 	/* load default certificates */
 	if (crtpath != NULL && stat(crtpath, &statbuf) == 0 && S_ISREG(statbuf.st_mode))
 		loaded = (git_mbedtls__set_cert_location(crtpath, 0) == 0);
-	if (!loaded && crtpath != NULL && stat(crtpath, &statbuf) == 0 && S_ISDIR(statbuf.st_mode))
+	if (!loaded && crtpath != NULL && stat(crtpath, &statbuf) == 0 &&
+		S_ISDIR(statbuf.st_mode))
 		loaded = (git_mbedtls__set_cert_location(crtpath, 1) == 0);
 
 	git__on_shutdown(shutdown_ssl);
@@ -154,14 +170,14 @@ mbedtls_ssl_config *git__ssl_conf;
 
 static int bio_read(void *b, unsigned char *buf, size_t len)
 {
-	git_stream *io = (git_stream *) b;
-	return (int) git_stream_read(io, buf, len);
+	git_stream *io = (git_stream *)b;
+	return (int)git_stream_read(io, buf, len);
 }
 
 static int bio_write(void *b, const unsigned char *buf, size_t len)
 {
-	git_stream *io = (git_stream *) b;
-	return (int) git_stream_write(io, (const char *)buf, len, 0);
+	git_stream *io = (git_stream *)b;
+	return (int)git_stream_write(io, (const char *)buf, len, 0);
 }
 
 static int ssl_set_error(mbedtls_ssl_context *ssl, int error)
@@ -173,15 +189,16 @@ static int ssl_set_error(mbedtls_ssl_context *ssl, int error)
 	assert(error != MBEDTLS_ERR_SSL_WANT_WRITE);
 
 	if (error != 0)
-		mbedtls_strerror( error, errbuf, 512 );
+		mbedtls_strerror(error, errbuf, 512);
 
-	switch(error) {
-		case 0:
+	switch (error) {
+	case 0:
 		giterr_set(GITERR_SSL, "SSL error: unknown error");
 		break;
 
 	case MBEDTLS_ERR_X509_CERT_VERIFY_FAILED:
-		giterr_set(GITERR_SSL, "SSL error: %#04x [%x] - %s", error, ssl->session_negotiate->verify_result, errbuf);
+		giterr_set(GITERR_SSL, "SSL error: %#04x [%x] - %s", error,
+			ssl->session_negotiate->verify_result, errbuf);
 		ret = GIT_ECERTIFICATE;
 		break;
 
@@ -211,8 +228,10 @@ static int verify_server_cert(mbedtls_ssl_context *ssl)
 	if ((ret = mbedtls_ssl_get_verify_result(ssl)) != 0) {
 		char vrfy_buf[512];
 		int len = mbedtls_x509_crt_verify_info(vrfy_buf, sizeof(vrfy_buf), "", ret);
-		if (len >= 1) vrfy_buf[len - 1] = '\0'; /* Remove trailing \n */
-		giterr_set(GITERR_SSL, "the SSL certificate is invalid: %#04x - %s", ret, vrfy_buf);
+		if (len >= 1)
+			vrfy_buf[len - 1] = '\0'; /* Remove trailing \n */
+		giterr_set(GITERR_SSL, "the SSL certificate is invalid: %#04x - %s",
+			ret, vrfy_buf);
 		return GIT_ECERTIFICATE;
 	}
 
@@ -232,7 +251,7 @@ typedef struct {
 int mbedtls_connect(git_stream *stream)
 {
 	int ret;
-	mbedtls_stream *st = (mbedtls_stream *) stream;
+	mbedtls_stream *st = (mbedtls_stream *)stream;
 
 	if ((ret = git_stream_connect(st->io)) < 0)
 		return ret;
@@ -252,7 +271,7 @@ int mbedtls_connect(git_stream *stream)
 int mbedtls_certificate(git_cert **out, git_stream *stream)
 {
 	unsigned char *encoded_cert;
-	mbedtls_stream *st = (mbedtls_stream *) stream;
+	mbedtls_stream *st = (mbedtls_stream *)stream;
 
 	const mbedtls_x509_crt *cert = mbedtls_ssl_get_peer_cert(st->ssl);
 	if (!cert) {
@@ -281,7 +300,7 @@ int mbedtls_certificate(git_cert **out, git_stream *stream)
 
 static int mbedtls_set_proxy(git_stream *stream, const git_proxy_options *proxy_options)
 {
-	mbedtls_stream *st = (mbedtls_stream *) stream;
+	mbedtls_stream *st = (mbedtls_stream *)stream;
 
 	return git_stream_set_proxy(st->io, proxy_options);
 }
@@ -289,12 +308,13 @@ static int mbedtls_set_proxy(git_stream *stream, const git_proxy_options *proxy_
 ssize_t mbedtls_stream_write(git_stream *stream, const char *data, size_t len, int flags)
 {
 	size_t read = 0;
-	mbedtls_stream *st = (mbedtls_stream *) stream;
+	mbedtls_stream *st = (mbedtls_stream *)stream;
 
 	GIT_UNUSED(flags);
 
 	do {
-		int error = mbedtls_ssl_write(st->ssl, (const unsigned char *)data + read, len - read);
+		int error = mbedtls_ssl_write(
+			st->ssl, (const unsigned char *)data + read, len - read);
 		if (error <= 0) {
 			return ssl_set_error(st->ssl, error);
 		}
@@ -306,7 +326,7 @@ ssize_t mbedtls_stream_write(git_stream *stream, const char *data, size_t len, i
 
 ssize_t mbedtls_stream_read(git_stream *stream, void *data, size_t len)
 {
-	mbedtls_stream *st = (mbedtls_stream *) stream;
+	mbedtls_stream *st = (mbedtls_stream *)stream;
 	int ret;
 
 	if ((ret = mbedtls_ssl_read(st->ssl, (unsigned char *)data, len)) <= 0)
@@ -317,7 +337,7 @@ ssize_t mbedtls_stream_read(git_stream *stream, void *data, size_t len)
 
 int mbedtls_stream_close(git_stream *stream)
 {
-	mbedtls_stream *st = (mbedtls_stream *) stream;
+	mbedtls_stream *st = (mbedtls_stream *)stream;
 	int ret = 0;
 
 	if (st->connected && (ret = ssl_teardown(st->ssl)) != 0)
@@ -330,7 +350,7 @@ int mbedtls_stream_close(git_stream *stream)
 
 void mbedtls_stream_free(git_stream *stream)
 {
-	mbedtls_stream *st = (mbedtls_stream *) stream;
+	mbedtls_stream *st = (mbedtls_stream *)stream;
 
 	git__free(st->host);
 	git__free(st->cert_info.data);
@@ -379,7 +399,7 @@ int git_mbedtls_stream_new(git_stream **out, const char *host, const char *port)
 	st->parent.close = mbedtls_stream_close;
 	st->parent.free = mbedtls_stream_free;
 
-	*out = (git_stream *) st;
+	*out = (git_stream *)st;
 	return 0;
 
 out_err:
@@ -409,7 +429,7 @@ int git_mbedtls__set_cert_location(const char *path, int is_dir)
 	if (ret < 0) {
 		mbedtls_x509_crt_free(cacert);
 		git__free(cacert);
-		mbedtls_strerror( ret, errbuf, 512 );
+		mbedtls_strerror(ret, errbuf, 512);
 		giterr_set(GITERR_SSL, "failed to load CA certificates: %#04x - %s", ret, errbuf);
 		return -1;
 	}

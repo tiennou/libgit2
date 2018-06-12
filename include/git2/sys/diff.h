@@ -8,10 +8,10 @@
 #define INCLUDE_sys_git_diff_h__
 
 #include "git2/common.h"
-#include "git2/types.h"
-#include "git2/oid.h"
 #include "git2/diff.h"
+#include "git2/oid.h"
 #include "git2/status.h"
+#include "git2/types.h"
 
 /**
  * @file git2/sys/diff.h
@@ -34,10 +34,9 @@ GIT_BEGIN_DECL
  * and/or `git_patch_print` function.  The data will be appended to the
  * buffer (after any existing content).
  */
-GIT_EXTERN(int) git_diff_print_callback__to_buf(
-	const git_diff_delta *delta,
-	const git_diff_hunk *hunk,
-	const git_diff_line *line,
+GIT_EXTERN(int)
+git_diff_print_callback__to_buf(const git_diff_delta *delta,
+	const git_diff_hunk *hunk, const git_diff_line *line,
 	void *payload); /**< payload must be a `git_buf *` */
 
 /**
@@ -54,10 +53,9 @@ GIT_EXTERN(int) git_diff_print_callback__to_buf(
  * and/or `git_patch_print` function.  If you pass NULL, this will write
  * data to `stdout`.
  */
-GIT_EXTERN(int) git_diff_print_callback__to_file_handle(
-	const git_diff_delta *delta,
-	const git_diff_hunk *hunk,
-	const git_diff_line *line,
+GIT_EXTERN(int)
+git_diff_print_callback__to_file_handle(const git_diff_delta *delta,
+	const git_diff_hunk *hunk, const git_diff_line *line,
 	void *payload); /**< payload must be a `FILE *` */
 
 
@@ -71,7 +69,10 @@ typedef struct {
 } git_diff_perfdata;
 
 #define GIT_DIFF_PERFDATA_VERSION 1
-#define GIT_DIFF_PERFDATA_INIT {GIT_DIFF_PERFDATA_VERSION,0,0}
+#define GIT_DIFF_PERFDATA_INIT          \
+	{                                   \
+		GIT_DIFF_PERFDATA_VERSION, 0, 0 \
+	}
 
 /**
  * Get performance data for a diff object.
@@ -80,14 +81,14 @@ typedef struct {
  * @param diff Diff to read performance data from
  * @return 0 for success, <0 for error
  */
-GIT_EXTERN(int) git_diff_get_perfdata(
-	git_diff_perfdata *out, const git_diff *diff);
+GIT_EXTERN(int)
+git_diff_get_perfdata(git_diff_perfdata *out, const git_diff *diff);
 
 /**
  * Get performance data for diffs from a git_status_list
  */
-GIT_EXTERN(int) git_status_list_get_perfdata(
-	git_diff_perfdata *out, const git_status_list *status);
+GIT_EXTERN(int)
+git_status_list_get_perfdata(git_diff_perfdata *out, const git_status_list *status);
 
 /** @} */
 GIT_END_DECL

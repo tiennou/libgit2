@@ -9,8 +9,8 @@
 
 #include "common.h"
 
-#include <ctype.h>
 #include "git2/index.h"
+#include <ctype.h>
 
 #define kmalloc git__malloc
 #define kcalloc git__calloc
@@ -29,8 +29,10 @@ typedef khiter_t git_idxmap_iter;
 
 int git_idxmap_alloc(git_idxmap **map);
 int git_idxmap_icase_alloc(git_idxmap_icase **map);
-void git_idxmap_insert(git_idxmap *map, const git_index_entry *key, void *value, int *rval);
-void git_idxmap_icase_insert(git_idxmap_icase *map, const git_index_entry *key, void *value, int *rval);
+void git_idxmap_insert(
+	git_idxmap *map, const git_index_entry *key, void *value, int *rval);
+void git_idxmap_icase_insert(
+	git_idxmap_icase *map, const git_index_entry *key, void *value, int *rval);
 
 size_t git_idxmap_lookup_index(git_idxmap *map, const git_index_entry *key);
 size_t git_idxmap_icase_lookup_index(git_idxmap_icase *map, const git_index_entry *key);
@@ -49,7 +51,7 @@ void git_idxmap_icase_delete_at(git_idxmap_icase *map, size_t idx);
 void git_idxmap_delete(git_idxmap *map, const git_index_entry *key);
 void git_idxmap_icase_delete(git_idxmap_icase *map, const git_index_entry *key);
 
-#define git_idxmap_begin		kh_begin
-#define git_idxmap_end		kh_end
+#define git_idxmap_begin kh_begin
+#define git_idxmap_end kh_end
 
 #endif

@@ -7,15 +7,15 @@
 
 #include "pathspec.h"
 
-#include "git2/pathspec.h"
-#include "git2/diff.h"
-#include "buf_text.h"
 #include "attr_file.h"
+#include "bitvec.h"
+#include "buf_text.h"
+#include "diff.h"
+#include "git2/diff.h"
+#include "git2/pathspec.h"
+#include "index.h"
 #include "iterator.h"
 #include "repository.h"
-#include "index.h"
-#include "bitvec.h"
-#include "diff.h"
 
 /* what is the common non-wildcard prefix for all items in the pathspec */
 char *git_pathspec_prefix(const git_strarray *pathspec)
@@ -29,8 +29,7 @@ char *git_pathspec_prefix(const git_strarray *pathspec)
 
 	/* diff prefix will only be leading non-wildcards */
 	for (scan = prefix.ptr; *scan; ++scan) {
-		if (git__iswildcard(*scan) &&
-			(scan == prefix.ptr || (*(scan - 1) != '\\')))
+		if (git__iswildcard(*scan) && (scan == prefix.ptr || (*(scan - 1) != '\\')))
 			break;
 	}
 	git_buf_truncate(&prefix, scan - prefix.ptr);
@@ -64,8 +63,7 @@ bool git_pathspec_is_empty(const git_strarray *pathspec)
 }
 
 /* build a vector of fnmatch patterns to evaluate efficiently */
-int git_pathspec__vinit(
-	git_vector *vspec, const git_strarray *strspec, git_pool *strpool)
+int git_pathspec__vinit(git_vector *vspec, const git_strarray *strspec, git_pool *strpool)
 {
 	size_t i;
 
@@ -84,8 +82,8 @@ int git_pathspec__vinit(
 		if (!match)
 			return -1;
 
-		match->flags = GIT_ATTR_FNMATCH_ALLOWSPACE |
-			GIT_ATTR_FNMATCH_ALLOWNEG | GIT_ATTR_FNMATCH_NOLEADINGDIR;
+		match->flags = GIT_ATTR_FNMATCH_ALLOWSPACE | GIT_ATTR_FNMATCH_ALLOWNEG |
+			GIT_ATTR_FNMATCH_NOLEADINGDIR;
 
 		ret = git_attr_fnmatch__parse(match, strpool, NULL, &pattern);
 		if (ret == GIT_ENOTFOUND) {
@@ -116,9 +114,7 @@ struct pathspec_match_context {
 };
 
 static void pathspec_match_context_init(
-	struct pathspec_match_context *ctxt,
-	bool disable_fnmatch,
-	bool casefold)
+	struct pathspec_match_context *ctxt, bool disable_fnmatch, bool casefold)
 {
 	if (disable_fnmatch)
 		ctxt->fnmatch_flags = -1;
@@ -128,18 +124,16 @@ static void pathspec_match_context_init(
 		ctxt->fnmatch_flags = 0;
 
 	if (casefold) {
-		ctxt->strcomp  = git__strcasecmp;
+		ctxt->strcomp = git__strcasecmp;
 		ctxt->strncomp = git__strncasecmp;
 	} else {
-		ctxt->strcomp  = git__strcmp;
+		ctxt->strcomp = git__strcmp;
 		ctxt->strncomp = git__strncmp;
 	}
 }
 
-static int pathspec_match_one(
-	const git_attr_fnmatch *match,
-	struct pathspec_match_context *ctxt,
-	const char *path)
+static int pathspec_match_one(const git_attr_fnmatch *match,
+	struct pathspec_match_context *ctxt, const char *path)
 {
 	int result = (match->flags & GIT_ATTR_FNMATCH_MATCH_ALL) ? 0 : FNM_NOMATCH;
 
@@ -150,8 +144,7 @@ static int pathspec_match_one(
 		result = p_fnmatch(match->pattern, path, ctxt->fnmatch_flags);
 
 	/* if we didn't match, look for exact dirname prefix match */
-	if (result == FNM_NOMATCH &&
-		(match->flags & GIT_ATTR_FNMATCH_HASWILD) == 0 &&
+	if (result == FNM_NOMATCH && (match->flags & GIT_ATTR_FNMATCH_HASWILD) == 0 &&
 		ctxt->strncomp(path, match->pattern, match->length) == 0 &&
 		path[match->length] == '/')
 		result = 0;
@@ -159,10 +152,8 @@ static int pathspec_match_one(
 	/* if we didn't match and this is a negative match, check for exact
 	 * match of filename with leading '!'
 	 */
-	if (result == FNM_NOMATCH &&
-		(match->flags & GIT_ATTR_FNMATCH_NEGATIVE) != 0 &&
-		*path == '!' &&
-		ctxt->strncomp(path + 1, match->pattern, match->length) == 0 &&
+	if (result == FNM_NOMATCH && (match->flags & GIT_ATTR_FNMATCH_NEGATIVE) != 0 &&
+		*path == '!' && ctxt->strncomp(path + 1, match->pattern, match->length) == 0 &&
 		(!path[match->length + 1] || path[match->length + 1] == '/'))
 		return 1;
 
@@ -171,18 +162,14 @@ static int pathspec_match_one(
 	return -1;
 }
 
-static int git_pathspec__match_at(
-	size_t *matched_at,
-	const git_vector *vspec,
-	struct pathspec_match_context *ctxt,
-	const char *path0,
-	const char *path1)
+static int git_pathspec__match_at(size_t *matched_at, const git_vector *vspec,
+	struct pathspec_match_context *ctxt, const char *path0, const char *path1)
 {
 	int result = GIT_ENOTFOUND;
 	size_t i = 0;
 	const git_attr_fnmatch *match;
 
-	git_vector_foreach(vspec, i, match) {
+	git_vector_foreach (vspec, i, match) {
 		if (path0 && (result = pathspec_match_one(match, ctxt, path0)) >= 0)
 			break;
 		if (path1 && (result = pathspec_match_one(match, ctxt, path1)) >= 0)
@@ -194,13 +181,8 @@ static int git_pathspec__match_at(
 }
 
 /* match a path against the vectorized pathspec */
-bool git_pathspec__match(
-	const git_vector *vspec,
-	const char *path,
-	bool disable_fnmatch,
-	bool casefold,
-	const char **matched_pathspec,
-	size_t *matched_at)
+bool git_pathspec__match(const git_vector *vspec, const char *path, bool disable_fnmatch,
+	bool casefold, const char **matched_pathspec, size_t *matched_at)
 {
 	int result;
 	size_t pos;
@@ -283,16 +265,15 @@ void git_pathspec_free(git_pathspec *ps)
 	GIT_REFCOUNT_DEC(ps, pathspec_free);
 }
 
-int git_pathspec_matches_path(
-	const git_pathspec *ps, uint32_t flags, const char *path)
+int git_pathspec_matches_path(const git_pathspec *ps, uint32_t flags, const char *path)
 {
 	bool no_fnmatch = (flags & GIT_PATHSPEC_NO_GLOB) != 0;
-	bool casefold =  (flags & GIT_PATHSPEC_IGNORE_CASE) != 0;
+	bool casefold = (flags & GIT_PATHSPEC_IGNORE_CASE) != 0;
 
 	assert(ps && path);
 
-	return (0 != git_pathspec__match(
-		&ps->pathspec, path, no_fnmatch, casefold, NULL, NULL));
+	return (0 !=
+		git_pathspec__match(&ps->pathspec, path, no_fnmatch, casefold, NULL, NULL));
 }
 
 static void pathspec_match_free(git_pathspec_match_list *m)
@@ -309,8 +290,7 @@ static void pathspec_match_free(git_pathspec_match_list *m)
 	git__free(m);
 }
 
-static git_pathspec_match_list *pathspec_match_alloc(
-	git_pathspec *ps, int datatype)
+static git_pathspec_match_list *pathspec_match_alloc(git_pathspec *ps, int datatype)
 {
 	git_pathspec_match_list *m = git__calloc(1, sizeof(git_pathspec_match_list));
 	if (!m)
@@ -339,12 +319,8 @@ GIT_INLINE(size_t) pathspec_mark_pattern(git_bitvec *used, size_t pos)
 	return 0;
 }
 
-static size_t pathspec_mark_remaining(
-	git_bitvec *used,
-	git_vector *patterns,
-	struct pathspec_match_context *ctxt,
-	size_t start,
-	const char *path0,
+static size_t pathspec_mark_remaining(git_bitvec *used, git_vector *patterns,
+	struct pathspec_match_context *ctxt, size_t start, const char *path0,
 	const char *path1)
 {
 	size_t count = 0;
@@ -367,11 +343,8 @@ static size_t pathspec_mark_remaining(
 	return count;
 }
 
-static int pathspec_build_failure_array(
-	git_pathspec_string_array_t *failures,
-	git_vector *patterns,
-	git_bitvec *used,
-	git_pool *pool)
+static int pathspec_build_failure_array(git_pathspec_string_array_t *failures,
+	git_vector *patterns, git_bitvec *used, git_pool *pool)
 {
 	size_t pos;
 	char **failed;
@@ -393,11 +366,8 @@ static int pathspec_build_failure_array(
 	return 0;
 }
 
-static int pathspec_match_from_iterator(
-	git_pathspec_match_list **out,
-	git_iterator *iter,
-	uint32_t flags,
-	git_pathspec *ps)
+static int pathspec_match_from_iterator(git_pathspec_match_list **out,
+	git_iterator *iter, uint32_t flags, git_pathspec *ps)
 {
 	int error = 0;
 	git_pathspec_match_list *m = NULL;
@@ -423,18 +393,15 @@ static int pathspec_match_from_iterator(
 		goto done;
 
 	if (git_iterator_type(iter) == GIT_ITERATOR_TYPE_WORKDIR &&
-		(error = git_repository_index__weakptr(
-			&index, git_iterator_owner(iter))) < 0)
+		(error = git_repository_index__weakptr(&index, git_iterator_owner(iter))) < 0)
 		goto done;
 
-	pathspec_match_context_init(
-		&ctxt, (flags & GIT_PATHSPEC_NO_GLOB) != 0,
+	pathspec_match_context_init(&ctxt, (flags & GIT_PATHSPEC_NO_GLOB) != 0,
 		git_iterator_ignore_case(iter));
 
 	while (!(error = git_iterator_advance(&entry, iter))) {
 		/* search for match with entry->path */
-		int result = git_pathspec__match_at(
-			&pos, patterns, &ctxt, entry->path, NULL);
+		int result = git_pathspec__match_at(&pos, patterns, &ctxt, entry->path, NULL);
 
 		/* no matches for this path */
 		if (result < 0)
@@ -447,8 +414,7 @@ static int pathspec_match_from_iterator(
 		}
 
 		/* check if path is ignored and untracked */
-		if (index != NULL &&
-			git_iterator_current_is_ignored(iter) &&
+		if (index != NULL && git_iterator_current_is_ignored(iter) &&
 			git_index__find_pos(NULL, index, entry->path, 0, GIT_INDEX_STAGE_ANY) < 0)
 			continue;
 
@@ -483,7 +449,7 @@ static int pathspec_match_from_iterator(
 	/* insert patterns that had no matches into failures array */
 	if (find_failures && used_ct < patterns->length &&
 		(error = pathspec_build_failure_array(
-			&m->failures, patterns, &used_patterns, &m->pool)) < 0)
+			 &m->failures, patterns, &used_patterns, &m->pool)) < 0)
 		goto done;
 
 	/* if every pattern failed to match, then we have failed */
@@ -497,7 +463,8 @@ done:
 
 	if (error < 0) {
 		pathspec_match_free(m);
-		if (out) *out = NULL;
+		if (out)
+			*out = NULL;
 	}
 
 	return error;
@@ -515,11 +482,8 @@ static git_iterator_flag_t pathspec_match_iter_flags(uint32_t flags)
 	return f;
 }
 
-int git_pathspec_match_workdir(
-	git_pathspec_match_list **out,
-	git_repository *repo,
-	uint32_t flags,
-	git_pathspec *ps)
+int git_pathspec_match_workdir(git_pathspec_match_list **out,
+	git_repository *repo, uint32_t flags, git_pathspec *ps)
 {
 	git_iterator *iter;
 	git_iterator_options iter_opts = GIT_ITERATOR_OPTIONS_INIT;
@@ -537,11 +501,8 @@ int git_pathspec_match_workdir(
 	return error;
 }
 
-int git_pathspec_match_index(
-	git_pathspec_match_list **out,
-	git_index *index,
-	uint32_t flags,
-	git_pathspec *ps)
+int git_pathspec_match_index(git_pathspec_match_list **out, git_index *index,
+	uint32_t flags, git_pathspec *ps)
 {
 	git_iterator *iter;
 	git_iterator_options iter_opts = GIT_ITERATOR_OPTIONS_INIT;
@@ -551,7 +512,8 @@ int git_pathspec_match_index(
 
 	iter_opts.flags = pathspec_match_iter_flags(flags);
 
-	if (!(error = git_iterator_for_index(&iter, git_index_owner(index), index, &iter_opts))) {
+	if (!(error = git_iterator_for_index(
+			  &iter, git_index_owner(index), index, &iter_opts))) {
 		error = pathspec_match_from_iterator(out, iter, flags, ps);
 		git_iterator_free(iter);
 	}
@@ -559,11 +521,8 @@ int git_pathspec_match_index(
 	return error;
 }
 
-int git_pathspec_match_tree(
-	git_pathspec_match_list **out,
-	git_tree *tree,
-	uint32_t flags,
-	git_pathspec *ps)
+int git_pathspec_match_tree(git_pathspec_match_list **out, git_tree *tree,
+	uint32_t flags, git_pathspec *ps)
 {
 	git_iterator *iter;
 	git_iterator_options iter_opts = GIT_ITERATOR_OPTIONS_INIT;
@@ -581,11 +540,8 @@ int git_pathspec_match_tree(
 	return error;
 }
 
-int git_pathspec_match_diff(
-	git_pathspec_match_list **out,
-	git_diff *diff,
-	uint32_t flags,
-	git_pathspec *ps)
+int git_pathspec_match_diff(git_pathspec_match_list **out, git_diff *diff,
+	uint32_t flags, git_pathspec *ps)
 {
 	int error = 0;
 	git_pathspec_match_list *m = NULL;
@@ -607,11 +563,10 @@ int git_pathspec_match_diff(
 		GITERR_CHECK_ALLOC(m);
 	}
 
-	pathspec_match_context_init(
-		&ctxt, (flags & GIT_PATHSPEC_NO_GLOB) != 0,
+	pathspec_match_context_init(&ctxt, (flags & GIT_PATHSPEC_NO_GLOB) != 0,
 		git_diff_is_sorted_icase(diff));
 
-	git_vector_foreach(&diff->deltas, i, delta) {
+	git_vector_foreach (&diff->deltas, i, delta) {
 		/* search for match with delta */
 		int result = git_pathspec__match_at(
 			&pos, patterns, &ctxt, delta->old_file.path, delta->new_file.path);
@@ -631,9 +586,8 @@ int git_pathspec_match_diff(
 
 		/* if find_failures is on, check if any later patterns also match */
 		if (find_failures && used_ct < patterns->length)
-			used_ct += pathspec_mark_remaining(
-				&used_patterns, patterns, &ctxt, pos + 1,
-				delta->old_file.path, delta->new_file.path);
+			used_ct += pathspec_mark_remaining(&used_patterns, patterns, &ctxt,
+				pos + 1, delta->old_file.path, delta->new_file.path);
 
 		/* if only looking at failures, exit early or just continue */
 		if (failures_only || !out) {
@@ -654,7 +608,7 @@ int git_pathspec_match_diff(
 	/* insert patterns that had no matches into failures array */
 	if (find_failures && used_ct < patterns->length &&
 		(error = pathspec_build_failure_array(
-			&m->failures, patterns, &used_patterns, &m->pool)) < 0)
+			 &m->failures, patterns, &used_patterns, &m->pool)) < 0)
 		goto done;
 
 	/* if every pattern failed to match, then we have failed */
@@ -668,7 +622,8 @@ done:
 
 	if (error < 0) {
 		pathspec_match_free(m);
-		if (out) *out = NULL;
+		if (out)
+			*out = NULL;
 	}
 
 	return error;
@@ -680,14 +635,12 @@ void git_pathspec_match_list_free(git_pathspec_match_list *m)
 		pathspec_match_free(m);
 }
 
-size_t git_pathspec_match_list_entrycount(
-	const git_pathspec_match_list *m)
+size_t git_pathspec_match_list_entrycount(const git_pathspec_match_list *m)
 {
 	return m ? git_array_size(m->matches) : 0;
 }
 
-const char *git_pathspec_match_list_entry(
-	const git_pathspec_match_list *m, size_t pos)
+const char *git_pathspec_match_list_entry(const git_pathspec_match_list *m, size_t pos)
 {
 	if (!m || m->datatype != PATHSPEC_DATATYPE_STRINGS ||
 		!git_array_valid_index(m->matches, pos))
@@ -706,13 +659,12 @@ const git_diff_delta *git_pathspec_match_list_diff_entry(
 	return *((const git_diff_delta **)git_array_get(m->matches, pos));
 }
 
-size_t git_pathspec_match_list_failed_entrycount(
-	const git_pathspec_match_list *m)
+size_t git_pathspec_match_list_failed_entrycount(const git_pathspec_match_list *m)
 {
 	return m ? git_array_size(m->failures) : 0;
 }
 
-const char * git_pathspec_match_list_failed_entry(
+const char *git_pathspec_match_list_failed_entry(
 	const git_pathspec_match_list *m, size_t pos)
 {
 	char **entry = m ? git_array_get(m->failures, pos) : NULL;

@@ -9,10 +9,10 @@
 
 #include "common.h"
 
-#include "git2/commit.h"
-#include "tree.h"
-#include "repository.h"
 #include "array.h"
+#include "git2/commit.h"
+#include "repository.h"
+#include "tree.h"
 
 #include <time.h>
 

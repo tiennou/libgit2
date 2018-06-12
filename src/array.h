@@ -23,18 +23,35 @@
  *
  *     typedef git_array_t(my_struct) my_struct_array_t;
  */
-#define git_array_t(type) struct { type *ptr; size_t size, asize; }
+#define git_array_t(type)   \
+	struct {                \
+		type *ptr;          \
+		size_t size, asize; \
+	}
 
-#define GIT_ARRAY_INIT { NULL, 0, 0 }
+#define GIT_ARRAY_INIT \
+	{                  \
+		NULL, 0, 0     \
+	}
 
-#define git_array_init(a) \
-	do { (a).size = (a).asize = 0; (a).ptr = NULL; } while (0)
+#define git_array_init(a)         \
+	do {                          \
+		(a).size = (a).asize = 0; \
+		(a).ptr = NULL;           \
+	} while (0)
 
-#define git_array_init_to_size(a, desired) \
-	do { (a).size = 0; (a).asize = desired; (a).ptr = git__calloc(desired, sizeof(*(a).ptr)); } while (0)
+#define git_array_init_to_size(a, desired)                \
+	do {                                                  \
+		(a).size = 0;                                     \
+		(a).asize = desired;                              \
+		(a).ptr = git__calloc(desired, sizeof(*(a).ptr)); \
+	} while (0)
 
-#define git_array_clear(a) \
-	do { git__free((a).ptr); git_array_init(a); } while (0)
+#define git_array_clear(a)  \
+	do {                    \
+		git__free((a).ptr); \
+		git_array_init(a);  \
+	} while (0)
 
 #define GITERR_CHECK_ARRAY(a) GITERR_CHECK_ALLOC((a).ptr)
 
@@ -59,7 +76,9 @@ GIT_INLINE(void *) git_array_grow(void *_a, size_t item_size)
 	if ((new_array = git__reallocarray(a->ptr, new_size, item_size)) == NULL)
 		goto on_oom;
 
-	a->ptr = new_array; a->asize = new_size; a->size++;
+	a->ptr = new_array;
+	a->asize = new_size;
+	a->size++;
 	return a->ptr + (a->size - 1) * item_size;
 
 on_oom:
@@ -67,10 +86,9 @@ on_oom:
 	return NULL;
 }
 
-#define git_array_alloc(a) \
-	(((a).size >= (a).asize) ? \
-	git_array_grow(&(a), sizeof(*(a).ptr)) : \
-	((a).ptr ? &(a).ptr[(a).size++] : NULL))
+#define git_array_alloc(a)                                              \
+	(((a).size >= (a).asize) ? git_array_grow(&(a), sizeof(*(a).ptr)) : \
+							   ((a).ptr ? &(a).ptr[(a).size++] : NULL))
 
 #define git_array_last(a) ((a).size ? &(a).ptr[(a).size - 1] : NULL)
 
@@ -85,13 +103,9 @@ on_oom:
 #define git_array_foreach(a, i, element) \
 	for ((i) = 0; (i) < (a).size && ((element) = &(a).ptr[(i)]); (i)++)
 
-GIT_INLINE(int) git_array__search(
-	size_t *out,
-	void *array_ptr,
-	size_t item_size,
-	size_t array_len,
-	int (*compare)(const void *, const void *),
-	const void *key)
+GIT_INLINE(int)
+git_array__search(size_t *out, void *array_ptr, size_t item_size,
+	size_t array_len, int (*compare)(const void *, const void *), const void *key)
 {
 	size_t lim;
 	unsigned char *part, *array = array_ptr, *base = array_ptr;
@@ -118,7 +132,6 @@ GIT_INLINE(int) git_array__search(
 }
 
 #define git_array_search(out, a, cmp, key) \
-	git_array__search(out, (a).ptr, sizeof(*(a).ptr), (a).size, \
-		(cmp), (key))
+	git_array__search(out, (a).ptr, sizeof(*(a).ptr), (a).size, (cmp), (key))
 
 #endif

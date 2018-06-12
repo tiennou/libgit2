@@ -11,11 +11,8 @@
 
 #include "blame.h"
 
-int git_blame__get_origin(
-		git_blame__origin **out,
-		git_blame *sb,
-		git_commit *commit,
-		const char *path);
+int git_blame__get_origin(git_blame__origin **out, git_blame *sb,
+	git_commit *commit, const char *path);
 void git_blame__free_entry(git_blame__entry *ent);
 int git_blame__like_git(git_blame *sb, uint32_t flags);
 

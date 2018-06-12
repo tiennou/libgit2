@@ -8,20 +8,20 @@
 #include "global.h"
 
 #include "alloc.h"
-#include "hash.h"
-#include "sysdir.h"
 #include "filter.h"
+#include "git2/global.h"
+#include "hash.h"
 #include "merge_driver.h"
 #include "streams/curl.h"
 #include "streams/mbedtls.h"
 #include "streams/openssl.h"
+#include "sysdir.h"
 #include "thread-utils.h"
-#include "git2/global.h"
 #include "transports/ssh.h"
 
 #if defined(GIT_MSVC_CRTDBG)
-#include "win32/w32_stack.h"
 #include "win32/w32_crtdbg_stacktrace.h"
+#include "win32/w32_stack.h"
 #endif
 
 git_mutex git__mwindow_mutex;
@@ -62,8 +62,7 @@ static int init_common(void)
 
 	/* Initialize any other subsystems that have global state */
 	if ((ret = git_allocator_global_init()) == 0 &&
-		(ret = git_hash_global_init()) == 0 &&
-		(ret = git_sysdir_global_init()) == 0 &&
+		(ret = git_hash_global_init()) == 0 && (ret = git_sysdir_global_init()) == 0 &&
 		(ret = git_filter_global_init()) == 0 &&
 		(ret = git_merge_driver_global_init()) == 0 &&
 		(ret = git_transport_ssh_global_init()) == 0 &&
@@ -82,12 +81,10 @@ static void shutdown_common(void)
 	int pos;
 
 	/* Shutdown subsystems that have registered */
-	for (pos = git_atomic_get(&git__n_shutdown_callbacks);
-		pos > 0;
-		pos = git_atomic_dec(&git__n_shutdown_callbacks)) {
+	for (pos = git_atomic_get(&git__n_shutdown_callbacks); pos > 0;
+		 pos = git_atomic_dec(&git__n_shutdown_callbacks)) {
 
-		git_global_shutdown_fn cb = git__swap(
-			git__shutdown_callbacks[pos - 1], NULL);
+		git_global_shutdown_fn cb = git__swap(git__shutdown_callbacks[pos - 1], NULL);
 
 		if (cb != NULL)
 			cb();
@@ -157,7 +154,9 @@ int git_libgit2_init(void)
 	int ret;
 
 	/* Enter the lock */
-	while (InterlockedCompareExchange(&_mutex, 1, 0)) { Sleep(0); }
+	while (InterlockedCompareExchange(&_mutex, 1, 0)) {
+		Sleep(0);
+	}
 
 	/* Only do work on a 0 -> 1 transition of the refcount */
 	if ((ret = git_atomic_inc(&git__n_inits)) == 1) {
@@ -176,7 +175,9 @@ int git_libgit2_shutdown(void)
 	int ret;
 
 	/* Enter the lock */
-	while (InterlockedCompareExchange(&_mutex, 1, 0)) { Sleep(0); }
+	while (InterlockedCompareExchange(&_mutex, 1, 0)) {
+		Sleep(0);
+	}
 
 	/* Only do work on a 1 -> 0 transition of the refcount */
 	if ((ret = git_atomic_dec(&git__n_inits)) == 0) {
@@ -245,8 +246,8 @@ BOOL WINAPI DllMain(HINSTANCE hInstDll, DWORD fdwReason, LPVOID lpvReserved)
 	}
 
 	/*
-	 * Windows pays attention to this during library loading. We don't do anything
-	 * so we trivially succeed.
+	 * Windows pays attention to this during library loading. We don't do
+	 * anything so we trivially succeed.
 	 */
 	return TRUE;
 }

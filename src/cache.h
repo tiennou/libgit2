@@ -10,11 +10,11 @@
 #include "common.h"
 
 #include "git2/common.h"
-#include "git2/oid.h"
 #include "git2/odb.h"
+#include "git2/oid.h"
 
-#include "thread-utils.h"
 #include "oidmap.h"
+#include "thread-utils.h"
 
 enum {
 	GIT_CACHE_STORE_ANY = 0,
@@ -23,17 +23,17 @@ enum {
 };
 
 typedef struct {
-	git_oid    oid;
-	int16_t    type;  /* git_otype value */
-	uint16_t   flags; /* GIT_CACHE_STORE value */
-	size_t     size;
+	git_oid oid;
+	int16_t type; /* git_otype value */
+	uint16_t flags; /* GIT_CACHE_STORE value */
+	size_t size;
 	git_atomic refcount;
 } git_cached_obj;
 
 typedef struct {
 	git_oidmap *map;
-	git_rwlock  lock;
-	ssize_t     used_memory;
+	git_rwlock lock;
+	ssize_t used_memory;
 } git_cache;
 
 extern bool git_cache__enabled;

@@ -9,16 +9,16 @@
 
 #include "common.h"
 
-#include "git2.h"
-#include "vector.h"
-#include "netops.h"
 #include "buffer.h"
-#include "push.h"
+#include "git2.h"
 #include "git2/sys/transport.h"
+#include "netops.h"
+#include "push.h"
+#include "vector.h"
 
-#define GIT_SIDE_BAND_DATA     1
+#define GIT_SIDE_BAND_DATA 1
 #define GIT_SIDE_BAND_PROGRESS 2
-#define GIT_SIDE_BAND_ERROR    3
+#define GIT_SIDE_BAND_ERROR 3
 
 #define GIT_CAP_OFS_DELTA "ofs-delta"
 #define GIT_CAP_MULTI_ACK "multi_ack"
@@ -120,16 +120,9 @@ typedef struct {
 } git_pkt_unpack;
 
 typedef struct transport_smart_caps {
-	int common:1,
-		ofs_delta:1,
-		multi_ack: 1,
-		multi_ack_detailed: 1,
-		side_band:1,
-		side_band_64k:1,
-		include_tag:1,
-		delete_refs:1,
-		report_status:1,
-		thin_pack:1;
+	int common : 1, ofs_delta : 1, multi_ack : 1, multi_ack_detailed : 1,
+		side_band : 1, side_band_64k : 1, include_tag : 1, delete_refs : 1,
+		report_status : 1, thin_pack : 1;
 } transport_smart_caps;
 
 typedef int (*packetsize_cb)(size_t received, void *payload);
@@ -157,29 +150,23 @@ typedef struct {
 	git_atomic cancelled;
 	packetsize_cb packetsize_cb;
 	void *packetsize_payload;
-	unsigned rpc : 1,
-		have_refs : 1,
-		connected : 1;
+	unsigned rpc : 1, have_refs : 1, connected : 1;
 	gitno_buffer buffer;
 	char buffer_data[65536];
 } transport_smart;
 
 /* smart_protocol.c */
 int git_smart__store_refs(transport_smart *t, int flushes);
-int git_smart__detect_caps(git_pkt_ref *pkt, transport_smart_caps *caps, git_vector *symrefs);
-int git_smart__push(git_transport *transport, git_push *push, const git_remote_callbacks *cbs);
+int git_smart__detect_caps(
+	git_pkt_ref *pkt, transport_smart_caps *caps, git_vector *symrefs);
+int git_smart__push(
+	git_transport *transport, git_push *push, const git_remote_callbacks *cbs);
 
-int git_smart__negotiate_fetch(
-	git_transport *transport,
-	git_repository *repo,
-	const git_remote_head * const *refs,
-	size_t count);
+int git_smart__negotiate_fetch(git_transport *transport, git_repository *repo,
+	const git_remote_head *const *refs, size_t count);
 
-int git_smart__download_pack(
-	git_transport *transport,
-	git_repository *repo,
-	git_transfer_progress *stats,
-	git_transfer_progress_cb progress_cb,
+int git_smart__download_pack(git_transport *transport, git_repository *repo,
+	git_transfer_progress *stats, git_transfer_progress_cb progress_cb,
 	void *progress_payload);
 
 /* smart.c */
@@ -193,7 +180,8 @@ int git_pkt_parse_line(git_pkt **head, const char *line, const char **out, size_
 int git_pkt_buffer_flush(git_buf *buf);
 int git_pkt_send_flush(GIT_SOCKET s);
 int git_pkt_buffer_done(git_buf *buf);
-int git_pkt_buffer_wants(const git_remote_head * const *refs, size_t count, transport_smart_caps *caps, git_buf *buf);
+int git_pkt_buffer_wants(const git_remote_head *const *refs, size_t count,
+	transport_smart_caps *caps, git_buf *buf);
 int git_pkt_buffer_have(git_oid *oid, git_buf *buf);
 void git_pkt_free(git_pkt *pkt);
 

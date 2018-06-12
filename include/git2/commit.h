@@ -8,9 +8,9 @@
 #define INCLUDE_git_commit_h__
 
 #include "common.h"
-#include "types.h"
-#include "oid.h"
 #include "object.h"
+#include "oid.h"
+#include "types.h"
 
 /**
  * @file git2/commit.h
@@ -33,8 +33,8 @@ GIT_BEGIN_DECL
  *		an annotated tag it will be peeled back to the commit.
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_commit_lookup(
-	git_commit **commit, git_repository *repo, const git_oid *id);
+GIT_EXTERN(int)
+git_commit_lookup(git_commit **commit, git_repository *repo, const git_oid *id);
 
 /**
  * Lookup a commit object from a repository, given a prefix of its
@@ -52,7 +52,8 @@ GIT_EXTERN(int) git_commit_lookup(
  * @param len the length of the short identifier
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_commit_lookup_prefix(
+GIT_EXTERN(int)
+git_commit_lookup_prefix(
 	git_commit **commit, git_repository *repo, const git_oid *id, size_t len);
 
 /**
@@ -162,7 +163,8 @@ GIT_EXTERN(int) git_commit_time_offset(const git_commit *commit);
  * @param commit a previously loaded commit.
  * @return the committer of a commit
  */
-GIT_EXTERN(const git_signature *) git_commit_committer(const git_commit *commit);
+GIT_EXTERN(const git_signature *)
+git_commit_committer(const git_commit *commit);
 
 /**
  * Get the author of a commit.
@@ -215,10 +217,8 @@ GIT_EXTERN(unsigned int) git_commit_parentcount(const git_commit *commit);
  * @param n the position of the parent (from 0 to `parentcount`)
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_commit_parent(
-	git_commit **out,
-	const git_commit *commit,
-	unsigned int n);
+GIT_EXTERN(int)
+git_commit_parent(git_commit **out, const git_commit *commit, unsigned int n);
 
 /**
  * Get the oid of a specified parent for a commit. This is different from
@@ -229,9 +229,8 @@ GIT_EXTERN(int) git_commit_parent(
  * @param n the position of the parent (from 0 to `parentcount`)
  * @return the id of the parent, NULL on error.
  */
-GIT_EXTERN(const git_oid *) git_commit_parent_id(
-	const git_commit *commit,
-	unsigned int n);
+GIT_EXTERN(const git_oid *)
+git_commit_parent_id(const git_commit *commit, unsigned int n);
 
 /**
  * Get the commit object that is the <n>th generation ancestor
@@ -247,10 +246,9 @@ GIT_EXTERN(const git_oid *) git_commit_parent_id(
  * @return 0 on success; GIT_ENOTFOUND if no matching ancestor exists
  * or an error code
  */
-GIT_EXTERN(int) git_commit_nth_gen_ancestor(
-	git_commit **ancestor,
-	const git_commit *commit,
-	unsigned int n);
+GIT_EXTERN(int)
+git_commit_nth_gen_ancestor(
+	git_commit **ancestor, const git_commit *commit, unsigned int n);
 
 /**
  * Get an arbitrary header field
@@ -262,7 +260,8 @@ GIT_EXTERN(int) git_commit_nth_gen_ancestor(
  * @return 0 on succeess, GIT_ENOTFOUND if the field does not exist,
  * or an error code
  */
-GIT_EXTERN(int) git_commit_header_field(git_buf *out, const git_commit *commit, const char *field);
+GIT_EXTERN(int)
+git_commit_header_field(git_buf *out, const git_commit *commit, const char *field);
 
 /**
  * Extract the signature from a commit
@@ -273,8 +272,8 @@ GIT_EXTERN(int) git_commit_header_field(git_buf *out, const git_commit *commit, 
  *
  * @param signature the signature block; existing content will be
  * overwritten
- * @param signed_data signed data; this is the commit contents minus the signature block;
- * existing content will be overwritten
+ * @param signed_data signed data; this is the commit contents minus the
+ * signature block; existing content will be overwritten
  * @param repo the repository in which the commit exists
  * @param commit_id the commit from which to extract the data
  * @param field the name of the header field containing the signature
@@ -282,7 +281,9 @@ GIT_EXTERN(int) git_commit_header_field(git_buf *out, const git_commit *commit, 
  * @return 0 on success, GIT_ENOTFOUND if the id is not for a commit
  * or the commit does not have a signature.
  */
-GIT_EXTERN(int) git_commit_extract_signature(git_buf *signature, git_buf *signed_data, git_repository *repo, git_oid *commit_id, const char *field);
+GIT_EXTERN(int)
+git_commit_extract_signature(git_buf *signature, git_buf *signed_data,
+	git_repository *repo, git_oid *commit_id, const char *field);
 
 /**
  * Create new commit in the repository from a list of `git_object` pointers
@@ -328,17 +329,11 @@ GIT_EXTERN(int) git_commit_extract_signature(git_buf *signature, git_buf *signed
  *	The created commit will be written to the Object Database and
  *	the given reference will be updated to point to it
  */
-GIT_EXTERN(int) git_commit_create(
-	git_oid *id,
-	git_repository *repo,
-	const char *update_ref,
-	const git_signature *author,
-	const git_signature *committer,
-	const char *message_encoding,
-	const char *message,
-	const git_tree *tree,
-	size_t parent_count,
-	const git_commit *parents[]);
+GIT_EXTERN(int)
+git_commit_create(git_oid *id, git_repository *repo, const char *update_ref,
+	const git_signature *author, const git_signature *committer,
+	const char *message_encoding, const char *message, const git_tree *tree,
+	size_t parent_count, const git_commit *parents[]);
 
 /**
  * Create new commit in the repository using a variable argument list.
@@ -354,17 +349,11 @@ GIT_EXTERN(int) git_commit_create(
  *
  * @see git_commit_create
  */
-GIT_EXTERN(int) git_commit_create_v(
-	git_oid *id,
-	git_repository *repo,
-	const char *update_ref,
-	const git_signature *author,
-	const git_signature *committer,
-	const char *message_encoding,
-	const char *message,
-	const git_tree *tree,
-	size_t parent_count,
-	...);
+GIT_EXTERN(int)
+git_commit_create_v(git_oid *id, git_repository *repo, const char *update_ref,
+	const git_signature *author, const git_signature *committer,
+	const char *message_encoding, const char *message, const git_tree *tree,
+	size_t parent_count, ...);
 
 /**
  * Amend an existing commit by replacing only non-NULL values.
@@ -387,15 +376,10 @@ GIT_EXTERN(int) git_commit_create_v(
  *
  * @see git_commit_create
  */
-GIT_EXTERN(int) git_commit_amend(
-	git_oid *id,
-	const git_commit *commit_to_amend,
-	const char *update_ref,
-	const git_signature *author,
-	const git_signature *committer,
-	const char *message_encoding,
-	const char *message,
-	const git_tree *tree);
+GIT_EXTERN(int)
+git_commit_amend(git_oid *id, const git_commit *commit_to_amend,
+	const char *update_ref, const git_signature *author, const git_signature *committer,
+	const char *message_encoding, const char *message, const git_tree *tree);
 
 /**
  * Create a commit and write it into a buffer
@@ -432,16 +416,11 @@ GIT_EXTERN(int) git_commit_amend(
  *
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_commit_create_buffer(
-	git_buf *out,
-	git_repository *repo,
-	const git_signature *author,
-	const git_signature *committer,
-	const char *message_encoding,
-	const char *message,
-	const git_tree *tree,
-	size_t parent_count,
-	const git_commit *parents[]);
+GIT_EXTERN(int)
+git_commit_create_buffer(git_buf *out, git_repository *repo,
+	const git_signature *author, const git_signature *committer,
+	const char *message_encoding, const char *message, const git_tree *tree,
+	size_t parent_count, const git_commit *parents[]);
 
 /**
  * Create a commit object from the given buffer and signature
@@ -457,12 +436,9 @@ GIT_EXTERN(int) git_commit_create_buffer(
  * signature. Leave `NULL` for the default of "gpgsig"
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_commit_create_with_signature(
-	git_oid *out,
-	git_repository *repo,
-	const char *commit_content,
-	const char *signature,
-	const char *signature_field);
+GIT_EXTERN(int)
+git_commit_create_with_signature(git_oid *out, git_repository *repo,
+	const char *commit_content, const char *signature, const char *signature_field);
 
 /**
  * Create an in-memory copy of a commit. The copy must be explicitly

@@ -9,13 +9,13 @@
 
 #include "common.h"
 
+#include "attr_file.h"
 #include "repository.h"
 #include "vector.h"
-#include "attr_file.h"
 
-#define GIT_IGNORE_FILE			".gitignore"
-#define GIT_IGNORE_FILE_INREPO	"exclude"
-#define GIT_IGNORE_FILE_XDG		"ignore"
+#define GIT_IGNORE_FILE ".gitignore"
+#define GIT_IGNORE_FILE_INREPO "exclude"
+#define GIT_IGNORE_FILE_XDG "ignore"
 
 /* The git_ignores structure maintains three sets of ignores:
  * - internal ignores
@@ -51,7 +51,8 @@ enum {
 	GIT_IGNORE_TRUE = 1,
 };
 
-extern int git_ignore__lookup(int *out, git_ignores *ign, const char *path, git_dir_flag dir_flag);
+extern int git_ignore__lookup(
+	int *out, git_ignores *ign, const char *path, git_dir_flag dir_flag);
 
 /* command line Git sometimes generates an error message if given a
  * pathspec that contains an exact match to an ignored file (provided

@@ -10,8 +10,8 @@
 #include "common.h"
 
 #include "diff.h"
-#include "xdiff/xdiff.h"
 #include "patch_generate.h"
+#include "xdiff/xdiff.h"
 
 /* xdiff cannot cope with large files.  these files should not be passed to
  * xdiff.  callers should treat these large files as binary.
@@ -26,8 +26,8 @@ typedef struct {
 	git_patch_generated_output output;
 
 	xdemitconf_t config;
-	xpparam_t    params;
-	xdemitcb_t   callback;
+	xpparam_t params;
+	xdemitcb_t callback;
 } git_xdiff_output;
 
 void git_xdiff_init(git_xdiff_output *xo, const git_diff_options *opts);

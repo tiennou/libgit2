@@ -11,9 +11,7 @@
 
 #include "buffer.h"
 
-int git_branch_upstream__name(
-	git_buf *tracking_name,
-	git_repository *repo,
+int git_branch_upstream__name(git_buf *tracking_name, git_repository *repo,
 	const char *canonical_branch_name);
 
 #endif

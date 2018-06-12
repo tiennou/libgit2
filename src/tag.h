@@ -10,8 +10,8 @@
 #include "common.h"
 
 #include "git2/tag.h"
-#include "repository.h"
 #include "odb.h"
+#include "repository.h"
 
 struct git_tag {
 	git_object object;

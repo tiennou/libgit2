@@ -7,11 +7,10 @@
 
 #include "auth.h"
 
-#include "git2.h"
 #include "buffer.h"
+#include "git2.h"
 
-static int basic_next_token(
-	git_buf *out, git_http_auth_context *ctx, git_cred *c)
+static int basic_next_token(git_buf *out, git_http_auth_context *ctx, git_cred *c)
 {
 	git_cred_userpass_plaintext *cred;
 	git_buf raw = GIT_BUF_INIT;
@@ -28,8 +27,7 @@ static int basic_next_token(
 
 	git_buf_printf(&raw, "%s:%s", cred->username, cred->password);
 
-	if (git_buf_oom(&raw) ||
-		git_buf_puts(out, "Authorization: Basic ") < 0 ||
+	if (git_buf_oom(&raw) || git_buf_puts(out, "Authorization: Basic ") < 0 ||
 		git_buf_encode_base64(out, git_buf_cstr(&raw), raw.size) < 0 ||
 		git_buf_puts(out, "\r\n") < 0)
 		goto on_error;
@@ -44,13 +42,8 @@ on_error:
 	return error;
 }
 
-static git_http_auth_context basic_context = {
-	GIT_AUTHTYPE_BASIC,
-	GIT_CREDTYPE_USERPASS_PLAINTEXT,
-	NULL,
-	basic_next_token,
-	NULL
-};
+static git_http_auth_context basic_context = { GIT_AUTHTYPE_BASIC,
+	GIT_CREDTYPE_USERPASS_PLAINTEXT, NULL, basic_next_token, NULL };
 
 int git_http_auth_basic(
 	git_http_auth_context **out, const gitno_connection_data *connection_data)
@@ -69,4 +62,3 @@ int git_http_auth_dummy(
 	*out = NULL;
 	return 0;
 }
-

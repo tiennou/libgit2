@@ -8,10 +8,10 @@
 #include "oid.h"
 
 #include "git2/oid.h"
-#include "repository.h"
 #include "global.h"
-#include <string.h>
+#include "repository.h"
 #include <limits.h>
+#include <string.h>
 
 static char to_hex[] = "0123456789abcdef";
 
@@ -57,7 +57,7 @@ int git_oid_fromstr(git_oid *out, const char *str)
 	return git_oid_fromstrn(out, str, GIT_OID_HEXSZ);
 }
 
-GIT_INLINE(char) *fmt_one(char *str, unsigned int val)
+GIT_INLINE(char) * fmt_one(char *str, unsigned int val)
 {
 	*str++ = to_hex[val >> 4];
 	*str++ = to_hex[val & 0xf];
@@ -131,8 +131,7 @@ char *git_oid_tostr(char *out, size_t n, const git_oid *oid)
 	return out;
 }
 
-int git_oid__parse(
-	git_oid *oid, const char **buffer_out,
+int git_oid__parse(git_oid *oid, const char **buffer_out,
 	const char *buffer_end, const char *header)
 {
 	const size_t sha_len = GIT_OID_HEXSZ;
@@ -266,14 +265,16 @@ static int resize_trie(git_oid_shorten *self, size_t new_size)
 	GITERR_CHECK_ALLOC(self->nodes);
 
 	if (new_size > self->size) {
-		memset(&self->nodes[self->size], 0x0, (new_size - self->size) * sizeof(trie_node));
+		memset(&self->nodes[self->size], 0x0,
+			(new_size - self->size) * sizeof(trie_node));
 	}
 
 	self->size = new_size;
 	return 0;
 }
 
-static trie_node *push_leaf(git_oid_shorten *os, node_index idx, int push_at, const char *oid)
+static trie_node *push_leaf(
+	git_oid_shorten *os, node_index idx, int push_at, const char *oid)
 {
 	trie_node *node, *leaf;
 	node_index idx_leaf;
@@ -287,8 +288,8 @@ static trie_node *push_leaf(git_oid_shorten *os, node_index idx, int push_at, co
 
 	if (os->node_count == SHRT_MAX) {
 		os->full = 1;
-        return NULL;
-    }
+		return NULL;
+	}
 
 	node = &os->nodes[idx];
 	node->children[push_at] = -idx_leaf;
@@ -439,4 +440,3 @@ int git_oid_shorten_add(git_oid_shorten *os, const char *text_oid)
 
 	return os->min_length;
 }
-

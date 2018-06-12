@@ -1,35 +1,34 @@
 /*
-* Copyright (C) the libgit2 contributors. All rights reserved.
-*
-* This file is part of libgit2, distributed under the GNU GPL v2 with
-* a Linking Exception. For full terms see the included COPYING file.
-*/
+ * Copyright (C) the libgit2 contributors. All rights reserved.
+ *
+ * This file is part of libgit2, distributed under the GNU GPL v2 with
+ * a Linking Exception. For full terms see the included COPYING file.
+ */
 
 #include "common.h"
 
-#include "repository.h"
 #include "filebuf.h"
-#include "merge.h"
 #include "index.h"
+#include "merge.h"
+#include "repository.h"
 
-#include "git2/types.h"
+#include "git2/commit.h"
 #include "git2/merge.h"
 #include "git2/revert.h"
-#include "git2/commit.h"
 #include "git2/sys/commit.h"
+#include "git2/types.h"
 
-#define GIT_REVERT_FILE_MODE		0666
+#define GIT_REVERT_FILE_MODE 0666
 
-static int write_revert_head(
-	git_repository *repo,
-	const char *commit_oidstr)
+static int write_revert_head(git_repository *repo, const char *commit_oidstr)
 {
 	git_filebuf file = GIT_FILEBUF_INIT;
 	git_buf file_path = GIT_BUF_INIT;
 	int error = 0;
 
 	if ((error = git_buf_joinpath(&file_path, repo->gitdir, GIT_REVERT_HEAD_FILE)) >= 0 &&
-		(error = git_filebuf_open(&file, file_path.ptr, GIT_FILEBUF_FORCE, GIT_REVERT_FILE_MODE)) >= 0 &&
+		(error = git_filebuf_open(&file, file_path.ptr, GIT_FILEBUF_FORCE,
+			 GIT_REVERT_FILE_MODE)) >= 0 &&
 		(error = git_filebuf_printf(&file, "%s\n", commit_oidstr)) >= 0)
 		error = git_filebuf_commit(&file);
 
@@ -42,18 +41,17 @@ static int write_revert_head(
 }
 
 static int write_merge_msg(
-	git_repository *repo,
-	const char *commit_oidstr,
-	const char *commit_msgline)
+	git_repository *repo, const char *commit_oidstr, const char *commit_msgline)
 {
 	git_filebuf file = GIT_FILEBUF_INIT;
 	git_buf file_path = GIT_BUF_INIT;
 	int error = 0;
 
 	if ((error = git_buf_joinpath(&file_path, repo->gitdir, GIT_MERGE_MSG_FILE)) < 0 ||
-		(error = git_filebuf_open(&file, file_path.ptr, GIT_FILEBUF_FORCE, GIT_REVERT_FILE_MODE)) < 0 ||
+		(error = git_filebuf_open(&file, file_path.ptr, GIT_FILEBUF_FORCE,
+			 GIT_REVERT_FILE_MODE)) < 0 ||
 		(error = git_filebuf_printf(&file, "Revert \"%s\"\n\nThis reverts commit %s.\n",
-		commit_msgline, commit_oidstr)) < 0)
+			 commit_msgline, commit_oidstr)) < 0)
 		goto cleanup;
 
 	error = git_filebuf_commit(&file);
@@ -67,11 +65,8 @@ cleanup:
 	return error;
 }
 
-static int revert_normalize_opts(
-	git_repository *repo,
-	git_revert_options *opts,
-	const git_revert_options *given,
-	const char *their_label)
+static int revert_normalize_opts(git_repository *repo, git_revert_options *opts,
+	const git_revert_options *given, const char *their_label)
 {
 	int error = 0;
 	unsigned int default_checkout_strategy = GIT_CHECKOUT_SAFE |
@@ -117,12 +112,8 @@ static int revert_seterr(git_commit *commit, const char *fmt)
 	return -1;
 }
 
-int git_revert_commit(
-	git_index **out,
-	git_repository *repo,
-	git_commit *revert_commit,
-	git_commit *our_commit,
-	unsigned int mainline,
+int git_revert_commit(git_index **out, git_repository *repo,
+	git_commit *revert_commit, git_commit *our_commit, unsigned int mainline,
 	const git_merge_options *merge_opts)
 {
 	git_commit *parent_commit = NULL;
@@ -147,7 +138,7 @@ int git_revert_commit(
 
 	if (parent &&
 		((error = git_commit_parent(&parent_commit, revert_commit, (parent - 1))) < 0 ||
-		(error = git_commit_tree(&parent_tree, parent_commit)) < 0))
+			(error = git_commit_tree(&parent_tree, parent_commit)) < 0))
 		goto done;
 
 	if ((error = git_commit_tree(&revert_tree, revert_commit)) < 0 ||
@@ -165,9 +156,7 @@ done:
 	return error;
 }
 
-int git_revert(
-	git_repository *repo,
-	git_commit *commit,
+int git_revert(git_repository *repo, git_commit *commit,
 	const git_revert_options *given_opts)
 {
 	git_revert_options opts;
@@ -195,14 +184,19 @@ int git_revert(
 		goto on_error;
 	}
 
-	if ((error = git_buf_printf(&their_label, "parent of %.7s... %s", commit_oidstr, commit_msg)) < 0 ||
-		(error = revert_normalize_opts(repo, &opts, given_opts, git_buf_cstr(&their_label))) < 0 ||
-		(error = git_indexwriter_init_for_operation(&indexwriter, repo, &opts.checkout_opts.checkout_strategy)) < 0 ||
+	if ((error = git_buf_printf(&their_label, "parent of %.7s... %s",
+			 commit_oidstr, commit_msg)) < 0 ||
+		(error = revert_normalize_opts(
+			 repo, &opts, given_opts, git_buf_cstr(&their_label))) < 0 ||
+		(error = git_indexwriter_init_for_operation(
+			 &indexwriter, repo, &opts.checkout_opts.checkout_strategy)) < 0 ||
 		(error = write_revert_head(repo, commit_oidstr)) < 0 ||
 		(error = write_merge_msg(repo, commit_oidstr, commit_msg)) < 0 ||
 		(error = git_repository_head(&our_ref, repo)) < 0 ||
-		(error = git_reference_peel((git_object **)&our_commit, our_ref, GIT_OBJ_COMMIT)) < 0 ||
-		(error = git_revert_commit(&index, repo, commit, our_commit, opts.mainline, &opts.merge_opts)) < 0 ||
+		(error = git_reference_peel(
+			 (git_object **)&our_commit, our_ref, GIT_OBJ_COMMIT)) < 0 ||
+		(error = git_revert_commit(&index, repo, commit, our_commit,
+			 opts.mainline, &opts.merge_opts)) < 0 ||
 		(error = git_merge__check_result(repo, index)) < 0 ||
 		(error = git_merge__append_conflicts_to_merge_msg(repo, index)) < 0 ||
 		(error = git_checkout_index(repo, index, &opts.checkout_opts)) < 0 ||

@@ -36,11 +36,8 @@ typedef struct {
  * @param esc_with String to insert in from of each found character
  * @return 0 on success, <0 on failure (probably allocation problem)
  */
-extern int git_buf_text_puts_escaped(
-	git_buf *buf,
-	const char *string,
-	const char *esc_chars,
-	const char *esc_with);
+extern int git_buf_text_puts_escaped(git_buf *buf, const char *string,
+	const char *esc_chars, const char *esc_with);
 
 /**
  * Append string escaping characters that are regex special

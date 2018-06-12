@@ -3,11 +3,11 @@
 
 #include "common.h"
 
-#include "git2/blame.h"
-#include "vector.h"
-#include "diff.h"
 #include "array.h"
+#include "diff.h"
+#include "git2/blame.h"
 #include "git2/oid.h"
+#include "vector.h"
 
 /*
  * One blob in a commit that is being suspected
@@ -87,8 +87,6 @@ struct git_blame {
 };
 
 git_blame *git_blame__alloc(
-	git_repository *repo,
-	git_blame_options opts,
-	const char *path);
+	git_repository *repo, git_blame_options opts, const char *path);
 
 #endif

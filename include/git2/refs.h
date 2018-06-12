@@ -8,9 +8,9 @@
 #define INCLUDE_git_refs_h__
 
 #include "common.h"
-#include "types.h"
 #include "oid.h"
 #include "strarray.h"
+#include "types.h"
 
 /**
  * @file git2/refs.h
@@ -34,7 +34,8 @@ GIT_BEGIN_DECL
  * @param name the long name for the reference (e.g. HEAD, refs/heads/master, refs/tags/v0.1.0, ...)
  * @return 0 on success, GIT_ENOTFOUND, GIT_EINVALIDSPEC or an error code.
  */
-GIT_EXTERN(int) git_reference_lookup(git_reference **out, git_repository *repo, const char *name);
+GIT_EXTERN(int)
+git_reference_lookup(git_reference **out, git_repository *repo, const char *name);
 
 /**
  * Lookup a reference by name and resolve immediately to OID.
@@ -51,8 +52,8 @@ GIT_EXTERN(int) git_reference_lookup(git_reference **out, git_repository *repo, 
  * @param name The long name for the reference (e.g. HEAD, refs/heads/master, refs/tags/v0.1.0, ...)
  * @return 0 on success, GIT_ENOTFOUND, GIT_EINVALIDSPEC or an error code.
  */
-GIT_EXTERN(int) git_reference_name_to_id(
-	git_oid *out, git_repository *repo, const char *name);
+GIT_EXTERN(int)
+git_reference_name_to_id(git_oid *out, git_repository *repo, const char *name);
 
 /**
  * Lookup a reference by DWIMing its short name
@@ -65,7 +66,8 @@ GIT_EXTERN(int) git_reference_name_to_id(
  * @param shorthand the short name for the reference
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_reference_dwim(git_reference **out, git_repository *repo, const char *shorthand);
+GIT_EXTERN(int)
+git_reference_dwim(git_reference **out, git_repository *repo, const char *shorthand);
 
 /**
  * Conditionally create a new symbolic reference.
@@ -106,7 +108,10 @@ GIT_EXTERN(int) git_reference_dwim(git_reference **out, git_repository *repo, co
  * @param log_message The one line long message to be appended to the reflog
  * @return 0 on success, GIT_EEXISTS, GIT_EINVALIDSPEC, GIT_EMODIFIED or an error code
  */
-GIT_EXTERN(int) git_reference_symbolic_create_matching(git_reference **out, git_repository *repo, const char *name, const char *target, int force, const char *current_value, const char *log_message);
+GIT_EXTERN(int)
+git_reference_symbolic_create_matching(git_reference **out,
+	git_repository *repo, const char *name, const char *target, int force,
+	const char *current_value, const char *log_message);
 
 /**
  * Create a new symbolic reference.
@@ -142,7 +147,9 @@ GIT_EXTERN(int) git_reference_symbolic_create_matching(git_reference **out, git_
  * @param log_message The one line long message to be appended to the reflog
  * @return 0 on success, GIT_EEXISTS, GIT_EINVALIDSPEC or an error code
  */
-GIT_EXTERN(int) git_reference_symbolic_create(git_reference **out, git_repository *repo, const char *name, const char *target, int force, const char *log_message);
+GIT_EXTERN(int)
+git_reference_symbolic_create(git_reference **out, git_repository *repo,
+	const char *name, const char *target, int force, const char *log_message);
 
 /**
  * Create a new direct reference.
@@ -179,7 +186,9 @@ GIT_EXTERN(int) git_reference_symbolic_create(git_reference **out, git_repositor
  * @param log_message The one line long message to be appended to the reflog
  * @return 0 on success, GIT_EEXISTS, GIT_EINVALIDSPEC or an error code
  */
-GIT_EXTERN(int) git_reference_create(git_reference **out, git_repository *repo, const char *name, const git_oid *id, int force, const char *log_message);
+GIT_EXTERN(int)
+git_reference_create(git_reference **out, git_repository *repo,
+	const char *name, const git_oid *id, int force, const char *log_message);
 
 /**
  * Conditionally create new direct reference
@@ -222,7 +231,10 @@ GIT_EXTERN(int) git_reference_create(git_reference **out, git_repository *repo, 
  * @return 0 on success, GIT_EMODIFIED if the value of the reference
  * has changed, GIT_EEXISTS, GIT_EINVALIDSPEC or an error code
  */
-GIT_EXTERN(int) git_reference_create_matching(git_reference **out, git_repository *repo, const char *name, const git_oid *id, int force, const git_oid *current_id, const char *log_message);
+GIT_EXTERN(int)
+git_reference_create_matching(git_reference **out, git_repository *repo,
+	const char *name, const git_oid *id, int force, const git_oid *current_id,
+	const char *log_message);
 
 /**
  * Get the OID pointed to by a direct reference.
@@ -258,7 +270,8 @@ GIT_EXTERN(const git_oid *) git_reference_target_peel(const git_reference *ref);
  * @param ref The reference
  * @return a pointer to the name if available, NULL otherwise
  */
-GIT_EXTERN(const char *) git_reference_symbolic_target(const git_reference *ref);
+GIT_EXTERN(const char *)
+git_reference_symbolic_target(const git_reference *ref);
 
 /**
  * Get the type of a reference.
@@ -296,7 +309,8 @@ GIT_EXTERN(const char *) git_reference_name(const git_reference *ref);
  * @param ref The reference
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_reference_resolve(git_reference **out, const git_reference *ref);
+GIT_EXTERN(int)
+git_reference_resolve(git_reference **out, const git_reference *ref);
 
 /**
  * Get the repository where a reference resides.
@@ -326,16 +340,14 @@ GIT_EXTERN(git_repository *) git_reference_owner(const git_reference *ref);
  * @param log_message The one line long message to be appended to the reflog
  * @return 0 on success, GIT_EINVALIDSPEC or an error code
  */
-GIT_EXTERN(int) git_reference_symbolic_set_target(
-	git_reference **out,
-	git_reference *ref,
-	const char *target,
-	const char *log_message);
+GIT_EXTERN(int)
+git_reference_symbolic_set_target(git_reference **out, git_reference *ref,
+	const char *target, const char *log_message);
 
 /**
- * Conditionally create a new reference with the same name as the given reference but a
- * different OID target. The reference must be a direct reference, otherwise
- * this will fail.
+ * Conditionally create a new reference with the same name as the given
+ * reference but a different OID target. The reference must be a direct
+ * reference, otherwise this will fail.
  *
  * The new reference will be written to disk, overwriting the given reference.
  *
@@ -346,11 +358,9 @@ GIT_EXTERN(int) git_reference_symbolic_set_target(
  * @return 0 on success, GIT_EMODIFIED if the value of the reference
  * has changed since it was read, or an error code
  */
-GIT_EXTERN(int) git_reference_set_target(
-	git_reference **out,
-	git_reference *ref,
-	const git_oid *id,
-	const char *log_message);
+GIT_EXTERN(int)
+git_reference_set_target(git_reference **out, git_reference *ref,
+	const git_oid *id, const char *log_message);
 
 /**
  * Rename an existing reference.
@@ -375,12 +385,9 @@ GIT_EXTERN(int) git_reference_set_target(
  * @return 0 on success, GIT_EINVALIDSPEC, GIT_EEXISTS or an error code
  *
  */
-GIT_EXTERN(int) git_reference_rename(
-	git_reference **new_ref,
-	git_reference *ref,
-	const char *new_name,
-	int force,
-	const char *log_message);
+GIT_EXTERN(int)
+git_reference_rename(git_reference **new_ref, git_reference *ref,
+	const char *new_name, int force, const char *log_message);
 
 /**
  * Delete an existing reference.
@@ -441,10 +448,9 @@ typedef int (*git_reference_foreach_name_cb)(const char *name, void *payload);
  * @param payload Additional data to pass to the callback
  * @return 0 on success, non-zero callback return value, or error code
  */
-GIT_EXTERN(int) git_reference_foreach(
-	git_repository *repo,
-	git_reference_foreach_cb callback,
-	void *payload);
+GIT_EXTERN(int)
+git_reference_foreach(
+	git_repository *repo, git_reference_foreach_cb callback, void *payload);
 
 /**
  * Perform a callback on the fully-qualified name of each reference.
@@ -459,10 +465,9 @@ GIT_EXTERN(int) git_reference_foreach(
  * @param payload Additional data to pass to the callback
  * @return 0 on success, non-zero callback return value, or error code
  */
-GIT_EXTERN(int) git_reference_foreach_name(
-	git_repository *repo,
-	git_reference_foreach_name_cb callback,
-	void *payload);
+GIT_EXTERN(int)
+git_reference_foreach_name(git_repository *repo,
+	git_reference_foreach_name_cb callback, void *payload);
 
 /**
  * Create a copy of an existing reference.
@@ -489,9 +494,8 @@ GIT_EXTERN(void) git_reference_free(git_reference *ref);
  * @param ref2 The second git_reference
  * @return 0 if the same, else a stable but meaningless ordering.
  */
-GIT_EXTERN(int) git_reference_cmp(
-	const git_reference *ref1,
-	const git_reference *ref2);
+GIT_EXTERN(int)
+git_reference_cmp(const git_reference *ref1, const git_reference *ref2);
 
 /**
  * Create an iterator for the repo's references
@@ -500,9 +504,8 @@ GIT_EXTERN(int) git_reference_cmp(
  * @param repo the repository
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_reference_iterator_new(
-	git_reference_iterator **out,
-	git_repository *repo);
+GIT_EXTERN(int)
+git_reference_iterator_new(git_reference_iterator **out, git_repository *repo);
 
 /**
  * Create an iterator for the repo's references that match the
@@ -513,10 +516,9 @@ GIT_EXTERN(int) git_reference_iterator_new(
  * @param glob the glob to match against the reference names
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_reference_iterator_glob_new(
-	git_reference_iterator **out,
-	git_repository *repo,
-	const char *glob);
+GIT_EXTERN(int)
+git_reference_iterator_glob_new(
+	git_reference_iterator **out, git_repository *repo, const char *glob);
 
 /**
  * Get the next reference
@@ -525,7 +527,8 @@ GIT_EXTERN(int) git_reference_iterator_glob_new(
  * @param iter the iterator
  * @return 0, GIT_ITEROVER if there are no more; or an error code
  */
-GIT_EXTERN(int) git_reference_next(git_reference **out, git_reference_iterator *iter);
+GIT_EXTERN(int)
+git_reference_next(git_reference **out, git_reference_iterator *iter);
 
 /**
  * Get the next reference's name
@@ -538,7 +541,8 @@ GIT_EXTERN(int) git_reference_next(git_reference **out, git_reference_iterator *
  * @param iter the iterator
  * @return 0, GIT_ITEROVER if there are no more; or an error code
  */
-GIT_EXTERN(int) git_reference_next_name(const char **out, git_reference_iterator *iter);
+GIT_EXTERN(int)
+git_reference_next_name(const char **out, git_reference_iterator *iter);
 
 /**
  * Free the iterator and its associated resources
@@ -565,11 +569,9 @@ GIT_EXTERN(void) git_reference_iterator_free(git_reference_iterator *iter);
  * @param payload Additional data to pass to the callback
  * @return 0 on success, GIT_EUSER on non-zero callback, or error code
  */
-GIT_EXTERN(int) git_reference_foreach_glob(
-	git_repository *repo,
-	const char *glob,
-	git_reference_foreach_name_cb callback,
-	void *payload);
+GIT_EXTERN(int)
+git_reference_foreach_glob(git_repository *repo, const char *glob,
+	git_reference_foreach_name_cb callback, void *payload);
 
 /**
  * Check if a reflog exists for the specified reference.
@@ -579,7 +581,8 @@ GIT_EXTERN(int) git_reference_foreach_glob(
  * @return 0 when no reflog can be found, 1 when it exists;
  * otherwise an error code.
  */
-GIT_EXTERN(int) git_reference_has_log(git_repository *repo, const char *refname);
+GIT_EXTERN(int)
+git_reference_has_log(git_repository *repo, const char *refname);
 
 /**
  * Ensure there is a reflog for a particular reference.
@@ -591,7 +594,8 @@ GIT_EXTERN(int) git_reference_has_log(git_repository *repo, const char *refname)
  * @param refname the reference's name
  * @return 0 or an error code.
  */
-GIT_EXTERN(int) git_reference_ensure_log(git_repository *repo, const char *refname);
+GIT_EXTERN(int)
+git_reference_ensure_log(git_repository *repo, const char *refname);
 
 /**
  * Check if a reference is a local branch.
@@ -687,11 +691,9 @@ typedef enum {
  * @return 0 on success, GIT_EBUFS if buffer is too small, GIT_EINVALIDSPEC
  * or an error code.
  */
-GIT_EXTERN(int) git_reference_normalize_name(
-	char *buffer_out,
-	size_t buffer_size,
-	const char *name,
-	unsigned int flags);
+GIT_EXTERN(int)
+git_reference_normalize_name(
+	char *buffer_out, size_t buffer_size, const char *name, unsigned int flags);
 
 /**
  * Recursively peel reference until object of the specified type is found.
@@ -708,10 +710,8 @@ GIT_EXTERN(int) git_reference_normalize_name(
  * GIT_OBJ_TAG, GIT_OBJ_TREE, GIT_OBJ_BLOB or GIT_OBJ_ANY).
  * @return 0 on success, GIT_EAMBIGUOUS, GIT_ENOTFOUND or an error code
  */
-GIT_EXTERN(int) git_reference_peel(
-	git_object **out,
-	git_reference *ref,
-	git_otype type);
+GIT_EXTERN(int)
+git_reference_peel(git_object **out, git_reference *ref, git_otype type);
 
 /**
  * Ensure the reference name is well-formed.

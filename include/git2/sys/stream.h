@@ -8,8 +8,8 @@
 #define INCLUDE_sys_git_stream_h__
 
 #include "git2/common.h"
-#include "git2/types.h"
 #include "git2/proxy.h"
+#include "git2/types.h"
 
 GIT_BEGIN_DECL
 

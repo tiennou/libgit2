@@ -8,9 +8,9 @@
 #define INCLUDE_git_refdb_h__
 
 #include "common.h"
-#include "types.h"
 #include "oid.h"
 #include "refs.h"
+#include "types.h"
 
 /**
  * @file git2/refdb.h

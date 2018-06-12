@@ -7,31 +7,31 @@
 
 #include "streams/socket.h"
 
-#include "posix.h"
 #include "netops.h"
+#include "posix.h"
 #include "stream.h"
 
 #ifndef _WIN32
-#	include <sys/types.h>
-#	include <sys/socket.h>
-#	include <sys/select.h>
-#	include <sys/time.h>
-#	include <netdb.h>
-#	include <netinet/in.h>
-#       include <arpa/inet.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/select.h>
+#include <sys/socket.h>
+#include <sys/time.h>
+#include <sys/types.h>
 #else
-#	include <winsock2.h>
-#	include <ws2tcpip.h>
-#	ifdef _MSC_VER
-#		pragma comment(lib, "ws2_32")
-#	endif
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#ifdef _MSC_VER
+#pragma comment(lib, "ws2_32")
+#endif
 #endif
 
 #ifdef GIT_WIN32
 static void net_set_error(const char *str)
 {
 	int error = WSAGetLastError();
-	char * win32_error = git_win32_get_error_message(error);
+	char *win32_error = git_win32_get_error_message(error);
 
 	if (win32_error) {
 		giterr_set(GITERR_NET, "%s: %s", str, win32_error);
@@ -65,14 +65,13 @@ static int close_socket(GIT_SOCKET s)
 #else
 	return close(s);
 #endif
-
 }
 
 int socket_connect(git_stream *stream)
 {
 	struct addrinfo *info = NULL, *p;
 	struct addrinfo hints;
-	git_socket_stream *st = (git_socket_stream *) stream;
+	git_socket_stream *st = (git_socket_stream *)stream;
 	GIT_SOCKET s = INVALID_SOCKET;
 	int ret;
 
@@ -81,7 +80,7 @@ int socket_connect(git_stream *stream)
 	 * before any socket calls can be performed */
 	WSADATA wsd;
 
-	if (WSAStartup(MAKEWORD(2,2), &wsd) != 0) {
+	if (WSAStartup(MAKEWORD(2, 2), &wsd) != 0) {
 		giterr_set(GITERR_OS, "winsock init failed");
 		return -1;
 	}
@@ -98,8 +97,8 @@ int socket_connect(git_stream *stream)
 	hints.ai_family = AF_UNSPEC;
 
 	if ((ret = p_getaddrinfo(st->host, st->port, &hints, &info)) != 0) {
-		giterr_set(GITERR_NET,
-			   "failed to resolve address for %s: %s", st->host, p_gai_strerror(ret));
+		giterr_set(GITERR_NET, "failed to resolve address for %s: %s", st->host,
+			p_gai_strerror(ret));
 		return -1;
 	}
 
@@ -133,7 +132,7 @@ ssize_t socket_write(git_stream *stream, const char *data, size_t len, int flags
 {
 	ssize_t ret;
 	size_t off = 0;
-	git_socket_stream *st = (git_socket_stream *) stream;
+	git_socket_stream *st = (git_socket_stream *)stream;
 
 	while (off < len) {
 		errno = 0;
@@ -152,7 +151,7 @@ ssize_t socket_write(git_stream *stream, const char *data, size_t len, int flags
 ssize_t socket_read(git_stream *stream, void *data, size_t len)
 {
 	ssize_t ret;
-	git_socket_stream *st = (git_socket_stream *) stream;
+	git_socket_stream *st = (git_socket_stream *)stream;
 
 	if ((ret = p_recv(st->s, data, len, 0)) < 0)
 		net_set_error("Error receiving socket data");
@@ -162,7 +161,7 @@ ssize_t socket_read(git_stream *stream, void *data, size_t len)
 
 int socket_close(git_stream *stream)
 {
-	git_socket_stream *st = (git_socket_stream *) stream;
+	git_socket_stream *st = (git_socket_stream *)stream;
 	int error;
 
 	error = close_socket(st->s);
@@ -173,7 +172,7 @@ int socket_close(git_stream *stream)
 
 void socket_free(git_stream *stream)
 {
-	git_socket_stream *st = (git_socket_stream *) stream;
+	git_socket_stream *st = (git_socket_stream *)stream;
 
 	git__free(st->host);
 	git__free(st->port);
@@ -205,6 +204,6 @@ int git_socket_stream_new(git_stream **out, const char *host, const char *port)
 	st->parent.free = socket_free;
 	st->s = INVALID_SOCKET;
 
-	*out = (git_stream *) st;
+	*out = (git_stream *)st;
 	return 0;
 }

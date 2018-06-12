@@ -29,7 +29,8 @@ GIT_INLINE(int) git_hash_init(git_hash_ctx *ctx)
 	return 0;
 }
 
-GIT_INLINE(int) git_hash_update(git_hash_ctx *ctx, const void *_data, size_t len)
+GIT_INLINE(int)
+git_hash_update(git_hash_ctx *ctx, const void *_data, size_t len)
 {
 	const unsigned char *data = _data;
 

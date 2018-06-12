@@ -27,7 +27,12 @@ typedef struct {
 	int zerr;
 } git_zstream;
 
-#define GIT_ZSTREAM_INIT {{0}}
+#define GIT_ZSTREAM_INIT \
+	{                    \
+		{                \
+			0            \
+		}                \
+	}
 
 int git_zstream_init(git_zstream *zstream, git_zstream_t type);
 void git_zstream_free(git_zstream *zstream);
@@ -37,8 +42,7 @@ int git_zstream_set_input(git_zstream *zstream, const void *in, size_t in_len);
 size_t git_zstream_suggest_output_len(git_zstream *zstream);
 
 /* get as much output as is available in the input buffer */
-int git_zstream_get_output_chunk(
-	void *out, size_t *out_len, git_zstream *zstream);
+int git_zstream_get_output_chunk(void *out, size_t *out_len, git_zstream *zstream);
 
 /* get all the output from the entire input buffer */
 int git_zstream_get_output(void *out, size_t *out_len, git_zstream *zstream);

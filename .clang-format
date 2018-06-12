@@ -1,0 +1,53 @@
+### This style was chosen for your .clang-format
+BasedOnStyle: WebKit
+Language: Cpp
+TabWidth: 4
+UseTab: Always
+# The following allows spaces to be used for continuations, eg.
+# 	if (blob &&
+# 	    mew)
+# but this also revert declarations to be space-indented…
+# UseTab: ForIndentation
+
+ColumnLimit: 80
+
+AlignEscapedNewlines: Left
+AlignConsecutiveAssignments: false
+AllowShortBlocksOnASingleLine: true
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterFunction: true
+  AfterControlStatement: false
+BreakBeforeBinaryOperators: None
+BreakBeforeTernaryOperators: false
+
+DerivePointerAlignment: false
+PointerAlignment: Right
+
+MaxEmptyLinesToKeep: 2
+
+SortIncludes: true
+IncludeBlocks: Preserve
+# Would be nice, but since indent is 4, all inner defines get updated
+#IndentPPDirectives: AfterHash
+
+SpaceBeforeParens: ControlStatements
+SpacesInSquareBrackets: false
+PenaltyExcessCharacter: 2
+PenaltyBreakAssignment: 100
+ForEachMacros:
+  - git_array_foreach
+  - git_attr_file__foreach
+  - git_offmap_foreach
+  - git_offmap_foreach_value
+  - git_oidmap_foreach_value
+  - git_strmap_foreach
+  - git_strmap_foreach_value
+  - git_vector_foreach
+  - kh_foreach
+  - kh_foreach_value

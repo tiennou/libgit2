@@ -7,16 +7,16 @@
 
 #include "common.h"
 
-#include "git2/types.h"
 #include "git2/errors.h"
 #include "git2/refs.h"
 #include "git2/revwalk.h"
+#include "git2/types.h"
 
-#include "smart.h"
-#include "util.h"
+#include "buffer.h"
 #include "netops.h"
 #include "posix.h"
-#include "buffer.h"
+#include "smart.h"
+#include "util.h"
 
 #include <ctype.h>
 
@@ -68,7 +68,7 @@ static int ack_pkt(git_pkt **out, const char *line, size_t len)
 			pkt->status = GIT_ACK_READY;
 	}
 
-	*out = (git_pkt *) pkt;
+	*out = (git_pkt *)pkt;
 
 	return 0;
 }
@@ -113,7 +113,7 @@ static int comment_pkt(git_pkt **out, const char *line, size_t len)
 	memcpy(pkt->comment, line, len);
 	pkt->comment[len] = '\0';
 
-	*out = (git_pkt *) pkt;
+	*out = (git_pkt *)pkt;
 
 	return 0;
 }
@@ -137,7 +137,7 @@ static int err_pkt(git_pkt **out, const char *line, size_t len)
 	memcpy(pkt->error, line, len);
 	pkt->error[len] = '\0';
 
-	*out = (git_pkt *) pkt;
+	*out = (git_pkt *)pkt;
 
 	return 0;
 }
@@ -155,10 +155,10 @@ static int data_pkt(git_pkt **out, const char *line, size_t len)
 	GITERR_CHECK_ALLOC(pkt);
 
 	pkt->type = GIT_PKT_DATA;
-	pkt->len = (int) len;
+	pkt->len = (int)len;
 	memcpy(pkt->data, line, len);
 
-	*out = (git_pkt *) pkt;
+	*out = (git_pkt *)pkt;
 
 	return 0;
 }
@@ -176,10 +176,10 @@ static int sideband_progress_pkt(git_pkt **out, const char *line, size_t len)
 	GITERR_CHECK_ALLOC(pkt);
 
 	pkt->type = GIT_PKT_PROGRESS;
-	pkt->len = (int) len;
+	pkt->len = (int)len;
 	memcpy(pkt->data, line, len);
 
-	*out = (git_pkt *) pkt;
+	*out = (git_pkt *)pkt;
 
 	return 0;
 }
@@ -366,11 +366,11 @@ static int32_t parse_len(const char *line)
 		if (!isxdigit(num[i])) {
 			/* Make sure there are no special characters before passing to error message */
 			for (k = 0; k < PKT_LEN_SIZE; ++k) {
-				if(!isprint(num[k])) {
+				if (!isprint(num[k])) {
 					num[k] = '.';
 				}
 			}
-			
+
 			giterr_set(GITERR_NET, "invalid hex digit in length: '%s'", num);
 			return -1;
 		}
@@ -395,8 +395,7 @@ static int32_t parse_len(const char *line)
  * in ASCII hexadecimal (including itself)
  */
 
-int git_pkt_parse_line(
-	git_pkt **head, const char *line, const char **out, size_t bufflen)
+int git_pkt_parse_line(git_pkt **head, const char *line, const char **out, size_t bufflen)
 {
 	int ret;
 	int32_t len;
@@ -484,18 +483,18 @@ int git_pkt_parse_line(
 void git_pkt_free(git_pkt *pkt)
 {
 	if (pkt->type == GIT_PKT_REF) {
-		git_pkt_ref *p = (git_pkt_ref *) pkt;
+		git_pkt_ref *p = (git_pkt_ref *)pkt;
 		git__free(p->head.name);
 		git__free(p->head.symref_target);
 	}
 
 	if (pkt->type == GIT_PKT_OK) {
-		git_pkt_ok *p = (git_pkt_ok *) pkt;
+		git_pkt_ok *p = (git_pkt_ok *)pkt;
 		git__free(p->ref);
 	}
 
 	if (pkt->type == GIT_PKT_NG) {
-		git_pkt_ng *p = (git_pkt_ng *) pkt;
+		git_pkt_ng *p = (git_pkt_ng *)pkt;
 		git__free(p->ref);
 		git__free(p->msg);
 	}
@@ -508,10 +507,11 @@ int git_pkt_buffer_flush(git_buf *buf)
 	return git_buf_put(buf, pkt_flush_str, strlen(pkt_flush_str));
 }
 
-static int buffer_want_with_caps(const git_remote_head *head, transport_smart_caps *caps, git_buf *buf)
+static int buffer_want_with_caps(
+	const git_remote_head *head, transport_smart_caps *caps, git_buf *buf)
 {
 	git_buf str = GIT_BUF_INIT;
-	char oid[GIT_OID_HEXSZ +1] = {0};
+	char oid[GIT_OID_HEXSZ + 1] = { 0 };
 	size_t len;
 
 	/* Prefer multi_ack_detailed */
@@ -539,7 +539,7 @@ static int buffer_want_with_caps(const git_remote_head *head, transport_smart_ca
 		return -1;
 
 	len = strlen("XXXXwant ") + GIT_OID_HEXSZ + 1 /* NUL */ +
-		 git_buf_len(&str) + 1 /* LF */;
+		git_buf_len(&str) + 1 /* LF */;
 
 	if (len > 0xffff) {
 		giterr_set(GITERR_NET,
@@ -549,8 +549,8 @@ static int buffer_want_with_caps(const git_remote_head *head, transport_smart_ca
 
 	git_buf_grow_by(buf, len);
 	git_oid_fmt(oid, &head->oid);
-	git_buf_printf(buf,
-		"%04xwant %s %s\n", (unsigned int)len, oid, git_buf_cstr(&str));
+	git_buf_printf(
+		buf, "%04xwant %s %s\n", (unsigned int)len, oid, git_buf_cstr(&str));
 	git_buf_dispose(&str);
 
 	GITERR_CHECK_ALLOC_BUF(buf);
@@ -563,11 +563,8 @@ static int buffer_want_with_caps(const git_remote_head *head, transport_smart_ca
  * is overwrite the OID each time.
  */
 
-int git_pkt_buffer_wants(
-	const git_remote_head * const *refs,
-	size_t count,
-	transport_smart_caps *caps,
-	git_buf *buf)
+int git_pkt_buffer_wants(const git_remote_head *const *refs, size_t count,
+	transport_smart_caps *caps, git_buf *buf)
 {
 	size_t i = 0;
 	const git_remote_head *head;

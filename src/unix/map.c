@@ -12,9 +12,9 @@
 #if !defined(GIT_WIN32) && !defined(NO_MMAP)
 
 #include "map.h"
+#include <errno.h>
 #include <sys/mman.h>
 #include <unistd.h>
-#include <errno.h>
 
 int git__page_size(size_t *page_size)
 {
@@ -23,13 +23,13 @@ int git__page_size(size_t *page_size)
 		giterr_set(GITERR_OS, "can't determine system page size");
 		return -1;
 	}
-	*page_size = (size_t) sc_page_size;
+	*page_size = (size_t)sc_page_size;
 	return 0;
 }
 
 int git__mmap_alignment(size_t *alignment)
 {
-  return git__page_size(alignment);
+	return git__page_size(alignment);
 }
 
 int p_mmap(git_map *out, size_t len, int prot, int flags, int fd, git_off_t offset)
@@ -73,4 +73,3 @@ int p_munmap(git_map *map)
 }
 
 #endif
-

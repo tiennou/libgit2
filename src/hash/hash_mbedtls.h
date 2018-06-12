@@ -11,7 +11,7 @@
 #include <mbedtls/sha1.h>
 
 struct git_hash_ctx {
-    mbedtls_sha1_context c;
+	mbedtls_sha1_context c;
 };
 
 #define git_hash_global_init() 0

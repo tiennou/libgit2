@@ -12,11 +12,11 @@
 
 #include "buffer.h"
 #include "hash.h"
-#include "oidmap.h"
-#include "netops.h"
-#include "zstream.h"
-#include "pool.h"
 #include "indexer.h"
+#include "netops.h"
+#include "oidmap.h"
+#include "pool.h"
+#include "zstream.h"
 
 #include "git2/oid.h"
 #include "git2/pack.h"
@@ -39,23 +39,19 @@ typedef struct git_pobject {
 	struct git_pobject *delta; /* delta base object */
 	struct git_pobject *delta_child; /* deltified objects who bases me */
 	struct git_pobject *delta_sibling; /* other deltified objects
-					    * who uses the same base as
-					    * me */
+										* who uses the same base as
+										* me */
 
 	void *delta_data;
 	size_t delta_size;
 	size_t z_delta_size;
 
-	int written:1,
-	    recursing:1,
-	    tagged:1,
-	    filled:1;
+	int written : 1, recursing : 1, tagged : 1, filled : 1;
 } git_pobject;
 
 typedef struct {
 	git_oid id;
-	unsigned int uninteresting:1,
-		seen:1;
+	unsigned int uninteresting : 1, seen : 1;
 } git_walk_object;
 
 struct git_packbuilder {
@@ -65,10 +61,7 @@ struct git_packbuilder {
 	git_hash_ctx ctx;
 	git_zstream zstream;
 
-	uint32_t nr_objects,
-		nr_deltified,
-		nr_written,
-		nr_remaining;
+	uint32_t nr_objects, nr_deltified, nr_written, nr_remaining;
 
 	size_t nr_alloc;
 

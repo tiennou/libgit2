@@ -8,8 +8,8 @@
 #define INCLUDE_git_revert_h__
 
 #include "common.h"
-#include "types.h"
 #include "merge.h"
+#include "types.h"
 
 /**
  * @file git2/revert.h
@@ -34,7 +34,10 @@ typedef struct {
 } git_revert_options;
 
 #define GIT_REVERT_OPTIONS_VERSION 1
-#define GIT_REVERT_OPTIONS_INIT {GIT_REVERT_OPTIONS_VERSION, 0, GIT_MERGE_OPTIONS_INIT, GIT_CHECKOUT_OPTIONS_INIT}
+#define GIT_REVERT_OPTIONS_INIT                                                          \
+	{                                                                                    \
+		GIT_REVERT_OPTIONS_VERSION, 0, GIT_MERGE_OPTIONS_INIT, GIT_CHECKOUT_OPTIONS_INIT \
+	}
 
 /**
  * Initialize git_revert_options structure
@@ -46,9 +49,8 @@ typedef struct {
  * @param version The struct version; pass `GIT_REVERT_OPTIONS_VERSION`.
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_revert_init_options(
-	git_revert_options *opts,
-	unsigned int version);
+GIT_EXTERN(int)
+git_revert_init_options(git_revert_options *opts, unsigned int version);
 
 /**
  * Reverts the given commit against the given "our" commit, producing an
@@ -64,12 +66,9 @@ GIT_EXTERN(int) git_revert_init_options(
  * @param merge_options the merge options (or null for defaults)
  * @return zero on success, -1 on failure.
  */
-GIT_EXTERN(int) git_revert_commit(
-	git_index **out,
-	git_repository *repo,
-	git_commit *revert_commit,
-	git_commit *our_commit,
-	unsigned int mainline,
+GIT_EXTERN(int)
+git_revert_commit(git_index **out, git_repository *repo,
+	git_commit *revert_commit, git_commit *our_commit, unsigned int mainline,
 	const git_merge_options *merge_options);
 
 /**
@@ -80,12 +79,10 @@ GIT_EXTERN(int) git_revert_commit(
  * @param given_opts the revert options (or null for defaults)
  * @return zero on success, -1 on failure.
  */
-GIT_EXTERN(int) git_revert(
-	git_repository *repo,
-	git_commit *commit,
+GIT_EXTERN(int)
+git_revert(git_repository *repo, git_commit *commit,
 	const git_revert_options *given_opts);
 
 /** @} */
 GIT_END_DECL
 #endif
-

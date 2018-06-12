@@ -8,15 +8,14 @@
 #ifndef INCLUDE_transports_auth_negotiate_h__
 #define INCLUDE_transports_auth_negotiate_h__
 
+#include "auth.h"
 #include "common.h"
 #include "git2.h"
-#include "auth.h"
 
 #ifdef GIT_GSSAPI
 
 extern int git_http_auth_negotiate(
-	git_http_auth_context **out,
-	const gitno_connection_data *connection_data);
+	git_http_auth_context **out, const gitno_connection_data *connection_data);
 
 #else
 

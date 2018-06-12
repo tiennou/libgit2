@@ -8,24 +8,24 @@
 #include "common.h"
 
 #ifdef GIT_OPENSSL
-# include <openssl/err.h>
+#include <openssl/err.h>
 #endif
 
 #ifdef GIT_MBEDTLS
-# include <mbedtls/error.h>
+#include <mbedtls/error.h>
 #endif
 
-#include <git2.h>
 #include "alloc.h"
-#include "sysdir.h"
 #include "cache.h"
 #include "global.h"
 #include "object.h"
 #include "odb.h"
 #include "refs.h"
-#include "transports/smart.h"
-#include "streams/openssl.h"
 #include "streams/mbedtls.h"
+#include "streams/openssl.h"
+#include "sysdir.h"
+#include "transports/smart.h"
+#include <git2.h>
 
 void git_libgit2_version(int *major, int *minor, int *rev)
 {
@@ -49,7 +49,7 @@ int git_libgit2_features(void)
 #if defined(GIT_USE_NSEC)
 		| GIT_FEATURE_NSEC
 #endif
-	;
+		;
 }
 
 /* Declarations for tuneable settings */
@@ -74,8 +74,7 @@ static int config_level_to_sysdir(int config_level)
 		val = GIT_SYSDIR_PROGRAMDATA;
 		break;
 	default:
-		giterr_set(
-			GITERR_INVALID, "invalid config path selector %d", config_level);
+		giterr_set(GITERR_INVALID, "invalid config path selector %d", config_level);
 	}
 
 	return val;
@@ -136,13 +135,12 @@ int git_libgit2_opts(int key, ...)
 			error = git_sysdir_set(error, va_arg(ap, const char *));
 		break;
 
-	case GIT_OPT_SET_CACHE_OBJECT_LIMIT:
-		{
-			git_otype type = (git_otype)va_arg(ap, int);
-			size_t size = va_arg(ap, size_t);
-			error = git_cache_set_max_object_size(type, size);
-			break;
-		}
+	case GIT_OPT_SET_CACHE_OBJECT_LIMIT: {
+		git_otype type = (git_otype)va_arg(ap, int);
+		size_t size = va_arg(ap, size_t);
+		error = git_cache_set_max_object_size(type, size);
+		break;
+	}
 
 	case GIT_OPT_SET_CACHE_MAX_SIZE:
 		git_cache__max_storage = va_arg(ap, ssize_t);
@@ -157,18 +155,16 @@ int git_libgit2_opts(int key, ...)
 		*(va_arg(ap, ssize_t *)) = git_cache__max_storage;
 		break;
 
-	case GIT_OPT_GET_TEMPLATE_PATH:
-		{
-			git_buf *out = va_arg(ap, git_buf *);
-			const git_buf *tmp;
+	case GIT_OPT_GET_TEMPLATE_PATH: {
+		git_buf *out = va_arg(ap, git_buf *);
+		const git_buf *tmp;
 
-			git_buf_sanitize(out);
-			if ((error = git_sysdir_get(&tmp, GIT_SYSDIR_TEMPLATE)) < 0)
-				break;
+		git_buf_sanitize(out);
+		if ((error = git_sysdir_get(&tmp, GIT_SYSDIR_TEMPLATE)) < 0)
+			break;
 
-			error = git_buf_sets(out, tmp->ptr);
-		}
-		break;
+		error = git_buf_sets(out, tmp->ptr);
+	} break;
 
 	case GIT_OPT_SET_TEMPLATE_PATH:
 		error = git_sysdir_set(GIT_SYSDIR_TEMPLATE, va_arg(ap, const char *));
@@ -176,25 +172,25 @@ int git_libgit2_opts(int key, ...)
 
 	case GIT_OPT_SET_SSL_CERT_LOCATIONS:
 #ifdef GIT_OPENSSL
-		{
-			const char *file = va_arg(ap, const char *);
-			const char *path = va_arg(ap, const char *);
-			error = git_openssl__set_cert_location(file, path);
-		}
+	{
+		const char *file = va_arg(ap, const char *);
+		const char *path = va_arg(ap, const char *);
+		error = git_openssl__set_cert_location(file, path);
+	}
 #elif defined(GIT_MBEDTLS)
-		{
-			const char *file = va_arg(ap, const char *);
-			const char *path = va_arg(ap, const char *);
-			if (file)
-				error = git_mbedtls__set_cert_location(file, 0);
-			if (error && path)
-				error = git_mbedtls__set_cert_location(path, 1);
-		}
+	{
+		const char *file = va_arg(ap, const char *);
+		const char *path = va_arg(ap, const char *);
+		if (file)
+			error = git_mbedtls__set_cert_location(file, 0);
+		if (error && path)
+			error = git_mbedtls__set_cert_location(path, 1);
+	}
 #else
 		giterr_set(GITERR_SSL, "TLS backend doesn't support certificate locations");
 		error = -1;
 #endif
-		break;
+	break;
 	case GIT_OPT_SET_USER_AGENT:
 		git__free(git__user_agent);
 		git__user_agent = git__strdup(va_arg(ap, const char *));
@@ -215,27 +211,25 @@ int git_libgit2_opts(int key, ...)
 
 	case GIT_OPT_SET_SSL_CIPHERS:
 #if (GIT_OPENSSL || GIT_MBEDTLS)
-		{
-			git__free(git__ssl_ciphers);
-			git__ssl_ciphers = git__strdup(va_arg(ap, const char *));
-			if (!git__ssl_ciphers) {
-				giterr_set_oom();
-				error = -1;
-			}
+	{
+		git__free(git__ssl_ciphers);
+		git__ssl_ciphers = git__strdup(va_arg(ap, const char *));
+		if (!git__ssl_ciphers) {
+			giterr_set_oom();
+			error = -1;
 		}
+	}
 #else
 		giterr_set(GITERR_SSL, "TLS backend doesn't support custom ciphers");
 		error = -1;
 #endif
-		break;
+	break;
 
-	case GIT_OPT_GET_USER_AGENT:
-		{
-			git_buf *out = va_arg(ap, git_buf *);
-			git_buf_sanitize(out);
-			error = git_buf_sets(out, git__user_agent);
-		}
-		break;
+	case GIT_OPT_GET_USER_AGENT: {
+		git_buf *out = va_arg(ap, git_buf *);
+		git_buf_sanitize(out);
+		error = git_buf_sets(out, git__user_agent);
+	} break;
 
 	case GIT_OPT_ENABLE_OFS_DELTA:
 		git_smart__ofs_delta_enabled = (va_arg(ap, int) != 0);
@@ -274,4 +268,3 @@ int git_libgit2_opts(int key, ...)
 
 	return error;
 }
-

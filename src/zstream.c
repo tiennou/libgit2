@@ -87,8 +87,7 @@ size_t git_zstream_suggest_output_len(git_zstream *zstream)
 		return ZSTREAM_BUFFER_MIN_EXTRA;
 }
 
-int git_zstream_get_output_chunk(
-	void *out, size_t *out_len, git_zstream *zstream)
+int git_zstream_get_output_chunk(void *out, size_t *out_len, git_zstream *zstream)
 {
 	size_t in_queued, in_used, out_queued;
 
@@ -178,8 +177,7 @@ static int zstream_buf(git_buf *out, const void *in, size_t in_len, git_zstream_
 
 		written = out->asize - out->size;
 
-		if ((error = git_zstream_get_output(
-				out->ptr + out->size, &written, &zs)) < 0)
+		if ((error = git_zstream_get_output(out->ptr + out->size, &written, &zs)) < 0)
 			goto done;
 
 		out->size += written;

@@ -9,8 +9,8 @@
 
 #include "common.h"
 
-#include "git2/message.h"
 #include "buffer.h"
+#include "git2/message.h"
 
 int git_message__prettify(git_buf *message_out, const char *message, int strip_comments);
 

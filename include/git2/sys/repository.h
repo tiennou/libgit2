@@ -58,9 +58,8 @@ GIT_EXTERN(void) git_repository__cleanup(git_repository *repo);
  * @param recurse_submodules Should submodules be updated recursively
  * @return 0 on success, < 0 on error
  */
-GIT_EXTERN(int) git_repository_reinit_filesystem(
-	git_repository *repo,
-	int recurse_submodules);
+GIT_EXTERN(int)
+git_repository_reinit_filesystem(git_repository *repo, int recurse_submodules);
 
 /**
  * Set the configuration file for this repository
@@ -75,7 +74,8 @@ GIT_EXTERN(int) git_repository_reinit_filesystem(
  * @param repo A repository object
  * @param config A Config object
  */
-GIT_EXTERN(void) git_repository_set_config(git_repository *repo, git_config *config);
+GIT_EXTERN(void)
+git_repository_set_config(git_repository *repo, git_config *config);
 
 /**
  * Set the Object Database for this repository
@@ -105,7 +105,8 @@ GIT_EXTERN(void) git_repository_set_odb(git_repository *repo, git_odb *odb);
  * @param repo A repository object
  * @param refdb An refdb object
  */
-GIT_EXTERN(void) git_repository_set_refdb(git_repository *repo, git_refdb *refdb);
+GIT_EXTERN(void)
+git_repository_set_refdb(git_repository *repo, git_refdb *refdb);
 
 /**
  * Set the index file for this repository
@@ -120,7 +121,8 @@ GIT_EXTERN(void) git_repository_set_refdb(git_repository *repo, git_refdb *refdb
  * @param repo A repository object
  * @param index An index object
  */
-GIT_EXTERN(void) git_repository_set_index(git_repository *repo, git_index *index);
+GIT_EXTERN(void)
+git_repository_set_index(git_repository *repo, git_index *index);
 
 /**
  * Set a repository to be bare.
@@ -146,8 +148,7 @@ GIT_EXTERN(int) git_repository_set_bare(git_repository *repo);
  *
  * @param repo the repository whose submodules will be cached.
  */
-GIT_EXTERN(int) git_repository_submodule_cache_all(
-	git_repository *repo);
+GIT_EXTERN(int) git_repository_submodule_cache_all(git_repository *repo);
 
 /**
  * Clear the submodule cache.
@@ -161,8 +162,7 @@ GIT_EXTERN(int) git_repository_submodule_cache_all(
  *
  * @param repo the repository whose submodule cache will be cleared
  */
-GIT_EXTERN(int) git_repository_submodule_cache_clear(
-	git_repository *repo);
+GIT_EXTERN(int) git_repository_submodule_cache_clear(git_repository *repo);
 
 /** @} */
 GIT_END_DECL

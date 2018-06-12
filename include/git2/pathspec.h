@@ -8,9 +8,9 @@
 #define INCLUDE_git_pathspec_h__
 
 #include "common.h"
-#include "types.h"
-#include "strarray.h"
 #include "diff.h"
+#include "strarray.h"
+#include "types.h"
 
 GIT_BEGIN_DECL
 
@@ -28,25 +28,25 @@ typedef struct git_pathspec_match_list git_pathspec_match_list;
  * Options controlling how pathspec match should be executed
  */
 typedef enum {
-	GIT_PATHSPEC_DEFAULT        = 0,
+	GIT_PATHSPEC_DEFAULT = 0,
 
 	/**
 	 * GIT_PATHSPEC_IGNORE_CASE forces match to ignore case; otherwise
 	 * match will use native case sensitivity of platform filesystem
 	 */
-	GIT_PATHSPEC_IGNORE_CASE    = (1u << 0),
+	GIT_PATHSPEC_IGNORE_CASE = (1u << 0),
 
 	/**
 	 * GIT_PATHSPEC_USE_CASE forces case sensitive match; otherwise
 	 * match will use native case sensitivity of platform filesystem
 	 */
-	GIT_PATHSPEC_USE_CASE       = (1u << 1),
+	GIT_PATHSPEC_USE_CASE = (1u << 1),
 
 	/**
 	 * GIT_PATHSPEC_NO_GLOB disables glob patterns and just uses simple
 	 * string comparison for matching
 	 */
-	GIT_PATHSPEC_NO_GLOB        = (1u << 2),
+	GIT_PATHSPEC_NO_GLOB = (1u << 2),
 
 	/**
 	 * GIT_PATHSPEC_NO_MATCH_ERROR means the match functions return error
@@ -61,7 +61,7 @@ typedef enum {
 	 * should track which patterns matched which files so that at the end of
 	 * the match we can identify patterns that did not match any files.
 	 */
-	GIT_PATHSPEC_FIND_FAILURES  = (1u << 4),
+	GIT_PATHSPEC_FIND_FAILURES = (1u << 4),
 
 	/**
 	 * GIT_PATHSPEC_FAILURES_ONLY means that the `git_pathspec_match_list`
@@ -69,7 +69,7 @@ typedef enum {
 	 * just test if there were any matches at all or in combination with
 	 * GIT_PATHSPEC_FIND_FAILURES to validate a pathspec.
 	 */
-	GIT_PATHSPEC_FAILURES_ONLY  = (1u << 5),
+	GIT_PATHSPEC_FAILURES_ONLY = (1u << 5),
 } git_pathspec_flag_t;
 
 /**
@@ -79,8 +79,8 @@ typedef enum {
  * @param pathspec A git_strarray of the paths to match
  * @return 0 on success, <0 on failure
  */
-GIT_EXTERN(int) git_pathspec_new(
-	git_pathspec **out, const git_strarray *pathspec);
+GIT_EXTERN(int)
+git_pathspec_new(git_pathspec **out, const git_strarray *pathspec);
 
 /**
  * Free a pathspec
@@ -102,8 +102,8 @@ GIT_EXTERN(void) git_pathspec_free(git_pathspec *ps);
  * @param path The pathname to attempt to match
  * @return 1 is path matches spec, 0 if it does not
  */
-GIT_EXTERN(int) git_pathspec_matches_path(
-	const git_pathspec *ps, uint32_t flags, const char *path);
+GIT_EXTERN(int)
+git_pathspec_matches_path(const git_pathspec *ps, uint32_t flags, const char *path);
 
 /**
  * Match a pathspec against the working directory of a repository.
@@ -127,11 +127,9 @@ GIT_EXTERN(int) git_pathspec_matches_path(
  * @return 0 on success, -1 on error, GIT_ENOTFOUND if no matches and
  *         the GIT_PATHSPEC_NO_MATCH_ERROR flag was given
  */
-GIT_EXTERN(int) git_pathspec_match_workdir(
-	git_pathspec_match_list **out,
-	git_repository *repo,
-	uint32_t flags,
-	git_pathspec *ps);
+GIT_EXTERN(int)
+git_pathspec_match_workdir(git_pathspec_match_list **out, git_repository *repo,
+	uint32_t flags, git_pathspec *ps);
 
 /**
  * Match a pathspec against entries in an index.
@@ -156,11 +154,9 @@ GIT_EXTERN(int) git_pathspec_match_workdir(
  * @return 0 on success, -1 on error, GIT_ENOTFOUND if no matches and
  *         the GIT_PATHSPEC_NO_MATCH_ERROR flag is used
  */
-GIT_EXTERN(int) git_pathspec_match_index(
-	git_pathspec_match_list **out,
-	git_index *index,
-	uint32_t flags,
-	git_pathspec *ps);
+GIT_EXTERN(int)
+git_pathspec_match_index(git_pathspec_match_list **out, git_index *index,
+	uint32_t flags, git_pathspec *ps);
 
 /**
  * Match a pathspec against files in a tree.
@@ -180,11 +176,9 @@ GIT_EXTERN(int) git_pathspec_match_index(
  * @return 0 on success, -1 on error, GIT_ENOTFOUND if no matches and
  *         the GIT_PATHSPEC_NO_MATCH_ERROR flag is used
  */
-GIT_EXTERN(int) git_pathspec_match_tree(
-	git_pathspec_match_list **out,
-	git_tree *tree,
-	uint32_t flags,
-	git_pathspec *ps);
+GIT_EXTERN(int)
+git_pathspec_match_tree(git_pathspec_match_list **out, git_tree *tree,
+	uint32_t flags, git_pathspec *ps);
 
 /**
  * Match a pathspec against files in a diff list.
@@ -204,11 +198,9 @@ GIT_EXTERN(int) git_pathspec_match_tree(
  * @return 0 on success, -1 on error, GIT_ENOTFOUND if no matches and
  *         the GIT_PATHSPEC_NO_MATCH_ERROR flag is used
  */
-GIT_EXTERN(int) git_pathspec_match_diff(
-	git_pathspec_match_list **out,
-	git_diff *diff,
-	uint32_t flags,
-	git_pathspec *ps);
+GIT_EXTERN(int)
+git_pathspec_match_diff(git_pathspec_match_list **out, git_diff *diff,
+	uint32_t flags, git_pathspec *ps);
 
 /**
  * Free memory associates with a git_pathspec_match_list
@@ -223,8 +215,8 @@ GIT_EXTERN(void) git_pathspec_match_list_free(git_pathspec_match_list *m);
  * @param m The git_pathspec_match_list object
  * @return Number of items in match list
  */
-GIT_EXTERN(size_t) git_pathspec_match_list_entrycount(
-	const git_pathspec_match_list *m);
+GIT_EXTERN(size_t)
+git_pathspec_match_list_entrycount(const git_pathspec_match_list *m);
 
 /**
  * Get a matching filename by position.
@@ -236,8 +228,8 @@ GIT_EXTERN(size_t) git_pathspec_match_list_entrycount(
  * @param pos The index into the list
  * @return The filename of the match
  */
-GIT_EXTERN(const char *) git_pathspec_match_list_entry(
-	const git_pathspec_match_list *m, size_t pos);
+GIT_EXTERN(const char *)
+git_pathspec_match_list_entry(const git_pathspec_match_list *m, size_t pos);
 
 /**
  * Get a matching diff delta by position.
@@ -249,8 +241,8 @@ GIT_EXTERN(const char *) git_pathspec_match_list_entry(
  * @param pos The index into the list
  * @return The filename of the match
  */
-GIT_EXTERN(const git_diff_delta *) git_pathspec_match_list_diff_entry(
-	const git_pathspec_match_list *m, size_t pos);
+GIT_EXTERN(const git_diff_delta *)
+git_pathspec_match_list_diff_entry(const git_pathspec_match_list *m, size_t pos);
 
 /**
  * Get the number of pathspec items that did not match.
@@ -261,8 +253,8 @@ GIT_EXTERN(const git_diff_delta *) git_pathspec_match_list_diff_entry(
  * @param m The git_pathspec_match_list object
  * @return Number of items in original pathspec that had no matches
  */
-GIT_EXTERN(size_t) git_pathspec_match_list_failed_entrycount(
-	const git_pathspec_match_list *m);
+GIT_EXTERN(size_t)
+git_pathspec_match_list_failed_entrycount(const git_pathspec_match_list *m);
 
 /**
  * Get an original pathspec string that had no matches.
@@ -273,8 +265,8 @@ GIT_EXTERN(size_t) git_pathspec_match_list_failed_entrycount(
  * @param pos The index into the failed items
  * @return The pathspec pattern that didn't match anything
  */
-GIT_EXTERN(const char *) git_pathspec_match_list_failed_entry(
-	const git_pathspec_match_list *m, size_t pos);
+GIT_EXTERN(const char *)
+git_pathspec_match_list_failed_entry(const git_pathspec_match_list *m, size_t pos);
 
 GIT_END_DECL
 #endif

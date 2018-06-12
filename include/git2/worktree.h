@@ -7,10 +7,10 @@
 #ifndef INCLUDE_git_worktree_h__
 #define INCLUDE_git_worktree_h__
 
-#include "common.h"
 #include "buffer.h"
-#include "types.h"
+#include "common.h"
 #include "strarray.h"
+#include "types.h"
 
 /**
  * @file git2/worktrees.h
@@ -41,7 +41,8 @@ GIT_EXTERN(int) git_worktree_list(git_strarray *out, git_repository *repo);
  * @param name Name of the working tree to look up
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_worktree_lookup(git_worktree **out, git_repository *repo, const char *name);
+GIT_EXTERN(int)
+git_worktree_lookup(git_worktree **out, git_repository *repo, const char *name);
 
 /**
  * Open a worktree of a given repository
@@ -53,7 +54,8 @@ GIT_EXTERN(int) git_worktree_lookup(git_worktree **out, git_repository *repo, co
  * @param out Out-pointer for the newly allocated worktree
  * @param repo Repository to look up worktree for
  */
-GIT_EXTERN(int) git_worktree_open_from_repository(git_worktree **out, git_repository *repo);
+GIT_EXTERN(int)
+git_worktree_open_from_repository(git_worktree **out, git_repository *repo);
 
 /**
  * Free a previously allocated worktree
@@ -89,7 +91,10 @@ typedef struct git_worktree_add_options {
 } git_worktree_add_options;
 
 #define GIT_WORKTREE_ADD_OPTIONS_VERSION 1
-#define GIT_WORKTREE_ADD_OPTIONS_INIT {GIT_WORKTREE_ADD_OPTIONS_VERSION,0,NULL}
+#define GIT_WORKTREE_ADD_OPTIONS_INIT             \
+	{                                             \
+		GIT_WORKTREE_ADD_OPTIONS_VERSION, 0, NULL \
+	}
 
 /**
  * Initialize git_worktree_add_options structure
@@ -101,8 +106,7 @@ typedef struct git_worktree_add_options {
  * @param version The struct version; pass `GIT_WORKTREE_ADD_OPTIONS_VERSION`.
  * @return Zero on success; -1 on failure.
  */
-int git_worktree_add_init_options(git_worktree_add_options *opts,
-	unsigned int version);
+int git_worktree_add_init_options(git_worktree_add_options *opts, unsigned int version);
 
 /**
  * Add a new working tree
@@ -118,9 +122,9 @@ int git_worktree_add_init_options(git_worktree_add_options *opts,
  * @param opts Options to modify default behavior. May be NULL
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_worktree_add(git_worktree **out, git_repository *repo,
-	const char *name, const char *path,
-	const git_worktree_add_options *opts);
+GIT_EXTERN(int)
+git_worktree_add(git_worktree **out, git_repository *repo, const char *name,
+	const char *path, const git_worktree_add_options *opts);
 
 /**
  * Lock worktree if not already locked
@@ -174,7 +178,7 @@ GIT_EXTERN(const char *) git_worktree_name(const git_worktree *wt);
  *  is valid for the lifetime of the git_worktree.
  */
 GIT_EXTERN(const char *) git_worktree_path(const git_worktree *wt);
- 
+
 /**
  * Flags which can be passed to git_worktree_prune to alter its
  * behavior.
@@ -202,7 +206,10 @@ typedef struct git_worktree_prune_options {
 } git_worktree_prune_options;
 
 #define GIT_WORKTREE_PRUNE_OPTIONS_VERSION 1
-#define GIT_WORKTREE_PRUNE_OPTIONS_INIT {GIT_WORKTREE_PRUNE_OPTIONS_VERSION,0}
+#define GIT_WORKTREE_PRUNE_OPTIONS_INIT       \
+	{                                         \
+		GIT_WORKTREE_PRUNE_OPTIONS_VERSION, 0 \
+	}
 
 /**
  * Initialize git_worktree_prune_options structure
@@ -214,9 +221,8 @@ typedef struct git_worktree_prune_options {
  * @param version The struct version; pass `GIT_WORKTREE_PRUNE_OPTIONS_VERSION`.
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_worktree_prune_init_options(
-	git_worktree_prune_options *opts,
-	unsigned int version);
+GIT_EXTERN(int)
+git_worktree_prune_init_options(git_worktree_prune_options *opts, unsigned int version);
 
 /**
  * Is the worktree prunable with the given options?
@@ -232,8 +238,8 @@ GIT_EXTERN(int) git_worktree_prune_init_options(
  * flags have been passed in, this function will return a
  * positive value.
  */
-GIT_EXTERN(int) git_worktree_is_prunable(git_worktree *wt,
-	git_worktree_prune_options *opts);
+GIT_EXTERN(int)
+git_worktree_is_prunable(git_worktree *wt, git_worktree_prune_options *opts);
 
 /**
  * Prune working tree
@@ -247,8 +253,8 @@ GIT_EXTERN(int) git_worktree_is_prunable(git_worktree *wt,
  *        `git_worktree_is_prunable`. May be NULL
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_worktree_prune(git_worktree *wt,
-	git_worktree_prune_options *opts);
+GIT_EXTERN(int)
+git_worktree_prune(git_worktree *wt, git_worktree_prune_options *opts);
 
 /** @} */
 GIT_END_DECL

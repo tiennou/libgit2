@@ -35,7 +35,8 @@ GIT_INLINE(int) git_stream_supports_proxy(git_stream *st)
 	return st->proxy_support;
 }
 
-GIT_INLINE(int) git_stream_set_proxy(git_stream *st, const git_proxy_options *proxy_opts)
+GIT_INLINE(int)
+git_stream_set_proxy(git_stream *st, const git_proxy_options *proxy_opts)
 {
 	if (!st->proxy_support) {
 		giterr_set(GITERR_INVALID, "proxy not supported on this stream");
@@ -50,7 +51,8 @@ GIT_INLINE(ssize_t) git_stream_read(git_stream *st, void *data, size_t len)
 	return st->read(st, data, len);
 }
 
-GIT_INLINE(ssize_t) git_stream_write(git_stream *st, const char *data, size_t len, int flags)
+GIT_INLINE(ssize_t)
+git_stream_write(git_stream *st, const char *data, size_t len, int flags)
 {
 	return st->write(st, data, len, flags);
 }

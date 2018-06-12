@@ -9,8 +9,8 @@
 
 #include "common.h"
 
-#include "git2/merge.h"
 #include "git2/index.h"
+#include "git2/merge.h"
 #include "git2/sys/merge.h"
 
 struct git_merge_driver_source {
@@ -30,25 +30,16 @@ typedef struct git_merge_driver__builtin {
 
 extern int git_merge_driver_global_init(void);
 
-extern int git_merge_driver_for_path(
-	char **name_out,
-	git_merge_driver **driver_out,
-	git_repository *repo,
-	const char *path);
+extern int git_merge_driver_for_path(char **name_out,
+	git_merge_driver **driver_out, git_repository *repo, const char *path);
 
 /* Merge driver configuration */
-extern int git_merge_driver_for_source(
-	const char **name_out,
-	git_merge_driver **driver_out,
-	const git_merge_driver_source *src);
+extern int git_merge_driver_for_source(const char **name_out,
+	git_merge_driver **driver_out, const git_merge_driver_source *src);
 
-extern int git_merge_driver__builtin_apply(
-	git_merge_driver *self,
-	const char **path_out,
-	uint32_t *mode_out,
-	git_buf *merged_out,
-	const char *filter_name,
-	const git_merge_driver_source *src);
+extern int git_merge_driver__builtin_apply(git_merge_driver *self,
+	const char **path_out, uint32_t *mode_out, git_buf *merged_out,
+	const char *filter_name, const git_merge_driver_source *src);
 
 /* Merge driver for text files, performs a standard three-way merge */
 extern git_merge_driver__builtin git_merge_driver__text;

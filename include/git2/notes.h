@@ -41,15 +41,14 @@ typedef struct git_iterator git_note_iterator;
  *
  * @param out pointer to the iterator
  * @param repo repository where to look up the note
- * @param notes_ref canonical name of the reference to use (optional); defaults to
- *                  "refs/notes/commits"
+ * @param notes_ref canonical name of the reference to use (optional); defaults
+ * to "refs/notes/commits"
  *
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_note_iterator_new(
-	git_note_iterator **out,
-	git_repository *repo,
-	const char *notes_ref);
+GIT_EXTERN(int)
+git_note_iterator_new(
+	git_note_iterator **out, git_repository *repo, const char *notes_ref);
 
 /**
  * Creates a new iterator for notes from a commit
@@ -61,9 +60,8 @@ GIT_EXTERN(int) git_note_iterator_new(
  *
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_note_commit_iterator_new(
-	git_note_iterator **out,
-	git_commit *notes_commit);
+GIT_EXTERN(int)
+git_note_commit_iterator_new(git_note_iterator **out, git_commit *notes_commit);
 
 /**
  * Frees an git_note_iterator
@@ -83,10 +81,8 @@ GIT_EXTERN(void) git_note_iterator_free(git_note_iterator *it);
  * @return 0 (no error), GIT_ITEROVER (iteration is done) or an error code
  *         (negative value)
  */
-GIT_EXTERN(int) git_note_next(
-	git_oid* note_id,
-	git_oid* annotated_id,
-	git_note_iterator *it);
+GIT_EXTERN(int)
+git_note_next(git_oid *note_id, git_oid *annotated_id, git_note_iterator *it);
 
 
 /**
@@ -96,16 +92,14 @@ GIT_EXTERN(int) git_note_next(
  *
  * @param out pointer to the read note; NULL in case of error
  * @param repo repository where to look up the note
- * @param notes_ref canonical name of the reference to use (optional); defaults to
- *                  "refs/notes/commits"
+ * @param notes_ref canonical name of the reference to use (optional); defaults
+ * to "refs/notes/commits"
  * @param oid OID of the git object to read the note from
  *
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_note_read(
-	git_note **out,
-	git_repository *repo,
-	const char *notes_ref,
+GIT_EXTERN(int)
+git_note_read(git_note **out, git_repository *repo, const char *notes_ref,
 	const git_oid *oid);
 
 
@@ -121,11 +115,9 @@ GIT_EXTERN(int) git_note_read(
  *
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_note_commit_read(
-	git_note **out,
-	git_repository *repo,
-	git_commit *notes_commit,
-	const git_oid *oid);
+GIT_EXTERN(int)
+git_note_commit_read(git_note **out, git_repository *repo,
+	git_commit *notes_commit, const git_oid *oid);
 
 /**
  * Get the note author
@@ -176,15 +168,10 @@ GIT_EXTERN(const git_oid *) git_note_id(const git_note *note);
  *
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_note_create(
-	git_oid *out,
-	git_repository *repo,
-	const char *notes_ref,
-	const git_signature *author,
-	const git_signature *committer,
-	const git_oid *oid,
-	const char *note,
-	int force);
+GIT_EXTERN(int)
+git_note_create(git_oid *out, git_repository *repo, const char *notes_ref,
+	const git_signature *author, const git_signature *committer,
+	const git_oid *oid, const char *note, int force);
 
 /**
  * Add a note for an object from a commit
@@ -206,15 +193,10 @@ GIT_EXTERN(int) git_note_create(
  *
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_note_commit_create(
-	git_oid *notes_commit_out,
-	git_oid *notes_blob_out,
-	git_repository *repo,
-	git_commit *parent,
-	const git_signature *author,
-	const git_signature *committer,
-	const git_oid *oid,
-	const char *note,
+GIT_EXTERN(int)
+git_note_commit_create(git_oid *notes_commit_out, git_oid *notes_blob_out,
+	git_repository *repo, git_commit *parent, const git_signature *author,
+	const git_signature *committer, const git_oid *oid, const char *note,
 	int allow_note_overwrite);
 
 /**
@@ -229,12 +211,9 @@ GIT_EXTERN(int) git_note_commit_create(
  *
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_note_remove(
-	git_repository *repo,
-	const char *notes_ref,
-	const git_signature *author,
-	const git_signature *committer,
-	const git_oid *oid);
+GIT_EXTERN(int)
+git_note_remove(git_repository *repo, const char *notes_ref,
+	const git_signature *author, const git_signature *committer, const git_oid *oid);
 
 /**
  * Remove the note for an object
@@ -254,13 +233,10 @@ GIT_EXTERN(int) git_note_remove(
  *
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_note_commit_remove(
-		git_oid *notes_commit_out,
-		git_repository *repo,
-		git_commit *notes_commit,
-		const git_signature *author,
-		const git_signature *committer,
-		const git_oid *oid);
+GIT_EXTERN(int)
+git_note_commit_remove(git_oid *notes_commit_out, git_repository *repo,
+	git_commit *notes_commit, const git_signature *author,
+	const git_signature *committer, const git_oid *oid);
 
 /**
  * Free a git_note object
@@ -295,11 +271,9 @@ GIT_EXTERN(int) git_note_default_ref(git_buf *out, git_repository *repo);
  *
  * @return 0 on success, non-zero callback return value, or error code
  */
-GIT_EXTERN(int) git_note_foreach(
-	git_repository *repo,
-	const char *notes_ref,
-	git_note_foreach_cb note_cb,
-	void *payload);
+GIT_EXTERN(int)
+git_note_foreach(git_repository *repo, const char *notes_ref,
+	git_note_foreach_cb note_cb, void *payload);
 
 /** @} */
 GIT_END_DECL

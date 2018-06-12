@@ -10,8 +10,8 @@
 #include "common.h"
 
 #include "diff.h"
-#include "git2/status.h"
 #include "git2/diff.h"
+#include "git2/status.h"
 
 struct git_status_list {
 	git_status_options opts;

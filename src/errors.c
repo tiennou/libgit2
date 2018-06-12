@@ -7,18 +7,15 @@
 
 #include "common.h"
 
+#include "buffer.h"
 #include "global.h"
 #include "posix.h"
-#include "buffer.h"
 
 /********************************************
  * New error handling
  ********************************************/
 
-static git_error g_git_oom_error = {
-	"Out of memory",
-	GITERR_NOMEMORY
-};
+static git_error g_git_oom_error = { "Out of memory", GITERR_NOMEMORY };
 
 static void set_error_from_buffer(int error_class)
 {
@@ -70,16 +67,15 @@ void giterr_set(int error_class, const char *string, ...)
 
 	if (error_class == GITERR_OS) {
 #ifdef GIT_WIN32
-		char * win32_error = git_win32_get_error_message(win32_error_code);
+		char *win32_error = git_win32_get_error_message(win32_error_code);
 		if (win32_error) {
 			git_buf_puts(buf, win32_error);
 			git__free(win32_error);
 
 			SetLastError(0);
-		}
-		else
+		} else
 #endif
-		if (error_code)
+			if (error_code)
 			git_buf_puts(buf, strerror(error_code));
 
 		if (error_code)

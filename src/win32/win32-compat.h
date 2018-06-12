@@ -8,10 +8,10 @@
 #define INCLUDE_win32_win32_compat_h__
 
 #include <stdint.h>
-#include <time.h>
-#include <wchar.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <time.h>
+#include <wchar.h>
 
 typedef long suseconds_t;
 

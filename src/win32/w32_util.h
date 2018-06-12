@@ -10,19 +10,19 @@
 
 #include "common.h"
 
-#include "utf-conv.h"
-#include "posix.h"
 #include "path_w32.h"
+#include "posix.h"
+#include "utf-conv.h"
 
 /*
 
 #include "common.h"
+#include "dir.h"
 #include "path.h"
 #include "path_w32.h"
-#include "utf-conv.h"
 #include "posix.h"
 #include "reparse.h"
-#include "dir.h"
+#include "utf-conv.h"
 */
 
 
@@ -83,9 +83,8 @@ size_t git_win32__canonicalize_path(wchar_t *str, size_t len);
  * @param FILETIME A pointer to a FILETIME
  * @param ts A pointer to the timespec structure to fill in
  */
-GIT_INLINE(void) git_win32__filetime_to_timespec(
-	const FILETIME *ft,
-	struct timespec *ts)
+GIT_INLINE(void)
+git_win32__filetime_to_timespec(const FILETIME *ft, struct timespec *ts)
 {
 	long long winTime = ((long long)ft->dwHighDateTime << 32) + ft->dwLowDateTime;
 	winTime -= 116444736000000000LL; /* Windows to Unix Epoch conversion */
@@ -97,24 +96,19 @@ GIT_INLINE(void) git_win32__filetime_to_timespec(
 #endif
 }
 
-GIT_INLINE(void) git_win32__timeval_to_filetime(
-	FILETIME *ft, const struct p_timeval tv)
+GIT_INLINE(void)
+git_win32__timeval_to_filetime(FILETIME *ft, const struct p_timeval tv)
 {
-	long long ticks = (tv.tv_sec * 10000000LL) +
-		(tv.tv_usec * 10LL) + 116444736000000000LL;
+	long long ticks = (tv.tv_sec * 10000000LL) + (tv.tv_usec * 10LL) + 116444736000000000LL;
 
 	ft->dwHighDateTime = ((ticks >> 32) & 0xffffffffLL);
 	ft->dwLowDateTime = (ticks & 0xffffffffLL);
 }
 
-GIT_INLINE(void) git_win32__stat_init(
-	struct stat *st,
-	DWORD dwFileAttributes,
-	DWORD nFileSizeHigh,
-	DWORD nFileSizeLow,
-	FILETIME ftCreationTime,
-	FILETIME ftLastAccessTime,
-	FILETIME ftLastWriteTime)
+GIT_INLINE(void)
+git_win32__stat_init(struct stat *st, DWORD dwFileAttributes,
+	DWORD nFileSizeHigh, DWORD nFileSizeLow, FILETIME ftCreationTime,
+	FILETIME ftLastAccessTime, FILETIME ftLastWriteTime)
 {
 	mode_t mode = S_IREAD;
 
@@ -141,31 +135,22 @@ GIT_INLINE(void) git_win32__stat_init(
 	git_win32__filetime_to_timespec(&ftCreationTime, &(st->st_ctim));
 }
 
-GIT_INLINE(void) git_win32__file_information_to_stat(
-	struct stat *st,
-	const BY_HANDLE_FILE_INFORMATION *fileinfo)
+GIT_INLINE(void)
+git_win32__file_information_to_stat(
+	struct stat *st, const BY_HANDLE_FILE_INFORMATION *fileinfo)
 {
-	git_win32__stat_init(st,
-		fileinfo->dwFileAttributes,
-		fileinfo->nFileSizeHigh,
-		fileinfo->nFileSizeLow,
-		fileinfo->ftCreationTime,
-		fileinfo->ftLastAccessTime,
-		fileinfo->ftLastWriteTime);
+	git_win32__stat_init(st, fileinfo->dwFileAttributes, fileinfo->nFileSizeHigh,
+		fileinfo->nFileSizeLow, fileinfo->ftCreationTime,
+		fileinfo->ftLastAccessTime, fileinfo->ftLastWriteTime);
 }
 
-GIT_INLINE(int) git_win32__file_attribute_to_stat(
-	struct stat *st,
-	const WIN32_FILE_ATTRIBUTE_DATA *attrdata,
-	const wchar_t *path)
+GIT_INLINE(int)
+git_win32__file_attribute_to_stat(struct stat *st,
+	const WIN32_FILE_ATTRIBUTE_DATA *attrdata, const wchar_t *path)
 {
-	git_win32__stat_init(st,
-		attrdata->dwFileAttributes,
-		attrdata->nFileSizeHigh,
-		attrdata->nFileSizeLow,
-		attrdata->ftCreationTime,
-		attrdata->ftLastAccessTime,
-		attrdata->ftLastWriteTime);
+	git_win32__stat_init(st, attrdata->dwFileAttributes, attrdata->nFileSizeHigh,
+		attrdata->nFileSizeLow, attrdata->ftCreationTime,
+		attrdata->ftLastAccessTime, attrdata->ftLastWriteTime);
 
 	if (attrdata->dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT && path) {
 		git_win32_path target;
@@ -176,7 +161,8 @@ GIT_INLINE(int) git_win32__file_attribute_to_stat(
 			/* st_size gets the UTF-8 length of the target name, in bytes,
 			 * not counting the NULL terminator */
 			if ((st->st_size = git__utf16_to_8(NULL, 0, target)) < 0) {
-				giterr_set(GITERR_OS, "could not convert reparse point name for '%ls'", path);
+				giterr_set(GITERR_OS,
+					"could not convert reparse point name for '%ls'", path);
 				return -1;
 			}
 		}
