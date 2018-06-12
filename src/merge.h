@@ -18,12 +18,12 @@
 #include "git2/merge.h"
 #include "git2/sys/merge.h"
 
-#define GIT_MERGE_MSG_FILE		"MERGE_MSG"
-#define GIT_MERGE_MODE_FILE		"MERGE_MODE"
-#define GIT_MERGE_FILE_MODE		0666
+#define GIT_MERGE_MSG_FILE "MERGE_MSG"
+#define GIT_MERGE_MODE_FILE "MERGE_MODE"
+#define GIT_MERGE_FILE_MODE 0666
 
-#define GIT_MERGE_DEFAULT_RENAME_THRESHOLD	50
-#define GIT_MERGE_DEFAULT_TARGET_LIMIT		1000
+#define GIT_MERGE_DEFAULT_RENAME_THRESHOLD 50
+#define GIT_MERGE_DEFAULT_TARGET_LIMIT 1000
 
 
 /** Internal merge flags. */
@@ -169,7 +169,8 @@ int git_merge__append_conflicts_to_merge_msg(git_repository *repo, git_index *in
 
 /* Merge files */
 
-GIT_INLINE(const char *) git_merge_file__best_path(
+GIT_INLINE(const char *)
+git_merge_file__best_path(
 	const char *ancestor,
 	const char *ours,
 	const char *theirs)
@@ -183,13 +184,14 @@ GIT_INLINE(const char *) git_merge_file__best_path(
 
 	if (ours && strcmp(ancestor, ours) == 0)
 		return theirs;
-	else if(theirs && strcmp(ancestor, theirs) == 0)
+	else if (theirs && strcmp(ancestor, theirs) == 0)
 		return ours;
 
 	return NULL;
 }
 
-GIT_INLINE(uint32_t) git_merge_file__best_mode(
+GIT_INLINE(uint32_t)
+git_merge_file__best_mode(
 	uint32_t ancestor, uint32_t ours, uint32_t theirs)
 {
 	/*

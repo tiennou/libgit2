@@ -27,7 +27,12 @@ typedef struct {
 	int zerr;
 } git_zstream;
 
-#define GIT_ZSTREAM_INIT {{0}}
+#define GIT_ZSTREAM_INIT \
+	{ \
+		{ \
+			0 \
+		} \
+	}
 
 int git_zstream_init(git_zstream *zstream, git_zstream_t type);
 void git_zstream_free(git_zstream *zstream);

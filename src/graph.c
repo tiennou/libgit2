@@ -21,7 +21,7 @@ static int interesting(git_pqueue *list, git_commit_list *roots)
 			return 1;
 	}
 
-	while(roots) {
+	while (roots) {
 		if ((roots->item->flags & STALE) == 0)
 			return 1;
 		roots = roots->next;

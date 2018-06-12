@@ -10,13 +10,13 @@
 #include "git2/cred_helpers.h"
 
 int git_cred_userpass(
-		git_cred **cred,
-		const char *url,
-		const char *user_from_url,
-		unsigned int allowed_types,
-		void *payload)
+	git_cred **cred,
+	const char *url,
+	const char *user_from_url,
+	unsigned int allowed_types,
+	void *payload)
 {
-	git_cred_userpass_payload *userpass = (git_cred_userpass_payload*)payload;
+	git_cred_userpass_payload *userpass = (git_cred_userpass_payload *)payload;
 	const char *effective_username = NULL;
 
 	GIT_UNUSED(url);
@@ -46,7 +46,7 @@ int git_cred_userpass(
 		return git_cred_username_new(cred, effective_username);
 
 	if ((GIT_CREDTYPE_USERPASS_PLAINTEXT & allowed_types) == 0 ||
-			git_cred_userpass_plaintext_new(cred, effective_username, userpass->password) < 0)
+		git_cred_userpass_plaintext_new(cred, effective_username, userpass->password) < 0)
 		return -1;
 
 	return 0;

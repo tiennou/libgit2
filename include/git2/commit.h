@@ -33,7 +33,8 @@ GIT_BEGIN_DECL
  *		an annotated tag it will be peeled back to the commit.
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_commit_lookup(
+GIT_EXTERN(int)
+git_commit_lookup(
 	git_commit **commit, git_repository *repo, const git_oid *id);
 
 /**
@@ -52,7 +53,8 @@ GIT_EXTERN(int) git_commit_lookup(
  * @param len the length of the short identifier
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_commit_lookup_prefix(
+GIT_EXTERN(int)
+git_commit_lookup_prefix(
 	git_commit **commit, git_repository *repo, const git_oid *id, size_t len);
 
 /**
@@ -67,7 +69,8 @@ GIT_EXTERN(int) git_commit_lookup_prefix(
  * @param commit the commit to close
  */
 
-GIT_EXTERN(void) git_commit_free(git_commit *commit);
+GIT_EXTERN(void)
+git_commit_free(git_commit *commit);
 
 /**
  * Get the id of a commit.
@@ -75,7 +78,8 @@ GIT_EXTERN(void) git_commit_free(git_commit *commit);
  * @param commit a previously loaded commit.
  * @return object identity for the commit.
  */
-GIT_EXTERN(const git_oid *) git_commit_id(const git_commit *commit);
+GIT_EXTERN(const git_oid *)
+git_commit_id(const git_commit *commit);
 
 /**
  * Get the repository that contains the commit.
@@ -83,7 +87,8 @@ GIT_EXTERN(const git_oid *) git_commit_id(const git_commit *commit);
  * @param commit A previously loaded commit.
  * @return Repository that contains this commit.
  */
-GIT_EXTERN(git_repository *) git_commit_owner(const git_commit *commit);
+GIT_EXTERN(git_repository *)
+git_commit_owner(const git_commit *commit);
 
 /**
  * Get the encoding for the message of a commit,
@@ -95,7 +100,8 @@ GIT_EXTERN(git_repository *) git_commit_owner(const git_commit *commit);
  * @param commit a previously loaded commit.
  * @return NULL, or the encoding
  */
-GIT_EXTERN(const char *) git_commit_message_encoding(const git_commit *commit);
+GIT_EXTERN(const char *)
+git_commit_message_encoding(const git_commit *commit);
 
 /**
  * Get the full message of a commit.
@@ -106,7 +112,8 @@ GIT_EXTERN(const char *) git_commit_message_encoding(const git_commit *commit);
  * @param commit a previously loaded commit.
  * @return the message of a commit
  */
-GIT_EXTERN(const char *) git_commit_message(const git_commit *commit);
+GIT_EXTERN(const char *)
+git_commit_message(const git_commit *commit);
 
 /**
  * Get the full raw message of a commit.
@@ -114,7 +121,8 @@ GIT_EXTERN(const char *) git_commit_message(const git_commit *commit);
  * @param commit a previously loaded commit.
  * @return the raw message of a commit
  */
-GIT_EXTERN(const char *) git_commit_message_raw(const git_commit *commit);
+GIT_EXTERN(const char *)
+git_commit_message_raw(const git_commit *commit);
 
 /**
  * Get the short "summary" of the git commit message.
@@ -125,7 +133,8 @@ GIT_EXTERN(const char *) git_commit_message_raw(const git_commit *commit);
  * @param commit a previously loaded commit.
  * @return the summary of a commit or NULL on error
  */
-GIT_EXTERN(const char *) git_commit_summary(git_commit *commit);
+GIT_EXTERN(const char *)
+git_commit_summary(git_commit *commit);
 
 /**
  * Get the long "body" of the git commit message.
@@ -138,7 +147,8 @@ GIT_EXTERN(const char *) git_commit_summary(git_commit *commit);
  * @return the body of a commit or NULL when no the message only
  *   consists of a summary
  */
-GIT_EXTERN(const char *) git_commit_body(git_commit *commit);
+GIT_EXTERN(const char *)
+git_commit_body(git_commit *commit);
 
 /**
  * Get the commit time (i.e. committer time) of a commit.
@@ -146,7 +156,8 @@ GIT_EXTERN(const char *) git_commit_body(git_commit *commit);
  * @param commit a previously loaded commit.
  * @return the time of a commit
  */
-GIT_EXTERN(git_time_t) git_commit_time(const git_commit *commit);
+GIT_EXTERN(git_time_t)
+git_commit_time(const git_commit *commit);
 
 /**
  * Get the commit timezone offset (i.e. committer's preferred timezone) of a commit.
@@ -154,7 +165,8 @@ GIT_EXTERN(git_time_t) git_commit_time(const git_commit *commit);
  * @param commit a previously loaded commit.
  * @return positive or negative timezone offset, in minutes from UTC
  */
-GIT_EXTERN(int) git_commit_time_offset(const git_commit *commit);
+GIT_EXTERN(int)
+git_commit_time_offset(const git_commit *commit);
 
 /**
  * Get the committer of a commit.
@@ -162,7 +174,8 @@ GIT_EXTERN(int) git_commit_time_offset(const git_commit *commit);
  * @param commit a previously loaded commit.
  * @return the committer of a commit
  */
-GIT_EXTERN(const git_signature *) git_commit_committer(const git_commit *commit);
+GIT_EXTERN(const git_signature *)
+git_commit_committer(const git_commit *commit);
 
 /**
  * Get the author of a commit.
@@ -170,7 +183,8 @@ GIT_EXTERN(const git_signature *) git_commit_committer(const git_commit *commit)
  * @param commit a previously loaded commit.
  * @return the author of a commit
  */
-GIT_EXTERN(const git_signature *) git_commit_author(const git_commit *commit);
+GIT_EXTERN(const git_signature *)
+git_commit_author(const git_commit *commit);
 
 /**
  * Get the full raw text of the commit header.
@@ -178,7 +192,8 @@ GIT_EXTERN(const git_signature *) git_commit_author(const git_commit *commit);
  * @param commit a previously loaded commit
  * @return the header text of the commit
  */
-GIT_EXTERN(const char *) git_commit_raw_header(const git_commit *commit);
+GIT_EXTERN(const char *)
+git_commit_raw_header(const git_commit *commit);
 
 /**
  * Get the tree pointed to by a commit.
@@ -187,7 +202,8 @@ GIT_EXTERN(const char *) git_commit_raw_header(const git_commit *commit);
  * @param commit a previously loaded commit.
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_commit_tree(git_tree **tree_out, const git_commit *commit);
+GIT_EXTERN(int)
+git_commit_tree(git_tree **tree_out, const git_commit *commit);
 
 /**
  * Get the id of the tree pointed to by a commit. This differs from
@@ -197,7 +213,8 @@ GIT_EXTERN(int) git_commit_tree(git_tree **tree_out, const git_commit *commit);
  * @param commit a previously loaded commit.
  * @return the id of tree pointed to by commit.
  */
-GIT_EXTERN(const git_oid *) git_commit_tree_id(const git_commit *commit);
+GIT_EXTERN(const git_oid *)
+git_commit_tree_id(const git_commit *commit);
 
 /**
  * Get the number of parents of this commit
@@ -205,7 +222,8 @@ GIT_EXTERN(const git_oid *) git_commit_tree_id(const git_commit *commit);
  * @param commit a previously loaded commit.
  * @return integer of count of parents
  */
-GIT_EXTERN(unsigned int) git_commit_parentcount(const git_commit *commit);
+GIT_EXTERN(unsigned int)
+git_commit_parentcount(const git_commit *commit);
 
 /**
  * Get the specified parent of the commit.
@@ -215,7 +233,8 @@ GIT_EXTERN(unsigned int) git_commit_parentcount(const git_commit *commit);
  * @param n the position of the parent (from 0 to `parentcount`)
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_commit_parent(
+GIT_EXTERN(int)
+git_commit_parent(
 	git_commit **out,
 	const git_commit *commit,
 	unsigned int n);
@@ -229,7 +248,8 @@ GIT_EXTERN(int) git_commit_parent(
  * @param n the position of the parent (from 0 to `parentcount`)
  * @return the id of the parent, NULL on error.
  */
-GIT_EXTERN(const git_oid *) git_commit_parent_id(
+GIT_EXTERN(const git_oid *)
+git_commit_parent_id(
 	const git_commit *commit,
 	unsigned int n);
 
@@ -247,7 +267,8 @@ GIT_EXTERN(const git_oid *) git_commit_parent_id(
  * @return 0 on success; GIT_ENOTFOUND if no matching ancestor exists
  * or an error code
  */
-GIT_EXTERN(int) git_commit_nth_gen_ancestor(
+GIT_EXTERN(int)
+git_commit_nth_gen_ancestor(
 	git_commit **ancestor,
 	const git_commit *commit,
 	unsigned int n);
@@ -262,7 +283,8 @@ GIT_EXTERN(int) git_commit_nth_gen_ancestor(
  * @return 0 on succeess, GIT_ENOTFOUND if the field does not exist,
  * or an error code
  */
-GIT_EXTERN(int) git_commit_header_field(git_buf *out, const git_commit *commit, const char *field);
+GIT_EXTERN(int)
+git_commit_header_field(git_buf *out, const git_commit *commit, const char *field);
 
 /**
  * Extract the signature from a commit
@@ -282,7 +304,8 @@ GIT_EXTERN(int) git_commit_header_field(git_buf *out, const git_commit *commit, 
  * @return 0 on success, GIT_ENOTFOUND if the id is not for a commit
  * or the commit does not have a signature.
  */
-GIT_EXTERN(int) git_commit_extract_signature(git_buf *signature, git_buf *signed_data, git_repository *repo, git_oid *commit_id, const char *field);
+GIT_EXTERN(int)
+git_commit_extract_signature(git_buf *signature, git_buf *signed_data, git_repository *repo, git_oid *commit_id, const char *field);
 
 /**
  * Create new commit in the repository from a list of `git_object` pointers
@@ -328,7 +351,8 @@ GIT_EXTERN(int) git_commit_extract_signature(git_buf *signature, git_buf *signed
  *	The created commit will be written to the Object Database and
  *	the given reference will be updated to point to it
  */
-GIT_EXTERN(int) git_commit_create(
+GIT_EXTERN(int)
+git_commit_create(
 	git_oid *id,
 	git_repository *repo,
 	const char *update_ref,
@@ -354,7 +378,8 @@ GIT_EXTERN(int) git_commit_create(
  *
  * @see git_commit_create
  */
-GIT_EXTERN(int) git_commit_create_v(
+GIT_EXTERN(int)
+git_commit_create_v(
 	git_oid *id,
 	git_repository *repo,
 	const char *update_ref,
@@ -387,7 +412,8 @@ GIT_EXTERN(int) git_commit_create_v(
  *
  * @see git_commit_create
  */
-GIT_EXTERN(int) git_commit_amend(
+GIT_EXTERN(int)
+git_commit_amend(
 	git_oid *id,
 	const git_commit *commit_to_amend,
 	const char *update_ref,
@@ -432,7 +458,8 @@ GIT_EXTERN(int) git_commit_amend(
  *
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_commit_create_buffer(
+GIT_EXTERN(int)
+git_commit_create_buffer(
 	git_buf *out,
 	git_repository *repo,
 	const git_signature *author,
@@ -457,7 +484,8 @@ GIT_EXTERN(int) git_commit_create_buffer(
  * signature. Leave `NULL` for the default of "gpgsig"
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_commit_create_with_signature(
+GIT_EXTERN(int)
+git_commit_create_with_signature(
 	git_oid *out,
 	git_repository *repo,
 	const char *commit_content,
@@ -471,7 +499,8 @@ GIT_EXTERN(int) git_commit_create_with_signature(
  * @param out Pointer to store the copy of the commit
  * @param source Original commit to copy
  */
-GIT_EXTERN(int) git_commit_dup(git_commit **out, git_commit *source);
+GIT_EXTERN(int)
+git_commit_dup(git_commit **out, git_commit *source);
 
 /** @} */
 GIT_END_DECL

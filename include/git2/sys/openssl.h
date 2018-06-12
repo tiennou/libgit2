@@ -31,8 +31,8 @@ GIT_BEGIN_DECL
  * @return 0 on success, -1 if there are errors or if libgit2 was not
  * built with OpenSSL and threading support.
  */
-GIT_EXTERN(int) git_openssl_set_locking(void);
+GIT_EXTERN(int)
+git_openssl_set_locking(void);
 
 GIT_END_DECL
 #endif
-

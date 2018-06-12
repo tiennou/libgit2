@@ -423,7 +423,7 @@ static int limit_list(git_commit_list **out, git_revwalk *walk, git_commit_list 
 		}
 
 		if (!commit->uninteresting && walk->hide_cb && walk->hide_cb(&commit->oid, walk->hide_cb_payload))
-				continue;
+			continue;
 
 		time = commit->time;
 		p = &git_commit_list_insert(commit, p)->next;
@@ -464,7 +464,7 @@ static int sort_in_topological_order(git_commit_list **out, git_revwalk *walk, g
 	 * ourselves to those commits in the original list (in-degree
 	 * of 1) avoiding setting it for any parent that was hidden.
 	 */
-	for(ll = list; ll; ll = ll->next) {
+	for (ll = list; ll; ll = ll->next) {
 		for (i = 0; i < ll->item->out_degree; ++i) {
 			git_commit_list_node *parent = ll->item->parents[i];
 			if (parent->in_degree)
@@ -476,7 +476,7 @@ static int sort_in_topological_order(git_commit_list **out, git_revwalk *walk, g
 	 * Now we find the tips i.e. those not reachable from any other node
 	 * i.e. those which still have an in-degree of 1.
 	 */
-	for(ll = list; ll; ll = ll->next) {
+	for (ll = list; ll; ll = ll->next) {
 		if (ll->item->in_degree == 1) {
 			if ((error = git_pqueue_insert(&queue, ll->item)))
 				goto cleanup;
@@ -695,7 +695,7 @@ void git_revwalk_reset(git_revwalk *walk)
 		commit->uninteresting = 0;
 		commit->added = 0;
 		commit->flags = 0;
-		});
+	});
 
 	git_pqueue_clear(&walk->iterator_time);
 	git_commit_list_free(&walk->iterator_topo);
@@ -728,4 +728,3 @@ int git_revwalk_add_hide_cb(
 
 	return 0;
 }
-

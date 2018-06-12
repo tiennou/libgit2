@@ -110,7 +110,7 @@ static int has_cr_in_index(const git_filter_source *src)
 		return false;
 
 	blobcontent = git_blob_rawcontent(blob);
-	blobsize    = git_blob_rawsize(blob);
+	blobsize = git_blob_rawsize(blob);
 	if (!git__is_sizet(blobsize))
 		blobsize = (size_t)-1;
 
@@ -274,8 +274,8 @@ static int crlf_apply_to_workdir(
 }
 
 static int crlf_check(
-	git_filter        *self,
-	void              **payload, /* points to NULL ptr on entry, may be set */
+	git_filter *self,
+	void **payload, /* points to NULL ptr on entry, may be set */
 	const git_filter_source *src,
 	const char **attr_values)
 {
@@ -307,8 +307,8 @@ static int crlf_check(
 
 	if (ca.crlf_action == GIT_CRLF_GUESS ||
 		((ca.crlf_action == GIT_CRLF_AUTO ||
-		ca.crlf_action == GIT_CRLF_TEXT) &&
-		git_filter_source_mode(src) == GIT_FILTER_SMUDGE)) {
+			 ca.crlf_action == GIT_CRLF_TEXT) &&
+			git_filter_source_mode(src) == GIT_FILTER_SMUDGE)) {
 
 		error = git_repository__cvar(
 			&ca.auto_crlf, git_filter_source_repo(src), GIT_CVAR_AUTO_CRLF);
@@ -345,9 +345,9 @@ static int crlf_check(
 }
 
 static int crlf_apply(
-	git_filter    *self,
-	void         **payload, /* may be read and/or set */
-	git_buf       *to,
+	git_filter *self,
+	void **payload, /* may be read and/or set */
+	git_buf *to,
 	const git_buf *from,
 	const git_filter_source *src)
 {
@@ -366,7 +366,7 @@ static int crlf_apply(
 
 static void crlf_cleanup(
 	git_filter *self,
-	void       *payload)
+	void *payload)
 {
 	GIT_UNUSED(self);
 	git__free(payload);
@@ -382,9 +382,9 @@ git_filter *git_crlf_filter_new(void)
 	f->f.attributes = "crlf eol text";
 	f->f.initialize = NULL;
 	f->f.shutdown = git_filter_free;
-	f->f.check    = crlf_check;
-	f->f.apply    = crlf_apply;
-	f->f.cleanup  = crlf_cleanup;
+	f->f.check = crlf_check;
+	f->f.apply = crlf_apply;
+	f->f.cleanup = crlf_cleanup;
 
 	return (git_filter *)f;
 }

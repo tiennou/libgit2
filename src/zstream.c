@@ -14,7 +14,8 @@
 #define ZSTREAM_BUFFER_SIZE (1024 * 1024)
 #define ZSTREAM_BUFFER_MIN_EXTRA 8
 
-GIT_INLINE(int) zstream_seterr(git_zstream *zs)
+GIT_INLINE(int)
+zstream_seterr(git_zstream *zs)
 {
 	switch (zs->zerr) {
 	case Z_OK:
@@ -179,7 +180,7 @@ static int zstream_buf(git_buf *out, const void *in, size_t in_len, git_zstream_
 		written = out->asize - out->size;
 
 		if ((error = git_zstream_get_output(
-				out->ptr + out->size, &written, &zs)) < 0)
+				 out->ptr + out->size, &written, &zs)) < 0)
 			goto done;
 
 		out->size += written;

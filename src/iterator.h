@@ -30,9 +30,9 @@ typedef enum {
 	/** force case sensitivity for entry sort order */
 	GIT_ITERATOR_DONT_IGNORE_CASE = (1u << 1),
 	/** return tree items in addition to blob items */
-	GIT_ITERATOR_INCLUDE_TREES    = (1u << 2),
+	GIT_ITERATOR_INCLUDE_TREES = (1u << 2),
 	/** don't flatten trees, requiring advance_into (implies INCLUDE_TREES) */
-	GIT_ITERATOR_DONT_AUTOEXPAND  = (1u << 3),
+	GIT_ITERATOR_DONT_AUTOEXPAND = (1u << 3),
 	/** convert precomposed unicode to decomposed unicode */
 	GIT_ITERATOR_PRECOMPOSE_UNICODE = (1u << 4),
 	/** never convert precomposed unicode to decomposed unicode */
@@ -63,7 +63,10 @@ typedef struct {
 	unsigned int flags;
 } git_iterator_options;
 
-#define GIT_ITERATOR_OPTIONS_INIT {0}
+#define GIT_ITERATOR_OPTIONS_INIT \
+	{ \
+		0 \
+	}
 
 typedef struct {
 	int (*current)(const git_index_entry **, git_iterator *);
@@ -132,7 +135,8 @@ extern int git_iterator_for_workdir_ext(
 /* workdir iterators will match the ignore_case value from the index of the
  * repository, unless you override with a non-zero flag value
  */
-GIT_INLINE(int) git_iterator_for_workdir(
+GIT_INLINE(int)
+git_iterator_for_workdir(
 	git_iterator **out,
 	git_repository *repo,
 	git_index *index,
@@ -163,7 +167,8 @@ extern void git_iterator_free(git_iterator *iter);
  * Once you call `git_iterator_advance()` then the old entry is no longer
  * guaranteed to be valid - it may be freed or just overwritten in place.
  */
-GIT_INLINE(int) git_iterator_current(
+GIT_INLINE(int)
+git_iterator_current(
 	const git_index_entry **entry, git_iterator *iter)
 {
 	return iter->cb->current(entry, iter);
@@ -176,7 +181,8 @@ GIT_INLINE(int) git_iterator_current(
  * GIT_ITERATOR_DONT_AUTOEXPAND is set, calling this again when on a tree
  * item will skip over all the items under that tree.
  */
-GIT_INLINE(int) git_iterator_advance(
+GIT_INLINE(int)
+git_iterator_advance(
 	const git_index_entry **entry, git_iterator *iter)
 {
 	return iter->cb->advance(entry, iter);
@@ -197,7 +203,8 @@ GIT_INLINE(int) git_iterator_advance(
  * can be empty.  In that case, this function returns GIT_ENOTFOUND and
  * does not advance.  That can't happen for tree and index iterators.
  */
-GIT_INLINE(int) git_iterator_advance_into(
+GIT_INLINE(int)
+git_iterator_advance_into(
 	const git_index_entry **entry, git_iterator *iter)
 {
 	return iter->cb->advance_into(entry, iter);
@@ -213,7 +220,8 @@ GIT_INLINE(int) git_iterator_advance_into(
  * untracked directory) but checks during the scan if there are any files
  * and any non-ignored files.
  */
-GIT_INLINE(int) git_iterator_advance_over(
+GIT_INLINE(int)
+git_iterator_advance_over(
 	const git_index_entry **entry,
 	git_iterator_status_t *status,
 	git_iterator *iter)
@@ -224,7 +232,8 @@ GIT_INLINE(int) git_iterator_advance_over(
 /**
  * Go back to the start of the iteration.
  */
-GIT_INLINE(int) git_iterator_reset(git_iterator *iter)
+GIT_INLINE(int)
+git_iterator_reset(git_iterator *iter)
 {
 	return iter->cb->reset(iter);
 }
@@ -236,27 +245,32 @@ GIT_INLINE(int) git_iterator_reset(git_iterator *iter)
 extern int git_iterator_reset_range(
 	git_iterator *iter, const char *start, const char *end);
 
-GIT_INLINE(git_iterator_type_t) git_iterator_type(git_iterator *iter)
+GIT_INLINE(git_iterator_type_t)
+git_iterator_type(git_iterator *iter)
 {
 	return iter->type;
 }
 
-GIT_INLINE(git_repository *) git_iterator_owner(git_iterator *iter)
+GIT_INLINE(git_repository *)
+git_iterator_owner(git_iterator *iter)
 {
 	return iter->repo;
 }
 
-GIT_INLINE(git_index *) git_iterator_index(git_iterator *iter)
+GIT_INLINE(git_index *)
+git_iterator_index(git_iterator *iter)
 {
 	return iter->index;
 }
 
-GIT_INLINE(git_iterator_flag_t) git_iterator_flags(git_iterator *iter)
+GIT_INLINE(git_iterator_flag_t)
+git_iterator_flags(git_iterator *iter)
 {
 	return iter->flags;
 }
 
-GIT_INLINE(bool) git_iterator_ignore_case(git_iterator *iter)
+GIT_INLINE(bool)
+git_iterator_ignore_case(git_iterator *iter)
 {
 	return ((iter->flags & GIT_ITERATOR_IGNORE_CASE) != 0);
 }

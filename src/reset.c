@@ -22,7 +22,7 @@
 int git_reset_default(
 	git_repository *repo,
 	const git_object *target,
-	const git_strarray* pathspecs)
+	const git_strarray *pathspecs)
 {
 	git_object *commit = NULL;
 	git_tree *tree = NULL;
@@ -56,8 +56,8 @@ int git_reset_default(
 	opts.flags = GIT_DIFF_REVERSE;
 
 	if ((error = git_diff_tree_to_index(
-		&diff, repo, tree, index, &opts)) < 0)
-			goto cleanup;
+			 &diff, repo, tree, index, &opts)) < 0)
+		goto cleanup;
 
 	for (i = 0, max_i = git_diff_num_deltas(diff); i < max_i; ++i) {
 		const git_diff_delta *delta = git_diff_get_delta(diff, i);
@@ -126,7 +126,7 @@ static int reset(
 
 	if (reset_type != GIT_RESET_SOFT &&
 		(error = git_repository__ensure_not_bare(repo,
-			reset_type == GIT_RESET_MIXED ? "reset mixed" : "reset hard")) < 0)
+			 reset_type == GIT_RESET_MIXED ? "reset mixed" : "reset hard")) < 0)
 		return error;
 
 	if ((error = git_object_peel(&commit, target, GIT_OBJ_COMMIT)) < 0 ||
@@ -136,8 +136,7 @@ static int reset(
 
 	if (reset_type == GIT_RESET_SOFT &&
 		(git_repository_state(repo) == GIT_REPOSITORY_STATE_MERGE ||
-		 git_index_has_conflicts(index)))
-	{
+			git_index_has_conflicts(index))) {
 		giterr_set(GITERR_OBJECT, "%s (soft) in the middle of a merge", ERROR_MSG);
 		error = GIT_EUNMERGED;
 		goto cleanup;
@@ -156,7 +155,7 @@ static int reset(
 
 	/* move HEAD to the new target */
 	if ((error = git_reference__update_terminal(repo, GIT_HEAD_FILE,
-		git_object_id(commit), NULL, git_buf_cstr(&log_message))) < 0)
+			 git_object_id(commit), NULL, git_buf_cstr(&log_message))) < 0)
 		goto cleanup;
 
 	if (reset_type > GIT_RESET_SOFT) {
@@ -196,5 +195,5 @@ int git_reset_from_annotated(
 	git_reset_t reset_type,
 	const git_checkout_options *checkout_opts)
 {
-	return reset(repo, (git_object *) commit->commit, commit->description, reset_type, checkout_opts);
+	return reset(repo, (git_object *)commit->commit, commit->description, reset_type, checkout_opts);
 }

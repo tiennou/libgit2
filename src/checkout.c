@@ -84,11 +84,11 @@ typedef struct {
 	const git_index_entry *ours;
 	const git_index_entry *theirs;
 
-	int name_collision:1,
-		directoryfile:1,
-		one_to_two:1,
-		binary:1,
-		submodule:1;
+	int name_collision : 1,
+		directoryfile : 1,
+		one_to_two : 1,
+		binary : 1,
+		submodule : 1;
 } checkout_conflictdata;
 
 static int checkout_notify(
@@ -151,7 +151,8 @@ static int checkout_notify(
 	}
 }
 
-GIT_INLINE(bool) is_workdir_base_or_new(
+GIT_INLINE(bool)
+is_workdir_base_or_new(
 	const git_oid *workdir_id,
 	const git_diff_file *baseitem,
 	const git_diff_file *newitem)
@@ -160,7 +161,8 @@ GIT_INLINE(bool) is_workdir_base_or_new(
 		git_oid__cmp(&newitem->id, workdir_id) == 0);
 }
 
-GIT_INLINE(bool) is_filemode_changed(git_filemode_t a, git_filemode_t b, int respect_filemode)
+GIT_INLINE(bool)
+is_filemode_changed(git_filemode_t a, git_filemode_t b, int respect_filemode)
 {
 	/* If core.filemode = false, ignore links in the repository and executable bit changes */
 	if (!respect_filemode) {
@@ -250,7 +252,7 @@ static bool checkout_is_workdir_modified(
 	return !is_workdir_base_or_new(&oid, baseitem, newitem);
 }
 
-#define CHECKOUT_ACTION_IF(FLAG,YES,NO) \
+#define CHECKOUT_ACTION_IF(FLAG, YES, NO) \
 	((data->strategy & GIT_CHECKOUT_##FLAG) ? CHECKOUT_ACTION__##YES : CHECKOUT_ACTION__##NO)
 
 static int checkout_action_common(
@@ -276,8 +278,8 @@ static int checkout_action_common(
 		/* if the file is on disk and doesn't match our mode, force update */
 		if (wd &&
 			GIT_PERMS_IS_EXEC(wd->mode) !=
-			GIT_PERMS_IS_EXEC(delta->new_file.mode))
-				*action |= CHECKOUT_ACTION__REMOVE;
+				GIT_PERMS_IS_EXEC(delta->new_file.mode))
+			*action |= CHECKOUT_ACTION__REMOVE;
 
 		notify = GIT_CHECKOUT_NOTIFY_UPDATED;
 	}
@@ -304,7 +306,7 @@ static int checkout_action_no_wd(
 			return error;
 		*action = CHECKOUT_ACTION_IF(RECREATE_MISSING, UPDATE_BLOB, NONE);
 		break;
-	case GIT_DELTA_ADDED:    /* case 2 or 28 (and 5 but not really) */
+	case GIT_DELTA_ADDED: /* case 2 or 28 (and 5 but not really) */
 		*action = CHECKOUT_ACTION_IF(SAFE, UPDATE_BLOB, NONE);
 		break;
 	case GIT_DELTA_MODIFIED: /* case 13 (and 35 but not really) */
@@ -493,7 +495,7 @@ static int checkout_action_with_wd(
 	case GIT_DELTA_UNMODIFIED: /* case 14/15 or 33 */
 		if (checkout_is_workdir_modified(data, &delta->old_file, &delta->new_file, wd)) {
 			GITERR_CHECK_ERROR(
-				checkout_notify(data, GIT_CHECKOUT_NOTIFY_DIRTY, delta, wd) );
+				checkout_notify(data, GIT_CHECKOUT_NOTIFY_DIRTY, delta, wd));
 			*action = CHECKOUT_ACTION_IF(FORCE, UPDATE_BLOB, NONE);
 		}
 		break;
@@ -533,8 +535,7 @@ static int checkout_action_with_wd(
 					*action = CHECKOUT_ACTION_IF(FORCE, REMOVE_AND_UPDATE, CONFLICT);
 			} else
 				*action = CHECKOUT_ACTION_IF(FORCE, REMOVE, CONFLICT);
-		}
-		else if (checkout_is_workdir_modified(data, &delta->old_file, &delta->new_file, wd))
+		} else if (checkout_is_workdir_modified(data, &delta->old_file, &delta->new_file, wd))
 			*action = CHECKOUT_ACTION_IF(FORCE, REMOVE_AND_UPDATE, CONFLICT);
 		else
 			*action = CHECKOUT_ACTION_IF(SAFE, REMOVE_AND_UPDATE, NONE);
@@ -562,7 +563,7 @@ static int checkout_action_with_wd_blocker(
 	case GIT_DELTA_UNMODIFIED:
 		/* should show delta as dirty / deleted */
 		GITERR_CHECK_ERROR(
-			checkout_notify(data, GIT_CHECKOUT_NOTIFY_DIRTY, delta, wd) );
+			checkout_notify(data, GIT_CHECKOUT_NOTIFY_DIRTY, delta, wd));
 		*action = CHECKOUT_ACTION_IF(FORCE, REMOVE_AND_UPDATE, NONE);
 		break;
 	case GIT_DELTA_ADDED:
@@ -600,7 +601,7 @@ static int checkout_action_with_wd_dir(
 			checkout_notify(data, GIT_CHECKOUT_NOTIFY_UNTRACKED, NULL, wd));
 		*action = CHECKOUT_ACTION_IF(FORCE, REMOVE_AND_UPDATE, NONE);
 		break;
-	case GIT_DELTA_ADDED:/* case 4 (and 7 for dir) */
+	case GIT_DELTA_ADDED: /* case 4 (and 7 for dir) */
 	case GIT_DELTA_MODIFIED: /* case 20 (or 37 but not really) */
 		if (delta->old_file.mode == GIT_FILEMODE_COMMIT)
 			/* expected submodule (and maybe found one) */;
@@ -623,8 +624,7 @@ static int checkout_action_with_wd_dir(
 			 * dir and it will succeed if no children are left.
 			 */
 			*action = CHECKOUT_ACTION_IF(SAFE, UPDATE_BLOB, NONE);
-		}
-		else if (delta->new_file.mode != GIT_FILEMODE_TREE)
+		} else if (delta->new_file.mode != GIT_FILEMODE_TREE)
 			/* For typechange to dir, dir is already created so no action */
 			*action = CHECKOUT_ACTION_IF(FORCE, REMOVE_AND_UPDATE, CONFLICT);
 		break;
@@ -730,8 +730,7 @@ static int checkout_action(
 
 				if (delta->new_file.mode == GIT_FILEMODE_TREE ||
 					delta->new_file.mode == GIT_FILEMODE_COMMIT ||
-					delta->old_file.mode == GIT_FILEMODE_COMMIT)
-				{
+					delta->old_file.mode == GIT_FILEMODE_COMMIT) {
 					error = checkout_action_with_wd(action, data, delta, workdir, wd);
 					advance = git_iterator_advance;
 					goto done;
@@ -775,7 +774,8 @@ static int checkout_remaining_wd_items(
 	return error;
 }
 
-GIT_INLINE(int) checkout_idxentry_cmp(
+GIT_INLINE(int)
+checkout_idxentry_cmp(
 	const git_index_entry *a,
 	const git_index_entry *b)
 {
@@ -783,7 +783,7 @@ GIT_INLINE(int) checkout_idxentry_cmp(
 		return 0;
 	else if (!a && b)
 		return -1;
-	else if(a && !b)
+	else if (a && !b)
 		return 1;
 	else
 		return strcmp(a->path, b->path);
@@ -819,7 +819,8 @@ int checkout_conflictdata_empty(
 	return 1;
 }
 
-GIT_INLINE(bool) conflict_pathspec_match(
+GIT_INLINE(bool)
+conflict_pathspec_match(
 	checkout_data *data,
 	git_iterator *workdir,
 	git_vector *pathspec,
@@ -828,25 +829,20 @@ GIT_INLINE(bool) conflict_pathspec_match(
 	const git_index_entry *theirs)
 {
 	/* if the pathspec matches ours *or* theirs, proceed */
-	if (ours && git_pathspec__match(pathspec, ours->path,
-		(data->strategy & GIT_CHECKOUT_DISABLE_PATHSPEC_MATCH) != 0,
-		git_iterator_ignore_case(workdir), NULL, NULL))
+	if (ours && git_pathspec__match(pathspec, ours->path, (data->strategy & GIT_CHECKOUT_DISABLE_PATHSPEC_MATCH) != 0, git_iterator_ignore_case(workdir), NULL, NULL))
 		return true;
 
-	if (theirs && git_pathspec__match(pathspec, theirs->path,
-		(data->strategy & GIT_CHECKOUT_DISABLE_PATHSPEC_MATCH) != 0,
-		git_iterator_ignore_case(workdir), NULL, NULL))
+	if (theirs && git_pathspec__match(pathspec, theirs->path, (data->strategy & GIT_CHECKOUT_DISABLE_PATHSPEC_MATCH) != 0, git_iterator_ignore_case(workdir), NULL, NULL))
 		return true;
 
-	if (ancestor && git_pathspec__match(pathspec, ancestor->path,
-		(data->strategy & GIT_CHECKOUT_DISABLE_PATHSPEC_MATCH) != 0,
-		git_iterator_ignore_case(workdir), NULL, NULL))
+	if (ancestor && git_pathspec__match(pathspec, ancestor->path, (data->strategy & GIT_CHECKOUT_DISABLE_PATHSPEC_MATCH) != 0, git_iterator_ignore_case(workdir), NULL, NULL))
 		return true;
 
 	return false;
 }
 
-GIT_INLINE(int) checkout_conflict_detect_submodule(checkout_conflictdata *conflict)
+GIT_INLINE(int)
+checkout_conflict_detect_submodule(checkout_conflictdata *conflict)
 {
 	conflict->submodule = ((conflict->ancestor && S_ISGITLINK(conflict->ancestor->mode)) ||
 		(conflict->ours && S_ISGITLINK(conflict->ours->mode)) ||
@@ -854,7 +850,8 @@ GIT_INLINE(int) checkout_conflict_detect_submodule(checkout_conflictdata *confli
 	return 0;
 }
 
-GIT_INLINE(int) checkout_conflict_detect_binary(git_repository *repo, checkout_conflictdata *conflict)
+GIT_INLINE(int)
+checkout_conflict_detect_binary(git_repository *repo, checkout_conflictdata *conflict)
 {
 	git_blob *ancestor_blob = NULL, *our_blob = NULL, *their_blob = NULL;
 	int error = 0;
@@ -909,8 +906,7 @@ static int checkout_conflict_append_update(
 	conflict->theirs = theirs;
 
 	if ((error = checkout_conflict_detect_submodule(conflict)) < 0 ||
-		(error = checkout_conflict_detect_binary(data->repo, conflict)) < 0)
-	{
+		(error = checkout_conflict_detect_binary(data->repo, conflict)) < 0) {
 		git__free(conflict);
 		return error;
 	}
@@ -974,7 +970,8 @@ static int checkout_conflicts_load(checkout_data *data, git_iterator *workdir, g
 	return 0;
 }
 
-GIT_INLINE(int) checkout_conflicts_cmp_entry(
+GIT_INLINE(int)
+checkout_conflicts_cmp_entry(
 	const char *path,
 	const git_index_entry *entry)
 {
@@ -1011,7 +1008,8 @@ static checkout_conflictdata *checkout_conflicts_search_branch(
 	checkout_conflictdata *conflict;
 	size_t i;
 
-	git_vector_foreach(&data->update_conflicts, i, conflict) {
+	git_vector_foreach(&data->update_conflicts, i, conflict)
+	{
 		int cmp = -1;
 
 		if (conflict->ancestor)
@@ -1056,7 +1054,7 @@ static int checkout_conflicts_load_byname_entry(
 	}
 
 	if ((ancestor = checkout_conflicts_search_ancestor(data,
-		name_entry->ancestor)) == NULL) {
+			 name_entry->ancestor)) == NULL) {
 		giterr_set(GITERR_INDEX,
 			"a NAME entry referenced ancestor entry '%s' which does not exist in the main index",
 			name_entry->ancestor);
@@ -1119,8 +1117,8 @@ static int checkout_conflicts_coalesce_renames(
 		name_entry = git_index_name_get_byindex(index, i);
 
 		if ((error = checkout_conflicts_load_byname_entry(
-			&ancestor_conflict, &our_conflict, &their_conflict,
-			data, name_entry)) < 0)
+				 &ancestor_conflict, &our_conflict, &their_conflict,
+				 data, name_entry)) < 0)
 			goto done;
 
 		if (our_conflict && our_conflict != ancestor_conflict) {
@@ -1173,13 +1171,15 @@ static int checkout_conflicts_mark_directoryfile(
 	len = git_index_entrycount(index);
 
 	/* Find d/f conflicts */
-	git_vector_foreach(&data->update_conflicts, i, conflict) {
+	git_vector_foreach(&data->update_conflicts, i, conflict)
+	{
 		if ((conflict->ours && conflict->theirs) ||
 			(!conflict->ours && !conflict->theirs))
 			continue;
 
 		path = conflict->ours ?
-			conflict->ours->path : conflict->theirs->path;
+			conflict->ours->path :
+			conflict->theirs->path;
 
 		if ((error = git_index_find(&j, index, path)) < 0) {
 			if (error == GIT_ENOTFOUND)
@@ -1318,7 +1318,7 @@ static int checkout_get_actions(
 
 	deltas = &data->diff->deltas;
 
-	*counts_ptr = counts = git__calloc(CHECKOUT_ACTION__MAX+1, sizeof(size_t));
+	*counts_ptr = counts = git__calloc(CHECKOUT_ACTION__MAX + 1, sizeof(size_t));
 	*actions_ptr = actions = git__calloc(
 		deltas->length ? deltas->length : 1, sizeof(uint32_t));
 	if (!counts || !actions) {
@@ -1326,7 +1326,8 @@ static int checkout_get_actions(
 		goto fail;
 	}
 
-	git_vector_foreach(deltas, i, delta) {
+	git_vector_foreach(deltas, i, delta)
+	{
 		if ((error = checkout_action(&act, data, delta, workdir, &wditem, &pathspec)) == 0)
 			error = checkout_verify_paths(data->repo, act, delta);
 
@@ -1352,12 +1353,12 @@ static int checkout_get_actions(
 	counts[CHECKOUT_ACTION__REMOVE] += data->removes.length;
 
 	if (counts[CHECKOUT_ACTION__CONFLICT] > 0 &&
-		(data->strategy & GIT_CHECKOUT_ALLOW_CONFLICTS) == 0)
-	{
-		giterr_set(GITERR_CHECKOUT, "%"PRIuZ" %s checkout",
+		(data->strategy & GIT_CHECKOUT_ALLOW_CONFLICTS) == 0) {
+		giterr_set(GITERR_CHECKOUT, "%" PRIuZ " %s checkout",
 			counts[CHECKOUT_ACTION__CONFLICT],
 			counts[CHECKOUT_ACTION__CONFLICT] == 1 ?
-			"conflict prevents" : "conflicts prevent");
+				"conflict prevents" :
+				"conflicts prevent");
 		error = GIT_ECONFLICT;
 		goto fail;
 	}
@@ -1411,7 +1412,7 @@ static int checkout_mkdir(
 	mode_t mode,
 	unsigned int flags)
 {
-	struct git_futils_mkdir_options mkdir_opts = {0};
+	struct git_futils_mkdir_options mkdir_opts = { 0 };
 	int error;
 
 	mkdir_opts.dir_map = data->mkdir_map;
@@ -1438,7 +1439,7 @@ static int mkpath2file(
 	int error;
 
 	if ((error = checkout_mkdir(
-			data, path, data->opts.target_directory, mode, flags)) < 0)
+			 data, path, data->opts.target_directory, mode, flags)) < 0)
 		return error;
 
 	if (remove_existing) {
@@ -1506,7 +1507,8 @@ static int blob_content_to_file(
 {
 	int flags = data->opts.file_open_flags;
 	mode_t file_mode = data->opts.file_mode ?
-		data->opts.file_mode : entry_filemode;
+		data->opts.file_mode :
+		entry_filemode;
 	git_filter_options filter_opts = GIT_FILTER_OPTIONS_INIT;
 	struct checkout_stream writer;
 	mode_t mode;
@@ -1535,8 +1537,8 @@ static int blob_content_to_file(
 
 	if (!data->opts.disable_filters &&
 		(error = git_filter_list__load_ext(
-			&fl, data->repo, blob, hint_path,
-			GIT_FILTER_TO_WORKTREE, &filter_opts))) {
+			 &fl, data->repo, blob, hint_path,
+			 GIT_FILTER_TO_WORKTREE, &filter_opts))) {
 		p_close(fd);
 		return error;
 	}
@@ -1665,9 +1667,9 @@ static int checkout_submodule(
 		return 0;
 
 	if ((error = checkout_mkdir(
-			data,
-			file->path, data->opts.target_directory, data->opts.dir_mode,
-			remove_existing ? MKDIR_REMOVE_EXISTING : MKDIR_NORMAL)) < 0)
+			 data,
+			 file->path, data->opts.target_directory, data->opts.dir_mode,
+			 remove_existing ? MKDIR_REMOVE_EXISTING : MKDIR_NORMAL)) < 0)
 		return error;
 
 	if ((error = git_submodule_lookup(NULL, data->repo, file->path)) < 0) {
@@ -1754,8 +1756,7 @@ static int checkout_write_content(
 	 * parent directory - suppress the error and try to continue.
 	 */
 	if ((data->strategy & GIT_CHECKOUT_ALLOW_CONFLICTS) != 0 &&
-		(error == GIT_ENOTFOUND || error == GIT_EEXISTS))
-	{
+		(error == GIT_ENOTFOUND || error == GIT_EEXISTS)) {
 		giterr_clear();
 		error = 0;
 	}
@@ -1814,7 +1815,8 @@ static int checkout_remove_the_old(
 	if (checkout_target_fullpath(&fullpath, data, NULL) < 0)
 		return -1;
 
-	git_vector_foreach(&data->diff->deltas, i, delta) {
+	git_vector_foreach(&data->diff->deltas, i, delta)
+	{
 		if (actions[i] & CHECKOUT_ACTION__REMOVE) {
 			error = git_futils_rmdir_r(
 				delta->old_file.path, fullpath->ptr, flg);
@@ -1827,14 +1829,14 @@ static int checkout_remove_the_old(
 
 			if ((actions[i] & CHECKOUT_ACTION__UPDATE_BLOB) == 0 &&
 				(data->strategy & GIT_CHECKOUT_DONT_UPDATE_INDEX) == 0 &&
-				data->index != NULL)
-			{
+				data->index != NULL) {
 				(void)git_index_remove(data->index, delta->old_file.path, 0);
 			}
 		}
 	}
 
-	git_vector_foreach(&data->removes, i, str) {
+	git_vector_foreach(&data->removes, i, str)
+	{
 		error = git_futils_rmdir_r(str, fullpath->ptr, flg);
 		if (error < 0)
 			return error;
@@ -1843,8 +1845,7 @@ static int checkout_remove_the_old(
 		report_progress(data, str);
 
 		if ((data->strategy & GIT_CHECKOUT_DONT_UPDATE_INDEX) == 0 &&
-			data->index != NULL)
-		{
+			data->index != NULL) {
 			if (str[strlen(str) - 1] == '/')
 				(void)git_index_remove_directory(data->index, str, 0);
 			else
@@ -1883,13 +1884,14 @@ static int checkout_create_the_new(
 	git_diff_delta *delta;
 	size_t i;
 
-	git_vector_foreach(&data->diff->deltas, i, delta) {
+	git_vector_foreach(&data->diff->deltas, i, delta)
+	{
 		if (actions[i] & CHECKOUT_ACTION__DEFER_REMOVE) {
 			/* this had a blocker directory that should only be removed iff
 			 * all of the contents of the directory were safely removed
 			 */
 			if ((error = checkout_deferred_remove(
-					data->repo, delta->old_file.path)) < 0)
+					 data->repo, delta->old_file.path)) < 0)
 				return error;
 		}
 
@@ -1914,13 +1916,14 @@ static int checkout_create_submodules(
 	git_diff_delta *delta;
 	size_t i;
 
-	git_vector_foreach(&data->diff->deltas, i, delta) {
+	git_vector_foreach(&data->diff->deltas, i, delta)
+	{
 		if (actions[i] & CHECKOUT_ACTION__DEFER_REMOVE) {
 			/* this has a blocker directory that should only be removed iff
 			 * all of the contents of the directory were safely removed
 			 */
 			if ((error = checkout_deferred_remove(
-					data->repo, delta->old_file.path)) < 0)
+					 data->repo, delta->old_file.path)) < 0)
 				return error;
 		}
 
@@ -2006,7 +2009,7 @@ static int checkout_write_entry(
 	struct stat st;
 	int error;
 
-	assert (side == conflict->ours || side == conflict->theirs);
+	assert(side == conflict->ours || side == conflict->theirs);
 
 	if (checkout_target_fullpath(&fullpath, data, side->path) < 0)
 		return -1;
@@ -2017,10 +2020,10 @@ static int checkout_write_entry(
 
 		if (side == conflict->ours)
 			suffix = data->opts.our_label ? data->opts.our_label :
-				"ours";
+											"ours";
 		else
 			suffix = data->opts.their_label ? data->opts.their_label :
-				"theirs";
+											  "theirs";
 
 		if (checkout_path_suffixed(fullpath, suffix) < 0)
 			return -1;
@@ -2034,7 +2037,7 @@ static int checkout_write_entry(
 
 	if (!S_ISGITLINK(side->mode))
 		return checkout_write_content(data,
-					      &side->id, fullpath->ptr, hint_path, side->mode, &st);
+			&side->id, fullpath->ptr, hint_path, side->mode, &st);
 
 	return 0;
 }
@@ -2083,10 +2086,10 @@ static int checkout_write_merge(
 	checkout_conflictdata *conflict)
 {
 	git_buf our_label = GIT_BUF_INIT, their_label = GIT_BUF_INIT,
-		path_suffixed = GIT_BUF_INIT, path_workdir = GIT_BUF_INIT,
-		in_data = GIT_BUF_INIT, out_data = GIT_BUF_INIT;
+			path_suffixed = GIT_BUF_INIT, path_workdir = GIT_BUF_INIT,
+			in_data = GIT_BUF_INIT, out_data = GIT_BUF_INIT;
 	git_merge_file_options opts = GIT_MERGE_FILE_OPTIONS_INIT;
-	git_merge_file_result result = {0};
+	git_merge_file_result result = { 0 };
 	git_filebuf output = GIT_FILEBUF_INIT;
 	git_filter_list *fl = NULL;
 	git_filter_options filter_opts = GIT_FILTER_OPTIONS_INIT;
@@ -2096,11 +2099,14 @@ static int checkout_write_merge(
 		opts.flags |= GIT_MERGE_FILE_STYLE_DIFF3;
 
 	opts.ancestor_label = data->opts.ancestor_label ?
-		data->opts.ancestor_label : "ancestor";
+		data->opts.ancestor_label :
+		"ancestor";
 	opts.our_label = data->opts.our_label ?
-		data->opts.our_label : "ours";
+		data->opts.our_label :
+		"ours";
 	opts.their_label = data->opts.their_label ?
-		data->opts.their_label : "theirs";
+		data->opts.their_label :
+		"theirs";
 
 	/* If all the paths are identical, decorate the diff3 file with the branch
 	 * names.  Otherwise, append branch_name:path.
@@ -2109,9 +2115,9 @@ static int checkout_write_merge(
 		strcmp(conflict->ours->path, conflict->theirs->path) != 0) {
 
 		if ((error = conflict_entry_name(
-			&our_label, opts.our_label, conflict->ours->path)) < 0 ||
+				 &our_label, opts.our_label, conflict->ours->path)) < 0 ||
 			(error = conflict_entry_name(
-			&their_label, opts.their_label, conflict->theirs->path)) < 0)
+				 &their_label, opts.their_label, conflict->theirs->path)) < 0)
 			goto done;
 
 		opts.our_label = git_buf_cstr(&our_label);
@@ -2119,7 +2125,7 @@ static int checkout_write_merge(
 	}
 
 	if ((error = git_merge_file_from_index(&result, data->repo,
-		conflict->ancestor, conflict->ours, conflict->theirs, &opts)) < 0)
+			 conflict->ancestor, conflict->ours, conflict->theirs, &opts)) < 0)
 		goto done;
 
 	if (result.path == NULL || result.mode == 0) {
@@ -2143,8 +2149,8 @@ static int checkout_write_merge(
 		filter_opts.temp_buf = &data->tmp;
 
 		if ((error = git_filter_list__load_ext(
-				&fl, data->repo, NULL, git_buf_cstr(&path_workdir),
-				GIT_FILTER_TO_WORKTREE, &filter_opts)) < 0 ||
+				 &fl, data->repo, NULL, git_buf_cstr(&path_workdir),
+				 GIT_FILTER_TO_WORKTREE, &filter_opts)) < 0 ||
 			(error = git_filter_list_apply_to_data(&out_data, fl, &in_data)) < 0)
 			goto done;
 	} else {
@@ -2210,7 +2216,8 @@ static int checkout_create_conflicts(checkout_data *data)
 	size_t i;
 	int error = 0;
 
-	git_vector_foreach(&data->update_conflicts, i, conflict) {
+	git_vector_foreach(&data->update_conflicts, i, conflict)
+	{
 
 		/* Both deleted: nothing to do */
 		if (conflict->ours == NULL && conflict->theirs == NULL)
@@ -2278,7 +2285,7 @@ static int checkout_create_conflicts(checkout_data *data)
 		data->completed_steps++;
 		report_progress(data,
 			conflict->ours ? conflict->ours->path :
-			(conflict->theirs ? conflict->theirs->path : conflict->ancestor->path));
+							 (conflict->theirs ? conflict->theirs->path : conflict->ancestor->path));
 	}
 
 	return error;
@@ -2289,7 +2296,8 @@ static int checkout_remove_conflicts(checkout_data *data)
 	const char *conflict;
 	size_t i;
 
-	git_vector_foreach(&data->remove_conflicts, i, conflict) {
+	git_vector_foreach(&data->remove_conflicts, i, conflict)
+	{
 		if (git_index_conflict_remove(data->index, conflict) < 0)
 			return -1;
 
@@ -2310,19 +2318,21 @@ static int checkout_extensions_update_index(checkout_data *data)
 		return 0;
 
 	if (data->update_reuc) {
-		git_vector_foreach(data->update_reuc, i, reuc_entry) {
+		git_vector_foreach(data->update_reuc, i, reuc_entry)
+		{
 			if ((error = git_index_reuc_add(data->index, reuc_entry->path,
-				reuc_entry->mode[0], &reuc_entry->oid[0],
-				reuc_entry->mode[1], &reuc_entry->oid[1],
-				reuc_entry->mode[2], &reuc_entry->oid[2])) < 0)
+					 reuc_entry->mode[0], &reuc_entry->oid[0],
+					 reuc_entry->mode[1], &reuc_entry->oid[1],
+					 reuc_entry->mode[2], &reuc_entry->oid[2])) < 0)
 				goto done;
 		}
 	}
 
 	if (data->update_names) {
-		git_vector_foreach(data->update_names, i, name_entry) {
+		git_vector_foreach(data->update_names, i, name_entry)
+		{
 			if ((error = git_index_name_add(data->index, name_entry->ancestor,
-				name_entry->ours, name_entry->theirs)) < 0)
+					 name_entry->ours, name_entry->theirs)) < 0)
 				goto done;
 		}
 	}
@@ -2392,9 +2402,9 @@ static int checkout_data_init(
 	if (!data->opts.target_directory)
 		data->opts.target_directory = git_repository_workdir(repo);
 	else if (!git_path_isdir(data->opts.target_directory) &&
-			 (error = checkout_mkdir(data,
-				data->opts.target_directory, NULL,
-				GIT_DIR_MODE, GIT_MKDIR_VERIFY_DIR)) < 0)
+		(error = checkout_mkdir(data,
+			 data->opts.target_directory, NULL,
+			 GIT_DIR_MODE, GIT_MKDIR_VERIFY_DIR)) < 0)
 		goto cleanup;
 
 	/* refresh config and index content unless NO_REFRESH is given */
@@ -2482,7 +2492,7 @@ static int checkout_data_init(
 	}
 
 	if ((data->opts.checkout_strategy &
-		(GIT_CHECKOUT_CONFLICT_STYLE_MERGE | GIT_CHECKOUT_CONFLICT_STYLE_DIFF3)) == 0) {
+			(GIT_CHECKOUT_CONFLICT_STYLE_MERGE | GIT_CHECKOUT_CONFLICT_STYLE_DIFF3)) == 0) {
 		git_config_entry *conflict_style = NULL;
 		git_config *cfg = NULL;
 
@@ -2538,8 +2548,8 @@ int git_checkout_iterator(
 	int error = 0;
 	git_iterator *baseline = NULL, *workdir = NULL;
 	git_iterator_options baseline_opts = GIT_ITERATOR_OPTIONS_INIT,
-		workdir_opts = GIT_ITERATOR_OPTIONS_INIT;
-	checkout_data data = {0};
+						 workdir_opts = GIT_ITERATOR_OPTIONS_INIT;
+	checkout_data data = { 0 };
 	git_diff_options diff_opts = GIT_DIFF_OPTIONS_INIT;
 	uint32_t *actions = NULL;
 	size_t *counts = NULL;
@@ -2567,19 +2577,21 @@ int git_checkout_iterator(
 	/* set up iterators */
 
 	workdir_opts.flags = git_iterator_ignore_case(target) ?
-		GIT_ITERATOR_IGNORE_CASE : GIT_ITERATOR_DONT_IGNORE_CASE;
+		GIT_ITERATOR_IGNORE_CASE :
+		GIT_ITERATOR_DONT_IGNORE_CASE;
 	workdir_opts.flags |= GIT_ITERATOR_DONT_AUTOEXPAND;
 	workdir_opts.start = data.pfx;
 	workdir_opts.end = data.pfx;
 
 	if ((error = git_iterator_reset_range(target, data.pfx, data.pfx)) < 0 ||
 		(error = git_iterator_for_workdir_ext(
-			&workdir, data.repo, data.opts.target_directory, index, NULL,
-			&workdir_opts)) < 0)
+			 &workdir, data.repo, data.opts.target_directory, index, NULL,
+			 &workdir_opts)) < 0)
 		goto cleanup;
 
 	baseline_opts.flags = git_iterator_ignore_case(target) ?
-		GIT_ITERATOR_IGNORE_CASE : GIT_ITERATOR_DONT_IGNORE_CASE;
+		GIT_ITERATOR_IGNORE_CASE :
+		GIT_ITERATOR_DONT_IGNORE_CASE;
 	baseline_opts.start = data.pfx;
 	baseline_opts.end = data.pfx;
 	if (opts && (opts->checkout_strategy & GIT_CHECKOUT_DISABLE_PATHSPEC_MATCH)) {
@@ -2589,12 +2601,12 @@ int git_checkout_iterator(
 
 	if (data.opts.baseline_index) {
 		if ((error = git_iterator_for_index(
-				&baseline, git_index_owner(data.opts.baseline_index),
-				data.opts.baseline_index, &baseline_opts)) < 0)
+				 &baseline, git_index_owner(data.opts.baseline_index),
+				 data.opts.baseline_index, &baseline_opts)) < 0)
 			goto cleanup;
 	} else {
 		if ((error = git_iterator_for_tree(
-				&baseline, data.opts.baseline, &baseline_opts)) < 0)
+				 &baseline, data.opts.baseline, &baseline_opts)) < 0)
 			goto cleanup;
 	}
 
@@ -2605,7 +2617,7 @@ int git_checkout_iterator(
 	 * every possible update that might need to be made.
 	 */
 	if ((error = git_diff__from_iterators(
-			&data.diff, data.repo, baseline, target, &diff_opts)) < 0)
+			 &data.diff, data.repo, baseline, target, &diff_opts)) < 0)
 		goto cleanup;
 
 	/* Loop through diff (and working directory iterator) building a list of
@@ -2690,7 +2702,7 @@ int git_checkout_index(
 		giterr_set(GITERR_CHECKOUT,
 			"index to checkout does not match repository");
 		return -1;
-	} else if(index && repo && !git_index_owner(index)) {
+	} else if (index && repo && !git_index_owner(index)) {
 		GIT_REFCOUNT_OWN(index, repo);
 		owned = 1;
 	}
@@ -2745,8 +2757,7 @@ int git_checkout_tree(
 				GITERR_CHECKOUT, "provided object cannot be peeled to a tree");
 			return -1;
 		}
-	}
-	else {
+	} else {
 		if ((error = checkout_lookup_head_tree(&tree, repo)) < 0) {
 			if (error != GIT_EUNBORNBRANCH)
 				giterr_set(

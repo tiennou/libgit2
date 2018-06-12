@@ -18,7 +18,8 @@ enum buferr_t {
 	BUFERR_MEM
 };
 
-#define ENSURE_BUF_OK(buf) if ((buf)->last_error != BUFERR_OK) { return -1; }
+#define ENSURE_BUF_OK(buf) \
+	if ((buf)->last_error != BUFERR_OK) { return -1; }
 
 static int verify_last_error(git_filebuf *file)
 {
@@ -133,7 +134,8 @@ void git_filebuf_cleanup(git_filebuf *file)
 	file->fd = -1;
 }
 
-GIT_INLINE(int) flush_buffer(git_filebuf *file)
+GIT_INLINE(int)
+flush_buffer(git_filebuf *file)
 {
 	int result = file->write(file, file->buffer, file->buf_pos);
 	file->buf_pos = 0;
@@ -207,7 +209,7 @@ static int resolve_symlink(git_buf *out, const char *path)
 	git_buf curpath = GIT_BUF_INIT, target = GIT_BUF_INIT;
 
 	if ((error = git_buf_grow(&target, GIT_PATH_MAX + 1)) < 0 ||
-	    (error = git_buf_puts(&curpath, path)) < 0)
+		(error = git_buf_puts(&curpath, path)) < 0)
 		return error;
 
 	for (i = 0; i < MAX_SYMLINK_DEPTH; i++) {
@@ -459,7 +461,8 @@ on_error:
 	return -1;
 }
 
-GIT_INLINE(void) add_to_cache(git_filebuf *file, const void *buf, size_t len)
+GIT_INLINE(void)
+add_to_cache(git_filebuf *file, const void *buf, size_t len)
 {
 	memcpy(file->buffer + file->buf_pos, buf, len);
 	file->buf_pos += len;

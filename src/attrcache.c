@@ -13,7 +13,8 @@
 #include "sysdir.h"
 #include "ignore.h"
 
-GIT_INLINE(int) attr_cache_lock(git_attr_cache *cache)
+GIT_INLINE(int)
+attr_cache_lock(git_attr_cache *cache)
 {
 	GIT_UNUSED(cache); /* avoid warning if threading is off */
 
@@ -24,13 +25,15 @@ GIT_INLINE(int) attr_cache_lock(git_attr_cache *cache)
 	return 0;
 }
 
-GIT_INLINE(void) attr_cache_unlock(git_attr_cache *cache)
+GIT_INLINE(void)
+attr_cache_unlock(git_attr_cache *cache)
 {
 	GIT_UNUSED(cache); /* avoid warning if threading is off */
 	git_mutex_unlock(&cache->lock);
 }
 
-GIT_INLINE(git_attr_file_entry *) attr_cache_lookup_entry(
+GIT_INLINE(git_attr_file_entry *)
+attr_cache_lookup_entry(
 	git_attr_cache *cache, const char *path)
 {
 	khiter_t pos = git_strmap_lookup_index(cache->files, path);
@@ -201,7 +204,7 @@ static int attr_cache_lookup(
 	attr_cache_unlock(cache);
 
 cleanup:
-	*out_file  = file;
+	*out_file = file;
 	*out_entry = entry;
 
 	git_buf_dispose(&path);
@@ -223,7 +226,7 @@ int git_attr_cache__get(
 	git_attr_file *file = NULL, *updated = NULL;
 
 	if ((error = attr_cache_lookup(
-			&file, &entry, repo, attr_session, source, base, filename)) < 0)
+			 &file, &entry, repo, attr_session, source, base, filename)) < 0)
 		return error;
 
 	/* load file if we don't have one or if existing one is out of date */
@@ -299,13 +302,12 @@ static int attr_cache__lookup_path(
 
 		/* expand leading ~/ as needed */
 		if (cfgval && cfgval[0] == '~' && cfgval[1] == '/') {
-			if (! (error = git_sysdir_expand_global_file(&buf, &cfgval[2])))
+			if (!(error = git_sysdir_expand_global_file(&buf, &cfgval[2])))
 				*out = git_buf_detach(&buf);
 		} else if (cfgval) {
 			*out = git__strdup(cfgval);
 		}
-	}
-	else if (!git_sysdir_find_xdg_file(&buf, fallback)) {
+	} else if (!git_sysdir_find_xdg_file(&buf, fallback)) {
 		*out = git_buf_detach(&buf);
 	}
 
@@ -466,4 +468,3 @@ git_attr_rule *git_attr_cache__lookup_macro(
 
 	return (git_attr_rule *)git_strmap_value_at(macros, pos);
 }
-

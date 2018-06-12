@@ -64,7 +64,8 @@ typedef enum {
  * @return 0 on success, GIT_ENOTFOUND where there's nothing to stash,
  * or error code.
  */
-GIT_EXTERN(int) git_stash_save(
+GIT_EXTERN(int)
+git_stash_save(
 	git_oid *out,
 	git_repository *repo,
 	const git_signature *stasher,
@@ -138,10 +139,12 @@ typedef struct git_stash_apply_options {
 } git_stash_apply_options;
 
 #define GIT_STASH_APPLY_OPTIONS_VERSION 1
-#define GIT_STASH_APPLY_OPTIONS_INIT { \
-	GIT_STASH_APPLY_OPTIONS_VERSION, \
-	GIT_STASH_APPLY_DEFAULT, \
-	GIT_CHECKOUT_OPTIONS_INIT }
+#define GIT_STASH_APPLY_OPTIONS_INIT \
+	{ \
+		GIT_STASH_APPLY_OPTIONS_VERSION, \
+			GIT_STASH_APPLY_DEFAULT, \
+			GIT_CHECKOUT_OPTIONS_INIT \
+	}
 
 /**
  * Initialize git_stash_apply_options structure
@@ -153,7 +156,8 @@ typedef struct git_stash_apply_options {
  * @param version The struct version; pass `GIT_STASH_APPLY_OPTIONS_VERSION`.
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_stash_apply_init_options(
+GIT_EXTERN(int)
+git_stash_apply_init_options(
 	git_stash_apply_options *opts, unsigned int version);
 
 /**
@@ -182,7 +186,8 @@ GIT_EXTERN(int) git_stash_apply_init_options(
  *         given index, GIT_EMERGECONFLICT if changes exist in the working
  *         directory, or an error code
  */
-GIT_EXTERN(int) git_stash_apply(
+GIT_EXTERN(int)
+git_stash_apply(
 	git_repository *repo,
 	size_t index,
 	const git_stash_apply_options *options);
@@ -200,7 +205,7 @@ GIT_EXTERN(int) git_stash_apply(
  */
 typedef int (*git_stash_cb)(
 	size_t index,
-	const char* message,
+	const char *message,
 	const git_oid *stash_id,
 	void *payload);
 
@@ -218,7 +223,8 @@ typedef int (*git_stash_cb)(
  *
  * @return 0 on success, non-zero callback return value, or error code.
  */
-GIT_EXTERN(int) git_stash_foreach(
+GIT_EXTERN(int)
+git_stash_foreach(
 	git_repository *repo,
 	git_stash_cb callback,
 	void *payload);
@@ -234,7 +240,8 @@ GIT_EXTERN(int) git_stash_foreach(
  * @return 0 on success, GIT_ENOTFOUND if there's no stashed state for the given
  * index, or error code.
  */
-GIT_EXTERN(int) git_stash_drop(
+GIT_EXTERN(int)
+git_stash_drop(
 	git_repository *repo,
 	size_t index);
 
@@ -250,7 +257,8 @@ GIT_EXTERN(int) git_stash_drop(
  * @return 0 on success, GIT_ENOTFOUND if there's no stashed state for the given
  * index, or error code. (see git_stash_apply() above for details)
 */
-GIT_EXTERN(int) git_stash_pop(
+GIT_EXTERN(int)
+git_stash_pop(
 	git_repository *repo,
 	size_t index,
 	const git_stash_apply_options *options);

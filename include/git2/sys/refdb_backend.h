@@ -93,9 +93,9 @@ struct git_refdb_backend {
 	 * must provide this function.
 	 */
 	int (*write)(git_refdb_backend *backend,
-		     const git_reference *ref, int force,
-		     const git_signature *who, const char *message,
-		     const git_oid *old, const char *old_target);
+		const git_reference *ref, int force,
+		const git_signature *who, const char *message,
+		const git_oid *old, const char *old_target);
 
 	int (*rename)(
 		git_reference **out, git_refdb_backend *backend,
@@ -166,11 +166,14 @@ struct git_refdb_backend {
 	 * reference or discard the lock (if it's false)
 	 */
 	int (*unlock)(git_refdb_backend *backend, void *payload, int success, int update_reflog,
-		      const git_reference *ref, const git_signature *sig, const char *message);
+		const git_reference *ref, const git_signature *sig, const char *message);
 };
 
 #define GIT_REFDB_BACKEND_VERSION 1
-#define GIT_REFDB_BACKEND_INIT {GIT_REFDB_BACKEND_VERSION}
+#define GIT_REFDB_BACKEND_INIT \
+	{ \
+		GIT_REFDB_BACKEND_VERSION \
+	}
 
 /**
  * Initializes a `git_refdb_backend` with default values. Equivalent to
@@ -180,7 +183,8 @@ struct git_refdb_backend {
  * @param version Version of struct; pass `GIT_REFDB_BACKEND_VERSION`
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_refdb_init_backend(
+GIT_EXTERN(int)
+git_refdb_init_backend(
 	git_refdb_backend *backend,
 	unsigned int version);
 
@@ -195,7 +199,8 @@ GIT_EXTERN(int) git_refdb_init_backend(
  * @param repo Git repository to access
  * @return 0 on success, <0 error code on failure
  */
-GIT_EXTERN(int) git_refdb_backend_fs(
+GIT_EXTERN(int)
+git_refdb_backend_fs(
 	git_refdb_backend **backend_out,
 	git_repository *repo);
 
@@ -209,7 +214,8 @@ GIT_EXTERN(int) git_refdb_backend_fs(
  * @param backend pointer to a git_refdb_backend instance
  * @return 0 on success; error code otherwise
  */
-GIT_EXTERN(int) git_refdb_set_backend(
+GIT_EXTERN(int)
+git_refdb_set_backend(
 	git_refdb *refdb,
 	git_refdb_backend *backend);
 

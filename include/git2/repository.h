@@ -34,7 +34,8 @@ GIT_BEGIN_DECL
  * @param path the path to the repository
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_repository_open(git_repository **out, const char *path);
+GIT_EXTERN(int)
+git_repository_open(git_repository **out, const char *path);
 /**
  * Open working tree as a repository
  *
@@ -45,7 +46,8 @@ GIT_EXTERN(int) git_repository_open(git_repository **out, const char *path);
  * @param wt Working tree to open
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_repository_open_from_worktree(git_repository **out, git_worktree *wt);
+GIT_EXTERN(int)
+git_repository_open_from_worktree(git_repository **out, git_worktree *wt);
 
 /**
  * Create a "fake" repository to wrap an object database
@@ -58,7 +60,8 @@ GIT_EXTERN(int) git_repository_open_from_worktree(git_repository **out, git_work
  * @param odb the object database to wrap
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_repository_wrap_odb(git_repository **out, git_odb *odb);
+GIT_EXTERN(int)
+git_repository_wrap_odb(git_repository **out, git_odb *odb);
 
 /**
  * Look for a git repository and copy its path in the given buffer.
@@ -86,11 +89,12 @@ GIT_EXTERN(int) git_repository_wrap_odb(git_repository **out, git_odb *odb);
  *
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_repository_discover(
-		git_buf *out,
-		const char *start_path,
-		int across_fs,
-		const char *ceiling_dirs);
+GIT_EXTERN(int)
+git_repository_discover(
+	git_buf *out,
+	const char *start_path,
+	int across_fs,
+	const char *ceiling_dirs);
 
 /**
  * Option flags for `git_repository_open_ext`.
@@ -125,10 +129,10 @@ GIT_EXTERN(int) git_repository_discover(
  */
 typedef enum {
 	GIT_REPOSITORY_OPEN_NO_SEARCH = (1 << 0),
-	GIT_REPOSITORY_OPEN_CROSS_FS  = (1 << 1),
-	GIT_REPOSITORY_OPEN_BARE      = (1 << 2),
+	GIT_REPOSITORY_OPEN_CROSS_FS = (1 << 1),
+	GIT_REPOSITORY_OPEN_BARE = (1 << 2),
 	GIT_REPOSITORY_OPEN_NO_DOTGIT = (1 << 3),
-	GIT_REPOSITORY_OPEN_FROM_ENV  = (1 << 4),
+	GIT_REPOSITORY_OPEN_FROM_ENV = (1 << 4),
 } git_repository_open_flag_t;
 
 /**
@@ -149,7 +153,8 @@ typedef enum {
  *        or -1 if there was a repository but open failed for some reason
  *        (such as repo corruption or system errors).
  */
-GIT_EXTERN(int) git_repository_open_ext(
+GIT_EXTERN(int)
+git_repository_open_ext(
 	git_repository **out,
 	const char *path,
 	unsigned int flags,
@@ -166,7 +171,8 @@ GIT_EXTERN(int) git_repository_open_ext(
  * @param bare_path Direct path to the bare repository
  * @return 0 on success, or an error code
  */
-GIT_EXTERN(int) git_repository_open_bare(git_repository **out, const char *bare_path);
+GIT_EXTERN(int)
+git_repository_open_bare(git_repository **out, const char *bare_path);
 
 /**
  * Free a previously allocated repository
@@ -179,7 +185,8 @@ GIT_EXTERN(int) git_repository_open_bare(git_repository **out, const char *bare_
  *
  * @param repo repository handle to close. If NULL nothing occurs.
  */
-GIT_EXTERN(void) git_repository_free(git_repository *repo);
+GIT_EXTERN(void)
+git_repository_free(git_repository *repo);
 
 /**
  * Creates a new Git repository in the given folder.
@@ -196,7 +203,8 @@ GIT_EXTERN(void) git_repository_free(git_repository *repo);
  *
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_repository_init(
+GIT_EXTERN(int)
+git_repository_init(
 	git_repository **out,
 	const char *path,
 	unsigned is_bare);
@@ -230,13 +238,13 @@ GIT_EXTERN(int) git_repository_init(
  *        specified, use relative paths for the gitdir and core.worktree.
  */
 typedef enum {
-	GIT_REPOSITORY_INIT_BARE              = (1u << 0),
-	GIT_REPOSITORY_INIT_NO_REINIT         = (1u << 1),
-	GIT_REPOSITORY_INIT_NO_DOTGIT_DIR     = (1u << 2),
-	GIT_REPOSITORY_INIT_MKDIR             = (1u << 3),
-	GIT_REPOSITORY_INIT_MKPATH            = (1u << 4),
+	GIT_REPOSITORY_INIT_BARE = (1u << 0),
+	GIT_REPOSITORY_INIT_NO_REINIT = (1u << 1),
+	GIT_REPOSITORY_INIT_NO_DOTGIT_DIR = (1u << 2),
+	GIT_REPOSITORY_INIT_MKDIR = (1u << 3),
+	GIT_REPOSITORY_INIT_MKPATH = (1u << 4),
 	GIT_REPOSITORY_INIT_EXTERNAL_TEMPLATE = (1u << 5),
-	GIT_REPOSITORY_INIT_RELATIVE_GITLINK  = (1u << 6),
+	GIT_REPOSITORY_INIT_RELATIVE_GITLINK = (1u << 6),
 } git_repository_init_flag_t;
 
 /**
@@ -255,7 +263,7 @@ typedef enum {
 typedef enum {
 	GIT_REPOSITORY_INIT_SHARED_UMASK = 0,
 	GIT_REPOSITORY_INIT_SHARED_GROUP = 0002775,
-	GIT_REPOSITORY_INIT_SHARED_ALL   = 0002777,
+	GIT_REPOSITORY_INIT_SHARED_ALL = 0002777,
 } git_repository_init_mode_t;
 
 /**
@@ -288,8 +296,8 @@ typedef enum {
  */
 typedef struct {
 	unsigned int version;
-	uint32_t    flags;
-	uint32_t    mode;
+	uint32_t flags;
+	uint32_t mode;
 	const char *workdir_path;
 	const char *description;
 	const char *template_path;
@@ -298,7 +306,10 @@ typedef struct {
 } git_repository_init_options;
 
 #define GIT_REPOSITORY_INIT_OPTIONS_VERSION 1
-#define GIT_REPOSITORY_INIT_OPTIONS_INIT {GIT_REPOSITORY_INIT_OPTIONS_VERSION}
+#define GIT_REPOSITORY_INIT_OPTIONS_INIT \
+	{ \
+		GIT_REPOSITORY_INIT_OPTIONS_VERSION \
+	}
 
 /**
  * Initialize git_repository_init_options structure
@@ -310,7 +321,8 @@ typedef struct {
  * @param version The struct version; pass `GIT_REPOSITORY_INIT_OPTIONS_VERSION`.
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_repository_init_init_options(
+GIT_EXTERN(int)
+git_repository_init_init_options(
 	git_repository_init_options *opts,
 	unsigned int version);
 
@@ -327,7 +339,8 @@ GIT_EXTERN(int) git_repository_init_init_options(
  * @param opts Pointer to git_repository_init_options struct.
  * @return 0 or an error code on failure.
  */
-GIT_EXTERN(int) git_repository_init_ext(
+GIT_EXTERN(int)
+git_repository_init_ext(
 	git_repository **out,
 	const char *repo_path,
 	git_repository_init_options *opts);
@@ -345,7 +358,8 @@ GIT_EXTERN(int) git_repository_init_ext(
  * @return 0 on success, GIT_EUNBORNBRANCH when HEAD points to a non existing
  * branch, GIT_ENOTFOUND when HEAD is missing; an error code otherwise
  */
-GIT_EXTERN(int) git_repository_head(git_reference **out, git_repository *repo);
+GIT_EXTERN(int)
+git_repository_head(git_reference **out, git_repository *repo);
 
 /**
  * Retrieve the referenced HEAD for the worktree
@@ -355,7 +369,8 @@ GIT_EXTERN(int) git_repository_head(git_reference **out, git_repository *repo);
  * @param name name of the worktree to retrieve HEAD for
  * @return 0 when successful, error-code otherwise
  */
-GIT_EXTERN(int) git_repository_head_for_worktree(git_reference **out, git_repository *repo,
+GIT_EXTERN(int)
+git_repository_head_for_worktree(git_reference **out, git_repository *repo,
 	const char *name);
 
 /**
@@ -368,7 +383,8 @@ GIT_EXTERN(int) git_repository_head_for_worktree(git_reference **out, git_reposi
  * @return 1 if HEAD is detached, 0 if it's not; error code if there
  * was an error.
  */
-GIT_EXTERN(int) git_repository_head_detached(git_repository *repo);
+GIT_EXTERN(int)
+git_repository_head_detached(git_repository *repo);
 
 /**
  * Check if a worktree's HEAD is detached
@@ -381,7 +397,8 @@ GIT_EXTERN(int) git_repository_head_detached(git_repository *repo);
  * @return 1 if HEAD is detached, 0 if its not; error code if
  *  there was an error
  */
-GIT_EXTERN(int) git_repository_head_detached_for_worktree(git_repository *repo,
+GIT_EXTERN(int)
+git_repository_head_detached_for_worktree(git_repository *repo,
 	const char *name);
 
 /**
@@ -394,7 +411,8 @@ GIT_EXTERN(int) git_repository_head_detached_for_worktree(git_repository *repo,
  * @return 1 if the current branch is unborn, 0 if it's not; error
  * code if there was an error
  */
-GIT_EXTERN(int) git_repository_head_unborn(git_repository *repo);
+GIT_EXTERN(int)
+git_repository_head_unborn(git_repository *repo);
 
 /**
  * Check if a repository is empty
@@ -406,7 +424,8 @@ GIT_EXTERN(int) git_repository_head_unborn(git_repository *repo);
  * @return 1 if the repository is empty, 0 if it isn't, error code
  * if the repository is corrupted
  */
-GIT_EXTERN(int) git_repository_is_empty(git_repository *repo);
+GIT_EXTERN(int)
+git_repository_is_empty(git_repository *repo);
 
 /**
  * List of items which belong to the git repository layout
@@ -442,7 +461,8 @@ typedef enum {
  * @param item The repository item for which to retrieve the path
  * @return 0, GIT_ENOTFOUND if the path cannot exist or an error code
  */
-GIT_EXTERN(int) git_repository_item_path(git_buf *out, const git_repository *repo, git_repository_item_t item);
+GIT_EXTERN(int)
+git_repository_item_path(git_buf *out, const git_repository *repo, git_repository_item_t item);
 
 /**
  * Get the path of this repository
@@ -453,7 +473,8 @@ GIT_EXTERN(int) git_repository_item_path(git_buf *out, const git_repository *rep
  * @param repo A repository object
  * @return the path to the repository
  */
-GIT_EXTERN(const char *) git_repository_path(const git_repository *repo);
+GIT_EXTERN(const char *)
+git_repository_path(const git_repository *repo);
 
 /**
  * Get the path of the working directory for this repository
@@ -464,7 +485,8 @@ GIT_EXTERN(const char *) git_repository_path(const git_repository *repo);
  * @param repo A repository object
  * @return the path to the working dir, if it exists
  */
-GIT_EXTERN(const char *) git_repository_workdir(const git_repository *repo);
+GIT_EXTERN(const char *)
+git_repository_workdir(const git_repository *repo);
 
 /**
  * Get the path of the shared common directory for this repository
@@ -475,7 +497,8 @@ GIT_EXTERN(const char *) git_repository_workdir(const git_repository *repo);
  * @param repo A repository object
  * @return the path to the common dir
  */
-GIT_EXTERN(const char *) git_repository_commondir(const git_repository *repo);
+GIT_EXTERN(const char *)
+git_repository_commondir(const git_repository *repo);
 
 /**
  * Set the path to the working directory for this repository
@@ -494,7 +517,8 @@ GIT_EXTERN(const char *) git_repository_commondir(const git_repository *repo);
  *        "core.worktree" (if workdir is not the parent of the .git directory)
  * @return 0, or an error code
  */
-GIT_EXTERN(int) git_repository_set_workdir(
+GIT_EXTERN(int)
+git_repository_set_workdir(
 	git_repository *repo, const char *workdir, int update_gitlink);
 
 /**
@@ -503,7 +527,8 @@ GIT_EXTERN(int) git_repository_set_workdir(
  * @param repo Repo to test
  * @return 1 if the repository is bare, 0 otherwise.
  */
-GIT_EXTERN(int) git_repository_is_bare(const git_repository *repo);
+GIT_EXTERN(int)
+git_repository_is_bare(const git_repository *repo);
 
 /**
  * Check if a repository is a linked work tree
@@ -511,7 +536,8 @@ GIT_EXTERN(int) git_repository_is_bare(const git_repository *repo);
  * @param repo Repo to test
  * @return 1 if the repository is a linked work tree, 0 otherwise.
  */
-GIT_EXTERN(int) git_repository_is_worktree(const git_repository *repo);
+GIT_EXTERN(int)
+git_repository_is_worktree(const git_repository *repo);
 
 /**
  * Get the configuration file for this repository.
@@ -527,7 +553,8 @@ GIT_EXTERN(int) git_repository_is_worktree(const git_repository *repo);
  * @param repo A repository object
  * @return 0, or an error code
  */
-GIT_EXTERN(int) git_repository_config(git_config **out, git_repository *repo);
+GIT_EXTERN(int)
+git_repository_config(git_config **out, git_repository *repo);
 
 /**
  * Get a snapshot of the repository's configuration
@@ -543,7 +570,8 @@ GIT_EXTERN(int) git_repository_config(git_config **out, git_repository *repo);
  * @param repo the repository
  * @return 0, or an error code
  */
-GIT_EXTERN(int) git_repository_config_snapshot(git_config **out, git_repository *repo);
+GIT_EXTERN(int)
+git_repository_config_snapshot(git_config **out, git_repository *repo);
 
 /**
  * Get the Object Database for this repository.
@@ -559,7 +587,8 @@ GIT_EXTERN(int) git_repository_config_snapshot(git_config **out, git_repository 
  * @param repo A repository object
  * @return 0, or an error code
  */
-GIT_EXTERN(int) git_repository_odb(git_odb **out, git_repository *repo);
+GIT_EXTERN(int)
+git_repository_odb(git_odb **out, git_repository *repo);
 
 /**
  * Get the Reference Database Backend for this repository.
@@ -575,7 +604,8 @@ GIT_EXTERN(int) git_repository_odb(git_odb **out, git_repository *repo);
  * @param repo A repository object
  * @return 0, or an error code
  */
-GIT_EXTERN(int) git_repository_refdb(git_refdb **out, git_repository *repo);
+GIT_EXTERN(int)
+git_repository_refdb(git_refdb **out, git_repository *repo);
 
 /**
  * Get the Index file for this repository.
@@ -591,7 +621,8 @@ GIT_EXTERN(int) git_repository_refdb(git_refdb **out, git_repository *repo);
  * @param repo A repository object
  * @return 0, or an error code
  */
-GIT_EXTERN(int) git_repository_index(git_index **out, git_repository *repo);
+GIT_EXTERN(int)
+git_repository_index(git_index **out, git_repository *repo);
 
 /**
  * Retrieve git's prepared message
@@ -609,14 +640,16 @@ GIT_EXTERN(int) git_repository_index(git_index **out, git_repository *repo);
  * @param repo Repository to read prepared message from
  * @return 0, GIT_ENOTFOUND if no message exists or an error code
  */
-GIT_EXTERN(int) git_repository_message(git_buf *out, git_repository *repo);
+GIT_EXTERN(int)
+git_repository_message(git_buf *out, git_repository *repo);
 
 /**
  * Remove git's prepared message.
  *
  * Remove the message that `git_repository_message` retrieves.
  */
-GIT_EXTERN(int) git_repository_message_remove(git_repository *repo);
+GIT_EXTERN(int)
+git_repository_message_remove(git_repository *repo);
 
 /**
  * Remove all the metadata associated with an ongoing command like merge,
@@ -625,7 +658,8 @@ GIT_EXTERN(int) git_repository_message_remove(git_repository *repo);
  * @param repo A repository object
  * @return 0 on success, or error
  */
-GIT_EXTERN(int) git_repository_state_cleanup(git_repository *repo);
+GIT_EXTERN(int)
+git_repository_state_cleanup(git_repository *repo);
 
 typedef int (*git_repository_fetchhead_foreach_cb)(const char *ref_name,
 	const char *remote_url,
@@ -644,7 +678,8 @@ typedef int (*git_repository_fetchhead_foreach_cb)(const char *ref_name,
  * @return 0 on success, non-zero callback return value, GIT_ENOTFOUND if
  *         there is no FETCH_HEAD file, or other error code.
  */
-GIT_EXTERN(int) git_repository_fetchhead_foreach(
+GIT_EXTERN(int)
+git_repository_fetchhead_foreach(
 	git_repository *repo,
 	git_repository_fetchhead_foreach_cb callback,
 	void *payload);
@@ -664,7 +699,8 @@ typedef int (*git_repository_mergehead_foreach_cb)(const git_oid *oid,
  * @return 0 on success, non-zero callback return value, GIT_ENOTFOUND if
  *         there is no MERGE_HEAD file, or other error code.
  */
-GIT_EXTERN(int) git_repository_mergehead_foreach(
+GIT_EXTERN(int)
+git_repository_mergehead_foreach(
 	git_repository *repo,
 	git_repository_mergehead_foreach_cb callback,
 	void *payload);
@@ -692,7 +728,8 @@ GIT_EXTERN(int) git_repository_mergehead_foreach(
  *             applied when calculating the hash.
  * @return 0 on success, or an error code
  */
-GIT_EXTERN(int) git_repository_hashfile(
+GIT_EXTERN(int)
+git_repository_hashfile(
 	git_oid *out,
 	git_repository *repo,
 	const char *path,
@@ -717,9 +754,10 @@ GIT_EXTERN(int) git_repository_hashfile(
  * @param refname Canonical name of the reference the HEAD should point at
  * @return 0 on success, or an error code
  */
-GIT_EXTERN(int) git_repository_set_head(
-	git_repository* repo,
-	const char* refname);
+GIT_EXTERN(int)
+git_repository_set_head(
+	git_repository *repo,
+	const char *refname);
 
 /**
  * Make the repository HEAD directly point to the Commit.
@@ -737,9 +775,10 @@ GIT_EXTERN(int) git_repository_set_head(
  * @param commitish Object id of the Commit the HEAD should point to
  * @return 0 on success, or an error code
  */
-GIT_EXTERN(int) git_repository_set_head_detached(
-	git_repository* repo,
-	const git_oid* commitish);
+GIT_EXTERN(int)
+git_repository_set_head_detached(
+	git_repository *repo,
+	const git_oid *commitish);
 
 /**
  * Make the repository HEAD directly point to the Commit.
@@ -753,7 +792,8 @@ GIT_EXTERN(int) git_repository_set_head_detached(
  *
  * @see git_repository_set_head_detached
  */
-GIT_EXTERN(int) git_repository_set_head_detached_from_annotated(
+GIT_EXTERN(int)
+git_repository_set_head_detached_from_annotated(
 	git_repository *repo,
 	const git_annotated_commit *commitish);
 
@@ -774,8 +814,9 @@ GIT_EXTERN(int) git_repository_set_head_detached_from_annotated(
  * @return 0 on success, GIT_EUNBORNBRANCH when HEAD points to a non existing
  * branch or an error code
  */
-GIT_EXTERN(int) git_repository_detach_head(
-	git_repository* repo);
+GIT_EXTERN(int)
+git_repository_detach_head(
+	git_repository *repo);
 
 /**
  * Repository state
@@ -805,7 +846,8 @@ typedef enum {
  * @param repo Repository pointer
  * @return The state of the repository
  */
-GIT_EXTERN(int) git_repository_state(git_repository *repo);
+GIT_EXTERN(int)
+git_repository_state(git_repository *repo);
 
 /**
  * Sets the active namespace for this Git Repository
@@ -819,7 +861,8 @@ GIT_EXTERN(int) git_repository_state(git_repository *repo);
  *	use `foo` as the namespace.
  *	@return 0 on success, -1 on error
  */
-GIT_EXTERN(int) git_repository_set_namespace(git_repository *repo, const char *nmspace);
+GIT_EXTERN(int)
+git_repository_set_namespace(git_repository *repo, const char *nmspace);
 
 /**
  * Get the currently active namespace for this repository
@@ -827,7 +870,8 @@ GIT_EXTERN(int) git_repository_set_namespace(git_repository *repo, const char *n
  * @param repo The repo
  * @return the active namespace, or NULL if there isn't one
  */
-GIT_EXTERN(const char *) git_repository_get_namespace(git_repository *repo);
+GIT_EXTERN(const char *)
+git_repository_get_namespace(git_repository *repo);
 
 
 /**
@@ -836,7 +880,8 @@ GIT_EXTERN(const char *) git_repository_get_namespace(git_repository *repo);
  * @param repo The repository
  * @return 1 if shallow, zero if not
  */
-GIT_EXTERN(int) git_repository_is_shallow(git_repository *repo);
+GIT_EXTERN(int)
+git_repository_is_shallow(git_repository *repo);
 
 /**
  * Retrieve the configured identity to use for reflogs
@@ -848,7 +893,8 @@ GIT_EXTERN(int) git_repository_is_shallow(git_repository *repo);
  * @param email where to store the pointer to the email
  * @param repo the repository
  */
-GIT_EXTERN(int) git_repository_ident(const char **name, const char **email, const git_repository *repo);
+GIT_EXTERN(int)
+git_repository_ident(const char **name, const char **email, const git_repository *repo);
 
 /**
  * Set the identity to be used for writing reflogs
@@ -861,7 +907,8 @@ GIT_EXTERN(int) git_repository_ident(const char **name, const char **email, cons
  * @param name the name to use for the reflog entries
  * @param email the email to use for the reflog entries
  */
-GIT_EXTERN(int) git_repository_set_ident(git_repository *repo, const char *name, const char *email);
+GIT_EXTERN(int)
+git_repository_set_ident(git_repository *repo, const char *name, const char *email);
 
 /** @} */
 GIT_END_DECL

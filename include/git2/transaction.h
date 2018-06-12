@@ -29,7 +29,8 @@ GIT_BEGIN_DECL
  * @param repo the repository in which to lock
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_transaction_new(git_transaction **out, git_repository *repo);
+GIT_EXTERN(int)
+git_transaction_new(git_transaction **out, git_repository *repo);
 
 /**
  * Lock a reference
@@ -41,7 +42,8 @@ GIT_EXTERN(int) git_transaction_new(git_transaction **out, git_repository *repo)
  * @param refname the reference to lock
  * @return 0 or an error message
  */
-GIT_EXTERN(int) git_transaction_lock_ref(git_transaction *tx, const char *refname);
+GIT_EXTERN(int)
+git_transaction_lock_ref(git_transaction *tx, const char *refname);
 
 /**
  * Set the target of a reference
@@ -56,7 +58,8 @@ GIT_EXTERN(int) git_transaction_lock_ref(git_transaction *tx, const char *refnam
  * @param msg message to use in the reflog
  * @return 0, GIT_ENOTFOUND if the reference is not among the locked ones, or an error code
  */
-GIT_EXTERN(int) git_transaction_set_target(git_transaction *tx, const char *refname, const git_oid *target, const git_signature *sig, const char *msg);
+GIT_EXTERN(int)
+git_transaction_set_target(git_transaction *tx, const char *refname, const git_oid *target, const git_signature *sig, const char *msg);
 
 /**
  * Set the target of a reference
@@ -71,7 +74,8 @@ GIT_EXTERN(int) git_transaction_set_target(git_transaction *tx, const char *refn
  * @param msg message to use in the reflog
  * @return 0, GIT_ENOTFOUND if the reference is not among the locked ones, or an error code
  */
-GIT_EXTERN(int) git_transaction_set_symbolic_target(git_transaction *tx, const char *refname, const char *target, const git_signature *sig, const char *msg);
+GIT_EXTERN(int)
+git_transaction_set_symbolic_target(git_transaction *tx, const char *refname, const char *target, const git_signature *sig, const char *msg);
 
 /**
  * Set the reflog of a reference
@@ -84,7 +88,8 @@ GIT_EXTERN(int) git_transaction_set_symbolic_target(git_transaction *tx, const c
  * @param reflog the reflog as it should be written out
  * @return 0, GIT_ENOTFOUND if the reference is not among the locked ones, or an error code
  */
-GIT_EXTERN(int) git_transaction_set_reflog(git_transaction *tx, const char *refname, const git_reflog *reflog);
+GIT_EXTERN(int)
+git_transaction_set_reflog(git_transaction *tx, const char *refname, const git_reflog *reflog);
 
 /**
  * Remove a reference
@@ -93,7 +98,8 @@ GIT_EXTERN(int) git_transaction_set_reflog(git_transaction *tx, const char *refn
  * @param refname the reference to remove
  * @return 0, GIT_ENOTFOUND if the reference is not among the locked ones, or an error code
  */
-GIT_EXTERN(int) git_transaction_remove(git_transaction *tx, const char *refname);
+GIT_EXTERN(int)
+git_transaction_remove(git_transaction *tx, const char *refname);
 
 /**
  * Commit the changes from the transaction
@@ -104,7 +110,8 @@ GIT_EXTERN(int) git_transaction_remove(git_transaction *tx, const char *refname)
  * @param tx the transaction
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_transaction_commit(git_transaction *tx);
+GIT_EXTERN(int)
+git_transaction_commit(git_transaction *tx);
 
 /**
  * Free the resources allocated by this transaction
@@ -114,7 +121,8 @@ GIT_EXTERN(int) git_transaction_commit(git_transaction *tx);
  *
  * @param tx the transaction
  */
-GIT_EXTERN(void) git_transaction_free(git_transaction *tx);
+GIT_EXTERN(void)
+git_transaction_free(git_transaction *tx);
 
 /** @} */
 GIT_END_DECL

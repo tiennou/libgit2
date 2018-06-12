@@ -10,7 +10,8 @@
 #include "../buffer.h"
 #include "utf-conv.h"
 
-GIT_INLINE(int) handle_wc_error(void)
+GIT_INLINE(int)
+handle_wc_error(void)
 {
 	if (GetLastError() == ERROR_INSUFFICIENT_BUFFER)
 		errno = ENAMETOOLONG;
@@ -43,7 +44,7 @@ int git_buf_put_w(git_buf *buf, const wchar_t *string_w, size_t len_w)
 		return -1;
 
 	if ((utf8_write_len = WideCharToMultiByte(
-			CP_UTF8, WC_ERR_INVALID_CHARS, string_w, len_w, &buf->ptr[buf->size], utf8_len, NULL, NULL)) == 0)
+			 CP_UTF8, WC_ERR_INVALID_CHARS, string_w, len_w, &buf->ptr[buf->size], utf8_len, NULL, NULL)) == 0)
 		return handle_wc_error();
 
 	assert(utf8_write_len == utf8_len);

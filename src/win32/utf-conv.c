@@ -7,7 +7,8 @@
 
 #include "utf-conv.h"
 
-GIT_INLINE(void) git__set_errno(void)
+GIT_INLINE(void)
+git__set_errno(void)
 {
 	if (GetLastError() == ERROR_INSUFFICIENT_BUFFER)
 		errno = ENAMETOOLONG;

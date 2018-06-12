@@ -20,13 +20,13 @@
 #include "git2/sys/openssl.h"
 
 #ifdef GIT_CURL
-# include "streams/curl.h"
+#include "streams/curl.h"
 #endif
 
 #ifndef GIT_WIN32
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <netinet/in.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 #endif
 
 #include <openssl/ssl.h>
@@ -39,8 +39,8 @@ SSL_CTX *git__ssl_ctx;
 #define GIT_SSL_DEFAULT_CIPHERS "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-DSS-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA:DHE-DSS-AES128-SHA256:DHE-DSS-AES256-SHA256:DHE-DSS-AES128-SHA:DHE-DSS-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA"
 
 #if (defined(OPENSSL_VERSION_NUMBER) && OPENSSL_VERSION_NUMBER < 0x10100000L) || \
-     (defined(LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x20700000L)
-# define OPENSSL_LEGACY_API
+	(defined(LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x20700000L)
+#define OPENSSL_LEGACY_API
 #endif
 
 /*
@@ -59,7 +59,7 @@ static int OPENSSL_init_ssl(int opts, void *settings)
 	return 0;
 }
 
-static BIO_METHOD* BIO_meth_new(int type, const char *name)
+static BIO_METHOD *BIO_meth_new(int type, const char *name)
 {
 	BIO_METHOD *meth = git__calloc(1, sizeof(BIO_METHOD));
 	if (!meth) {
@@ -77,44 +77,44 @@ static void BIO_meth_free(BIO_METHOD *biom)
 	git__free(biom);
 }
 
-static int BIO_meth_set_write(BIO_METHOD *biom, int (*write) (BIO *, const char *, int))
+static int BIO_meth_set_write(BIO_METHOD *biom, int (*write)(BIO *, const char *, int))
 {
 	biom->bwrite = write;
 	return 1;
 }
 
-static int BIO_meth_set_read(BIO_METHOD *biom, int (*read) (BIO *, char *, int))
+static int BIO_meth_set_read(BIO_METHOD *biom, int (*read)(BIO *, char *, int))
 {
 	biom->bread = read;
 	return 1;
 }
 
-static int BIO_meth_set_puts(BIO_METHOD *biom, int (*puts) (BIO *, const char *))
+static int BIO_meth_set_puts(BIO_METHOD *biom, int (*puts)(BIO *, const char *))
 {
 	biom->bputs = puts;
 	return 1;
 }
 
-static int BIO_meth_set_gets(BIO_METHOD *biom, int (*gets) (BIO *, char *, int))
+static int BIO_meth_set_gets(BIO_METHOD *biom, int (*gets)(BIO *, char *, int))
 
 {
 	biom->bgets = gets;
 	return 1;
 }
 
-static int BIO_meth_set_ctrl(BIO_METHOD *biom, long (*ctrl) (BIO *, int, long, void *))
+static int BIO_meth_set_ctrl(BIO_METHOD *biom, long (*ctrl)(BIO *, int, long, void *))
 {
 	biom->ctrl = ctrl;
 	return 1;
 }
 
-static int BIO_meth_set_create(BIO_METHOD *biom, int (*create) (BIO *))
+static int BIO_meth_set_create(BIO_METHOD *biom, int (*create)(BIO *))
 {
 	biom->create = create;
 	return 1;
 }
 
-static int BIO_meth_set_destroy(BIO_METHOD *biom, int (*destroy) (BIO *))
+static int BIO_meth_set_destroy(BIO_METHOD *biom, int (*destroy)(BIO *))
 {
 	biom->destroy = destroy;
 	return 1;
@@ -146,7 +146,7 @@ static const unsigned char *ASN1_STRING_get0_data(const ASN1_STRING *x)
 	return ASN1_STRING_data((ASN1_STRING *)x);
 }
 
-# if defined(GIT_THREADS)
+#if defined(GIT_THREADS)
 static git_mutex *openssl_locks;
 
 static void openssl_locking_function(
@@ -177,7 +177,7 @@ static void shutdown_ssl_locking(void)
 		git_mutex_free(&openssl_locks[i]);
 	git__free(openssl_locks);
 }
-# endif /* GIT_THREADS */
+#endif /* GIT_THREADS */
 #endif /* OPENSSL_LEGACY_API */
 
 static BIO_METHOD *git_stream_bio_method;
@@ -232,7 +232,7 @@ int git_openssl_stream_global_init(void)
 		ciphers = GIT_SSL_DEFAULT_CIPHERS;
 	}
 
-	if(!SSL_CTX_set_cipher_list(git__ssl_ctx, ciphers)) {
+	if (!SSL_CTX_set_cipher_list(git__ssl_ctx, ciphers)) {
 		SSL_CTX_free(git__ssl_ctx);
 		git__ssl_ctx = NULL;
 		return -1;
@@ -307,16 +307,16 @@ static int bio_destroy(BIO *b)
 
 static int bio_read(BIO *b, char *buf, int len)
 {
-	git_stream *io = (git_stream *) BIO_get_data(b);
+	git_stream *io = (git_stream *)BIO_get_data(b);
 
-	return (int) git_stream_read(io, buf, len);
+	return (int)git_stream_read(io, buf, len);
 }
 
 static int bio_write(BIO *b, const char *buf, int len)
 {
-	git_stream *io = (git_stream *) BIO_get_data(b);
+	git_stream *io = (git_stream *)BIO_get_data(b);
 
-	return (int) git_stream_write(io, buf, len, 0);
+	return (int)git_stream_write(io, buf, len, 0);
 }
 
 static long bio_ctrl(BIO *b, int cmd, long num, void *ptr)
@@ -393,8 +393,7 @@ static int ssl_set_error(SSL *ssl, int error)
 		giterr_set(GITERR_NET, "SSL error: received early EOF");
 		return GIT_EEOF;
 		break;
-	case SSL_ERROR_SSL:
-	{
+	case SSL_ERROR_SSL: {
 		char errmsg[256];
 		e = ERR_get_error();
 		ERR_error_string_n(e, errmsg, sizeof(errmsg));
@@ -479,8 +478,8 @@ static int verify_server_cert(SSL *ssl, const char *host)
 		num = sk_GENERAL_NAME_num(alts);
 		for (i = 0; i < num && matched != 1; i++) {
 			const GENERAL_NAME *gn = sk_GENERAL_NAME_value(alts, i);
-			const char *name = (char *) ASN1_STRING_get0_data(gn->d.ia5);
-			size_t namelen = (size_t) ASN1_STRING_length(gn->d.ia5);
+			const char *name = (char *)ASN1_STRING_get0_data(gn->d.ia5);
+			size_t namelen = (size_t)ASN1_STRING_length(gn->d.ia5);
 
 			/* Skip any names of a type we're not looking for */
 			if (gn->type != type)
@@ -582,7 +581,7 @@ int openssl_connect(git_stream *stream)
 {
 	int ret;
 	BIO *bio;
-	openssl_stream *st = (openssl_stream *) stream;
+	openssl_stream *st = (openssl_stream *)stream;
 
 	if ((ret = git_stream_connect(st->io)) < 0)
 		return ret;
@@ -608,7 +607,7 @@ int openssl_connect(git_stream *stream)
 
 int openssl_certificate(git_cert **out, git_stream *stream)
 {
-	openssl_stream *st = (openssl_stream *) stream;
+	openssl_stream *st = (openssl_stream *)stream;
 	int len;
 	X509 *cert = SSL_get_peer_certificate(st->ssl);
 	unsigned char *guard, *encoded_cert;
@@ -643,14 +642,14 @@ int openssl_certificate(git_cert **out, git_stream *stream)
 
 static int openssl_set_proxy(git_stream *stream, const git_proxy_options *proxy_opts)
 {
-	openssl_stream *st = (openssl_stream *) stream;
+	openssl_stream *st = (openssl_stream *)stream;
 
 	return git_stream_set_proxy(st->io, proxy_opts);
 }
 
 ssize_t openssl_write(git_stream *stream, const char *data, size_t len, int flags)
 {
-	openssl_stream *st = (openssl_stream *) stream;
+	openssl_stream *st = (openssl_stream *)stream;
 	int ret;
 
 	GIT_UNUSED(flags);
@@ -664,7 +663,7 @@ ssize_t openssl_write(git_stream *stream, const char *data, size_t len, int flag
 
 ssize_t openssl_read(git_stream *stream, void *data, size_t len)
 {
-	openssl_stream *st = (openssl_stream *) stream;
+	openssl_stream *st = (openssl_stream *)stream;
 	int ret;
 
 	if ((ret = SSL_read(st->ssl, data, len)) <= 0)
@@ -675,7 +674,7 @@ ssize_t openssl_read(git_stream *stream, void *data, size_t len)
 
 int openssl_close(git_stream *stream)
 {
-	openssl_stream *st = (openssl_stream *) stream;
+	openssl_stream *st = (openssl_stream *)stream;
 	int ret;
 
 	if (st->connected && (ret = ssl_teardown(st->ssl)) < 0)
@@ -688,7 +687,7 @@ int openssl_close(git_stream *stream)
 
 void openssl_free(git_stream *stream)
 {
-	openssl_stream *st = (openssl_stream *) stream;
+	openssl_stream *st = (openssl_stream *)stream;
 
 	SSL_free(st->ssl);
 	git__free(st->host);
@@ -736,7 +735,7 @@ int git_openssl_stream_new(git_stream **out, const char *host, const char *port)
 	st->parent.close = openssl_close;
 	st->parent.free = openssl_free;
 
-	*out = (git_stream *) st;
+	*out = (git_stream *)st;
 	return 0;
 
 out_err:

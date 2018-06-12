@@ -35,14 +35,15 @@ GIT_BEGIN_DECL
  *
  * @return 0 or an error code.
  */
-GIT_EXTERN(int) git_message_prettify(git_buf *out, const char *message, int strip_comments, char comment_char);
+GIT_EXTERN(int)
+git_message_prettify(git_buf *out, const char *message, int strip_comments, char comment_char);
 
 /**
  * Represents a single git message trailer.
  */
 typedef struct {
-  const char *key;
-  const char *value;
+	const char *key;
+	const char *value;
 } git_message_trailer;
 
 /**
@@ -52,11 +53,11 @@ typedef struct {
  * and should not be used by callers.
  */
 typedef struct {
-  git_message_trailer *trailers;
-  size_t count;
+	git_message_trailer *trailers;
+	size_t count;
 
-  /* private */
-  char *_trailer_block;
+	/* private */
+	char *_trailer_block;
 } git_message_trailer_array;
 
 /**
@@ -70,13 +71,15 @@ typedef struct {
  * @param message The message to be parsed
  * @return 0 on success, or non-zero on error.
  */
-GIT_EXTERN(int) git_message_trailers(git_message_trailer_array *arr, const char *message);
+GIT_EXTERN(int)
+git_message_trailers(git_message_trailer_array *arr, const char *message);
 
 /**
  * Clean's up any allocated memory in the git_message_trailer_array filled by
  * a call to git_message_trailers.
  */
-GIT_EXTERN(void) git_message_trailer_array_free(git_message_trailer_array *arr);
+GIT_EXTERN(void)
+git_message_trailer_array_free(git_message_trailer_array *arr);
 
 /** @} */
 GIT_END_DECL

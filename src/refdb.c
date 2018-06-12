@@ -204,7 +204,7 @@ int git_refdb_delete(struct git_refdb *db, const char *ref_name, const git_oid *
 	return db->backend->del(db->backend, ref_name, old_id, old_target);
 }
 
-int git_refdb_reflog_read(git_reflog **out, git_refdb *db,  const char *name)
+int git_refdb_reflog_read(git_reflog **out, git_refdb *db, const char *name)
 {
 	int error;
 

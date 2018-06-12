@@ -119,4 +119,3 @@ int git__closedir(git__DIR *d)
 	git__free(d);
 	return 0;
 }
-

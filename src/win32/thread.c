@@ -11,7 +11,7 @@
 
 #define CLEAN_THREAD_EXIT 0x6F012842
 
-typedef void (WINAPI *win32_srwlock_fn)(GIT_SRWLOCK *);
+typedef void(WINAPI *win32_srwlock_fn)(GIT_SRWLOCK *);
 
 static win32_srwlock_fn win32_srwlock_initialize;
 static win32_srwlock_fn win32_srwlock_acquire_shared;
@@ -59,7 +59,7 @@ int git_threads_init(void)
 
 int git_thread_create(
 	git_thread *GIT_RESTRICT thread,
-	void *(*start_routine)(void*),
+	void *(*start_routine)(void *),
 	void *GIT_RESTRICT arg)
 {
 	thread->result = NULL;

@@ -69,4 +69,3 @@ int git_http_auth_dummy(
 	*out = NULL;
 	return 0;
 }
-

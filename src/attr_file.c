@@ -44,7 +44,7 @@ int git_attr_file__new(
 
 	git_pool_init(&attrs->pool, 1);
 	GIT_REFCOUNT_INC(attrs);
-	attrs->entry  = entry;
+	attrs->entry = entry;
 	attrs->source = source;
 	*out = attrs;
 	return 0;
@@ -212,7 +212,7 @@ int git_attr_file__out_of_date(
 		git_oid id;
 
 		if ((error = attr_file_oid_from_index(
-				&id, repo, file->entry->path)) < 0)
+				 &id, repo, file->entry->path)) < 0)
 			return error;
 
 		return (git_oid__cmp(&file->cache_data.oid, &id) != 0);
@@ -261,10 +261,9 @@ int git_attr_file__parse_buffer(
 
 		/* parse the next "pattern attr attr attr" line */
 		if (!(error = git_attr_fnmatch__parse(
-				&rule->match, &attrs->pool, context, &scan)) &&
+				  &rule->match, &attrs->pool, context, &scan)) &&
 			!(error = git_attr_assignment__parse(
-				repo, &attrs->pool, &rule->assigns, &scan)))
-		{
+				  repo, &attrs->pool, &rule->assigns, &scan))) {
 			if (rule->match.flags & GIT_ATTR_FNMATCH_MACRO)
 				/* TODO: warning if macro found in file below repo root */
 				error = git_attr_cache__insert_macro(repo, rule);
@@ -313,12 +312,14 @@ int git_attr_file__lookup_one(
 	name.name = attr;
 	name.name_hash = git_attr_file__name_hash(attr);
 
-	git_attr_file__foreach_matching_rule(file, path, i, rule) {
+	git_attr_file__foreach_matching_rule(file, path, i, rule)
+	{
 		size_t pos;
 
 		if (!git_vector_bsearch(&pos, &rule->assigns, &name)) {
 			*value = ((git_attr_assignment *)
-					  git_vector_get(&rule->assigns, pos))->value;
+						  git_vector_get(&rule->assigns, pos))
+						 ->value;
 			break;
 		}
 	}
@@ -429,8 +430,8 @@ bool git_attr_fnmatch__match(
 		size_t pathlen = strlen(relpath);
 		bool prefixed = (pathlen <= match->length) &&
 			((match->flags & GIT_ATTR_FNMATCH_ICASE) ?
-			!strncasecmp(match->pattern, relpath, pathlen) :
-			!strncmp(match->pattern, relpath, pathlen));
+					!strncasecmp(match->pattern, relpath, pathlen) :
+					!strncmp(match->pattern, relpath, pathlen));
 
 		if (prefixed && git_path_at_end_of_segment(&match->pattern[pathlen]))
 			return true;
@@ -497,8 +498,7 @@ int git_attr_path__init(
 	if (!info->basename || !*info->basename)
 		info->basename = info->path;
 
-	switch (dir_flag)
-	{
+	switch (dir_flag) {
 	case GIT_DIR_FLAG_FALSE:
 		info->is_dir = 0;
 		break;
@@ -789,7 +789,8 @@ int git_attr_assignment__parse(
 
 		/* if there is an equals sign, find the value */
 		if (*scan == '=') {
-			for (value_start = ++scan; *scan && !git__isspace(*scan); ++scan);
+			for (value_start = ++scan; *scan && !git__isspace(*scan); ++scan)
+				;
 
 			/* if we found a value, allocate permanent storage for it */
 			if (scan > value_start) {
@@ -807,7 +808,8 @@ int git_attr_assignment__parse(
 				unsigned int i;
 				git_attr_assignment *massign;
 
-				git_vector_foreach(&macro->assigns, i, massign) {
+				git_vector_foreach(&macro->assigns, i, massign)
+				{
 					GIT_REFCOUNT_INC(massign);
 
 					error = git_vector_insert_sorted(

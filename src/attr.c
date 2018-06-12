@@ -15,7 +15,7 @@
 #include "git2/oid.h"
 #include <ctype.h>
 
-const char *git_attr__true  = "[internal]__TRUE__";
+const char *git_attr__true = "[internal]__TRUE__";
 const char *git_attr__false = "[internal]__FALSE__";
 const char *git_attr__unset = "[internal]__UNSET__";
 
@@ -75,14 +75,17 @@ int git_attr_get(
 	attr.name = name;
 	attr.name_hash = git_attr_file__name_hash(name);
 
-	git_vector_foreach(&files, i, file) {
+	git_vector_foreach(&files, i, file)
+	{
 
-		git_attr_file__foreach_matching_rule(file, &path, j, rule) {
+		git_attr_file__foreach_matching_rule(file, &path, j, rule)
+		{
 			size_t pos;
 
 			if (!git_vector_bsearch(&pos, &rule->assigns, &attr)) {
 				*value = ((git_attr_assignment *)git_vector_get(
-							  &rule->assigns, pos))->value;
+							  &rule->assigns, pos))
+							 ->value;
 				goto cleanup;
 			}
 		}
@@ -137,9 +140,11 @@ int git_attr_get_many_with_session(
 	info = git__calloc(num_attr, sizeof(attr_get_many_info));
 	GITERR_CHECK_ALLOC(info);
 
-	git_vector_foreach(&files, i, file) {
+	git_vector_foreach(&files, i, file)
+	{
 
-		git_attr_file__foreach_matching_rule(file, &path, j, rule) {
+		git_attr_file__foreach_matching_rule(file, &path, j, rule)
+		{
 
 			for (k = 0; k < num_attr; k++) {
 				size_t pos;
@@ -218,11 +223,14 @@ int git_attr_foreach(
 		(error = git_strmap_alloc(&seen)) < 0)
 		goto cleanup;
 
-	git_vector_foreach(&files, i, file) {
+	git_vector_foreach(&files, i, file)
+	{
 
-		git_attr_file__foreach_matching_rule(file, &path, j, rule) {
+		git_attr_file__foreach_matching_rule(file, &path, j, rule)
+		{
 
-			git_vector_foreach(&rule->assigns, k, assign) {
+			git_vector_foreach(&rule->assigns, k, assign)
+			{
 				/* skip if higher priority assignment was already seen */
 				if (git_strmap_exists(seen, assign->name))
 					continue;
@@ -261,7 +269,7 @@ static int preload_attr_file(
 	if (!file)
 		return 0;
 	if (!(error = git_attr_cache__get(
-			&preload, repo, attr_session, source, base, file, git_attr_file__parse_buffer)))
+			  &preload, repo, attr_session, source, base, file, git_attr_file__parse_buffer)))
 		git_attr_file__free(preload);
 
 	return error;
@@ -332,27 +340,27 @@ static int attr_setup(git_repository *repo, git_attr_session *attr_session)
 		goto out;
 
 	if ((error = preload_attr_file(
-			repo, attr_session, GIT_ATTR_FILE__FROM_FILE,
-			NULL, git_repository_attr_cache(repo)->cfg_attr_file)) < 0)
+			 repo, attr_session, GIT_ATTR_FILE__FROM_FILE,
+			 NULL, git_repository_attr_cache(repo)->cfg_attr_file)) < 0)
 		goto out;
 
 	if ((error = git_repository_item_path(&path,
-			repo, GIT_REPOSITORY_ITEM_INFO)) < 0)
+			 repo, GIT_REPOSITORY_ITEM_INFO)) < 0)
 		goto out;
 
 	if ((error = preload_attr_file(
-			repo, attr_session, GIT_ATTR_FILE__FROM_FILE,
-			path.ptr, GIT_ATTR_FILE_INREPO)) < 0)
+			 repo, attr_session, GIT_ATTR_FILE__FROM_FILE,
+			 path.ptr, GIT_ATTR_FILE_INREPO)) < 0)
 		goto out;
 
 	if (workdir != NULL &&
 		(error = preload_attr_file(
-			repo, attr_session, GIT_ATTR_FILE__FROM_FILE, workdir, GIT_ATTR_FILE)) < 0)
+			 repo, attr_session, GIT_ATTR_FILE__FROM_FILE, workdir, GIT_ATTR_FILE)) < 0)
 		goto out;
 
 	if ((error = git_repository_index__weakptr(&idx, repo)) < 0 ||
 		(error = preload_attr_file(
-			repo, attr_session, GIT_ATTR_FILE__FROM_INDEX, NULL, GIT_ATTR_FILE)) < 0)
+			 repo, attr_session, GIT_ATTR_FILE__FROM_INDEX, NULL, GIT_ATTR_FILE)) < 0)
 		goto out;
 
 	if (attr_session)
@@ -480,7 +488,8 @@ static void release_attr_files(git_vector *files)
 	size_t i;
 	git_attr_file *file;
 
-	git_vector_foreach(files, i, file) {
+	git_vector_foreach(files, i, file)
+	{
 		git_attr_file__free(file);
 		files->contents[i] = NULL;
 	}
@@ -562,7 +571,7 @@ static int collect_attr_files(
 			error = 0;
 	}
 
- cleanup:
+cleanup:
 	if (error < 0)
 		release_attr_files(files);
 	git_buf_dispose(&attrfile);

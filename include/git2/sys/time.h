@@ -24,8 +24,8 @@ GIT_BEGIN_DECL
  *
  * This function cannot fail.
  */
-GIT_EXTERN(double) git_time_monotonic(void);
+GIT_EXTERN(double)
+git_time_monotonic(void);
 
 GIT_END_DECL
 #endif
-

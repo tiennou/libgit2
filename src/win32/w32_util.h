@@ -26,7 +26,8 @@
 */
 
 
-GIT_INLINE(bool) git_win32__isalpha(wchar_t c)
+GIT_INLINE(bool)
+git_win32__isalpha(wchar_t c)
 {
 	return ((c >= L'A' && c <= L'Z') || (c >= L'a' && c <= L'z'));
 }
@@ -83,7 +84,8 @@ size_t git_win32__canonicalize_path(wchar_t *str, size_t len);
  * @param FILETIME A pointer to a FILETIME
  * @param ts A pointer to the timespec structure to fill in
  */
-GIT_INLINE(void) git_win32__filetime_to_timespec(
+GIT_INLINE(void)
+git_win32__filetime_to_timespec(
 	const FILETIME *ft,
 	struct timespec *ts)
 {
@@ -97,7 +99,8 @@ GIT_INLINE(void) git_win32__filetime_to_timespec(
 #endif
 }
 
-GIT_INLINE(void) git_win32__timeval_to_filetime(
+GIT_INLINE(void)
+git_win32__timeval_to_filetime(
 	FILETIME *ft, const struct p_timeval tv)
 {
 	long long ticks = (tv.tv_sec * 10000000LL) +
@@ -107,7 +110,8 @@ GIT_INLINE(void) git_win32__timeval_to_filetime(
 	ft->dwLowDateTime = (ticks & 0xffffffffLL);
 }
 
-GIT_INLINE(void) git_win32__stat_init(
+GIT_INLINE(void)
+git_win32__stat_init(
 	struct stat *st,
 	DWORD dwFileAttributes,
 	DWORD nFileSizeHigh,
@@ -141,7 +145,8 @@ GIT_INLINE(void) git_win32__stat_init(
 	git_win32__filetime_to_timespec(&ftCreationTime, &(st->st_ctim));
 }
 
-GIT_INLINE(void) git_win32__file_information_to_stat(
+GIT_INLINE(void)
+git_win32__file_information_to_stat(
 	struct stat *st,
 	const BY_HANDLE_FILE_INFORMATION *fileinfo)
 {
@@ -154,7 +159,8 @@ GIT_INLINE(void) git_win32__file_information_to_stat(
 		fileinfo->ftLastWriteTime);
 }
 
-GIT_INLINE(int) git_win32__file_attribute_to_stat(
+GIT_INLINE(int)
+git_win32__file_attribute_to_stat(
 	struct stat *st,
 	const WIN32_FILE_ATTRIBUTE_DATA *attrdata,
 	const wchar_t *path)

@@ -50,14 +50,17 @@ GIT_BEGIN_DECL
  * those cases, the behavior will be clearly documented by the API.
  */
 typedef struct {
-	char   *ptr;
+	char *ptr;
 	size_t asize, size;
 } git_buf;
 
 /**
  * Static initializer for git_buf from static buffer
  */
-#define GIT_BUF_INIT_CONST(STR,LEN) { (char *)(STR), 0, (size_t)(LEN) }
+#define GIT_BUF_INIT_CONST(STR, LEN) \
+	{ \
+		(char *)(STR), 0, (size_t)(LEN) \
+	}
 
 /**
  * Free the memory referred to by the git_buf.
@@ -69,7 +72,8 @@ typedef struct {
  *
  * @param buffer The buffer to deallocate
  */
-GIT_EXTERN(void) git_buf_dispose(git_buf *buffer);
+GIT_EXTERN(void)
+git_buf_dispose(git_buf *buffer);
 
 /**
  * Alias of `git_buf_dispose`.
@@ -81,7 +85,9 @@ GIT_EXTERN(void) git_buf_dispose(git_buf *buffer);
  *
  * This function is going to be removed in v0.30.0.
  */
-GIT_EXTERN(void) GIT_DEPRECATED(git_buf_free)(git_buf *buffer);
+GIT_EXTERN(void)
+GIT_DEPRECATED(git_buf_free)
+(git_buf *buffer);
 
 /**
  * Resize the buffer allocation to make more space.
@@ -104,7 +110,8 @@ GIT_EXTERN(void) GIT_DEPRECATED(git_buf_free)(git_buf *buffer);
  * @param target_size The desired available size
  * @return 0 on success, -1 on allocation failure
  */
-GIT_EXTERN(int) git_buf_grow(git_buf *buffer, size_t target_size);
+GIT_EXTERN(int)
+git_buf_grow(git_buf *buffer, size_t target_size);
 
 /**
  * Set buffer to a copy of some raw data.
@@ -114,7 +121,8 @@ GIT_EXTERN(int) git_buf_grow(git_buf *buffer, size_t target_size);
  * @param datalen The length of the data to copy into the buffer
  * @return 0 on success, -1 on allocation failure
  */
-GIT_EXTERN(int) git_buf_set(
+GIT_EXTERN(int)
+git_buf_set(
 	git_buf *buffer, const void *data, size_t datalen);
 
 /**
@@ -123,7 +131,8 @@ GIT_EXTERN(int) git_buf_set(
 * @param buf Buffer to check
 * @return 1 if buffer looks like non-text data
 */
-GIT_EXTERN(int) git_buf_is_binary(const git_buf *buf);
+GIT_EXTERN(int)
+git_buf_is_binary(const git_buf *buf);
 
 /**
 * Check quickly if buffer contains a NUL byte
@@ -131,7 +140,8 @@ GIT_EXTERN(int) git_buf_is_binary(const git_buf *buf);
 * @param buf Buffer to check
 * @return 1 if buffer contains a NUL byte
 */
-GIT_EXTERN(int) git_buf_contains_nul(const git_buf *buf);
+GIT_EXTERN(int)
+git_buf_contains_nul(const git_buf *buf);
 
 GIT_END_DECL
 

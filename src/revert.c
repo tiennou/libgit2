@@ -18,7 +18,7 @@
 #include "git2/commit.h"
 #include "git2/sys/commit.h"
 
-#define GIT_REVERT_FILE_MODE		0666
+#define GIT_REVERT_FILE_MODE 0666
 
 static int write_revert_head(
 	git_repository *repo,
@@ -53,7 +53,7 @@ static int write_merge_msg(
 	if ((error = git_buf_joinpath(&file_path, repo->gitdir, GIT_MERGE_MSG_FILE)) < 0 ||
 		(error = git_filebuf_open(&file, file_path.ptr, GIT_FILEBUF_FORCE, GIT_REVERT_FILE_MODE)) < 0 ||
 		(error = git_filebuf_printf(&file, "Revert \"%s\"\n\nThis reverts commit %s.\n",
-		commit_msgline, commit_oidstr)) < 0)
+			 commit_msgline, commit_oidstr)) < 0)
 		goto cleanup;
 
 	error = git_filebuf_commit(&file);
@@ -147,7 +147,7 @@ int git_revert_commit(
 
 	if (parent &&
 		((error = git_commit_parent(&parent_commit, revert_commit, (parent - 1))) < 0 ||
-		(error = git_commit_tree(&parent_tree, parent_commit)) < 0))
+			(error = git_commit_tree(&parent_tree, parent_commit)) < 0))
 		goto done;
 
 	if ((error = git_commit_tree(&revert_tree, revert_commit)) < 0 ||

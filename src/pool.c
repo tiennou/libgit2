@@ -112,15 +112,14 @@ bool git_pool__ptr_in_pool(git_pool *pool, void *ptr)
 
 #else
 
-static int git_pool__ptr_cmp(const void * a, const void * b)
+static int git_pool__ptr_cmp(const void *a, const void *b)
 {
-	if(a > b) {
+	if (a > b) {
 		return 1;
 	}
-	if(a < b) {
+	if (a < b) {
 		return -1;
-	}
-	else {
+	} else {
 		return 0;
 	}
 }
@@ -141,9 +140,10 @@ void git_pool_clear(git_pool *pool)
 	git_vector_free_deep(&pool->allocations);
 }
 
-static void *pool_alloc(git_pool *pool, uint32_t size) {
+static void *pool_alloc(git_pool *pool, uint32_t size)
+{
 	void *ptr = NULL;
-	if((ptr = git__malloc(size)) == NULL) {
+	if ((ptr = git__malloc(size)) == NULL) {
 		return NULL;
 	}
 	git_vector_insert_sorted(&pool->allocations, ptr, NULL);

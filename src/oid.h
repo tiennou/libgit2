@@ -22,7 +22,8 @@
  */
 char *git_oid_allocfmt(const git_oid *id);
 
-GIT_INLINE(int) git_oid__hashcmp(const unsigned char *sha1, const unsigned char *sha2)
+GIT_INLINE(int)
+git_oid__hashcmp(const unsigned char *sha1, const unsigned char *sha2)
 {
 	return memcmp(sha1, sha2, GIT_OID_RAWSZ);
 }
@@ -34,12 +35,14 @@ GIT_INLINE(int) git_oid__hashcmp(const unsigned char *sha1, const unsigned char 
  * @param b second oid structure.
  * @return <0, 0, >0 if a < b, a == b, a > b.
  */
-GIT_INLINE(int) git_oid__cmp(const git_oid *a, const git_oid *b)
+GIT_INLINE(int)
+git_oid__cmp(const git_oid *a, const git_oid *b)
 {
 	return git_oid__hashcmp(a->id, b->id);
 }
 
-GIT_INLINE(void) git_oid__cpy_prefix(
+GIT_INLINE(void)
+git_oid__cpy_prefix(
 	git_oid *out, const git_oid *id, size_t len)
 {
 	memcpy(&out->id, id->id, (len + 1) / 2);

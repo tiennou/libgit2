@@ -39,7 +39,8 @@ void git_oid__writebuf(git_buf *buf, const char *header, const git_oid *oid);
 bool git_object__is_valid(
 	git_repository *repo, const git_oid *id, git_otype expected_type);
 
-GIT_INLINE(git_otype) git_object__type_from_filemode(git_filemode_t mode)
+GIT_INLINE(git_otype)
+git_object__type_from_filemode(git_filemode_t mode)
 {
 	switch (mode) {
 	case GIT_FILEMODE_TREE:

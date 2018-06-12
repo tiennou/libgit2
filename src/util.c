@@ -10,16 +10,16 @@
 #include "common.h"
 
 #ifdef GIT_WIN32
-# include "win32/utf-conv.h"
-# include "win32/w32_buffer.h"
+#include "win32/utf-conv.h"
+#include "win32/w32_buffer.h"
 
-# ifdef HAVE_QSORT_S
-#  include <search.h>
-# endif
+#ifdef HAVE_QSORT_S
+#include <search.h>
+#endif
 #endif
 
 #ifdef _MSC_VER
-# include <Shlwapi.h>
+#include <Shlwapi.h>
 #endif
 
 void git_strarray_free(git_strarray *array)
@@ -121,14 +121,14 @@ int git__strntol64(int64_t *result, const char *nptr, size_t nptr_len, const cha
 	/*
 	 * Non-empty sequence of digits
 	 */
-	for (; nptr_len > 0; p++,ndig++,nptr_len--) {
+	for (; nptr_len > 0; p++, ndig++, nptr_len--) {
 		c = *p;
 		v = base;
-		if ('0'<=c && c<='9')
+		if ('0' <= c && c <= '9')
 			v = c - '0';
-		else if ('a'<=c && c<='z')
+		else if ('a' <= c && c <= 'z')
 			v = c - 'a' + 10;
-		else if ('A'<=c && c<='Z')
+		else if ('A' <= c && c <= 'Z')
 			v = c - 'A' + 10;
 		if (v >= base)
 			break;
@@ -254,7 +254,8 @@ void git__strtolower(char *str)
 	git__strntolower(str, strlen(str));
 }
 
-GIT_INLINE(int) prefixcmp(const char *str, size_t str_n, const char *prefix, bool icase)
+GIT_INLINE(int)
+prefixcmp(const char *str, size_t str_n, const char *prefix, bool icase)
 {
 	int s, p;
 
@@ -409,7 +410,7 @@ uint32_t git__hash(const void *key, int len, unsigned int seed)
 
 	const unsigned char *data = (const unsigned char *)key;
 
-	while(len >= 4) {
+	while (len >= 4) {
 		uint32_t k = *(uint32_t *)data;
 
 		k *= m;
@@ -423,11 +424,12 @@ uint32_t git__hash(const void *key, int len, unsigned int seed)
 		len -= 4;
 	}
 
-	switch(len) {
+	switch (len) {
 	case 3: h ^= data[2] << 16;
 	case 2: h ^= data[1] << 8;
-	case 1: h ^= data[0];
-			h *= m;
+	case 1:
+		h ^= data[0];
+		h *= m;
 	};
 
 	h ^= h >> 13;
@@ -447,17 +449,18 @@ uint32_t git__hash(const void *key, int len, unsigned int seed)
 uint32_t git__hash(const void *key, int len, uint32_t seed)
 {
 
-#define MURMUR_BLOCK() {\
-	k1 *= c1; \
-	k1 = git__rotl(k1,11);\
-	k1 *= c2;\
-	h1 ^= k1;\
-	h1 = h1*3 + 0x52dce729;\
-	c1 = c1*5 + 0x7b7d159c;\
-	c2 = c2*5 + 0x6bce6396;\
-}
+#define MURMUR_BLOCK() \
+	{ \
+		k1 *= c1; \
+		k1 = git__rotl(k1, 11); \
+		k1 *= c2; \
+		h1 ^= k1; \
+		h1 = h1 * 3 + 0x52dce729; \
+		c1 = c1 * 5 + 0x7b7d159c; \
+		c2 = c2 * 5 + 0x6bce6396; \
+	}
 
-	const uint8_t *data = (const uint8_t*)key;
+	const uint8_t *data = (const uint8_t *)key;
 	const int nblocks = len / 4;
 
 	const uint32_t *blocks = (const uint32_t *)(data + nblocks * 4);
@@ -478,12 +481,15 @@ uint32_t git__hash(const void *key, int len, uint32_t seed)
 
 	k1 = 0;
 
-	switch(len & 3) {
-	case 3: k1 ^= tail[2] << 16;
+	switch (len & 3) {
+	case 3:
+		k1 ^= tail[2] << 16;
 		/* fall through */
-	case 2: k1 ^= tail[1] << 8;
+	case 2:
+		k1 ^= tail[1] << 8;
 		/* fall through */
-	case 1: k1 ^= tail[0];
+	case 1:
+		k1 ^= tail[0];
 		MURMUR_BLOCK();
 	}
 
@@ -774,24 +780,22 @@ int git__utf8_iterate(const uint8_t *str, int str_len, int32_t *dst)
 		return -1;
 
 	switch (length) {
-		case 1:
-			uc = str[0];
-			break;
-		case 2:
-			uc = ((str[0] & 0x1F) <<  6) + (str[1] & 0x3F);
-			if (uc < 0x80) uc = -1;
-			break;
-		case 3:
-			uc = ((str[0] & 0x0F) << 12) + ((str[1] & 0x3F) <<  6)
-				+ (str[2] & 0x3F);
-			if (uc < 0x800 || (uc >= 0xD800 && uc < 0xE000) ||
-					(uc >= 0xFDD0 && uc < 0xFDF0)) uc = -1;
-			break;
-		case 4:
-			uc = ((str[0] & 0x07) << 18) + ((str[1] & 0x3F) << 12)
-				+ ((str[2] & 0x3F) <<  6) + (str[3] & 0x3F);
-			if (uc < 0x10000 || uc >= 0x110000) uc = -1;
-			break;
+	case 1:
+		uc = str[0];
+		break;
+	case 2:
+		uc = ((str[0] & 0x1F) << 6) + (str[1] & 0x3F);
+		if (uc < 0x80) uc = -1;
+		break;
+	case 3:
+		uc = ((str[0] & 0x0F) << 12) + ((str[1] & 0x3F) << 6) + (str[2] & 0x3F);
+		if (uc < 0x800 || (uc >= 0xD800 && uc < 0xE000) ||
+			(uc >= 0xFDD0 && uc < 0xFDF0)) uc = -1;
+		break;
+	case 4:
+		uc = ((str[0] & 0x07) << 18) + ((str[1] & 0x3F) << 12) + ((str[2] & 0x3F) << 6) + (str[3] & 0x3F);
+		if (uc < 0x10000 || uc >= 0x110000) uc = -1;
+		break;
 	}
 
 	if (uc < 0 || ((uc & 0xFFFF) >= 0xFFFE))

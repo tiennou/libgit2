@@ -30,7 +30,8 @@ GIT_BEGIN_DECL
  * @param id identity of the tag to locate.
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_tag_lookup(
+GIT_EXTERN(int)
+git_tag_lookup(
 	git_tag **out, git_repository *repo, const git_oid *id);
 
 /**
@@ -45,7 +46,8 @@ GIT_EXTERN(int) git_tag_lookup(
  * @param len the length of the short identifier
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_tag_lookup_prefix(
+GIT_EXTERN(int)
+git_tag_lookup_prefix(
 	git_tag **out, git_repository *repo, const git_oid *id, size_t len);
 
 /**
@@ -58,7 +60,8 @@ GIT_EXTERN(int) git_tag_lookup_prefix(
  *
  * @param tag the tag to close
  */
-GIT_EXTERN(void) git_tag_free(git_tag *tag);
+GIT_EXTERN(void)
+git_tag_free(git_tag *tag);
 
 /**
  * Get the id of a tag.
@@ -66,7 +69,8 @@ GIT_EXTERN(void) git_tag_free(git_tag *tag);
  * @param tag a previously loaded tag.
  * @return object identity for the tag.
  */
-GIT_EXTERN(const git_oid *) git_tag_id(const git_tag *tag);
+GIT_EXTERN(const git_oid *)
+git_tag_id(const git_tag *tag);
 
 /**
  * Get the repository that contains the tag.
@@ -74,7 +78,8 @@ GIT_EXTERN(const git_oid *) git_tag_id(const git_tag *tag);
  * @param tag A previously loaded tag.
  * @return Repository that contains this tag.
  */
-GIT_EXTERN(git_repository *) git_tag_owner(const git_tag *tag);
+GIT_EXTERN(git_repository *)
+git_tag_owner(const git_tag *tag);
 
 /**
  * Get the tagged object of a tag
@@ -86,7 +91,8 @@ GIT_EXTERN(git_repository *) git_tag_owner(const git_tag *tag);
  * @param tag a previously loaded tag.
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_tag_target(git_object **target_out, const git_tag *tag);
+GIT_EXTERN(int)
+git_tag_target(git_object **target_out, const git_tag *tag);
 
 /**
  * Get the OID of the tagged object of a tag
@@ -94,7 +100,8 @@ GIT_EXTERN(int) git_tag_target(git_object **target_out, const git_tag *tag);
  * @param tag a previously loaded tag.
  * @return pointer to the OID
  */
-GIT_EXTERN(const git_oid *) git_tag_target_id(const git_tag *tag);
+GIT_EXTERN(const git_oid *)
+git_tag_target_id(const git_tag *tag);
 
 /**
  * Get the type of a tag's tagged object
@@ -102,7 +109,8 @@ GIT_EXTERN(const git_oid *) git_tag_target_id(const git_tag *tag);
  * @param tag a previously loaded tag.
  * @return type of the tagged object
  */
-GIT_EXTERN(git_otype) git_tag_target_type(const git_tag *tag);
+GIT_EXTERN(git_otype)
+git_tag_target_type(const git_tag *tag);
 
 /**
  * Get the name of a tag
@@ -110,7 +118,8 @@ GIT_EXTERN(git_otype) git_tag_target_type(const git_tag *tag);
  * @param tag a previously loaded tag.
  * @return name of the tag
  */
-GIT_EXTERN(const char *) git_tag_name(const git_tag *tag);
+GIT_EXTERN(const char *)
+git_tag_name(const git_tag *tag);
 
 /**
  * Get the tagger (author) of a tag
@@ -118,7 +127,8 @@ GIT_EXTERN(const char *) git_tag_name(const git_tag *tag);
  * @param tag a previously loaded tag.
  * @return reference to the tag's author or NULL when unspecified
  */
-GIT_EXTERN(const git_signature *) git_tag_tagger(const git_tag *tag);
+GIT_EXTERN(const git_signature *)
+git_tag_tagger(const git_tag *tag);
 
 /**
  * Get the message of a tag
@@ -126,7 +136,8 @@ GIT_EXTERN(const git_signature *) git_tag_tagger(const git_tag *tag);
  * @param tag a previously loaded tag.
  * @return message of the tag or NULL when unspecified
  */
-GIT_EXTERN(const char *) git_tag_message(const git_tag *tag);
+GIT_EXTERN(const char *)
+git_tag_message(const git_tag *tag);
 
 
 /**
@@ -168,7 +179,8 @@ GIT_EXTERN(const char *) git_tag_message(const git_tag *tag);
  *	A tag object is written to the ODB, and a proper reference
  *	is written in the /refs/tags folder, pointing to it
  */
-GIT_EXTERN(int) git_tag_create(
+GIT_EXTERN(int)
+git_tag_create(
 	git_oid *oid,
 	git_repository *repo,
 	const char *tag_name,
@@ -200,7 +212,8 @@ GIT_EXTERN(int) git_tag_create(
  *
  * @return 0 on success or an error code
  */
-GIT_EXTERN(int) git_tag_annotation_create(
+GIT_EXTERN(int)
+git_tag_annotation_create(
 	git_oid *oid,
 	git_repository *repo,
 	const char *tag_name,
@@ -217,7 +230,8 @@ GIT_EXTERN(int) git_tag_annotation_create(
  * @param force Overwrite existing tags
  * @return 0 on success; error code otherwise
  */
-GIT_EXTERN(int) git_tag_create_frombuffer(
+GIT_EXTERN(int)
+git_tag_create_frombuffer(
 	git_oid *oid,
 	git_repository *repo,
 	const char *buffer,
@@ -253,7 +267,8 @@ GIT_EXTERN(int) git_tag_create_frombuffer(
  *	A proper reference is written in the /refs/tags folder,
  * pointing to the provided target object
  */
-GIT_EXTERN(int) git_tag_create_lightweight(
+GIT_EXTERN(int)
+git_tag_create_lightweight(
 	git_oid *oid,
 	git_repository *repo,
 	const char *tag_name,
@@ -273,7 +288,8 @@ GIT_EXTERN(int) git_tag_create_lightweight(
  *
  * @return 0 on success, GIT_EINVALIDSPEC or an error code
  */
-GIT_EXTERN(int) git_tag_delete(
+GIT_EXTERN(int)
+git_tag_delete(
 	git_repository *repo,
 	const char *tag_name);
 
@@ -290,7 +306,8 @@ GIT_EXTERN(int) git_tag_delete(
  * @param repo Repository where to find the tags
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_tag_list(
+GIT_EXTERN(int)
+git_tag_list(
 	git_strarray *tag_names,
 	git_repository *repo);
 
@@ -312,7 +329,8 @@ GIT_EXTERN(int) git_tag_list(
  * @param repo Repository where to find the tags
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_tag_list_match(
+GIT_EXTERN(int)
+git_tag_list_match(
 	git_strarray *tag_names,
 	const char *pattern,
 	git_repository *repo);
@@ -327,7 +345,8 @@ typedef int (*git_tag_foreach_cb)(const char *name, git_oid *oid, void *payload)
  * @param callback Callback function
  * @param payload Pointer to callback data (optional)
  */
-GIT_EXTERN(int) git_tag_foreach(
+GIT_EXTERN(int)
+git_tag_foreach(
 	git_repository *repo,
 	git_tag_foreach_cb callback,
 	void *payload);
@@ -343,7 +362,8 @@ GIT_EXTERN(int) git_tag_foreach(
  * @param tag The tag to be processed
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_tag_peel(
+GIT_EXTERN(int)
+git_tag_peel(
 	git_object **tag_target_out,
 	const git_tag *tag);
 
@@ -354,7 +374,8 @@ GIT_EXTERN(int) git_tag_peel(
  * @param out Pointer to store the copy of the tag
  * @param source Original tag to copy
  */
-GIT_EXTERN(int) git_tag_dup(git_tag **out, git_tag *source);
+GIT_EXTERN(int)
+git_tag_dup(git_tag **out, git_tag *source);
 
 /** @} */
 GIT_END_DECL

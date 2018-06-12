@@ -26,7 +26,7 @@
 
 typedef struct { /* object header data */
 	git_otype type; /* object type */
-	size_t	size; /* object size */
+	size_t size; /* object size */
 } obj_hdr;
 
 typedef struct {
@@ -62,9 +62,9 @@ typedef struct {
 	size_t dir_len;
 	unsigned char short_oid[GIT_OID_HEXSZ]; /* hex formatted oid to match */
 	size_t short_oid_len;
-	int found;				/* number of matching
+	int found; /* number of matching
 						 * objects already found */
-	unsigned char res_oid[GIT_OID_HEXSZ];	/* hex formatted oid of
+	unsigned char res_oid[GIT_OID_HEXSZ]; /* hex formatted oid of
 						 * the object found */
 } loose_locate_object_state;
 
@@ -144,7 +144,7 @@ on_error:
 
 static int parse_header(
 	obj_hdr *out,
-       	size_t *out_len,
+	size_t *out_len,
 	const unsigned char *_data,
 	size_t data_len)
 {
@@ -452,7 +452,8 @@ static int locate_object(
 }
 
 /* Explore an entry of a directory and see if it matches a short oid */
-static int fn_locate_object_short_oid(void *state, git_buf *pathbuf) {
+static int fn_locate_object_short_oid(void *state, git_buf *pathbuf)
+{
 	loose_locate_object_state *sstate = (loose_locate_object_state *)state;
 
 	if (git_buf_len(pathbuf) - sstate->dir_len != GIT_OID_HEXSZ - 2) {
@@ -464,13 +465,13 @@ static int fn_locate_object_short_oid(void *state, git_buf *pathbuf) {
 		/* We are already in the directory matching the 2 first hex characters,
 		 * compare the first ncmp characters of the oids */
 		if (!memcmp(sstate->short_oid + 2,
-			(unsigned char *)pathbuf->ptr + sstate->dir_len,
-			sstate->short_oid_len - 2)) {
+				(unsigned char *)pathbuf->ptr + sstate->dir_len,
+				sstate->short_oid_len - 2)) {
 
 			if (!sstate->found) {
 				sstate->res_oid[0] = sstate->short_oid[0];
 				sstate->res_oid[1] = sstate->short_oid[1];
-				memcpy(sstate->res_oid+2, pathbuf->ptr+sstate->dir_len, GIT_OID_HEXSZ-2);
+				memcpy(sstate->res_oid + 2, pathbuf->ptr + sstate->dir_len, GIT_OID_HEXSZ - 2);
 			}
 			sstate->found++;
 		}
@@ -559,13 +560,6 @@ static int locate_object_short_oid(
 }
 
 
-
-
-
-
-
-
-
 /***********************************************************
  *
  * LOOSE BACKEND PUBLIC API
@@ -645,9 +639,8 @@ static int loose_backend__read_prefix(
 		assert(backend && short_oid);
 
 		if ((error = locate_object_short_oid(&object_path, out_oid,
-				(loose_backend *)backend, short_oid, len)) == 0 &&
-			(error = read_loose(&raw, &object_path)) == 0)
-		{
+				 (loose_backend *)backend, short_oid, len)) == 0 &&
+			(error = read_loose(&raw, &object_path)) == 0) {
 			*buffer_p = raw.data;
 			*len_p = raw.len;
 			*type_p = raw.type;
@@ -695,21 +688,22 @@ struct foreach_state {
 	void *data;
 };
 
-GIT_INLINE(int) filename_to_oid(git_oid *oid, const char *ptr)
+GIT_INLINE(int)
+filename_to_oid(git_oid *oid, const char *ptr)
 {
 	int v, i = 0;
-	if (strlen(ptr) != GIT_OID_HEXSZ+1)
+	if (strlen(ptr) != GIT_OID_HEXSZ + 1)
 		return -1;
 
 	if (ptr[2] != '/') {
 		return -1;
 	}
 
-	v = (git__fromhex(ptr[i]) << 4) | git__fromhex(ptr[i+1]);
+	v = (git__fromhex(ptr[i]) << 4) | git__fromhex(ptr[i + 1]);
 	if (v < 0)
 		return -1;
 
-	oid->id[0] = (unsigned char) v;
+	oid->id[0] = (unsigned char)v;
 
 	ptr += 3;
 	for (i = 0; i < 38; i += 2) {
@@ -717,7 +711,7 @@ GIT_INLINE(int) filename_to_oid(git_oid *oid, const char *ptr)
 		if (v < 0)
 			return -1;
 
-		oid->id[1 + i/2] = (unsigned char) v;
+		oid->id[1 + i / 2] = (unsigned char)v;
 	}
 
 	return 0;
@@ -726,7 +720,7 @@ GIT_INLINE(int) filename_to_oid(git_oid *oid, const char *ptr)
 static int foreach_object_dir_cb(void *_state, git_buf *path)
 {
 	git_oid oid;
-	struct foreach_state *state = (struct foreach_state *) _state;
+	struct foreach_state *state = (struct foreach_state *)_state;
 
 	if (filename_to_oid(&oid, path->ptr + state->dir_len) < 0)
 		return 0;
@@ -737,7 +731,7 @@ static int foreach_object_dir_cb(void *_state, git_buf *path)
 
 static int foreach_cb(void *_state, git_buf *path)
 {
-	struct foreach_state *state = (struct foreach_state *) _state;
+	struct foreach_state *state = (struct foreach_state *)_state;
 
 	/* non-dir is some stray file, ignore it */
 	if (!git_path_isdir(git_buf_cstr(path)))
@@ -752,7 +746,7 @@ static int loose_backend__foreach(git_odb_backend *_backend, git_odb_foreach_cb 
 	int error;
 	git_buf buf = GIT_BUF_INIT;
 	struct foreach_state state;
-	loose_backend *backend = (loose_backend *) _backend;
+	loose_backend *backend = (loose_backend *)_backend;
 
 	assert(backend && cb);
 
@@ -834,7 +828,7 @@ static int loose_backend__writestream(git_odb_stream **stream_out, git_odb_backe
 	*stream_out = NULL;
 
 	if ((error = git_odb__format_object_header(&hdrlen,
-		hdr, sizeof(hdr), length, type)) < 0)
+			 hdr, sizeof(hdr), length, type)) < 0)
 		return error;
 
 	stream = git__calloc(1, sizeof(loose_writestream));
@@ -850,8 +844,7 @@ static int loose_backend__writestream(git_odb_stream **stream_out, git_odb_backe
 	if (git_buf_joinpath(&tmp_path, backend->objects_dir, "tmp_object") < 0 ||
 		git_filebuf_open(&stream->fbuf, tmp_path.ptr, filebuf_flags(backend),
 			backend->object_file_mode) < 0 ||
-		stream->stream.write((git_odb_stream *)stream, hdr, hdrlen) < 0)
-	{
+		stream->stream.write((git_odb_stream *)stream, hdr, hdrlen) < 0) {
 		git_filebuf_cleanup(&stream->fbuf);
 		git__free(stream);
 		stream = NULL;
@@ -943,7 +936,7 @@ static int loose_backend__readstream_standard(
 	int error;
 
 	if ((error = git_zstream_set_input(&stream->zstream,
-			stream->map.data, stream->map.len)) < 0)
+			 stream->map.data, stream->map.len)) < 0)
 		return error;
 
 	init = sizeof(head);
@@ -1052,13 +1045,12 @@ static int loose_backend__write(git_odb_backend *_backend, const git_oid *oid, c
 
 	/* prepare the header for the file */
 	if ((error = git_odb__format_object_header(&header_len,
-		header, sizeof(header), len, type)) < 0)
+			 header, sizeof(header), len, type)) < 0)
 		goto cleanup;
 
 	if (git_buf_joinpath(&final_path, backend->objects_dir, "tmp_object") < 0 ||
 		git_filebuf_open(&fbuf, final_path.ptr, filebuf_flags(backend),
-			backend->object_file_mode) < 0)
-	{
+			backend->object_file_mode) < 0) {
 		error = -1;
 		goto cleanup;
 	}

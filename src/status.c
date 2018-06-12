@@ -90,7 +90,7 @@ static unsigned int workdir_delta2status(
 				!git_diff__oid_for_file(
 					&idx2wd->old_file.id, diff, idx2wd->old_file.path,
 					idx2wd->old_file.mode, idx2wd->old_file.size))
-			idx2wd->old_file.flags |= GIT_DIFF_FLAG_VALID_ID;
+				idx2wd->old_file.flags |= GIT_DIFF_FLAG_VALID_ID;
 
 			if (git_oid_iszero(&idx2wd->new_file.id) &&
 				diff->new_src == GIT_ITERATOR_TYPE_WORKDIR &&
@@ -183,7 +183,8 @@ static int status_collect(
 	return git_vector_insert(&status->paired, status_entry);
 }
 
-GIT_INLINE(int) status_entry_cmp_base(
+GIT_INLINE(int)
+status_entry_cmp_base(
 	const void *a,
 	const void *b,
 	int (*strcomp)(const char *a, const char *b))
@@ -193,9 +194,9 @@ GIT_INLINE(int) status_entry_cmp_base(
 	const git_diff_delta *delta_a, *delta_b;
 
 	delta_a = entry_a->index_to_workdir ? entry_a->index_to_workdir :
-		entry_a->head_to_index;
+										  entry_a->head_to_index;
 	delta_b = entry_b->index_to_workdir ? entry_b->index_to_workdir :
-		entry_b->head_to_index;
+										  entry_b->head_to_index;
 
 	if (!delta_a && delta_b)
 		return -1;
@@ -250,7 +251,7 @@ static int status_validate_options(const git_status_options *opts)
 	if ((opts->flags & GIT_STATUS_OPT_NO_REFRESH) != 0 &&
 		(opts->flags & GIT_STATUS_OPT_UPDATE_INDEX) != 0) {
 		giterr_set(GITERR_INVALID, "updating index from status "
-			"is not allowed when index refresh is disabled");
+								   "is not allowed when index refresh is disabled");
 		return -1;
 	}
 
@@ -280,7 +281,7 @@ int git_status_list_new(
 	if ((error = git_repository__ensure_not_bare(repo, "status")) < 0 ||
 		(error = git_repository_index(&index, repo)) < 0)
 		return error;
-	
+
 	if (opts != NULL && opts->baseline != NULL) {
 		head = opts->baseline;
 	} else {
@@ -337,7 +338,7 @@ int git_status_list_new(
 
 	if (show != GIT_STATUS_SHOW_WORKDIR_ONLY) {
 		if ((error = git_diff_tree_to_index(
-				&status->head2idx, repo, head, index, &diffopt)) < 0)
+				 &status->head2idx, repo, head, index, &diffopt)) < 0)
 			goto done;
 
 		if ((flags & GIT_STATUS_OPT_RENAMES_HEAD_TO_INDEX) != 0 &&
@@ -347,7 +348,7 @@ int git_status_list_new(
 
 	if (show != GIT_STATUS_SHOW_INDEX_ONLY) {
 		if ((error = git_diff_index_to_workdir(
-				&status->idx2wd, repo, index, &diffopt)) < 0) {
+				 &status->idx2wd, repo, index, &diffopt)) < 0) {
 			goto done;
 		}
 
@@ -367,10 +368,10 @@ int git_status_list_new(
 		git_vector_set_cmp(&status->paired, status_entry_icmp);
 
 	if ((flags &
-		 (GIT_STATUS_OPT_RENAMES_HEAD_TO_INDEX |
-		  GIT_STATUS_OPT_RENAMES_INDEX_TO_WORKDIR |
-		  GIT_STATUS_OPT_SORT_CASE_SENSITIVELY |
-		  GIT_STATUS_OPT_SORT_CASE_INSENSITIVELY)) != 0)
+			(GIT_STATUS_OPT_RENAMES_HEAD_TO_INDEX |
+				GIT_STATUS_OPT_RENAMES_INDEX_TO_WORKDIR |
+				GIT_STATUS_OPT_SORT_CASE_SENSITIVELY |
+				GIT_STATUS_OPT_SORT_CASE_INSENSITIVELY)) != 0)
 		git_vector_sort(&status->paired);
 
 done:
@@ -431,7 +432,8 @@ int git_status_foreach_ext(
 		return error;
 	}
 
-	git_vector_foreach(&status->paired, i, status_entry) {
+	git_vector_foreach(&status->paired, i, status_entry)
+	{
 		const char *path = status_entry->head_to_index ?
 			status_entry->head_to_index->old_file.path :
 			status_entry->index_to_workdir->old_file.path;
@@ -472,8 +474,7 @@ static int get_one_status(const char *path, unsigned int status, void *data)
 
 	if (sfi->count > 1 ||
 		(strcomp(sfi->expected, path) != 0 &&
-		 p_fnmatch(sfi->expected, path, sfi->fnm_flags) != 0))
-	{
+			p_fnmatch(sfi->expected, path, sfi->fnm_flags) != 0)) {
 		sfi->ambiguous = true;
 		return GIT_EAMBIGUOUS; /* giterr_set will be done by caller */
 	}
@@ -488,7 +489,7 @@ int git_status_file(
 {
 	int error;
 	git_status_options opts = GIT_STATUS_OPTIONS_INIT;
-	struct status_file_info sfi = {0};
+	struct status_file_info sfi = { 0 };
 	git_index *index;
 
 	assert(status_flags && repo && path);
@@ -567,4 +568,3 @@ int git_status_list_get_perfdata(
 
 	return 0;
 }
-

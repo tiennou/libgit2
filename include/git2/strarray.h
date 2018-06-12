@@ -38,7 +38,8 @@ typedef struct git_strarray {
  *
  * @param array git_strarray from which to free string data
  */
-GIT_EXTERN(void) git_strarray_free(git_strarray *array);
+GIT_EXTERN(void)
+git_strarray_free(git_strarray *array);
 
 /**
  * Copy a string array object from source to target.
@@ -50,11 +51,11 @@ GIT_EXTERN(void) git_strarray_free(git_strarray *array);
  * @param src source
  * @return 0 on success, < 0 on allocation failure
  */
-GIT_EXTERN(int) git_strarray_copy(git_strarray *tgt, const git_strarray *src);
+GIT_EXTERN(int)
+git_strarray_copy(git_strarray *tgt, const git_strarray *src);
 
 
 /** @} */
 GIT_END_DECL
 
 #endif
-

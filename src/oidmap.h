@@ -45,7 +45,7 @@ void git_oidmap_delete(git_oidmap *map, const git_oid *key);
 
 #define git_oidmap_foreach_value kh_foreach_value
 
-#define git_oidmap_begin	kh_begin
-#define git_oidmap_end		kh_end
+#define git_oidmap_begin kh_begin
+#define git_oidmap_end kh_end
 
 #endif

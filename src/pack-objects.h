@@ -46,16 +46,16 @@ typedef struct git_pobject {
 	size_t delta_size;
 	size_t z_delta_size;
 
-	int written:1,
-	    recursing:1,
-	    tagged:1,
-	    filled:1;
+	int written : 1,
+		recursing : 1,
+		tagged : 1,
+		filled : 1;
 } git_pobject;
 
 typedef struct {
 	git_oid id;
-	unsigned int uninteresting:1,
-		seen:1;
+	unsigned int uninteresting : 1,
+		seen : 1;
 } git_walk_object;
 
 struct git_packbuilder {

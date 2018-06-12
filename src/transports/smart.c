@@ -14,7 +14,7 @@
 
 static int git_smart__recv_cb(gitno_buffer *buf)
 {
-	transport_smart *t = (transport_smart *) buf->cb_data;
+	transport_smart *t = (transport_smart *)buf->cb_data;
 	size_t old_len, bytes_read;
 	int error;
 
@@ -38,7 +38,8 @@ static int git_smart__recv_cb(gitno_buffer *buf)
 	return (int)(buf->offset - old_len);
 }
 
-GIT_INLINE(int) git_smart__reset_stream(transport_smart *t, bool close_subtransport)
+GIT_INLINE(int)
+git_smart__reset_stream(transport_smart *t, bool close_subtransport)
 {
 	if (t->current_stream) {
 		t->current_stream->free(t->current_stream);
@@ -153,8 +154,9 @@ int git_smart__update_heads(transport_smart *t, git_vector *symrefs)
 	git_pkt *pkt;
 
 	git_vector_clear(&t->heads);
-	git_vector_foreach(&t->refs, i, pkt) {
-		git_pkt_ref *ref = (git_pkt_ref *) pkt;
+	git_vector_foreach(&t->refs, i, pkt)
+	{
+		git_pkt_ref *ref = (git_pkt_ref *)pkt;
 		if (pkt->type != GIT_PKT_REF)
 			continue;
 
@@ -164,10 +166,11 @@ int git_smart__update_heads(transport_smart *t, git_vector *symrefs)
 			size_t j;
 			int error = 0;
 
-			git_vector_foreach(symrefs, j, spec) {
+			git_vector_foreach(symrefs, j, spec)
+			{
 				git_buf_clear(&buf);
 				if (git_refspec_src_matches(spec, ref->head.name) &&
-				    !(error = git_refspec_transform(&buf, spec, ref->head.name)))
+					!(error = git_refspec_transform(&buf, spec, ref->head.name)))
 					ref->head.symref_target = git_buf_detach(&buf);
 			}
 
@@ -189,7 +192,8 @@ static void free_symrefs(git_vector *symrefs)
 	git_refspec *spec;
 	size_t i;
 
-	git_vector_foreach(symrefs, i, spec) {
+	git_vector_foreach(symrefs, i, spec)
+	{
 		git_refspec__free(spec);
 		git__free(spec);
 	}
@@ -305,7 +309,7 @@ static int git_smart__ls(const git_remote_head ***out, size_t *size, git_transpo
 		return -1;
 	}
 
-	*out = (const git_remote_head **) t->heads.contents;
+	*out = (const git_remote_head **)t->heads.contents;
 	*size = t->heads.length;
 
 	return 0;
@@ -407,7 +411,7 @@ static int git_smart__close(git_transport *transport)
 	 * will complain that we disconnected unexpectedly.
 	 */
 	if (t->connected && !t->rpc &&
-	    !t->wrapped->action(&stream, t->wrapped, t->url, GIT_SERVICE_UPLOADPACK)) {
+		!t->wrapped->action(&stream, t->wrapped, t->url, GIT_SERVICE_UPLOADPACK)) {
 		t->current_stream->write(t->current_stream, flush, 4);
 	}
 
@@ -476,7 +480,7 @@ int git_transport_smart_credentials(git_cred **out, git_transport *transport, co
 
 int git_transport_smart_proxy_options(git_proxy_options *out, git_transport *transport)
 {
-	transport_smart *t = (transport_smart *) transport;
+	transport_smart *t = (transport_smart *)transport;
 	return git_proxy_options_dup(out, &t->proxy);
 }
 
@@ -523,6 +527,6 @@ int git_transport_smart(git_transport **out, git_remote *owner, void *param)
 		return -1;
 	}
 
-	*out = (git_transport *) t;
+	*out = (git_transport *)t;
 	return 0;
 }

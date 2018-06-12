@@ -44,8 +44,8 @@ int p_getaddrinfo(
 		ainfo->ai_port = htons(atol(port));
 
 	memcpy(&ainfo->ai_addr_in.sin_addr,
-			ainfo->ai_hostent->h_addr_list[0],
-			ainfo->ai_hostent->h_length);
+		ainfo->ai_hostent->h_addr_list[0],
+		ainfo->ai_hostent->h_length);
 
 	ainfo->ai_protocol = 0;
 	ainfo->ai_socktype = hints->ai_socktype;
@@ -87,7 +87,7 @@ void p_freeaddrinfo(struct addrinfo *info)
 
 	p = info;
 
-	while(p != NULL) {
+	while (p != NULL) {
 		next = p->ai_next;
 		free(p);
 		p = next;
@@ -96,7 +96,7 @@ void p_freeaddrinfo(struct addrinfo *info)
 
 const char *p_gai_strerror(int ret)
 {
-	switch(ret) {
+	switch (ret) {
 	case -1: return "Out of memory"; break;
 	case -2: return "Address lookup failed"; break;
 	default: return "Unknown error"; break;

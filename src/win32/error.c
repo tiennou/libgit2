@@ -10,7 +10,7 @@
 #include "utf-conv.h"
 
 #ifdef GIT_WINHTTP
-# include <winhttp.h>
+#include <winhttp.h>
 #endif
 
 char *git_win32_get_error_message(DWORD error_code)
@@ -39,8 +39,8 @@ char *git_win32_get_error_message(DWORD error_code)
 		dwFlags |= FORMAT_MESSAGE_FROM_SYSTEM;
 
 	if (FormatMessageW(dwFlags, hModule, error_code,
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		(LPWSTR)&lpMsgBuf, 0, NULL)) {
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+			(LPWSTR)&lpMsgBuf, 0, NULL)) {
 		/* Convert the message to UTF-8. If this fails, we will
 		 * return NULL, which is a condition expected by the caller */
 		if (git__utf16_to_8_alloc(&utf8_msg, lpMsgBuf) < 0)

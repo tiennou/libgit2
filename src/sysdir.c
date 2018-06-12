@@ -91,9 +91,9 @@ static int git_sysdir_guess_global_dirs(git_buf *out)
 	 * of the effective user.
 	 */
 	if (uid == euid)
-	    error = git__getenv(out, "HOME");
+		error = git__getenv(out, "HOME");
 	else
-	    error = get_passwd_home(out, euid);
+		error = get_passwd_home(out, euid);
 
 	if (error == GIT_ENOTFOUND) {
 		giterr_clear();

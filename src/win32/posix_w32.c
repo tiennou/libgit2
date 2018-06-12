@@ -22,7 +22,7 @@
 #include <ws2tcpip.h>
 
 #ifndef FILE_NAME_NORMALIZED
-# define FILE_NAME_NORMALIZED 0
+#define FILE_NAME_NORMALIZED 0
 #endif
 
 #ifndef IO_REPARSE_TAG_SYMLINK
@@ -39,10 +39,11 @@
 typedef DWORD(WINAPI *PFGetFinalPathNameByHandleW)(HANDLE, LPWSTR, DWORD, DWORD);
 
 unsigned long git_win32__createfile_sharemode =
- FILE_SHARE_READ | FILE_SHARE_WRITE;
+	FILE_SHARE_READ | FILE_SHARE_WRITE;
 int git_win32__retries = 10;
 
-GIT_INLINE(void) set_errno(void)
+GIT_INLINE(void)
+set_errno(void)
 {
 	switch (GetLastError()) {
 	case ERROR_FILE_NOT_FOUND:
@@ -155,7 +156,8 @@ GIT_INLINE(void) set_errno(void)
 	}
 }
 
-GIT_INLINE(bool) last_error_retryable(void)
+GIT_INLINE(bool)
+last_error_retryable(void)
 {
 	int os_error = GetLastError();
 
@@ -164,20 +166,20 @@ GIT_INLINE(bool) last_error_retryable(void)
 }
 
 #define do_with_retries(fn, remediation) \
-	do {                                                             \
-		int __retry, __ret;                                          \
-		for (__retry = git_win32__retries; __retry; __retry--) {     \
-			if ((__ret = (fn)) != GIT_RETRY)                         \
-				return __ret;                                        \
-			if (__retry > 1 && (__ret = (remediation)) != 0) {       \
-				if (__ret == GIT_RETRY)                              \
-					continue;                                        \
-				return __ret;                                        \
-			}                                                        \
-			Sleep(5);                                                \
-		}                                                            \
-		return -1;                                                   \
-	} while (0)                                                      \
+	do { \
+		int __retry, __ret; \
+		for (__retry = git_win32__retries; __retry; __retry--) { \
+			if ((__ret = (fn)) != GIT_RETRY) \
+				return __ret; \
+			if (__retry > 1 && (__ret = (remediation)) != 0) { \
+				if (__ret == GIT_RETRY) \
+					continue; \
+				return __ret; \
+			} \
+			Sleep(5); \
+		} \
+		return -1; \
+	} while (0)
 
 static int ensure_writable(wchar_t *path)
 {
@@ -244,7 +246,8 @@ int p_link(const char *old, const char *new)
 	return -1;
 }
 
-GIT_INLINE(int) unlink_once(const wchar_t *path)
+GIT_INLINE(int)
+unlink_once(const wchar_t *path)
 {
 	if (DeleteFileW(path))
 		return 0;
@@ -327,7 +330,8 @@ static int lstat_w(
 			DWORD attrs;
 
 			/* remove last directory component */
-			for (path_len--; path_len > 0 && !WIN32_IS_WSEP(path[path_len]); path_len--);
+			for (path_len--; path_len > 0 && !WIN32_IS_WSEP(path[path_len]); path_len--)
+				;
 
 			if (path_len <= 0)
 				break;
@@ -410,7 +414,8 @@ struct open_opts {
 	int osf_flags;
 };
 
-GIT_INLINE(void) open_opts_from_posix(struct open_opts *opts, int flags, mode_t mode)
+GIT_INLINE(void)
+open_opts_from_posix(struct open_opts *opts, int flags, mode_t mode)
 {
 	memset(opts, 0, sizeof(struct open_opts));
 
@@ -448,7 +453,8 @@ GIT_INLINE(void) open_opts_from_posix(struct open_opts *opts, int flags, mode_t 
 	}
 
 	opts->attributes = ((flags & O_CREAT) && !(mode & S_IWRITE)) ?
-		FILE_ATTRIBUTE_READONLY : FILE_ATTRIBUTE_NORMAL;
+		FILE_ATTRIBUTE_READONLY :
+		FILE_ATTRIBUTE_NORMAL;
 	opts->osf_flags = flags & (O_RDONLY | O_APPEND);
 
 	opts->security.nLength = sizeof(SECURITY_ATTRIBUTES);
@@ -456,7 +462,8 @@ GIT_INLINE(void) open_opts_from_posix(struct open_opts *opts, int flags, mode_t 
 	opts->security.bInheritHandle = 0;
 }
 
-GIT_INLINE(int) open_once(
+GIT_INLINE(int)
+open_once(
 	const wchar_t *path,
 	struct open_opts *opts)
 {
@@ -483,7 +490,7 @@ int p_open(const char *path, int flags, ...)
 {
 	git_win32_path wpath;
 	mode_t mode = 0;
-	struct open_opts opts = {0};
+	struct open_opts opts = { 0 };
 
 	if (git_win32_path_from_utf8(wpath, path) < 0)
 		return -1;
@@ -560,8 +567,7 @@ int p_futimes(int fd, const struct p_timeval times[2])
 		GetSystemTime(&st);
 		SystemTimeToFileTime(&st, &atime);
 		SystemTimeToFileTime(&st, &mtime);
-	}
-	else {
+	} else {
 		git_win32__timeval_to_filetime(&atime, times[0]);
 		git_win32__timeval_to_filetime(&mtime, times[1]);
 	}
@@ -652,7 +658,7 @@ static int getfinalpath_w(
 	return (int)git_win32__canonicalize_path(dest, dwChars);
 }
 
-static int follow_and_lstat_link(git_win32_path path, struct stat* buf)
+static int follow_and_lstat_link(git_win32_path path, struct stat *buf)
 {
 	git_win32_path target_w;
 
@@ -678,7 +684,7 @@ int p_fstat(int fd, struct stat *buf)
 	return 0;
 }
 
-int p_stat(const char* path, struct stat* buf)
+int p_stat(const char *path, struct stat *buf)
 {
 	git_win32_path path_w;
 	int len;
@@ -695,7 +701,7 @@ int p_stat(const char* path, struct stat* buf)
 	return 0;
 }
 
-int p_chdir(const char* path)
+int p_chdir(const char *path)
 {
 	git_win32_path buf;
 
@@ -705,7 +711,7 @@ int p_chdir(const char* path)
 	return _wchdir(buf);
 }
 
-int p_chmod(const char* path, mode_t mode)
+int p_chmod(const char *path, mode_t mode)
 {
 	git_win32_path buf;
 
@@ -715,7 +721,7 @@ int p_chmod(const char* path, mode_t mode)
 	return _wchmod(buf, mode);
 }
 
-int p_rmdir(const char* path)
+int p_rmdir(const char *path)
 {
 	git_win32_path buf;
 	int error;
@@ -727,18 +733,18 @@ int p_rmdir(const char* path)
 
 	if (error == -1) {
 		switch (GetLastError()) {
-			/* _wrmdir() is documented to return EACCES if "A program has an open
+		/* _wrmdir() is documented to return EACCES if "A program has an open
 			 * handle to the directory."  This sounds like what everybody else calls
 			 * EBUSY.  Let's convert appropriate error codes.
 			 */
-			case ERROR_SHARING_VIOLATION:
-				errno = EBUSY;
-				break;
+		case ERROR_SHARING_VIOLATION:
+			errno = EBUSY;
+			break;
 
-			/* This error can be returned when trying to rmdir an extant file. */
-			case ERROR_DIRECTORY:
-				errno = ENOTDIR;
-				break;
+		/* This error can be returned when trying to rmdir an extant file. */
+		case ERROR_DIRECTORY:
+			errno = ENOTDIR;
+			break;
 		}
 	}
 
@@ -794,11 +800,11 @@ int p_vsnprintf(char *buffer, size_t count, const char *format, va_list argptr)
 	if (count == 0)
 		return _vscprintf(format, argptr);
 
-	#if _MSC_VER >= 1500
+#if _MSC_VER >= 1500
 	len = _vsnprintf_s(buffer, count, _TRUNCATE, format, argptr);
-	#else
+#else
 	len = _vsnprintf(buffer, count, format, argptr);
-	#endif
+#endif
 
 	if (len < 0)
 		return _vscprintf(format, argptr);
@@ -835,7 +841,7 @@ int p_mkstemp(char *tmp_path)
 	return p_open(tmp_path, O_RDWR | O_CREAT | O_EXCL, 0744); //-V536
 }
 
-int p_access(const char* path, mode_t mode)
+int p_access(const char *path, mode_t mode)
 {
 	git_win32_path buf;
 
@@ -845,7 +851,8 @@ int p_access(const char* path, mode_t mode)
 	return _waccess(buf, mode & WIN32_MODE_MASK);
 }
 
-GIT_INLINE(int) rename_once(const wchar_t *from, const wchar_t *to)
+GIT_INLINE(int)
+rename_once(const wchar_t *from, const wchar_t *to)
 {
 	if (MoveFileExW(from, to, MOVEFILE_REPLACE_EXISTING | MOVEFILE_COPY_ALLOWED))
 		return 0;
@@ -889,27 +896,27 @@ int p_send(GIT_SOCKET socket, const void *buffer, size_t length, int flags)
  * On Win32, `gmtime_r` doesn't exist but `gmtime` is threadsafe, so we can use that
  */
 struct tm *
-p_localtime_r (const time_t *timer, struct tm *result)
+p_localtime_r(const time_t *timer, struct tm *result)
 {
 	struct tm *local_result;
-	local_result = localtime (timer);
+	local_result = localtime(timer);
 
 	if (local_result == NULL || result == NULL)
 		return NULL;
 
-	memcpy (result, local_result, sizeof (struct tm));
+	memcpy(result, local_result, sizeof(struct tm));
 	return result;
 }
 struct tm *
-p_gmtime_r (const time_t *timer, struct tm *result)
+p_gmtime_r(const time_t *timer, struct tm *result)
 {
 	struct tm *local_result;
-	local_result = gmtime (timer);
+	local_result = gmtime(timer);
 
 	if (local_result == NULL || result == NULL)
 		return NULL;
 
-	memcpy (result, local_result, sizeof (struct tm));
+	memcpy(result, local_result, sizeof(struct tm));
 	return result;
 }
 
@@ -936,7 +943,7 @@ int p_inet_pton(int af, const char *src, void *dst)
 		return 1;
 	}
 
-	switch(WSAGetLastError()) {
+	switch (WSAGetLastError()) {
 	case WSAEINVAL:
 		return 0;
 	case WSAEFAULT:

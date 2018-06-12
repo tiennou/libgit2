@@ -32,7 +32,8 @@ GIT_BEGIN_DECL
  * @param repo the repository
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_refdb_new(git_refdb **out, git_repository *repo);
+GIT_EXTERN(int)
+git_refdb_new(git_refdb **out, git_repository *repo);
 
 /**
  * Create a new reference database and automatically add
@@ -46,21 +47,24 @@ GIT_EXTERN(int) git_refdb_new(git_refdb **out, git_repository *repo);
  * @param repo the repository
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_refdb_open(git_refdb **out, git_repository *repo);
+GIT_EXTERN(int)
+git_refdb_open(git_refdb **out, git_repository *repo);
 
 /**
  * Suggests that the given refdb compress or optimize its references.
  * This mechanism is implementation specific.  For on-disk reference
  * databases, for example, this may pack all loose references.
  */
-GIT_EXTERN(int) git_refdb_compress(git_refdb *refdb);
+GIT_EXTERN(int)
+git_refdb_compress(git_refdb *refdb);
 
 /**
  * Close an open reference database.
  *
  * @param refdb reference database pointer or NULL
  */
-GIT_EXTERN(void) git_refdb_free(git_refdb *refdb);
+GIT_EXTERN(void)
+git_refdb_free(git_refdb *refdb);
 
 /** @} */
 GIT_END_DECL

@@ -67,7 +67,7 @@ struct git_transport {
 		git_transport *transport);
 
 	/* Executes the push whose context is in the git_push object. */
-	int(*push)(git_transport *transport, git_push *push, const git_remote_callbacks *callbacks);
+	int (*push)(git_transport *transport, git_push *push, const git_remote_callbacks *callbacks);
 
 	/* This function may be called after a successful call to connect(), when
 	 * the direction is FETCH. The function performs a negotiation to calculate
@@ -75,7 +75,7 @@ struct git_transport {
 	int (*negotiate_fetch)(
 		git_transport *transport,
 		git_repository *repo,
-		const git_remote_head * const *refs,
+		const git_remote_head *const *refs,
 		size_t count);
 
 	/* This function may be called after a successful call to negotiate_fetch(),
@@ -106,7 +106,10 @@ struct git_transport {
 };
 
 #define GIT_TRANSPORT_VERSION 1
-#define GIT_TRANSPORT_INIT {GIT_TRANSPORT_VERSION}
+#define GIT_TRANSPORT_INIT \
+	{ \
+		GIT_TRANSPORT_VERSION \
+	}
 
 /**
  * Initializes a `git_transport` with default values. Equivalent to
@@ -116,7 +119,8 @@ struct git_transport {
  * @param version Version of struct; pass `GIT_TRANSPORT_VERSION`
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_transport_init(
+GIT_EXTERN(int)
+git_transport_init(
 	git_transport *opts,
 	unsigned int version);
 
@@ -130,7 +134,8 @@ GIT_EXTERN(int) git_transport_init(
  * @param url The URL to connect to
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_transport_new(git_transport **out, git_remote *owner, const char *url);
+GIT_EXTERN(int)
+git_transport_new(git_transport **out, git_remote *owner, const char *url);
 
 /**
  * Create an ssh transport with custom git command paths
@@ -146,7 +151,8 @@ GIT_EXTERN(int) git_transport_new(git_transport **out, git_remote *owner, const 
  * @param payload a strarray with the paths
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_transport_ssh_with_paths(git_transport **out, git_remote *owner, void *payload);
+GIT_EXTERN(int)
+git_transport_ssh_with_paths(git_transport **out, git_remote *owner, void *payload);
 
 /**
  * Add a custom transport definition, to be used in addition to the built-in
@@ -161,7 +167,8 @@ GIT_EXTERN(int) git_transport_ssh_with_paths(git_transport **out, git_remote *ow
  * @param param A fixed parameter to pass to cb at creation time
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_transport_register(
+GIT_EXTERN(int)
+git_transport_register(
 	const char *prefix,
 	git_transport_cb cb,
 	void *param);
@@ -174,7 +181,8 @@ GIT_EXTERN(int) git_transport_register(
  * @param prefix From the previous call to git_transport_register
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_transport_unregister(
+GIT_EXTERN(int)
+git_transport_unregister(
 	const char *prefix);
 
 /* Transports which come with libgit2 (match git_transport_cb). The expected
@@ -188,7 +196,8 @@ GIT_EXTERN(int) git_transport_unregister(
  * @param payload You must pass NULL for this parameter.
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_transport_dummy(
+GIT_EXTERN(int)
+git_transport_dummy(
 	git_transport **out,
 	git_remote *owner,
 	/* NULL */ void *payload);
@@ -201,7 +210,8 @@ GIT_EXTERN(int) git_transport_dummy(
  * @param payload You must pass NULL for this parameter.
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_transport_local(
+GIT_EXTERN(int)
+git_transport_local(
 	git_transport **out,
 	git_remote *owner,
 	/* NULL */ void *payload);
@@ -214,7 +224,8 @@ GIT_EXTERN(int) git_transport_local(
  * @param payload A pointer to a git_smart_subtransport_definition
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_transport_smart(
+GIT_EXTERN(int)
+git_transport_smart(
 	git_transport **out,
 	git_remote *owner,
 	/* (git_smart_subtransport_definition *) */ void *payload);
@@ -228,7 +239,8 @@ GIT_EXTERN(int) git_transport_smart(
  * @param hostname the hostname we connected to
  * @return the return value of the callback
  */
-GIT_EXTERN(int) git_transport_smart_certificate_check(git_transport *transport, git_cert *cert, int valid, const char *hostname);
+GIT_EXTERN(int)
+git_transport_smart_certificate_check(git_transport *transport, git_cert *cert, int valid, const char *hostname);
 
 /**
  * Call the credentials callback for this transport
@@ -239,7 +251,8 @@ GIT_EXTERN(int) git_transport_smart_certificate_check(git_transport *transport, 
  * @param methods available methods for authentication
  * @return the return value of the callback
  */
-GIT_EXTERN(int) git_transport_smart_credentials(git_cred **out, git_transport *transport, const char *user, int methods);
+GIT_EXTERN(int)
+git_transport_smart_credentials(git_cred **out, git_transport *transport, const char *user, int methods);
 
 /**
  * Get a copy of the proxy options
@@ -249,7 +262,8 @@ GIT_EXTERN(int) git_transport_smart_credentials(git_cred **out, git_transport *t
  * @param out options struct to fill
  * @param transport the transport to extract the data from.
  */
-GIT_EXTERN(int) git_transport_smart_proxy_options(git_proxy_options *out, git_transport *transport);
+GIT_EXTERN(int)
+git_transport_smart_proxy_options(git_proxy_options *out, git_transport *transport);
 
 /*
  *** End of base transport interface ***
@@ -304,11 +318,11 @@ struct git_smart_subtransport_stream {
 /* An implementation of a subtransport which carries data for the
  * smart transport */
 struct git_smart_subtransport {
-	int (* action)(
-			git_smart_subtransport_stream **out,
-			git_smart_subtransport *transport,
-			const char *url,
-			git_smart_service_t action);
+	int (*action)(
+		git_smart_subtransport_stream **out,
+		git_smart_subtransport *transport,
+		const char *url,
+		git_smart_service_t action);
 
 	/* Subtransports are guaranteed a call to close() between
 	 * calls to action(), except for the following two "natural" progressions
@@ -324,8 +338,8 @@ struct git_smart_subtransport {
 /* A function which creates a new subtransport for the smart transport */
 typedef int (*git_smart_subtransport_cb)(
 	git_smart_subtransport **out,
-	git_transport* owner,
-	void* param);
+	git_transport *owner,
+	void *param);
 
 /**
  * Definition for a "subtransport"
@@ -345,7 +359,7 @@ typedef struct git_smart_subtransport_definition {
 
 	/** Param of the callback
 	 */
-	void* param;
+	void *param;
 } git_smart_subtransport_definition;
 
 /* Smart transport subtransports that come with libgit2 */
@@ -359,9 +373,10 @@ typedef struct git_smart_subtransport_definition {
  * @param owner The smart transport to own this subtransport
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_smart_subtransport_http(
+GIT_EXTERN(int)
+git_smart_subtransport_http(
 	git_smart_subtransport **out,
-	git_transport* owner,
+	git_transport *owner,
 	void *param);
 
 /**
@@ -371,9 +386,10 @@ GIT_EXTERN(int) git_smart_subtransport_http(
  * @param owner The smart transport to own this subtransport
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_smart_subtransport_git(
+GIT_EXTERN(int)
+git_smart_subtransport_git(
 	git_smart_subtransport **out,
-	git_transport* owner,
+	git_transport *owner,
 	void *param);
 
 /**
@@ -383,9 +399,10 @@ GIT_EXTERN(int) git_smart_subtransport_git(
  * @param owner The smart transport to own this subtransport
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_smart_subtransport_ssh(
+GIT_EXTERN(int)
+git_smart_subtransport_ssh(
 	git_smart_subtransport **out,
-	git_transport* owner,
+	git_transport *owner,
 	void *param);
 
 /** @} */

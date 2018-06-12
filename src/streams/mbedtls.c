@@ -19,7 +19,7 @@
 #include "util.h"
 
 #ifdef GIT_CURL
-# include "streams/curl.h"
+#include "streams/curl.h"
 #endif
 
 #ifndef GIT_DEFAULT_CERT_LOCATION
@@ -80,9 +80,9 @@ int git_mbedtls_stream_global_init(void)
 	git__ssl_conf = git__malloc(sizeof(mbedtls_ssl_config));
 	mbedtls_ssl_config_init(git__ssl_conf);
 	if (mbedtls_ssl_config_defaults(git__ssl_conf,
-		                            MBEDTLS_SSL_IS_CLIENT,
-		                            MBEDTLS_SSL_TRANSPORT_STREAM,
-		                            MBEDTLS_SSL_PRESET_DEFAULT) != 0) {
+			MBEDTLS_SSL_IS_CLIENT,
+			MBEDTLS_SSL_TRANSPORT_STREAM,
+			MBEDTLS_SSL_PRESET_DEFAULT) != 0) {
 		giterr_set(GITERR_SSL, "failed to initialize mbedTLS");
 		goto cleanup;
 	}
@@ -120,8 +120,8 @@ int git_mbedtls_stream_global_init(void)
 	ctr_drbg = git__malloc(sizeof(mbedtls_ctr_drbg_context));
 	mbedtls_ctr_drbg_init(ctr_drbg);
 	if (mbedtls_ctr_drbg_seed(ctr_drbg,
-		                      mbedtls_entropy_func,
-		                      mbedtls_entropy, NULL, 0) != 0) {
+			mbedtls_entropy_func,
+			mbedtls_entropy, NULL, 0) != 0) {
 		giterr_set(GITERR_SSL, "failed to initialize mbedTLS entropy pool");
 		goto cleanup;
 	}
@@ -154,14 +154,14 @@ mbedtls_ssl_config *git__ssl_conf;
 
 static int bio_read(void *b, unsigned char *buf, size_t len)
 {
-	git_stream *io = (git_stream *) b;
-	return (int) git_stream_read(io, buf, len);
+	git_stream *io = (git_stream *)b;
+	return (int)git_stream_read(io, buf, len);
 }
 
 static int bio_write(void *b, const unsigned char *buf, size_t len)
 {
-	git_stream *io = (git_stream *) b;
-	return (int) git_stream_write(io, (const char *)buf, len, 0);
+	git_stream *io = (git_stream *)b;
+	return (int)git_stream_write(io, (const char *)buf, len, 0);
 }
 
 static int ssl_set_error(mbedtls_ssl_context *ssl, int error)
@@ -173,10 +173,10 @@ static int ssl_set_error(mbedtls_ssl_context *ssl, int error)
 	assert(error != MBEDTLS_ERR_SSL_WANT_WRITE);
 
 	if (error != 0)
-		mbedtls_strerror( error, errbuf, 512 );
+		mbedtls_strerror(error, errbuf, 512);
 
-	switch(error) {
-		case 0:
+	switch (error) {
+	case 0:
 		giterr_set(GITERR_SSL, "SSL error: unknown error");
 		break;
 
@@ -232,7 +232,7 @@ typedef struct {
 int mbedtls_connect(git_stream *stream)
 {
 	int ret;
-	mbedtls_stream *st = (mbedtls_stream *) stream;
+	mbedtls_stream *st = (mbedtls_stream *)stream;
 
 	if ((ret = git_stream_connect(st->io)) < 0)
 		return ret;
@@ -252,7 +252,7 @@ int mbedtls_connect(git_stream *stream)
 int mbedtls_certificate(git_cert **out, git_stream *stream)
 {
 	unsigned char *encoded_cert;
-	mbedtls_stream *st = (mbedtls_stream *) stream;
+	mbedtls_stream *st = (mbedtls_stream *)stream;
 
 	const mbedtls_x509_crt *cert = mbedtls_ssl_get_peer_cert(st->ssl);
 	if (!cert) {
@@ -281,7 +281,7 @@ int mbedtls_certificate(git_cert **out, git_stream *stream)
 
 static int mbedtls_set_proxy(git_stream *stream, const git_proxy_options *proxy_options)
 {
-	mbedtls_stream *st = (mbedtls_stream *) stream;
+	mbedtls_stream *st = (mbedtls_stream *)stream;
 
 	return git_stream_set_proxy(st->io, proxy_options);
 }
@@ -289,7 +289,7 @@ static int mbedtls_set_proxy(git_stream *stream, const git_proxy_options *proxy_
 ssize_t mbedtls_stream_write(git_stream *stream, const char *data, size_t len, int flags)
 {
 	size_t read = 0;
-	mbedtls_stream *st = (mbedtls_stream *) stream;
+	mbedtls_stream *st = (mbedtls_stream *)stream;
 
 	GIT_UNUSED(flags);
 
@@ -306,7 +306,7 @@ ssize_t mbedtls_stream_write(git_stream *stream, const char *data, size_t len, i
 
 ssize_t mbedtls_stream_read(git_stream *stream, void *data, size_t len)
 {
-	mbedtls_stream *st = (mbedtls_stream *) stream;
+	mbedtls_stream *st = (mbedtls_stream *)stream;
 	int ret;
 
 	if ((ret = mbedtls_ssl_read(st->ssl, (unsigned char *)data, len)) <= 0)
@@ -317,7 +317,7 @@ ssize_t mbedtls_stream_read(git_stream *stream, void *data, size_t len)
 
 int mbedtls_stream_close(git_stream *stream)
 {
-	mbedtls_stream *st = (mbedtls_stream *) stream;
+	mbedtls_stream *st = (mbedtls_stream *)stream;
 	int ret = 0;
 
 	if (st->connected && (ret = ssl_teardown(st->ssl)) != 0)
@@ -330,7 +330,7 @@ int mbedtls_stream_close(git_stream *stream)
 
 void mbedtls_stream_free(git_stream *stream)
 {
-	mbedtls_stream *st = (mbedtls_stream *) stream;
+	mbedtls_stream *st = (mbedtls_stream *)stream;
 
 	git__free(st->host);
 	git__free(st->cert_info.data);
@@ -379,7 +379,7 @@ int git_mbedtls_stream_new(git_stream **out, const char *host, const char *port)
 	st->parent.close = mbedtls_stream_close;
 	st->parent.free = mbedtls_stream_free;
 
-	*out = (git_stream *) st;
+	*out = (git_stream *)st;
 	return 0;
 
 out_err:
@@ -409,7 +409,7 @@ int git_mbedtls__set_cert_location(const char *path, int is_dir)
 	if (ret < 0) {
 		mbedtls_x509_crt_free(cacert);
 		git__free(cacert);
-		mbedtls_strerror( ret, errbuf, 512 );
+		mbedtls_strerror(ret, errbuf, 512);
 		giterr_set(GITERR_SSL, "failed to load CA certificates: %#04x - %s", ret, errbuf);
 		return -1;
 	}

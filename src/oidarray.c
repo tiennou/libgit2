@@ -28,7 +28,7 @@ void git_oidarray__reverse(git_oidarray *arr)
 
 	for (i = 0; i < arr->count / 2; i++) {
 		git_oid_cpy(&tmp, &arr->ids[i]);
-		git_oid_cpy(&arr->ids[i], &arr->ids[(arr->count-1)-i]);
-		git_oid_cpy(&arr->ids[(arr->count-1)-i], &tmp);
+		git_oid_cpy(&arr->ids[i], &arr->ids[(arr->count - 1) - i]);
+		git_oid_cpy(&arr->ids[(arr->count - 1) - i], &tmp);
 	}
 }

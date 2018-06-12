@@ -34,7 +34,8 @@ GIT_BEGIN_DECL
  *              each rule should be terminated with a newline.
  * @return 0 on success
  */
-GIT_EXTERN(int) git_ignore_add_rule(
+GIT_EXTERN(int)
+git_ignore_add_rule(
 	git_repository *repo,
 	const char *rules);
 
@@ -49,7 +50,8 @@ GIT_EXTERN(int) git_ignore_add_rule(
  * @param repo The repository to remove ignore rules from.
  * @return 0 on success
  */
-GIT_EXTERN(int) git_ignore_clear_internal_rules(
+GIT_EXTERN(int)
+git_ignore_clear_internal_rules(
 	git_repository *repo);
 
 /**
@@ -68,7 +70,8 @@ GIT_EXTERN(int) git_ignore_clear_internal_rules(
  * @return 0 if ignore rules could be processed for the file (regardless
  *         of whether it exists or not), or an error < 0 if they could not.
  */
-GIT_EXTERN(int) git_ignore_path_is_ignored(
+GIT_EXTERN(int)
+git_ignore_path_is_ignored(
 	int *ignored,
 	git_repository *repo,
 	const char *path);

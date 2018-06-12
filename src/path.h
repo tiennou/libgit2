@@ -85,24 +85,26 @@ extern int git_path_to_dir(git_buf *path);
 /**
  * Ensure string has a trailing '/' if there is space for it.
  */
-extern void git_path_string_to_dir(char* path, size_t size);
+extern void git_path_string_to_dir(char *path, size_t size);
 
 /**
  * Taken from git.git; returns nonzero if the given path is "." or "..".
  */
-GIT_INLINE(int) git_path_is_dot_or_dotdot(const char *name)
+GIT_INLINE(int)
+git_path_is_dot_or_dotdot(const char *name)
 {
 	return (name[0] == '.' &&
-			  (name[1] == '\0' ||
-				(name[1] == '.' && name[2] == '\0')));
+		(name[1] == '\0' ||
+			(name[1] == '.' && name[2] == '\0')));
 }
 
 #ifdef GIT_WIN32
-GIT_INLINE(int) git_path_is_dot_or_dotdotW(const wchar_t *name)
+GIT_INLINE(int)
+git_path_is_dot_or_dotdotW(const wchar_t *name)
 {
 	return (name[0] == L'.' &&
-			  (name[1] == L'\0' ||
-				(name[1] == L'.' && name[2] == L'\0')));
+		(name[1] == L'\0' ||
+			(name[1] == L'.' && name[2] == L'\0')));
 }
 
 #define git_path_is_absolute(p) \
@@ -114,7 +116,8 @@ GIT_INLINE(int) git_path_is_dot_or_dotdotW(const wchar_t *name)
 /**
  * Convert backslashes in path to forward slashes.
  */
-GIT_INLINE(void) git_path_mkposix(char *path)
+GIT_INLINE(void)
+git_path_mkposix(char *path)
 {
 	while (*path) {
 		if (*path == '\\')
@@ -124,7 +127,7 @@ GIT_INLINE(void) git_path_mkposix(char *path)
 	}
 }
 #else
-#	define git_path_mkposix(p) /* blank */
+#define git_path_mkposix(p) /* blank */
 
 #define git_path_is_absolute(p) \
 	((p)[0] == '/')
@@ -137,7 +140,8 @@ GIT_INLINE(void) git_path_mkposix(char *path)
 /**
  * Check if string is a relative path (i.e. starts with "./" or "../")
  */
-GIT_INLINE(int) git_path_is_relative(const char *p)
+GIT_INLINE(int)
+git_path_is_relative(const char *p)
 {
 	return (p[0] == '.' && (p[1] == '/' || (p[1] == '.' && p[2] == '/')));
 }
@@ -145,7 +149,8 @@ GIT_INLINE(int) git_path_is_relative(const char *p)
 /**
  * Check if string is at end of path segment (i.e. looking at '/' or '\0')
  */
-GIT_INLINE(int) git_path_at_end_of_segment(const char *p)
+GIT_INLINE(int)
+git_path_at_end_of_segment(const char *p)
 {
 	return !*p || *p == '/';
 }
@@ -366,14 +371,17 @@ extern int git_path_walk_up(
 	void *payload);
 
 
-enum { GIT_PATH_NOTEQUAL = 0, GIT_PATH_EQUAL = 1, GIT_PATH_PREFIX = 2 };
+enum { GIT_PATH_NOTEQUAL = 0,
+	GIT_PATH_EQUAL = 1,
+	GIT_PATH_PREFIX = 2 };
 
 /*
  * Determines if a path is equal to or potentially a child of another.
  * @param parent The possible parent
  * @param child The possible child
  */
-GIT_INLINE(int) git_path_equal_or_prefixed(
+GIT_INLINE(int)
+git_path_equal_or_prefixed(
 	const char *parent,
 	const char *child,
 	ssize_t *prefixlen)
@@ -432,7 +440,10 @@ typedef struct {
 	git_buf buf;
 } git_path_iconv_t;
 
-#define GIT_PATH_ICONV_INIT { (iconv_t)-1, GIT_BUF_INIT }
+#define GIT_PATH_ICONV_INIT \
+	{ \
+		(iconv_t) - 1, GIT_BUF_INIT \
+	}
 
 /* Init iconv data for converting decomposed UTF-8 to precomposed */
 extern int git_path_iconv_init_precompose(git_path_iconv_t *ic);
@@ -456,8 +467,7 @@ typedef struct git_path_diriter git_path_diriter;
 
 #if defined(GIT_WIN32) && !defined(__MINGW32__)
 
-struct git_path_diriter
-{
+struct git_path_diriter {
 	git_win32_path path;
 	size_t parent_len;
 
@@ -472,12 +482,14 @@ struct git_path_diriter
 	unsigned int needs_next;
 };
 
-#define GIT_PATH_DIRITER_INIT { {0}, 0, GIT_BUF_INIT, 0, INVALID_HANDLE_VALUE }
+#define GIT_PATH_DIRITER_INIT \
+	{ \
+		{ 0 }, 0, GIT_BUF_INIT, 0, INVALID_HANDLE_VALUE \
+	}
 
 #else
 
-struct git_path_diriter
-{
+struct git_path_diriter {
 	git_buf path;
 	size_t parent_len;
 
@@ -490,7 +502,10 @@ struct git_path_diriter
 #endif
 };
 
-#define GIT_PATH_DIRITER_INIT { GIT_BUF_INIT }
+#define GIT_PATH_DIRITER_INIT \
+	{ \
+		GIT_BUF_INIT \
+	}
 
 #endif
 
@@ -587,38 +602,38 @@ extern bool git_path_is_local_file_url(const char *file_url);
 extern int git_path_from_url_or_path(git_buf *local_path_out, const char *url_or_path);
 
 /* Flags to determine path validity in `git_path_isvalid` */
-#define GIT_PATH_REJECT_TRAVERSAL          (1 << 0)
-#define GIT_PATH_REJECT_DOT_GIT            (1 << 1)
-#define GIT_PATH_REJECT_SLASH              (1 << 2)
-#define GIT_PATH_REJECT_BACKSLASH          (1 << 3)
-#define GIT_PATH_REJECT_TRAILING_DOT       (1 << 4)
-#define GIT_PATH_REJECT_TRAILING_SPACE     (1 << 5)
-#define GIT_PATH_REJECT_TRAILING_COLON     (1 << 6)
-#define GIT_PATH_REJECT_DOS_PATHS          (1 << 7)
-#define GIT_PATH_REJECT_NT_CHARS           (1 << 8)
-#define GIT_PATH_REJECT_DOT_GIT_LITERAL    (1 << 9)
-#define GIT_PATH_REJECT_DOT_GIT_HFS        (1 << 10)
-#define GIT_PATH_REJECT_DOT_GIT_NTFS       (1 << 11)
+#define GIT_PATH_REJECT_TRAVERSAL (1 << 0)
+#define GIT_PATH_REJECT_DOT_GIT (1 << 1)
+#define GIT_PATH_REJECT_SLASH (1 << 2)
+#define GIT_PATH_REJECT_BACKSLASH (1 << 3)
+#define GIT_PATH_REJECT_TRAILING_DOT (1 << 4)
+#define GIT_PATH_REJECT_TRAILING_SPACE (1 << 5)
+#define GIT_PATH_REJECT_TRAILING_COLON (1 << 6)
+#define GIT_PATH_REJECT_DOS_PATHS (1 << 7)
+#define GIT_PATH_REJECT_NT_CHARS (1 << 8)
+#define GIT_PATH_REJECT_DOT_GIT_LITERAL (1 << 9)
+#define GIT_PATH_REJECT_DOT_GIT_HFS (1 << 10)
+#define GIT_PATH_REJECT_DOT_GIT_NTFS (1 << 11)
 
 /* Default path safety for writing files to disk: since we use the
  * Win32 "File Namespace" APIs ("\\?\") we need to protect from
  * paths that the normal Win32 APIs would not write.
  */
 #ifdef GIT_WIN32
-# define GIT_PATH_REJECT_FILESYSTEM_DEFAULTS \
+#define GIT_PATH_REJECT_FILESYSTEM_DEFAULTS \
 	GIT_PATH_REJECT_TRAVERSAL | \
-	GIT_PATH_REJECT_BACKSLASH | \
-	GIT_PATH_REJECT_TRAILING_DOT | \
-	GIT_PATH_REJECT_TRAILING_SPACE | \
-	GIT_PATH_REJECT_TRAILING_COLON | \
-	GIT_PATH_REJECT_DOS_PATHS | \
-	GIT_PATH_REJECT_NT_CHARS
+		GIT_PATH_REJECT_BACKSLASH | \
+		GIT_PATH_REJECT_TRAILING_DOT | \
+		GIT_PATH_REJECT_TRAILING_SPACE | \
+		GIT_PATH_REJECT_TRAILING_COLON | \
+		GIT_PATH_REJECT_DOS_PATHS | \
+		GIT_PATH_REJECT_NT_CHARS
 #else
-# define GIT_PATH_REJECT_FILESYSTEM_DEFAULTS \
+#define GIT_PATH_REJECT_FILESYSTEM_DEFAULTS \
 	GIT_PATH_REJECT_TRAVERSAL
 #endif
 
- /* Paths that should never be written into the working directory. */
+/* Paths that should never be written into the working directory. */
 #define GIT_PATH_REJECT_WORKDIR_DEFAULTS \
 	GIT_PATH_REJECT_FILESYSTEM_DEFAULTS | GIT_PATH_REJECT_DOT_GIT
 

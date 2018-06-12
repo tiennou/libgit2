@@ -39,12 +39,12 @@ static const char *post_verb = "POST";
 
 #define OWNING_SUBTRANSPORT(s) ((http_subtransport *)(s)->parent.subtransport)
 
-#define PARSE_ERROR_GENERIC	-1
-#define PARSE_ERROR_REPLAY	-2
+#define PARSE_ERROR_GENERIC -1
+#define PARSE_ERROR_REPLAY -2
 /** Look at the user field */
-#define PARSE_ERROR_EXT         -3
+#define PARSE_ERROR_EXT -3
 
-#define CHUNK_SIZE	4096
+#define CHUNK_SIZE 4096
 
 enum last_cb {
 	NONE,
@@ -145,7 +145,8 @@ static int auth_context_match(
 		return 0;
 
 	/* See if authentication has already started for this scheme */
-	git_vector_foreach(&t->auth_contexts, i, c) {
+	git_vector_foreach(&t->auth_contexts, i, c)
+	{
 		if (c->type == scheme->type) {
 			context = c;
 			break;
@@ -214,7 +215,7 @@ static int gen_request(
 		if (s->chunked)
 			git_buf_puts(buf, "Transfer-Encoding: chunked\r\n");
 		else
-			git_buf_printf(buf, "Content-Length: %"PRIuZ "\r\n", content_length);
+			git_buf_printf(buf, "Content-Length: %" PRIuZ "\r\n", content_length);
 	} else
 		git_buf_puts(buf, "Accept: */*\r\n");
 
@@ -244,7 +245,8 @@ static int parse_authenticate_response(
 	char *challenge;
 	size_t i;
 
-	git_vector_foreach(www_authenticate, i, challenge) {
+	git_vector_foreach(www_authenticate, i, challenge)
+	{
 		if (auth_context_match(&context, t, challenge_match, challenge) < 0)
 			return -1;
 		else if (!context)
@@ -270,14 +272,12 @@ static int on_header_ready(http_subtransport *t)
 			t->content_type = git__strdup(git_buf_cstr(value));
 			GITERR_CHECK_ALLOC(t->content_type);
 		}
-	}
-	else if (!strcasecmp("WWW-Authenticate", git_buf_cstr(name))) {
+	} else if (!strcasecmp("WWW-Authenticate", git_buf_cstr(name))) {
 		char *dup = git__strdup(git_buf_cstr(value));
 		GITERR_CHECK_ALLOC(dup);
 
 		git_vector_insert(&t->www_authenticate, dup);
-	}
-	else if (!strcasecmp("Location", git_buf_cstr(name))) {
+	} else if (!strcasecmp("Location", git_buf_cstr(name))) {
 		if (!t->location) {
 			t->location = git__strdup(git_buf_cstr(value));
 			GITERR_CHECK_ALLOC(t->location);
@@ -289,7 +289,7 @@ static int on_header_ready(http_subtransport *t)
 
 static int on_header_field(http_parser *parser, const char *str, size_t len)
 {
-	parser_context *ctx = (parser_context *) parser->data;
+	parser_context *ctx = (parser_context *)parser->data;
 	http_subtransport *t = ctx->t;
 
 	/* Both parse_header_name and parse_header_value are populated
@@ -310,7 +310,7 @@ static int on_header_field(http_parser *parser, const char *str, size_t len)
 
 static int on_header_value(http_parser *parser, const char *str, size_t len)
 {
-	parser_context *ctx = (parser_context *) parser->data;
+	parser_context *ctx = (parser_context *)parser->data;
 	http_subtransport *t = ctx->t;
 
 	assert(NONE != t->last_cb);
@@ -327,7 +327,7 @@ static int on_header_value(http_parser *parser, const char *str, size_t len)
 
 static int on_headers_complete(http_parser *parser)
 {
-	parser_context *ctx = (parser_context *) parser->data;
+	parser_context *ctx = (parser_context *)parser->data;
 	http_subtransport *t = ctx->t;
 	http_stream *s = ctx->s;
 	git_buf buf = GIT_BUF_INIT;
@@ -359,10 +359,10 @@ static int on_headers_complete(http_parser *parser)
 				}
 
 				error = t->owner->cred_acquire_cb(&t->cred,
-								  t->owner->url,
-								  t->connection_data.user,
-								  allowed_auth_types,
-								  t->owner->cred_acquire_payload);
+					t->owner->url,
+					t->connection_data.user,
+					allowed_auth_types,
+					t->owner->cred_acquire_payload);
 
 				if (error == GIT_PASSTHROUGH) {
 					no_callback = 1;
@@ -393,10 +393,10 @@ static int on_headers_complete(http_parser *parser)
 	/* Check for a redirect.
 	 * Right now we only permit a redirect to the same hostname. */
 	if ((parser->status_code == 301 ||
-	     parser->status_code == 302 ||
-	     (parser->status_code == 303 && get_verb == s->verb) ||
-	     parser->status_code == 307) &&
-	    t->location) {
+			parser->status_code == 302 ||
+			(parser->status_code == 303 && get_verb == s->verb) ||
+			parser->status_code == 307) &&
+		t->location) {
 
 		if (s->redirect_count >= 7) {
 			giterr_set(GITERR_NET, "too many redirects");
@@ -463,7 +463,7 @@ static int on_headers_complete(http_parser *parser)
 
 static int on_message_complete(http_parser *parser)
 {
-	parser_context *ctx = (parser_context *) parser->data;
+	parser_context *ctx = (parser_context *)parser->data;
 	http_subtransport *t = ctx->t;
 
 	t->parse_finished = 1;
@@ -473,7 +473,7 @@ static int on_message_complete(http_parser *parser)
 
 static int on_body_fill_buffer(http_parser *parser, const char *str, size_t len)
 {
-	parser_context *ctx = (parser_context *) parser->data;
+	parser_context *ctx = (parser_context *)parser->data;
 	http_subtransport *t = ctx->t;
 
 	/* If our goal is to replay the request (either an auth failure or
@@ -607,7 +607,7 @@ static int http_connect(http_subtransport *t)
 #ifdef GIT_CURL
 		error = git_curl_stream_new(&t->io, t->connection_data.host, t->connection_data.port);
 #else
-		error = git_socket_stream_new(&t->io,  t->connection_data.host, t->connection_data.port);
+		error = git_socket_stream_new(&t->io, t->connection_data.host, t->connection_data.port);
 #endif
 	}
 
@@ -621,7 +621,7 @@ static int http_connect(http_subtransport *t)
 	error = git_stream_connect(t->io);
 
 	if ((!error || error == GIT_ECERTIFICATE) && t->owner->certificate_check_cb != NULL &&
-	    git_stream_is_encrypted(t->io)) {
+		git_stream_is_encrypted(t->io)) {
 		git_cert *cert;
 		int is_valid = (error == GIT_OK);
 
@@ -813,8 +813,7 @@ static int http_stream_write_chunked(
 		/* Write chunk directly */
 		if (write_chunk(t->io, buffer, len) < 0)
 			return -1;
-	}
-	else {
+	} else {
 		/* Append as much to the buffer as we can */
 		int count = min(CHUNK_SIZE - s->chunk_buffer_len, len);
 
@@ -1002,7 +1001,7 @@ static int http_action(
 		return -1;
 
 	if ((!t->connection_data.host || !t->connection_data.port || !t->connection_data.path) &&
-		 (ret = gitno_connection_data_from_url(&t->connection_data, url, NULL)) < 0)
+		(ret = gitno_connection_data_from_url(&t->connection_data, url, NULL)) < 0)
 		return ret;
 
 	if ((ret = http_connect(t)) < 0)
@@ -1028,7 +1027,7 @@ static int http_action(
 
 static int http_close(git_smart_subtransport *subtransport)
 {
-	http_subtransport *t = (http_subtransport *) subtransport;
+	http_subtransport *t = (http_subtransport *)subtransport;
 	git_http_auth_context *context;
 	size_t i;
 
@@ -1052,7 +1051,8 @@ static int http_close(git_smart_subtransport *subtransport)
 		t->url_cred = NULL;
 	}
 
-	git_vector_foreach(&t->auth_contexts, i, context) {
+	git_vector_foreach(&t->auth_contexts, i, context)
+	{
 		if (context->free)
 			context->free(context);
 	}
@@ -1067,7 +1067,7 @@ static int http_close(git_smart_subtransport *subtransport)
 
 static void http_free(git_smart_subtransport *subtransport)
 {
-	http_subtransport *t = (http_subtransport *) subtransport;
+	http_subtransport *t = (http_subtransport *)subtransport;
 
 	http_close(subtransport);
 
@@ -1098,7 +1098,7 @@ int git_smart_subtransport_http(git_smart_subtransport **out, git_transport *own
 	t->settings.on_body = on_body_fill_buffer;
 	t->settings.on_message_complete = on_message_complete;
 
-	*out = (git_smart_subtransport *) t;
+	*out = (git_smart_subtransport *)t;
 	return 0;
 }
 

@@ -61,7 +61,8 @@ typedef enum {
  *
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_packbuilder_new(git_packbuilder **out, git_repository *repo);
+GIT_EXTERN(int)
+git_packbuilder_new(git_packbuilder **out, git_repository *repo);
 
 /**
  * Set number of threads to spawn
@@ -74,7 +75,8 @@ GIT_EXTERN(int) git_packbuilder_new(git_packbuilder **out, git_repository *repo)
  * @param n Number of threads to spawn
  * @return number of actual threads to be used
  */
-GIT_EXTERN(unsigned int) git_packbuilder_set_threads(git_packbuilder *pb, unsigned int n);
+GIT_EXTERN(unsigned int)
+git_packbuilder_set_threads(git_packbuilder *pb, unsigned int n);
 
 /**
  * Insert a single object
@@ -88,7 +90,8 @@ GIT_EXTERN(unsigned int) git_packbuilder_set_threads(git_packbuilder *pb, unsign
  *
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_packbuilder_insert(git_packbuilder *pb, const git_oid *id, const char *name);
+GIT_EXTERN(int)
+git_packbuilder_insert(git_packbuilder *pb, const git_oid *id, const char *name);
 
 /**
  * Insert a root tree object
@@ -100,7 +103,8 @@ GIT_EXTERN(int) git_packbuilder_insert(git_packbuilder *pb, const git_oid *id, c
  *
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_packbuilder_insert_tree(git_packbuilder *pb, const git_oid *id);
+GIT_EXTERN(int)
+git_packbuilder_insert_tree(git_packbuilder *pb, const git_oid *id);
 
 /**
  * Insert a commit object
@@ -112,7 +116,8 @@ GIT_EXTERN(int) git_packbuilder_insert_tree(git_packbuilder *pb, const git_oid *
  *
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_packbuilder_insert_commit(git_packbuilder *pb, const git_oid *id);
+GIT_EXTERN(int)
+git_packbuilder_insert_commit(git_packbuilder *pb, const git_oid *id);
 
 /**
  * Insert objects as given by the walk
@@ -125,7 +130,8 @@ GIT_EXTERN(int) git_packbuilder_insert_commit(git_packbuilder *pb, const git_oid
  *
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_packbuilder_insert_walk(git_packbuilder *pb, git_revwalk *walk);
+GIT_EXTERN(int)
+git_packbuilder_insert_walk(git_packbuilder *pb, git_revwalk *walk);
 
 /**
  * Recursively insert an object and its referenced objects
@@ -137,7 +143,8 @@ GIT_EXTERN(int) git_packbuilder_insert_walk(git_packbuilder *pb, git_revwalk *wa
  * @param name optional name for the object
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_packbuilder_insert_recur(git_packbuilder *pb, const git_oid *id, const char *name);
+GIT_EXTERN(int)
+git_packbuilder_insert_recur(git_packbuilder *pb, const git_oid *id, const char *name);
 
 /**
  * Write the contents of the packfile to an in-memory buffer
@@ -148,7 +155,8 @@ GIT_EXTERN(int) git_packbuilder_insert_recur(git_packbuilder *pb, const git_oid 
  * @param buf Buffer where to write the packfile
  * @param pb The packbuilder
  */
-GIT_EXTERN(int) git_packbuilder_write_buf(git_buf *buf, git_packbuilder *pb);
+GIT_EXTERN(int)
+git_packbuilder_write_buf(git_buf *buf, git_packbuilder *pb);
 
 /**
  * Write the new pack and corresponding index file to path.
@@ -161,7 +169,8 @@ GIT_EXTERN(int) git_packbuilder_write_buf(git_buf *buf, git_packbuilder *pb);
  *
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_packbuilder_write(
+GIT_EXTERN(int)
+git_packbuilder_write(
 	git_packbuilder *pb,
 	const char *path,
 	unsigned int mode,
@@ -176,7 +185,8 @@ GIT_EXTERN(int) git_packbuilder_write(
 *
 * @param pb The packbuilder object
 */
-GIT_EXTERN(const git_oid *) git_packbuilder_hash(git_packbuilder *pb);
+GIT_EXTERN(const git_oid *)
+git_packbuilder_hash(git_packbuilder *pb);
 
 typedef int (*git_packbuilder_foreach_cb)(void *buf, size_t size, void *payload);
 
@@ -188,7 +198,8 @@ typedef int (*git_packbuilder_foreach_cb)(void *buf, size_t size, void *payload)
  * @param payload the callback's data
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_packbuilder_foreach(git_packbuilder *pb, git_packbuilder_foreach_cb cb, void *payload);
+GIT_EXTERN(int)
+git_packbuilder_foreach(git_packbuilder *pb, git_packbuilder_foreach_cb cb, void *payload);
 
 /**
  * Get the total number of objects the packbuilder will write out
@@ -196,7 +207,8 @@ GIT_EXTERN(int) git_packbuilder_foreach(git_packbuilder *pb, git_packbuilder_for
  * @param pb the packbuilder
  * @return the number of objects in the packfile
  */
-GIT_EXTERN(size_t) git_packbuilder_object_count(git_packbuilder *pb);
+GIT_EXTERN(size_t)
+git_packbuilder_object_count(git_packbuilder *pb);
 
 /**
  * Get the number of objects the packbuilder has already written out
@@ -204,7 +216,8 @@ GIT_EXTERN(size_t) git_packbuilder_object_count(git_packbuilder *pb);
  * @param pb the packbuilder
  * @return the number of objects which have already been written
  */
-GIT_EXTERN(size_t) git_packbuilder_written(git_packbuilder *pb);
+GIT_EXTERN(size_t)
+git_packbuilder_written(git_packbuilder *pb);
 
 /** Packbuilder progress notification function */
 typedef int (*git_packbuilder_progress)(
@@ -223,7 +236,8 @@ typedef int (*git_packbuilder_progress)(
  * @param progress_cb_payload Payload for progress callback.
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_packbuilder_set_callbacks(
+GIT_EXTERN(int)
+git_packbuilder_set_callbacks(
 	git_packbuilder *pb,
 	git_packbuilder_progress progress_cb,
 	void *progress_cb_payload);
@@ -233,7 +247,8 @@ GIT_EXTERN(int) git_packbuilder_set_callbacks(
  *
  * @param pb The packbuilder
  */
-GIT_EXTERN(void) git_packbuilder_free(git_packbuilder *pb);
+GIT_EXTERN(void)
+git_packbuilder_free(git_packbuilder *pb);
 
 /** @} */
 GIT_END_DECL

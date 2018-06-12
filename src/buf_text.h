@@ -45,7 +45,8 @@ extern int git_buf_text_puts_escaped(
 /**
  * Append string escaping characters that are regex special
  */
-GIT_INLINE(int) git_buf_text_puts_escape_regex(git_buf *buf, const char *string)
+GIT_INLINE(int)
+git_buf_text_puts_escape_regex(git_buf *buf, const char *string)
 {
 	return git_buf_text_puts_escaped(buf, string, "^.[]$()|*+?{}\\", "\\");
 }

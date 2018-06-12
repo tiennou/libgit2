@@ -137,7 +137,7 @@ typedef struct _LIBSSH2_USERAUTH_KBDINT_RESPONSE LIBSSH2_USERAUTH_KBDINT_RESPONS
 #endif
 
 typedef int (*git_cred_sign_callback)(LIBSSH2_SESSION *session, unsigned char **sig, size_t *sig_len, const unsigned char *data, size_t data_len, void **abstract);
-typedef void (*git_cred_ssh_interactive_callback)(const char* name, int name_len, const char* instruction, int instruction_len, int num_prompts, const LIBSSH2_USERAUTH_KBDINT_PROMPT* prompts, LIBSSH2_USERAUTH_KBDINT_RESPONSE* responses, void **abstract);
+typedef void (*git_cred_ssh_interactive_callback)(const char *name, int name_len, const char *instruction, int instruction_len, int num_prompts, const LIBSSH2_USERAUTH_KBDINT_PROMPT *prompts, LIBSSH2_USERAUTH_KBDINT_RESPONSE *responses, void **abstract);
 
 /**
  * A ssh key from disk
@@ -187,7 +187,8 @@ typedef struct git_cred_username {
  * @param cred object to check
  * @return 1 if the credential object has non-NULL username, 0 otherwise
  */
-GIT_EXTERN(int) git_cred_has_username(git_cred *cred);
+GIT_EXTERN(int)
+git_cred_has_username(git_cred *cred);
 
 /**
  * Create a new plain-text username and password credential object.
@@ -198,7 +199,8 @@ GIT_EXTERN(int) git_cred_has_username(git_cred *cred);
  * @param password The password of the credential.
  * @return 0 for success or an error code for failure
  */
-GIT_EXTERN(int) git_cred_userpass_plaintext_new(
+GIT_EXTERN(int)
+git_cred_userpass_plaintext_new(
 	git_cred **out,
 	const char *username,
 	const char *password);
@@ -214,7 +216,8 @@ GIT_EXTERN(int) git_cred_userpass_plaintext_new(
  * @param passphrase The passphrase of the credential.
  * @return 0 for success or an error code for failure
  */
-GIT_EXTERN(int) git_cred_ssh_key_new(
+GIT_EXTERN(int)
+git_cred_ssh_key_new(
 	git_cred **out,
 	const char *username,
 	const char *publickey,
@@ -230,7 +233,8 @@ GIT_EXTERN(int) git_cred_ssh_key_new(
  * @param payload Additional data to pass to the callback.
  * @return 0 for success or an error code for failure.
  */
-GIT_EXTERN(int) git_cred_ssh_interactive_new(
+GIT_EXTERN(int)
+git_cred_ssh_interactive_new(
 	git_cred **out,
 	const char *username,
 	git_cred_ssh_interactive_callback prompt_callback,
@@ -244,7 +248,8 @@ GIT_EXTERN(int) git_cred_ssh_interactive_new(
  * @param username username to use to authenticate
  * @return 0 for success or an error code for failure
  */
-GIT_EXTERN(int) git_cred_ssh_key_from_agent(
+GIT_EXTERN(int)
+git_cred_ssh_key_from_agent(
 	git_cred **out,
 	const char *username);
 
@@ -266,7 +271,8 @@ GIT_EXTERN(int) git_cred_ssh_key_from_agent(
  * @param payload Additional data to pass to the callback.
  * @return 0 for success or an error code for failure
  */
-GIT_EXTERN(int) git_cred_ssh_custom_new(
+GIT_EXTERN(int)
+git_cred_ssh_custom_new(
 	git_cred **out,
 	const char *username,
 	const char *publickey,
@@ -280,7 +286,8 @@ GIT_EXTERN(int) git_cred_ssh_custom_new(
  *
  * @return 0 for success or an error code for failure
  */
-GIT_EXTERN(int) git_cred_default_new(git_cred **out);
+GIT_EXTERN(int)
+git_cred_default_new(git_cred **out);
 
 /**
  * Create a credential to specify a username.
@@ -288,7 +295,8 @@ GIT_EXTERN(int) git_cred_default_new(git_cred **out);
  * This is used with ssh authentication to query for the username if
  * none is specified in the url.
  */
-GIT_EXTERN(int) git_cred_username_new(git_cred **cred, const char *username);
+GIT_EXTERN(int)
+git_cred_username_new(git_cred **cred, const char *username);
 
 /**
  * Create a new ssh key credential object reading the keys from memory.
@@ -300,7 +308,8 @@ GIT_EXTERN(int) git_cred_username_new(git_cred **cred, const char *username);
  * @param passphrase The passphrase of the credential.
  * @return 0 for success or an error code for failure
  */
-GIT_EXTERN(int) git_cred_ssh_key_memory_new(
+GIT_EXTERN(int)
+git_cred_ssh_key_memory_new(
 	git_cred **out,
 	const char *username,
 	const char *publickey,
@@ -316,7 +325,8 @@ GIT_EXTERN(int) git_cred_ssh_key_memory_new(
  *
  * @param cred the object to free
  */
-GIT_EXTERN(void) git_cred_free(git_cred *cred);
+GIT_EXTERN(void)
+git_cred_free(git_cred *cred);
 
 /**
  * Signature of a function which acquires a credential object.

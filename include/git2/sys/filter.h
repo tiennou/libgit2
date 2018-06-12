@@ -24,9 +24,10 @@ GIT_BEGIN_DECL
  * @param name The name of the filter
  * @return Pointer to the filter object or NULL if not found
  */
-GIT_EXTERN(git_filter *) git_filter_lookup(const char *name);
+GIT_EXTERN(git_filter *)
+git_filter_lookup(const char *name);
 
-#define GIT_FILTER_CRLF  "crlf"
+#define GIT_FILTER_CRLF "crlf"
 #define GIT_FILTER_IDENT "ident"
 
 /**
@@ -54,7 +55,8 @@ GIT_EXTERN(git_filter *) git_filter_lookup(const char *name);
  * `git_filter_lookup` and `git_filter_list_push` functions to assemble
  * your own chains of filters.
  */
-GIT_EXTERN(int) git_filter_list_new(
+GIT_EXTERN(int)
+git_filter_list_new(
 	git_filter_list **out,
 	git_repository *repo,
 	git_filter_mode_t mode,
@@ -73,7 +75,8 @@ GIT_EXTERN(int) git_filter_list_new(
  * know the expected payload format, or you can pass NULL.  Some filters
  * may fail with a NULL payload.  Good luck!
  */
-GIT_EXTERN(int) git_filter_list_push(
+GIT_EXTERN(int)
+git_filter_list_push(
 	git_filter_list *fl, git_filter *filter, void *payload);
 
 /**
@@ -87,7 +90,8 @@ GIT_EXTERN(int) git_filter_list_push(
  * @param fl A filter list
  * @return The number of filters in the list
  */
-GIT_EXTERN(size_t) git_filter_list_length(const git_filter_list *fl);
+GIT_EXTERN(size_t)
+git_filter_list_length(const git_filter_list *fl);
 
 /**
  * A filter source represents a file/blob to be processed
@@ -97,35 +101,41 @@ typedef struct git_filter_source git_filter_source;
 /**
  * Get the repository that the source data is coming from.
  */
-GIT_EXTERN(git_repository *) git_filter_source_repo(const git_filter_source *src);
+GIT_EXTERN(git_repository *)
+git_filter_source_repo(const git_filter_source *src);
 
 /**
  * Get the path that the source data is coming from.
  */
-GIT_EXTERN(const char *) git_filter_source_path(const git_filter_source *src);
+GIT_EXTERN(const char *)
+git_filter_source_path(const git_filter_source *src);
 
 /**
  * Get the file mode of the source file
  * If the mode is unknown, this will return 0
  */
-GIT_EXTERN(uint16_t) git_filter_source_filemode(const git_filter_source *src);
+GIT_EXTERN(uint16_t)
+git_filter_source_filemode(const git_filter_source *src);
 
 /**
  * Get the OID of the source
  * If the OID is unknown (often the case with GIT_FILTER_CLEAN) then
  * this will return NULL.
  */
-GIT_EXTERN(const git_oid *) git_filter_source_id(const git_filter_source *src);
+GIT_EXTERN(const git_oid *)
+git_filter_source_id(const git_filter_source *src);
 
 /**
  * Get the git_filter_mode_t to be used
  */
-GIT_EXTERN(git_filter_mode_t) git_filter_source_mode(const git_filter_source *src);
+GIT_EXTERN(git_filter_mode_t)
+git_filter_source_mode(const git_filter_source *src);
 
 /**
  * Get the combination git_filter_flag_t options to be applied
  */
-GIT_EXTERN(uint32_t) git_filter_source_flags(const git_filter_source *src);
+GIT_EXTERN(uint32_t)
+git_filter_source_flags(const git_filter_source *src);
 
 /**
  * Initialize callback on filter
@@ -173,8 +183,8 @@ typedef void (*git_filter_shutdown_fn)(git_filter *self);
  * `payload`, it will need a `cleanup` callback to free the payload.
  */
 typedef int (*git_filter_check_fn)(
-	git_filter  *self,
-	void       **payload, /* points to NULL ptr on entry, may be set */
+	git_filter *self,
+	void **payload, /* points to NULL ptr on entry, may be set */
 	const git_filter_source *src,
 	const char **attr_values);
 
@@ -191,9 +201,9 @@ typedef int (*git_filter_check_fn)(
  * `check` callback.  It may be read from or written to as needed.
  */
 typedef int (*git_filter_apply_fn)(
-	git_filter    *self,
-	void         **payload, /* may be read and/or set */
-	git_buf       *to,
+	git_filter *self,
+	void **payload, /* may be read and/or set */
+	git_buf *to,
 	const git_buf *from,
 	const git_filter_source *src);
 
@@ -214,7 +224,7 @@ typedef int (*git_filter_stream_fn)(
  */
 typedef void (*git_filter_cleanup_fn)(
 	git_filter *self,
-	void       *payload);
+	void *payload);
 
 /**
  * Filter structure used to register custom filters.
@@ -225,9 +235,9 @@ typedef void (*git_filter_cleanup_fn)(
  */
 struct git_filter {
 	/** The `version` field should be set to `GIT_FILTER_VERSION`. */
-	unsigned int           version;
+	unsigned int version;
 
- 	/**
+	/**
 	 * A whitespace-separated list of attribute names to check for this
 	 * filter (e.g. "eol crlf text").  If the attribute name is bare, it
 	 * will be simply loaded and passed to the `check` callback.  If it
@@ -237,10 +247,10 @@ struct git_filter {
 	 * value for the given attribute name.  See the attribute parameter
 	 * of the `check` callback for the attribute value that was specified.
 	 */
-	const char            *attributes;
+	const char *attributes;
 
 	/** Called when the filter is first used for any file. */
-	git_filter_init_fn     initialize;
+	git_filter_init_fn initialize;
 
 	/** Called when the filter is removed or unregistered from the system. */
 	git_filter_shutdown_fn shutdown;
@@ -251,27 +261,30 @@ struct git_filter {
 	 * `apply` function will not be invoked and the contents will be passed
 	 * through unmodified.
 	 */
-	git_filter_check_fn    check;
+	git_filter_check_fn check;
 
 	/**
 	 * Called to actually apply the filter to file contents.  If this
 	 * function returns `GIT_PASSTHROUGH` then the contents will be passed
 	 * through unmodified.
 	 */
-	git_filter_apply_fn    apply;
+	git_filter_apply_fn apply;
 
 	/**
 	 * Called to apply the filter in a streaming manner.  If this is not
 	 * specified then the system will call `apply` with the whole buffer.
 	 */
-	git_filter_stream_fn   stream;
+	git_filter_stream_fn stream;
 
 	/** Called when the system is done filtering for a file. */
-	git_filter_cleanup_fn  cleanup;
+	git_filter_cleanup_fn cleanup;
 };
 
 #define GIT_FILTER_VERSION 1
-#define GIT_FILTER_INIT {GIT_FILTER_VERSION}
+#define GIT_FILTER_INIT \
+	{ \
+		GIT_FILTER_VERSION \
+	}
 
 /**
  * Initializes a `git_filter` with default values. Equivalent to
@@ -281,7 +294,8 @@ struct git_filter {
  * @param version Version the struct; pass `GIT_FILTER_VERSION`
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_filter_init(git_filter *filter, unsigned int version);
+GIT_EXTERN(int)
+git_filter_init(git_filter *filter, unsigned int version);
 
 /**
  * Register a filter under a given name with a given priority.
@@ -309,7 +323,8 @@ GIT_EXTERN(int) git_filter_init(git_filter *filter, unsigned int version);
  * @param priority The priority for filter application
  * @return 0 on successful registry, error code <0 on failure
  */
-GIT_EXTERN(int) git_filter_register(
+GIT_EXTERN(int)
+git_filter_register(
 	const char *name, git_filter *filter, int priority);
 
 /**
@@ -325,7 +340,8 @@ GIT_EXTERN(int) git_filter_register(
  * @param name The name under which the filter was registered
  * @return 0 on success, error code <0 on failure
  */
-GIT_EXTERN(int) git_filter_unregister(const char *name);
+GIT_EXTERN(int)
+git_filter_unregister(const char *name);
 
 /** @} */
 GIT_END_DECL

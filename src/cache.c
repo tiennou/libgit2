@@ -17,17 +17,17 @@
 
 bool git_cache__enabled = true;
 ssize_t git_cache__max_storage = (256 * 1024 * 1024);
-git_atomic_ssize git_cache__current_storage = {0};
+git_atomic_ssize git_cache__current_storage = { 0 };
 
 static size_t git_cache__max_object_size[8] = {
-	0,     /* GIT_OBJ__EXT1 */
-	4096,  /* GIT_OBJ_COMMIT */
-	4096,  /* GIT_OBJ_TREE */
-	0,     /* GIT_OBJ_BLOB */
-	4096,  /* GIT_OBJ_TAG */
-	0,     /* GIT_OBJ__EXT2 */
-	0,     /* GIT_OBJ_OFS_DELTA */
-	0      /* GIT_OBJ_REF_DELTA */
+	0, /* GIT_OBJ__EXT1 */
+	4096, /* GIT_OBJ_COMMIT */
+	4096, /* GIT_OBJ_TREE */
+	0, /* GIT_OBJ_BLOB */
+	4096, /* GIT_OBJ_TAG */
+	0, /* GIT_OBJ__EXT2 */
+	0, /* GIT_OBJ_OFS_DELTA */
+	0 /* GIT_OBJ_REF_DELTA */
 };
 
 int git_cache_set_max_object_size(git_otype type, size_t size)
@@ -48,17 +48,16 @@ void git_cache_dump_stats(git_cache *cache)
 	if (git_cache_size(cache) == 0)
 		return;
 
-	printf("Cache %p: %"PRIuZ" items cached, %"PRIdZ" bytes\n",
+	printf("Cache %p: %" PRIuZ " items cached, %" PRIdZ " bytes\n",
 		cache, git_cache_size(cache), cache->used_memory);
 
 	git_oidmap_foreach_value(cache->map, object, {
 		char oid_str[9];
-		printf(" %s%c %s (%"PRIuZ")\n",
+		printf(" %s%c %s (%" PRIuZ ")\n",
 			git_object_type2string(object->type),
 			object->flags == GIT_CACHE_STORE_PARSED ? '*' : ' ',
 			git_oid_tostr(oid_str, sizeof(oid_str), &object->oid),
-			object->size
-		);
+			object->size);
 	});
 }
 

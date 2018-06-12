@@ -13,12 +13,13 @@
 
 static void set_parse_error(git_config_parser *reader, int col, const char *error_str)
 {
-	giterr_set(GITERR_CONFIG, "failed to parse config file: %s (in %s:%"PRIuZ", column %d)",
+	giterr_set(GITERR_CONFIG, "failed to parse config file: %s (in %s:%" PRIuZ ", column %d)",
 		error_str, reader->file->path, reader->ctx.line_num, col);
 }
 
 
-GIT_INLINE(int) config_keychar(int c)
+GIT_INLINE(int)
+config_keychar(int c)
 {
 	return isalnum(c) || c == '-';
 }
@@ -86,7 +87,7 @@ static int parse_section_header_ext(git_config_parser *reader, const char *line,
 	GITERR_CHECK_ALLOC_ADD(&alloc_len, alloc_len, 2);
 
 	if (git_buf_grow(&buf, alloc_len) < 0 ||
-	    git_buf_printf(&buf, "%s.", base_name) < 0)
+		git_buf_printf(&buf, "%s.", base_name) < 0)
 		goto end_error;
 
 	rpos = 0;
@@ -178,7 +179,7 @@ static int parse_section_header(git_config_parser *reader, char **section_out)
 	c = line[pos++];
 
 	do {
-		if (git__isspace(c)){
+		if (git__isspace(c)) {
 			name[name_length] = '\0';
 			result = parse_section_header_ext(reader, line, name, section_out);
 			git__free(line);
@@ -362,7 +363,8 @@ static int parse_multiline_variable(git_config_parser *reader, git_buf *value, i
 	return 0;
 }
 
-GIT_INLINE(bool) is_namechar(char c)
+GIT_INLINE(bool)
+is_namechar(char c)
 {
 	return isalnum(c) || c == '-';
 }
@@ -481,7 +483,7 @@ int git_config_parse(
 		 * to preserve whitespaces when writing back the file.
 		 */
 		if (git_parse_peek(&c, ctx, GIT_PARSE_PEEK_SKIP_WHITESPACE) < 0 &&
-		    git_parse_peek(&c, ctx, 0) < 0)
+			git_parse_peek(&c, ctx, 0) < 0)
 			continue;
 
 		switch (c) {

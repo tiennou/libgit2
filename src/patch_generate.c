@@ -19,7 +19,7 @@
 
 static void diff_output_init(
 	git_patch_generated_output *, const git_diff_options *, git_diff_file_cb,
-	git_diff_binary_cb, git_diff_hunk_cb, git_diff_line_cb, void*);
+	git_diff_binary_cb, git_diff_hunk_cb, git_diff_line_cb, void *);
 
 static void diff_output_to_patch(
 	git_patch_generated_output *, git_patch_generated *);
@@ -118,11 +118,11 @@ static int patch_generated_init(
 	patch->delta_index = delta_index;
 
 	if ((error = patch_generated_normalize_options(
-			&patch->base.diff_opts, &diff->opts)) < 0 ||
+			 &patch->base.diff_opts, &diff->opts)) < 0 ||
 		(error = git_diff_file_content__init_from_diff(
-			&patch->ofile, diff, patch->base.delta, true)) < 0 ||
+			 &patch->ofile, diff, patch->base.delta, true)) < 0 ||
 		(error = git_diff_file_content__init_from_diff(
-			&patch->nfile, diff, patch->base.delta, false)) < 0)
+			 &patch->nfile, diff, patch->base.delta, false)) < 0)
 		return error;
 
 	patch_generated_init_common(patch);
@@ -149,7 +149,8 @@ static int patch_generated_alloc_from_diff(
 	return error;
 }
 
-GIT_INLINE(bool) should_skip_binary(git_patch_generated *patch, git_diff_file *file)
+GIT_INLINE(bool)
+should_skip_binary(git_patch_generated *patch, git_diff_file *file)
 {
 	if ((patch->base.diff_opts.flags & GIT_DIFF_SHOW_BINARY) != 0)
 		return false;
@@ -203,16 +204,16 @@ static int patch_generated_load(git_patch_generated *patch, git_patch_generated_
 
 	incomplete_data =
 		(((patch->ofile.flags & GIT_DIFF_FLAG__NO_DATA) != 0 ||
-		  (patch->ofile.file->flags & GIT_DIFF_FLAG_VALID_ID) != 0) &&
-		 ((patch->nfile.flags & GIT_DIFF_FLAG__NO_DATA) != 0 ||
-		  (patch->nfile.file->flags & GIT_DIFF_FLAG_VALID_ID) != 0));
+			 (patch->ofile.file->flags & GIT_DIFF_FLAG_VALID_ID) != 0) &&
+			((patch->nfile.flags & GIT_DIFF_FLAG__NO_DATA) != 0 ||
+				(patch->nfile.file->flags & GIT_DIFF_FLAG_VALID_ID) != 0));
 
 	if ((error = git_diff_file_content__load(
-			&patch->ofile, &patch->base.diff_opts)) < 0 ||
+			 &patch->ofile, &patch->base.diff_opts)) < 0 ||
 		should_skip_binary(patch, patch->ofile.file))
 		goto cleanup;
 	if ((error = git_diff_file_content__load(
-			&patch->nfile, &patch->base.diff_opts)) < 0 ||
+			 &patch->nfile, &patch->base.diff_opts)) < 0 ||
 		should_skip_binary(patch, patch->nfile.file))
 		goto cleanup;
 
@@ -243,7 +244,8 @@ static int patch_generated_invoke_file_callback(
 	git_patch_generated *patch, git_patch_generated_output *output)
 {
 	float progress = patch->diff ?
-		((float)patch->delta_index / patch->diff->deltas.length) : 1.0f;
+		((float)patch->delta_index / patch->diff->deltas.length) :
+		1.0f;
 
 	if (!output->file_cb)
 		return 0;
@@ -322,11 +324,11 @@ done:
 
 static int diff_binary(git_patch_generated_output *output, git_patch_generated *patch)
 {
-	git_diff_binary binary = {0};
+	git_diff_binary binary = { 0 };
 	const char *old_data = patch->ofile.map.data;
 	const char *new_data = patch->nfile.map.data;
 	size_t old_len = patch->ofile.map.len,
-		new_len = patch->nfile.map.len;
+		   new_len = patch->nfile.map.len;
 	int error;
 
 	/* Only load contents if the user actually wants to diff
@@ -338,15 +340,15 @@ static int diff_binary(git_patch_generated_output *output, git_patch_generated *
 		 * and the new->old delta (as the "old" side)
 		 */
 		if ((error = create_binary(&binary.old_file.type,
-				(char **)&binary.old_file.data,
-				&binary.old_file.datalen,
-				&binary.old_file.inflatedlen,
-				new_data, new_len, old_data, old_len)) < 0 ||
+				 (char **)&binary.old_file.data,
+				 &binary.old_file.datalen,
+				 &binary.old_file.inflatedlen,
+				 new_data, new_len, old_data, old_len)) < 0 ||
 			(error = create_binary(&binary.new_file.type,
-				(char **)&binary.new_file.data,
-				&binary.new_file.datalen,
-				&binary.new_file.inflatedlen,
-				old_data, old_len, new_data, new_len)) < 0)
+				 (char **)&binary.new_file.data,
+				 &binary.new_file.datalen,
+				 &binary.new_file.inflatedlen,
+				 old_data, old_len, new_data, new_len)) < 0)
 			return error;
 	}
 
@@ -354,8 +356,8 @@ static int diff_binary(git_patch_generated_output *output, git_patch_generated *
 		output->binary_cb(patch->base.delta, &binary, output->payload),
 		"git_patch");
 
-	git__free((char *) binary.old_file.data);
-	git__free((char *) binary.new_file.data);
+	git__free((char *)binary.old_file.data);
+	git__free((char *)binary.new_file.data);
 
 	return error;
 }
@@ -383,8 +385,7 @@ static int patch_generated_create(
 	if ((patch->base.delta->flags & GIT_DIFF_FLAG_BINARY) != 0) {
 		if (output->binary_cb)
 			error = diff_binary(output, patch);
-	}
-	else {
+	} else {
 		if (output->diff_cb)
 			error = output->diff_cb(output, patch);
 	}
@@ -456,7 +457,7 @@ static int patch_generated_from_sources(
 	int error = 0;
 	git_repository *repo =
 		oldsrc->blob ? git_blob_owner(oldsrc->blob) :
-		newsrc->blob ? git_blob_owner(newsrc->blob) : NULL;
+					   newsrc->blob ? git_blob_owner(newsrc->blob) : NULL;
 	git_diff_file *lfile = &pd->delta.old_file, *rfile = &pd->delta.new_file;
 	git_diff_file_content *ldata = &pd->patch.ofile, *rdata = &pd->patch.nfile;
 
@@ -464,8 +465,12 @@ static int patch_generated_from_sources(
 		return error;
 
 	if (opts && (opts->flags & GIT_DIFF_REVERSE) != 0) {
-		void *tmp = lfile; lfile = rfile; rfile = tmp;
-		tmp = ldata; ldata = rdata; rdata = tmp;
+		void *tmp = lfile;
+		lfile = rfile;
+		rfile = tmp;
+		tmp = ldata;
+		ldata = rdata;
+		rdata = tmp;
 	}
 
 	pd->patch.base.delta = &pd->delta;
@@ -475,17 +480,16 @@ static int patch_generated_from_sources(
 			oldsrc->as_path = newsrc->as_path;
 		else
 			oldsrc->as_path = newsrc->as_path = "file";
-	}
-	else if (!newsrc->as_path)
+	} else if (!newsrc->as_path)
 		newsrc->as_path = oldsrc->as_path;
 
 	lfile->path = oldsrc->as_path;
 	rfile->path = newsrc->as_path;
 
 	if ((error = git_diff_file_content__init_from_src(
-			ldata, repo, opts, oldsrc, lfile)) < 0 ||
+			 ldata, repo, opts, oldsrc, lfile)) < 0 ||
 		(error = git_diff_file_content__init_from_src(
-			rdata, repo, opts, newsrc, rfile)) < 0)
+			 rdata, repo, opts, newsrc, rfile)) < 0)
 		return error;
 
 	return diff_single_generate(pd, xo);
@@ -567,7 +571,7 @@ static int patch_from_sources(
 	*out = NULL;
 
 	if ((error = patch_generated_with_delta_alloc(
-			&pd, &oldsrc->as_path, &newsrc->as_path)) < 0)
+			 &pd, &oldsrc->as_path, &newsrc->as_path)) < 0)
 		return error;
 
 	memset(&xo, 0, sizeof(xo));
@@ -718,7 +722,7 @@ int git_patch_generated_from_diff(
 	/* don't load the patch data unless we need it for binary check */
 	if (!patch_ptr &&
 		((delta->flags & DIFF_FLAGS_KNOWN_BINARY) != 0 ||
-		 (diff->opts.flags & GIT_DIFF_SKIP_BINARY_CHECK) != 0))
+			(diff->opts.flags & GIT_DIFF_SKIP_BINARY_CHECK) != 0))
 		return 0;
 
 	if ((error = patch_generated_alloc_from_diff(&patch, diff, idx)) < 0)
@@ -771,7 +775,9 @@ static int patch_generated_file_cb(
 	float progress,
 	void *payload)
 {
-	GIT_UNUSED(delta); GIT_UNUSED(progress); GIT_UNUSED(payload);
+	GIT_UNUSED(delta);
+	GIT_UNUSED(progress);
+	GIT_UNUSED(payload);
 	return 0;
 }
 
@@ -810,7 +816,7 @@ static int git_patch_hunk_cb(
 	const git_diff_hunk *hunk_,
 	void *payload)
 {
-	git_patch_generated  *patch = payload;
+	git_patch_generated *patch = payload;
 	git_patch_hunk *hunk;
 
 	GIT_UNUSED(delta);
@@ -834,9 +840,9 @@ static int patch_generated_line_cb(
 	const git_diff_line *line_,
 	void *payload)
 {
-	git_patch_generated  *patch = payload;
+	git_patch_generated *patch = payload;
 	git_patch_hunk *hunk;
-	git_diff_line   *line;
+	git_diff_line *line;
 
 	GIT_UNUSED(delta);
 	GIT_UNUSED(hunk_);

@@ -79,7 +79,7 @@ size_t git_patch_size(
 		git_buf file_header = GIT_BUF_INIT;
 
 		if (git_diff_delta__format_file_header(
-			&file_header, patch->delta, NULL, NULL, 0) < 0)
+				&file_header, patch->delta, NULL, NULL, 0) < 0)
 			giterr_clear();
 		else
 			out += git_buf_len(&file_header);
@@ -106,7 +106,7 @@ int git_patch_line_stats(
 			continue;
 
 		switch (line->origin) {
-		case GIT_DIFF_LINE_CONTEXT:  totals[0]++; break;
+		case GIT_DIFF_LINE_CONTEXT: totals[0]++; break;
 		case GIT_DIFF_LINE_ADDITION: totals[1]++; break;
 		case GIT_DIFF_LINE_DELETION: totals[2]++; break;
 		default:
@@ -195,7 +195,7 @@ int git_patch_get_line_in_hunk(
 
 	if (line_of_hunk >= hunk->line_count ||
 		!(line = git_array_get(
-			patch->lines, hunk->line_start + line_of_hunk))) {
+			  patch->lines, hunk->line_start + line_of_hunk))) {
 		if (out) *out = NULL;
 		return patch_error_outofrange("line");
 	}

@@ -34,7 +34,8 @@ struct git_treebuilder {
 	git_strmap *map;
 };
 
-GIT_INLINE(bool) git_tree_entry__is_tree(const struct git_tree_entry *e)
+GIT_INLINE(bool)
+git_tree_entry__is_tree(const struct git_tree_entry *e)
 {
 	return (S_ISDIR(e->attr) && !S_ISGITLINK(e->attr));
 }

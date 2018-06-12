@@ -1,0 +1,17 @@
+### This style was chosen for your .clang-format
+BasedOnStyle: WebKit
+AlignEscapedNewlines: DontAlign
+AllowShortBlocksOnASingleLine: true
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: true
+AllowShortLoopsOnASingleLine: true
+BraceWrapping:
+  AfterFunction: true
+BreakBeforeBinaryOperators: None
+BreakBeforeBraces: Custom
+BreakBeforeTernaryOperators: false
+DerivePointerAlignment: true
+MaxEmptyLinesToKeep: 2
+SortIncludes: false
+TabWidth: 4
+UseTab: ForContinuationAndIndentation

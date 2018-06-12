@@ -10,7 +10,7 @@
 #include "common.h"
 
 #ifndef GIT_WIN32
-# include <ctype.h>
+#include <ctype.h>
 #endif
 
 #include "git2/buffer.h"
@@ -20,17 +20,17 @@
 #include "strnlen.h"
 #include "thread-utils.h"
 
-#define ARRAY_SIZE(x) (sizeof(x)/sizeof(x[0]))
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof(x[0]))
 #define bitsizeof(x) (CHAR_BIT * sizeof(x))
 #define MSB(x, bits) ((x) & (~0ULL << (bitsizeof(x) - (bits))))
 #ifndef min
-# define min(a,b) ((a) < (b) ? (a) : (b))
+#define min(a, b) ((a) < (b) ? (a) : (b))
 #endif
 #ifndef max
-# define max(a,b) ((a) > (b) ? (a) : (b))
+#define max(a, b) ((a) > (b) ? (a) : (b))
 #endif
 
-#define GIT_DATE_RFC2822_SZ  32
+#define GIT_DATE_RFC2822_SZ 32
 
 /**
  * Return the length of a constant string.
@@ -39,7 +39,7 @@
  * valid values when passed a pointer instead of a constant string; however
  * this macro will transparently work with wide-char and single-char strings.
  */
-#define CONST_STRLEN(x) ((sizeof(x)/sizeof(x[0])) - 1)
+#define CONST_STRLEN(x) ((sizeof(x) / sizeof(x[0])) - 1)
 
 #define STRCMP_CASESELECT(IGNORE_CASE, STR1, STR2) \
 	((IGNORE_CASE) ? strcasecmp((STR1), (STR2)) : strcmp((STR1), (STR2)))
@@ -53,7 +53,8 @@ extern int git__prefixncmp(const char *str, size_t str_n, const char *prefix);
 extern int git__prefixncmp_icase(const char *str, size_t str_n, const char *prefix);
 extern int git__suffixcmp(const char *str, const char *suffix);
 
-GIT_INLINE(int) git__signum(int val)
+GIT_INLINE(int)
+git__signum(int val)
 {
 	return ((val > 0) - (val < 0));
 }
@@ -69,9 +70,9 @@ extern uint32_t git__hash(const void *key, int len, uint32_t seed);
 
 /* 32-bit cross-platform rotl */
 #ifdef _MSC_VER /* use built-in method in MSVC */
-#	define git__rotl(v, s) (uint32_t)_rotl(v, s)
+#define git__rotl(v, s) (uint32_t) _rotl(v, s)
 #else /* use bitops in GCC; with o2 this gets optimized to a rotl instruction */
-#	define git__rotl(v, s) (uint32_t)(((uint32_t)(v) << (s)) | ((uint32_t)(v) >> (32 - (s))))
+#define git__rotl(v, s) (uint32_t)(((uint32_t)(v) << (s)) | ((uint32_t)(v) >> (32 - (s))))
 #endif
 
 extern char *git__strtok(char **end, const char *sep);
@@ -81,24 +82,27 @@ extern void git__strntolower(char *str, size_t len);
 extern void git__strtolower(char *str);
 
 #ifdef GIT_WIN32
-GIT_INLINE(int) git__tolower(int c)
+GIT_INLINE(int)
+git__tolower(int c)
 {
 	return (c >= 'A' && c <= 'Z') ? (c + 32) : c;
 }
 #else
-# define git__tolower(a) tolower(a)
+#define git__tolower(a) tolower(a)
 #endif
 
 extern size_t git__linenlen(const char *buffer, size_t buffer_len);
 
-GIT_INLINE(const char *) git__next_line(const char *s)
+GIT_INLINE(const char *)
+git__next_line(const char *s)
 {
 	while (*s && *s != '\n') s++;
 	while (*s == '\n' || *s == '\r') s++;
 	return s;
 }
 
-GIT_INLINE(const void *) git__memrchr(const void *s, int c, size_t n)
+GIT_INLINE(const void *)
+git__memrchr(const void *s, int c, size_t n)
 {
 	const unsigned char *cp;
 
@@ -166,19 +170,22 @@ typedef struct {
 
 typedef void (*git_refcount_freeptr)(void *r);
 
-#define GIT_REFCOUNT_INC(r) { \
-	git_atomic_inc(&(r)->rc.refcount);	\
-}
+#define GIT_REFCOUNT_INC(r) \
+	{ \
+		git_atomic_inc(&(r)->rc.refcount); \
+	}
 
-#define GIT_REFCOUNT_DEC(_r, do_free) { \
-	git_refcount *r = &(_r)->rc; \
-	int val = git_atomic_dec(&r->refcount); \
-	if (val <= 0 && r->owner == NULL) { do_free(_r); } \
-}
+#define GIT_REFCOUNT_DEC(_r, do_free) \
+	{ \
+		git_refcount *r = &(_r)->rc; \
+		int val = git_atomic_dec(&r->refcount); \
+		if (val <= 0 && r->owner == NULL) { do_free(_r); } \
+	}
 
-#define GIT_REFCOUNT_OWN(r, o) { \
-	(r)->rc.owner = o; \
-}
+#define GIT_REFCOUNT_OWN(r, o) \
+	{ \
+		(r)->rc.owner = o; \
+	}
 
 #define GIT_REFCOUNT_OWNER(r) ((r)->rc.owner)
 
@@ -186,39 +193,42 @@ typedef void (*git_refcount_freeptr)(void *r);
 
 
 static signed char from_hex[] = {
--1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* 00 */
--1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* 10 */
--1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* 20 */
- 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, -1, -1, -1, -1, -1, -1, /* 30 */
--1, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* 40 */
--1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* 50 */
--1, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* 60 */
--1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* 70 */
--1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* 80 */
--1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* 90 */
--1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* a0 */
--1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* b0 */
--1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* c0 */
--1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* d0 */
--1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* e0 */
--1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* f0 */
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* 00 */
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* 10 */
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* 20 */
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, -1, -1, -1, -1, -1, -1, /* 30 */
+	-1, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* 40 */
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* 50 */
+	-1, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* 60 */
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* 70 */
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* 80 */
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* 90 */
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* a0 */
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* b0 */
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* c0 */
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* d0 */
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* e0 */
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* f0 */
 };
 
-GIT_INLINE(int) git__fromhex(char h)
+GIT_INLINE(int)
+git__fromhex(char h)
 {
-	return from_hex[(unsigned char) h];
+	return from_hex[(unsigned char)h];
 }
 
-GIT_INLINE(int) git__ishex(const char *str)
+GIT_INLINE(int)
+git__ishex(const char *str)
 {
 	unsigned i;
-	for (i=0; str[i] != '\0'; i++)
+	for (i = 0; str[i] != '\0'; i++)
 		if (git__fromhex(str[i]) < 0)
 			return 0;
 	return 1;
 }
 
-GIT_INLINE(size_t) git__size_t_bitmask(size_t v)
+GIT_INLINE(size_t)
+git__size_t_bitmask(size_t v)
 {
 	v--;
 	v |= v >> 1;
@@ -230,42 +240,50 @@ GIT_INLINE(size_t) git__size_t_bitmask(size_t v)
 	return v;
 }
 
-GIT_INLINE(size_t) git__size_t_powerof2(size_t v)
+GIT_INLINE(size_t)
+git__size_t_powerof2(size_t v)
 {
 	return git__size_t_bitmask(v) + 1;
 }
 
-GIT_INLINE(bool) git__isupper(int c)
+GIT_INLINE(bool)
+git__isupper(int c)
 {
 	return (c >= 'A' && c <= 'Z');
 }
 
-GIT_INLINE(bool) git__isalpha(int c)
+GIT_INLINE(bool)
+git__isalpha(int c)
 {
 	return ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'));
 }
 
-GIT_INLINE(bool) git__isdigit(int c)
+GIT_INLINE(bool)
+git__isdigit(int c)
 {
 	return (c >= '0' && c <= '9');
 }
 
-GIT_INLINE(bool) git__isspace(int c)
+GIT_INLINE(bool)
+git__isspace(int c)
 {
 	return (c == ' ' || c == '\t' || c == '\n' || c == '\f' || c == '\r' || c == '\v');
 }
 
-GIT_INLINE(bool) git__isspace_nonlf(int c)
+GIT_INLINE(bool)
+git__isspace_nonlf(int c)
 {
 	return (c == ' ' || c == '\t' || c == '\f' || c == '\r' || c == '\v');
 }
 
-GIT_INLINE(bool) git__iswildcard(int c)
+GIT_INLINE(bool)
+git__iswildcard(int c)
 {
 	return (c == '*' || c == '?' || c == '[');
 }
 
-GIT_INLINE(bool) git__isxdigit(int c)
+GIT_INLINE(bool)
+git__isxdigit(int c)
 {
 	return ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'));
 }
@@ -332,7 +350,8 @@ extern size_t git__utf8_valid_buf_length(const uint8_t *str, size_t str_len);
  * Safely zero-out memory, making sure that the compiler
  * doesn't optimize away the operation.
  */
-GIT_INLINE(void) git__memzero(void *data, size_t size)
+GIT_INLINE(void)
+git__memzero(void *data, size_t size)
 {
 #ifdef _MSC_VER
 	SecureZeroMemory((PVOID)data, size);
@@ -346,7 +365,8 @@ GIT_INLINE(void) git__memzero(void *data, size_t size)
 
 #ifdef GIT_WIN32
 
-GIT_INLINE(double) git__timer(void)
+GIT_INLINE(double)
+git__timer(void)
 {
 	/* We need the initial tick count to detect if the tick
 	 * count has rolled over. */
@@ -356,39 +376,41 @@ GIT_INLINE(double) git__timer(void)
 	 * elapsed since the system was started. */
 	DWORD count = GetTickCount();
 
-	if(initial_tick_count == 0) {
+	if (initial_tick_count == 0) {
 		initial_tick_count = count;
 	} else if (count < initial_tick_count) {
 		/* The tick count has rolled over - adjust for it. */
 		count = (0xFFFFFFFF - initial_tick_count) + count;
 	}
 
-	return (double) count / (double) 1000;
+	return (double)count / (double)1000;
 }
 
 #elif __APPLE__
 
 #include <mach/mach_time.h>
 
-GIT_INLINE(double) git__timer(void)
+GIT_INLINE(double)
+git__timer(void)
 {
-   uint64_t time = mach_absolute_time();
-   static double scaling_factor = 0;
+	uint64_t time = mach_absolute_time();
+	static double scaling_factor = 0;
 
-   if (scaling_factor == 0) {
-       mach_timebase_info_data_t info;
-       (void)mach_timebase_info(&info);
-       scaling_factor = (double)info.numer / (double)info.denom;
-   }
+	if (scaling_factor == 0) {
+		mach_timebase_info_data_t info;
+		(void)mach_timebase_info(&info);
+		scaling_factor = (double)info.numer / (double)info.denom;
+	}
 
-   return (double)time * scaling_factor / 1.0E9;
+	return (double)time * scaling_factor / 1.0E9;
 }
 
 #elif defined(AMIGA)
 
 #include <proto/timer.h>
 
-GIT_INLINE(double) git__timer(void)
+GIT_INLINE(double)
+git__timer(void)
 {
 	struct TimeVal tv;
 	ITimer->GetUpTime(&tv);
@@ -399,12 +421,13 @@ GIT_INLINE(double) git__timer(void)
 
 #include <sys/time.h>
 
-GIT_INLINE(double) git__timer(void)
+GIT_INLINE(double)
+git__timer(void)
 {
 	struct timespec tp;
 
 	if (clock_gettime(CLOCK_MONOTONIC, &tp) == 0) {
-		return (double) tp.tv_sec + (double) tp.tv_nsec / 1.0E9;
+		return (double)tp.tv_sec + (double)tp.tv_nsec / 1.0E9;
 	} else {
 		/* Fall back to using gettimeofday */
 		struct timeval tv;

@@ -117,8 +117,10 @@ typedef enum {
 
 #define GIT_REBASE_OPTIONS_VERSION 1
 #define GIT_REBASE_OPTIONS_INIT \
-	{ GIT_REBASE_OPTIONS_VERSION, 0, 0, NULL, GIT_MERGE_OPTIONS_INIT, \
-	  GIT_CHECKOUT_OPTIONS_INIT}
+	{ \
+		GIT_REBASE_OPTIONS_VERSION, 0, 0, NULL, GIT_MERGE_OPTIONS_INIT, \
+			GIT_CHECKOUT_OPTIONS_INIT \
+	}
 
 /** Indicates that a rebase operation is not (yet) in progress. */
 #define GIT_REBASE_NO_OPERATION SIZE_MAX
@@ -156,7 +158,8 @@ typedef struct {
  * @param version The struct version; pass `GIT_REBASE_OPTIONS_VERSION`.
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_rebase_init_options(
+GIT_EXTERN(int)
+git_rebase_init_options(
 	git_rebase_options *opts,
 	unsigned int version);
 
@@ -177,7 +180,8 @@ GIT_EXTERN(int) git_rebase_init_options(
  * @param opts Options to specify how rebase is performed, or NULL
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_rebase_init(
+GIT_EXTERN(int)
+git_rebase_init(
 	git_rebase **out,
 	git_repository *repo,
 	const git_annotated_commit *branch,
@@ -194,7 +198,8 @@ GIT_EXTERN(int) git_rebase_init(
  * @param opts Options to specify how rebase is performed
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_rebase_open(
+GIT_EXTERN(int)
+git_rebase_open(
 	git_rebase **out,
 	git_repository *repo,
 	const git_rebase_options *opts);
@@ -205,7 +210,8 @@ GIT_EXTERN(int) git_rebase_open(
  * @param rebase The in-progress rebase
  * @return The number of rebase operations in total
  */
-GIT_EXTERN(size_t) git_rebase_operation_entrycount(git_rebase *rebase);
+GIT_EXTERN(size_t)
+git_rebase_operation_entrycount(git_rebase *rebase);
 
 /**
  * Gets the index of the rebase operation that is currently being applied.
@@ -216,7 +222,8 @@ GIT_EXTERN(size_t) git_rebase_operation_entrycount(git_rebase *rebase);
  * @param rebase The in-progress rebase
  * @return The index of the rebase operation currently being applied.
  */
-GIT_EXTERN(size_t) git_rebase_operation_current(git_rebase *rebase);
+GIT_EXTERN(size_t)
+git_rebase_operation_current(git_rebase *rebase);
 
 /**
  * Gets the rebase operation specified by the given index.
@@ -225,7 +232,8 @@ GIT_EXTERN(size_t) git_rebase_operation_current(git_rebase *rebase);
  * @param idx The index of the rebase operation to retrieve
  * @return The rebase operation or NULL if `idx` was out of bounds
  */
-GIT_EXTERN(git_rebase_operation *) git_rebase_operation_byindex(
+GIT_EXTERN(git_rebase_operation *)
+git_rebase_operation_byindex(
 	git_rebase *rebase,
 	size_t idx);
 
@@ -240,7 +248,8 @@ GIT_EXTERN(git_rebase_operation *) git_rebase_operation_byindex(
  * @param rebase The rebase in progress
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_rebase_next(
+GIT_EXTERN(int)
+git_rebase_next(
 	git_rebase_operation **operation,
 	git_rebase *rebase);
 
@@ -255,7 +264,8 @@ GIT_EXTERN(int) git_rebase_next(
  * a working directory, the changes were applied to the repository's
  * index.
  */
-GIT_EXTERN(int) git_rebase_inmemory_index(
+GIT_EXTERN(int)
+git_rebase_inmemory_index(
 	git_index **index,
 	git_rebase *rebase);
 
@@ -281,7 +291,8 @@ GIT_EXTERN(int) git_rebase_inmemory_index(
  *        been applied to the upstream and there is nothing to commit,
  *        -1 on failure.
  */
-GIT_EXTERN(int) git_rebase_commit(
+GIT_EXTERN(int)
+git_rebase_commit(
 	git_oid *id,
 	git_rebase *rebase,
 	const git_signature *author,
@@ -297,7 +308,8 @@ GIT_EXTERN(int) git_rebase_commit(
  * @return Zero on success; GIT_ENOTFOUND if a rebase is not in progress,
  *         -1 on other errors.
  */
-GIT_EXTERN(int) git_rebase_abort(git_rebase *rebase);
+GIT_EXTERN(int)
+git_rebase_abort(git_rebase *rebase);
 
 /**
  * Finishes a rebase that is currently in progress once all patches have
@@ -307,7 +319,8 @@ GIT_EXTERN(int) git_rebase_abort(git_rebase *rebase);
  * @param signature The identity that is finishing the rebase (optional)
  * @return Zero on success; -1 on error
  */
-GIT_EXTERN(int) git_rebase_finish(
+GIT_EXTERN(int)
+git_rebase_finish(
 	git_rebase *rebase,
 	const git_signature *signature);
 
@@ -316,7 +329,8 @@ GIT_EXTERN(int) git_rebase_finish(
  *
  * @param rebase The rebase object
  */
-GIT_EXTERN(void) git_rebase_free(git_rebase *rebase);
+GIT_EXTERN(void)
+git_rebase_free(git_rebase *rebase);
 
 /** @} */
 GIT_END_DECL

@@ -28,21 +28,21 @@ typedef enum {
 	GIT_BLAME_NORMAL = 0,
 	/** Track lines that have moved within a file (like `git blame -M`).
 	 * NOT IMPLEMENTED. */
-	GIT_BLAME_TRACK_COPIES_SAME_FILE = (1<<0),
+	GIT_BLAME_TRACK_COPIES_SAME_FILE = (1 << 0),
 	/** Track lines that have moved across files in the same commit (like `git blame -C`).
 	 * NOT IMPLEMENTED. */
-	GIT_BLAME_TRACK_COPIES_SAME_COMMIT_MOVES = (1<<1),
+	GIT_BLAME_TRACK_COPIES_SAME_COMMIT_MOVES = (1 << 1),
 	/** Track lines that have been copied from another file that exists in the
 	 * same commit (like `git blame -CC`). Implies SAME_FILE.
 	 * NOT IMPLEMENTED. */
-	GIT_BLAME_TRACK_COPIES_SAME_COMMIT_COPIES = (1<<2),
+	GIT_BLAME_TRACK_COPIES_SAME_COMMIT_COPIES = (1 << 2),
 	/** Track lines that have been copied from another file that exists in *any*
 	 * commit (like `git blame -CCC`). Implies SAME_COMMIT_COPIES.
 	 * NOT IMPLEMENTED. */
-	GIT_BLAME_TRACK_COPIES_ANY_COMMIT_COPIES = (1<<3),
+	GIT_BLAME_TRACK_COPIES_ANY_COMMIT_COPIES = (1 << 3),
 	/** Restrict the search of commits to those reachable following only the
 	 * first parents. */
-	GIT_BLAME_FIRST_PARENT = (1<<4),
+	GIT_BLAME_FIRST_PARENT = (1 << 4),
 } git_blame_flag_t;
 
 /**
@@ -84,7 +84,10 @@ typedef struct git_blame_options {
 } git_blame_options;
 
 #define GIT_BLAME_OPTIONS_VERSION 1
-#define GIT_BLAME_OPTIONS_INIT {GIT_BLAME_OPTIONS_VERSION}
+#define GIT_BLAME_OPTIONS_INIT \
+	{ \
+		GIT_BLAME_OPTIONS_VERSION \
+	}
 
 /**
  * Initialize git_blame_options structure
@@ -96,7 +99,8 @@ typedef struct git_blame_options {
  * @param version The struct version; pass `GIT_BLAME_OPTIONS_VERSION`.
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_blame_init_options(
+GIT_EXTERN(int)
+git_blame_init_options(
 	git_blame_options *opts,
 	unsigned int version);
 
@@ -141,7 +145,8 @@ typedef struct git_blame git_blame;
 /**
  * Gets the number of hunks that exist in the blame structure.
  */
-GIT_EXTERN(uint32_t) git_blame_get_hunk_count(git_blame *blame);
+GIT_EXTERN(uint32_t)
+git_blame_get_hunk_count(git_blame *blame);
 
 /**
  * Gets the blame hunk at the given index.
@@ -150,9 +155,10 @@ GIT_EXTERN(uint32_t) git_blame_get_hunk_count(git_blame *blame);
  * @param index index of the hunk to retrieve
  * @return the hunk at the given index, or NULL on error
  */
-GIT_EXTERN(const git_blame_hunk*) git_blame_get_hunk_byindex(
-		git_blame *blame,
-		uint32_t index);
+GIT_EXTERN(const git_blame_hunk *)
+git_blame_get_hunk_byindex(
+	git_blame *blame,
+	uint32_t index);
 
 /**
  * Gets the hunk that relates to the given line number in the newest commit.
@@ -161,9 +167,10 @@ GIT_EXTERN(const git_blame_hunk*) git_blame_get_hunk_byindex(
  * @param lineno the (1-based) line number to find a hunk for
  * @return the hunk that contains the given line, or NULL on error
  */
-GIT_EXTERN(const git_blame_hunk*) git_blame_get_hunk_byline(
-		git_blame *blame,
-		size_t lineno);
+GIT_EXTERN(const git_blame_hunk *)
+git_blame_get_hunk_byline(
+	git_blame *blame,
+	size_t lineno);
 
 /**
  * Get the blame for a single file.
@@ -176,11 +183,12 @@ GIT_EXTERN(const git_blame_hunk*) git_blame_get_hunk_byline(
  * @return 0 on success, or an error code. (use giterr_last for information
  *         about the error.)
  */
-GIT_EXTERN(int) git_blame_file(
-		git_blame **out,
-		git_repository *repo,
-		const char *path,
-		git_blame_options *options);
+GIT_EXTERN(int)
+git_blame_file(
+	git_blame **out,
+	git_repository *repo,
+	const char *path,
+	git_blame_options *options);
 
 
 /**
@@ -200,20 +208,21 @@ GIT_EXTERN(int) git_blame_file(
  * @return 0 on success, or an error code. (use giterr_last for information
  *         about the error)
  */
-GIT_EXTERN(int) git_blame_buffer(
-		git_blame **out,
-		git_blame *reference,
-		const char *buffer,
-		size_t buffer_len);
+GIT_EXTERN(int)
+git_blame_buffer(
+	git_blame **out,
+	git_blame *reference,
+	const char *buffer,
+	size_t buffer_len);
 
 /**
  * Free memory allocated by git_blame_file or git_blame_buffer.
  *
  * @param blame the blame structure to free
  */
-GIT_EXTERN(void) git_blame_free(git_blame *blame);
+GIT_EXTERN(void)
+git_blame_free(git_blame *blame);
 
 /** @} */
 GIT_END_DECL
 #endif
-

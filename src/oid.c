@@ -57,7 +57,7 @@ int git_oid_fromstr(git_oid *out, const char *str)
 	return git_oid_fromstrn(out, str, GIT_OID_HEXSZ);
 }
 
-GIT_INLINE(char) *fmt_one(char *str, unsigned int val)
+GIT_INLINE(char) * fmt_one(char *str, unsigned int val)
 {
 	*str++ = to_hex[val >> 4];
 	*str++ = to_hex[val & 0xf];
@@ -287,8 +287,8 @@ static trie_node *push_leaf(git_oid_shorten *os, node_index idx, int push_at, co
 
 	if (os->node_count == SHRT_MAX) {
 		os->full = 1;
-        return NULL;
-    }
+		return NULL;
+	}
 
 	node = &os->nodes[idx];
 	node->children[push_at] = -idx_leaf;
@@ -439,4 +439,3 @@ int git_oid_shorten_add(git_oid_shorten *os, const char *text_oid)
 
 	return os->min_length;
 }
-

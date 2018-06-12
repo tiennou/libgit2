@@ -192,7 +192,7 @@ static int _git_uploadpack_ls(
 	const char *url,
 	git_smart_subtransport_stream **stream)
 {
-	char *host=NULL, *port=NULL, *path=NULL, *user=NULL, *pass=NULL;
+	char *host = NULL, *port = NULL, *path = NULL, *user = NULL, *pass = NULL;
 	const char *stream_url = url;
 	git_proto_stream *s;
 	int error;
@@ -219,7 +219,7 @@ static int _git_uploadpack_ls(
 		return error;
 	}
 
-	s = (git_proto_stream *) *stream;
+	s = (git_proto_stream *)*stream;
 	if ((error = git_stream_connect(s->io)) < 0) {
 		git_proto_stream_free(*stream);
 		return error;
@@ -251,7 +251,7 @@ static int _git_receivepack_ls(
 	const char *url,
 	git_smart_subtransport_stream **stream)
 {
-	char *host=NULL, *port=NULL, *path=NULL, *user=NULL, *pass=NULL;
+	char *host = NULL, *port = NULL, *path = NULL, *user = NULL, *pass = NULL;
 	const char *stream_url = url;
 	git_proto_stream *s;
 	int error;
@@ -276,7 +276,7 @@ static int _git_receivepack_ls(
 		return error;
 	}
 
-	s = (git_proto_stream *) *stream;
+	s = (git_proto_stream *)*stream;
 
 	if ((error = git_stream_connect(s->io)) < 0)
 		return error;
@@ -308,20 +308,20 @@ static int _git_action(
 	const char *url,
 	git_smart_service_t action)
 {
-	git_subtransport *t = (git_subtransport *) subtransport;
+	git_subtransport *t = (git_subtransport *)subtransport;
 
 	switch (action) {
-		case GIT_SERVICE_UPLOADPACK_LS:
-			return _git_uploadpack_ls(t, url, stream);
+	case GIT_SERVICE_UPLOADPACK_LS:
+		return _git_uploadpack_ls(t, url, stream);
 
-		case GIT_SERVICE_UPLOADPACK:
-			return _git_uploadpack(t, url, stream);
+	case GIT_SERVICE_UPLOADPACK:
+		return _git_uploadpack(t, url, stream);
 
-		case GIT_SERVICE_RECEIVEPACK_LS:
-			return _git_receivepack_ls(t, url, stream);
+	case GIT_SERVICE_RECEIVEPACK_LS:
+		return _git_receivepack_ls(t, url, stream);
 
-		case GIT_SERVICE_RECEIVEPACK:
-			return _git_receivepack(t, url, stream);
+	case GIT_SERVICE_RECEIVEPACK:
+		return _git_receivepack(t, url, stream);
 	}
 
 	*stream = NULL;
@@ -330,7 +330,7 @@ static int _git_action(
 
 static int _git_close(git_smart_subtransport *subtransport)
 {
-	git_subtransport *t = (git_subtransport *) subtransport;
+	git_subtransport *t = (git_subtransport *)subtransport;
 
 	assert(!t->current_stream);
 
@@ -341,7 +341,7 @@ static int _git_close(git_smart_subtransport *subtransport)
 
 static void _git_free(git_smart_subtransport *subtransport)
 {
-	git_subtransport *t = (git_subtransport *) subtransport;
+	git_subtransport *t = (git_subtransport *)subtransport;
 
 	assert(!t->current_stream);
 
@@ -365,6 +365,6 @@ int git_smart_subtransport_git(git_smart_subtransport **out, git_transport *owne
 	t->parent.close = _git_close;
 	t->parent.free = _git_free;
 
-	*out = (git_smart_subtransport *) t;
+	*out = (git_smart_subtransport *)t;
 	return 0;
 }

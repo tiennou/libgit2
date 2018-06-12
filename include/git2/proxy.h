@@ -67,7 +67,7 @@ typedef struct {
 	 * connection to proceed. Returns 0 to allow the connection
 	 * or a negative value to indicate an error.
 	 */
-        git_transport_certificate_check_cb certificate_check;
+	git_transport_certificate_check_cb certificate_check;
 
 	/**
 	 * Payload to be provided to the credentials and certificate
@@ -77,7 +77,10 @@ typedef struct {
 } git_proxy_options;
 
 #define GIT_PROXY_OPTIONS_VERSION 1
-#define GIT_PROXY_OPTIONS_INIT {GIT_PROXY_OPTIONS_VERSION}
+#define GIT_PROXY_OPTIONS_INIT \
+	{ \
+		GIT_PROXY_OPTIONS_VERSION \
+	}
 
 /**
  * Initialize git_proxy_options structure
@@ -89,7 +92,8 @@ typedef struct {
  * @param version The struct version; pass `GIT_PROXY_OPTIONS_VERSION`.
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_proxy_init_options(git_proxy_options *opts, unsigned int version);
+GIT_EXTERN(int)
+git_proxy_init_options(git_proxy_options *opts, unsigned int version);
 
 GIT_END_DECL
 

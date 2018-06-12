@@ -105,4 +105,3 @@ int git_diff_from_buffer(
 
 	return error;
 }
-

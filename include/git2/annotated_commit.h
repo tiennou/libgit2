@@ -30,7 +30,8 @@ GIT_BEGIN_DECL
  * @param ref reference to use to lookup the git_annotated_commit
  * @return 0 on success or error code
  */
-GIT_EXTERN(int) git_annotated_commit_from_ref(
+GIT_EXTERN(int)
+git_annotated_commit_from_ref(
 	git_annotated_commit **out,
 	git_repository *repo,
 	const git_reference *ref);
@@ -47,7 +48,8 @@ GIT_EXTERN(int) git_annotated_commit_from_ref(
  * @param id the commit object id of the remote branch
  * @return 0 on success or error code
  */
-GIT_EXTERN(int) git_annotated_commit_from_fetchhead(
+GIT_EXTERN(int)
+git_annotated_commit_from_fetchhead(
 	git_annotated_commit **out,
 	git_repository *repo,
 	const char *branch_name,
@@ -72,7 +74,8 @@ GIT_EXTERN(int) git_annotated_commit_from_fetchhead(
  * @param id the commit object id to lookup
  * @return 0 on success or error code
  */
-GIT_EXTERN(int) git_annotated_commit_lookup(
+GIT_EXTERN(int)
+git_annotated_commit_lookup(
 	git_annotated_commit **out,
 	git_repository *repo,
 	const git_oid *id);
@@ -89,7 +92,8 @@ GIT_EXTERN(int) git_annotated_commit_lookup(
  * @param revspec the extended sha syntax string to use to lookup the commit
  * @return 0 on success or error code
  */
-GIT_EXTERN(int) git_annotated_commit_from_revspec(
+GIT_EXTERN(int)
+git_annotated_commit_from_revspec(
 	git_annotated_commit **out,
 	git_repository *repo,
 	const char *revspec);
@@ -100,7 +104,8 @@ GIT_EXTERN(int) git_annotated_commit_from_revspec(
  * @param commit the given annotated commit
  * @return commit id
  */
-GIT_EXTERN(const git_oid *) git_annotated_commit_id(
+GIT_EXTERN(const git_oid *)
+git_annotated_commit_id(
 	const git_annotated_commit *commit);
 
 /**
@@ -108,7 +113,8 @@ GIT_EXTERN(const git_oid *) git_annotated_commit_id(
  *
  * @param commit annotated commit to free
  */
-GIT_EXTERN(void) git_annotated_commit_free(
+GIT_EXTERN(void)
+git_annotated_commit_free(
 	git_annotated_commit *commit);
 
 /** @} */
