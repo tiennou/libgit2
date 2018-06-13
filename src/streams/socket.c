@@ -12,19 +12,19 @@
 #include "stream.h"
 
 #ifndef _WIN32
-#	include <sys/types.h>
-#	include <sys/socket.h>
-#	include <sys/select.h>
-#	include <sys/time.h>
-#	include <netdb.h>
-#	include <netinet/in.h>
+#   include <sys/types.h>
+#   include <sys/socket.h>
+#   include <sys/select.h>
+#   include <sys/time.h>
+#   include <netdb.h>
+#   include <netinet/in.h>
 #       include <arpa/inet.h>
 #else
-#	include <winsock2.h>
-#	include <ws2tcpip.h>
-#	ifdef _MSC_VER
-#		pragma comment(lib, "ws2_32")
-#	endif
+#   include <winsock2.h>
+#   include <ws2tcpip.h>
+#   ifdef _MSC_VER
+#       pragma comment(lib, "ws2_32")
+#   endif
 #endif
 
 #ifdef GIT_WIN32
@@ -99,7 +99,7 @@ int socket_connect(git_stream *stream)
 
 	if ((ret = p_getaddrinfo(st->host, st->port, &hints, &info)) != 0) {
 		giterr_set(GITERR_NET,
-			   "failed to resolve address for %s: %s", st->host, p_gai_strerror(ret));
+		           "failed to resolve address for %s: %s", st->host, p_gai_strerror(ret));
 		return -1;
 	}
 

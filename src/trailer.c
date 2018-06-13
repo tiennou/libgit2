@@ -129,7 +129,7 @@ static int ignore_non_trailer(const char *buf, size_t len)
 			if (!boc)
 				boc = bol;
 		} else if (in_old_conflicts_block && buf[bol] == '\t') {
-			; /* a pathname in the conflicts block */
+			;             /* a pathname in the conflicts block */
 		} else if (boc) {
 			/* the previous was not trailing comment */
 			boc = 0;
@@ -280,7 +280,7 @@ enum trailer_state {
 #define NEXT(st) { state = (st); ptr++; continue; }
 #define GOTO(st) { state = (st); continue; }
 
-typedef git_array_t(git_message_trailer) git_array_trailer_t;
+typedef git_array_t (git_message_trailer) git_array_trailer_t;
 
 int git_message_trailers(git_message_trailer_array *trailer_arr, const char *message)
 {
@@ -296,108 +296,108 @@ int git_message_trailers(git_message_trailer_array *trailer_arr, const char *mes
 
 	for (ptr = trailer;;) {
 		switch (state) {
-			case S_START: {
-				if (*ptr == 0) {
-					goto ret;
-				}
-
-				key = ptr;
-				GOTO(S_KEY);
+		case S_START: {
+			if (*ptr == 0) {
+				goto ret;
 			}
-			case S_KEY: {
-				if (*ptr == 0) {
-					goto ret;
-				}
 
-				if (isalnum(*ptr) || *ptr == '-') {
-					// legal key character
-					NEXT(S_KEY);
-				}
-
-				if (*ptr == ' ' || *ptr == '\t') {
-					// optional whitespace before separator
-					*ptr = 0;
-					NEXT(S_KEY_WS);
-				}
-
-				if (strchr(TRAILER_SEPARATORS, *ptr)) {
-					*ptr = 0;
-					NEXT(S_SEP_WS);
-				}
-
-				// illegal character
-				GOTO(S_IGNORE);
+			key = ptr;
+			GOTO(S_KEY);
+		}
+		case S_KEY: {
+			if (*ptr == 0) {
+				goto ret;
 			}
-			case S_KEY_WS: {
-				if (*ptr == 0) {
-					goto ret;
-				}
 
-				if (*ptr == ' ' || *ptr == '\t') {
-					NEXT(S_KEY_WS);
-				}
-
-				if (strchr(TRAILER_SEPARATORS, *ptr)) {
-					NEXT(S_SEP_WS);
-				}
-
-				// illegal character
-				GOTO(S_IGNORE);
+			if (isalnum(*ptr) || *ptr == '-') {
+				// legal key character
+				NEXT(S_KEY);
 			}
-			case S_SEP_WS: {
-				if (*ptr == 0) {
-					goto ret;
-				}
 
-				if (*ptr == ' ' || *ptr == '\t') {
-					NEXT(S_SEP_WS);
-				}
-
-				value = ptr;
-				NEXT(S_VALUE);
+			if (*ptr == ' ' || *ptr == '\t') {
+				// optional whitespace before separator
+				*ptr = 0;
+				NEXT(S_KEY_WS);
 			}
-			case S_VALUE: {
-				if (*ptr == 0) {
-					GOTO(S_VALUE_END);
-				}
 
-				if (*ptr == '\n') {
-					NEXT(S_VALUE_NL);
-				}
-
-				NEXT(S_VALUE);
+			if (strchr(TRAILER_SEPARATORS, *ptr)) {
+				*ptr = 0;
+				NEXT(S_SEP_WS);
 			}
-			case S_VALUE_NL: {
-				if (*ptr == ' ') {
-					// continuation;
-					NEXT(S_VALUE);
-				}
 
-				ptr[-1] = 0;
+			// illegal character
+			GOTO(S_IGNORE);
+		}
+		case S_KEY_WS: {
+			if (*ptr == 0) {
+				goto ret;
+			}
+
+			if (*ptr == ' ' || *ptr == '\t') {
+				NEXT(S_KEY_WS);
+			}
+
+			if (strchr(TRAILER_SEPARATORS, *ptr)) {
+				NEXT(S_SEP_WS);
+			}
+
+			// illegal character
+			GOTO(S_IGNORE);
+		}
+		case S_SEP_WS: {
+			if (*ptr == 0) {
+				goto ret;
+			}
+
+			if (*ptr == ' ' || *ptr == '\t') {
+				NEXT(S_SEP_WS);
+			}
+
+			value = ptr;
+			NEXT(S_VALUE);
+		}
+		case S_VALUE: {
+			if (*ptr == 0) {
 				GOTO(S_VALUE_END);
 			}
-			case S_VALUE_END: {
-				git_message_trailer *t = git_array_alloc(arr);
 
-				t->key = key;
-				t->value = value;
-
-				key = NULL;
-				value = NULL;
-
-				GOTO(S_START);
+			if (*ptr == '\n') {
+				NEXT(S_VALUE_NL);
 			}
-			case S_IGNORE: {
-				if (*ptr == 0) {
-					goto ret;
-				}
 
-				if (*ptr == '\n') {
-					NEXT(S_START);
-				}
-
-				NEXT(S_IGNORE);
+			NEXT(S_VALUE);
+		}
+		case S_VALUE_NL: {
+			if (*ptr == ' ') {
+				// continuation;
+				NEXT(S_VALUE);
 			}
+
+			ptr[-1] = 0;
+			GOTO(S_VALUE_END);
+		}
+		case S_VALUE_END: {
+			git_message_trailer *t = git_array_alloc(arr);
+
+			t->key = key;
+			t->value = value;
+
+			key = NULL;
+			value = NULL;
+
+			GOTO(S_START);
+		}
+		case S_IGNORE: {
+			if (*ptr == 0) {
+				goto ret;
+			}
+
+			if (*ptr == '\n') {
+				NEXT(S_START);
+			}
+
+			NEXT(S_IGNORE);
+		}
 		}
 	}
 

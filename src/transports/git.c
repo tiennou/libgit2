@@ -63,7 +63,7 @@ static int gen_proto(git_buf *request, const char *cmd, const char *url)
 
 	git_buf_grow(request, len);
 	git_buf_printf(request, "%04x%s %s%c%s",
-		(unsigned int)(len & 0x0FFFF), cmd, repo, 0, host);
+	               (unsigned int)(len & 0x0FFFF), cmd, repo, 0, host);
 	git_buf_put(request, url, delim - url);
 	git_buf_putc(request, '\0');
 
@@ -311,17 +311,17 @@ static int _git_action(
 	git_subtransport *t = (git_subtransport *) subtransport;
 
 	switch (action) {
-		case GIT_SERVICE_UPLOADPACK_LS:
-			return _git_uploadpack_ls(t, url, stream);
+	case GIT_SERVICE_UPLOADPACK_LS:
+		return _git_uploadpack_ls(t, url, stream);
 
-		case GIT_SERVICE_UPLOADPACK:
-			return _git_uploadpack(t, url, stream);
+	case GIT_SERVICE_UPLOADPACK:
+		return _git_uploadpack(t, url, stream);
 
-		case GIT_SERVICE_RECEIVEPACK_LS:
-			return _git_receivepack_ls(t, url, stream);
+	case GIT_SERVICE_RECEIVEPACK_LS:
+		return _git_receivepack_ls(t, url, stream);
 
-		case GIT_SERVICE_RECEIVEPACK:
-			return _git_receivepack(t, url, stream);
+	case GIT_SERVICE_RECEIVEPACK:
+		return _git_receivepack(t, url, stream);
 	}
 
 	*stream = NULL;

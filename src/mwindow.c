@@ -16,8 +16,8 @@
 
 #define DEFAULT_WINDOW_SIZE \
 	(sizeof(void*) >= 8 \
-		? 1 * 1024 * 1024 * 1024 \
-		: 32 * 1024 * 1024)
+	 ? 1 * 1024 * 1024 * 1024 \
+	 : 32 * 1024 * 1024)
 
 #define DEFAULT_MAPPED_LIMIT \
 	((1024 * 1024) * (sizeof(void*) >= 8 ? 8192ULL : 256UL))
@@ -143,7 +143,7 @@ void git_mwindow_free_all_locked(git_mwindow_file *mwf)
 	/*
 	 * Remove these windows from the global list
 	 */
-	for (i = 0; i < ctl->windowfiles.length; ++i){
+	for (i = 0; i < ctl->windowfiles.length; ++i) {
 		if (git_vector_get(&ctl->windowfiles, i) == mwf) {
 			git_vector_remove(&ctl->windowfiles, i);
 			break;
@@ -176,7 +176,7 @@ int git_mwindow_contains(git_mwindow *win, git_off_t offset)
 {
 	git_off_t win_off = win->offset;
 	return win_off <= offset
-		&& offset <= (git_off_t)(win_off + win->window_map.len);
+	       && offset <= (git_off_t)(win_off + win->window_map.len);
 }
 
 /*
@@ -274,7 +274,7 @@ static git_mwindow *new_window(
 	ctl->mapped += (size_t)len;
 
 	while (git_mwindow__mapped_limit < ctl->mapped &&
-			git_mwindow_close_lru(mwf) == 0) /* nop */;
+	       git_mwindow_close_lru(mwf) == 0) /* nop */;
 
 	/*
 	 * We treat `mapped_limit` as a soft limit. If we can't find a
@@ -335,7 +335,7 @@ unsigned char *git_mwindow_open(
 
 		for (w = mwf->windows; w; w = w->next) {
 			if (git_mwindow_contains(w, offset) &&
-				git_mwindow_contains(w, offset + extra))
+			    git_mwindow_contains(w, offset + extra))
 				break;
 		}
 

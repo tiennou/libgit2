@@ -33,22 +33,22 @@ typedef enum {
 static git_time_t tm_to_time_t(const struct tm *tm)
 {
 	static const int mdays[] = {
-	    0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334
+		0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334
 	};
 	int year = tm->tm_year - 70;
 	int month = tm->tm_mon;
 	int day = tm->tm_mday;
 
-	if (year < 0 || year > 129) /* algo only works for 1970-2099 */
+	if (year < 0 || year > 129)     /* algo only works for 1970-2099 */
 		return -1;
-	if (month < 0 || month > 11) /* array bounds */
+	if (month < 0 || month > 11)     /* array bounds */
 		return -1;
 	if (month < 2 || (year + 2) % 4)
 		day--;
 	if (tm->tm_hour < 0 || tm->tm_min < 0 || tm->tm_sec < 0)
 		return -1;
 	return (year * 365 + (year + 1) / 4 + mdays[month] + day) * 24*60*60UL +
-		tm->tm_hour * 60*60 + tm->tm_min * 60 + tm->tm_sec;
+	       tm->tm_hour * 60*60 + tm->tm_min * 60 + tm->tm_sec;
 }
 
 static const char *month_names[] = {
@@ -73,52 +73,52 @@ static const struct {
 	int offset;
 	int dst;
 } timezone_names[] = {
-	{ "IDLW", -12, 0, },	/* International Date Line West */
-	{ "NT",   -11, 0, },	/* Nome */
-	{ "CAT",  -10, 0, },	/* Central Alaska */
-	{ "HST",  -10, 0, },	/* Hawaii Standard */
-	{ "HDT",  -10, 1, },	/* Hawaii Daylight */
-	{ "YST",   -9, 0, },	/* Yukon Standard */
-	{ "YDT",   -9, 1, },	/* Yukon Daylight */
-	{ "PST",   -8, 0, },	/* Pacific Standard */
-	{ "PDT",   -8, 1, },	/* Pacific Daylight */
-	{ "MST",   -7, 0, },	/* Mountain Standard */
-	{ "MDT",   -7, 1, },	/* Mountain Daylight */
-	{ "CST",   -6, 0, },	/* Central Standard */
-	{ "CDT",   -6, 1, },	/* Central Daylight */
-	{ "EST",   -5, 0, },	/* Eastern Standard */
-	{ "EDT",   -5, 1, },	/* Eastern Daylight */
-	{ "AST",   -3, 0, },	/* Atlantic Standard */
-	{ "ADT",   -3, 1, },	/* Atlantic Daylight */
-	{ "WAT",   -1, 0, },	/* West Africa */
+	{ "IDLW", -12, 0, },     /* International Date Line West */
+	{ "NT",   -11, 0, },    /* Nome */
+	{ "CAT",  -10, 0, },    /* Central Alaska */
+	{ "HST",  -10, 0, },    /* Hawaii Standard */
+	{ "HDT",  -10, 1, },    /* Hawaii Daylight */
+	{ "YST",   -9, 0, },    /* Yukon Standard */
+	{ "YDT",   -9, 1, },    /* Yukon Daylight */
+	{ "PST",   -8, 0, },    /* Pacific Standard */
+	{ "PDT",   -8, 1, },    /* Pacific Daylight */
+	{ "MST",   -7, 0, },    /* Mountain Standard */
+	{ "MDT",   -7, 1, },    /* Mountain Daylight */
+	{ "CST",   -6, 0, },    /* Central Standard */
+	{ "CDT",   -6, 1, },    /* Central Daylight */
+	{ "EST",   -5, 0, },    /* Eastern Standard */
+	{ "EDT",   -5, 1, },    /* Eastern Daylight */
+	{ "AST",   -3, 0, },    /* Atlantic Standard */
+	{ "ADT",   -3, 1, },    /* Atlantic Daylight */
+	{ "WAT",   -1, 0, },    /* West Africa */
 
-	{ "GMT",    0, 0, },	/* Greenwich Mean */
-	{ "UTC",    0, 0, },	/* Universal (Coordinated) */
+	{ "GMT",    0, 0, },    /* Greenwich Mean */
+	{ "UTC",    0, 0, },    /* Universal (Coordinated) */
 	{ "Z",      0, 0, },    /* Zulu, alias for UTC */
 
-	{ "WET",    0, 0, },	/* Western European */
-	{ "BST",    0, 1, },	/* British Summer */
-	{ "CET",   +1, 0, },	/* Central European */
-	{ "MET",   +1, 0, },	/* Middle European */
-	{ "MEWT",  +1, 0, },	/* Middle European Winter */
-	{ "MEST",  +1, 1, },	/* Middle European Summer */
-	{ "CEST",  +1, 1, },	/* Central European Summer */
-	{ "MESZ",  +1, 1, },	/* Middle European Summer */
-	{ "FWT",   +1, 0, },	/* French Winter */
-	{ "FST",   +1, 1, },	/* French Summer */
-	{ "EET",   +2, 0, },	/* Eastern Europe */
-	{ "EEST",  +2, 1, },	/* Eastern European Daylight */
-	{ "WAST",  +7, 0, },	/* West Australian Standard */
-	{ "WADT",  +7, 1, },	/* West Australian Daylight */
-	{ "CCT",   +8, 0, },	/* China Coast */
-	{ "JST",   +9, 0, },	/* Japan Standard */
-	{ "EAST", +10, 0, },	/* Eastern Australian Standard */
-	{ "EADT", +10, 1, },	/* Eastern Australian Daylight */
-	{ "GST",  +10, 0, },	/* Guam Standard */
-	{ "NZT",  +12, 0, },	/* New Zealand */
-	{ "NZST", +12, 0, },	/* New Zealand Standard */
-	{ "NZDT", +12, 1, },	/* New Zealand Daylight */
-	{ "IDLE", +12, 0, },	/* International Date Line East */
+	{ "WET",    0, 0, },    /* Western European */
+	{ "BST",    0, 1, },    /* British Summer */
+	{ "CET",   +1, 0, },    /* Central European */
+	{ "MET",   +1, 0, },    /* Middle European */
+	{ "MEWT",  +1, 0, },    /* Middle European Winter */
+	{ "MEST",  +1, 1, },    /* Middle European Summer */
+	{ "CEST",  +1, 1, },    /* Central European Summer */
+	{ "MESZ",  +1, 1, },    /* Middle European Summer */
+	{ "FWT",   +1, 0, },    /* French Winter */
+	{ "FST",   +1, 1, },    /* French Summer */
+	{ "EET",   +2, 0, },    /* Eastern Europe */
+	{ "EEST",  +2, 1, },    /* Eastern European Daylight */
+	{ "WAST",  +7, 0, },    /* West Australian Standard */
+	{ "WADT",  +7, 1, },    /* West Australian Daylight */
+	{ "CCT",   +8, 0, },    /* China Coast */
+	{ "JST",   +9, 0, },    /* Japan Standard */
+	{ "EAST", +10, 0, },     /* Eastern Australian Standard */
+	{ "EADT", +10, 1, },     /* Eastern Australian Daylight */
+	{ "GST",  +10, 0, },    /* Guam Standard */
+	{ "NZT",  +12, 0, },    /* New Zealand */
+	{ "NZST", +12, 0, },     /* New Zealand Standard */
+	{ "NZDT", +12, 1, },     /* New Zealand Daylight */
+	{ "IDLE", +12, 0, },     /* International Date Line East */
 };
 
 static size_t match_string(const char *date, const char *str)
@@ -147,8 +147,8 @@ static int skip_alpha(const char *date)
 }
 
 /*
-* Parse month, weekday, or timezone name
-*/
+ * Parse month, weekday, or timezone name
+ */
 static size_t match_alpha(const char *date, struct tm *tm, int *offset)
 {
 	unsigned int i;
@@ -309,11 +309,11 @@ static size_t match_multi_number(unsigned long num, char c, const char *date, ch
 static int nodate(struct tm *tm)
 {
 	return (tm->tm_year &
-		tm->tm_mon &
-		tm->tm_mday &
-		tm->tm_hour &
-		tm->tm_min &
-		tm->tm_sec) < 0;
+	        tm->tm_mon &
+	        tm->tm_mday &
+	        tm->tm_hour &
+	        tm->tm_min &
+	        tm->tm_sec) < 0;
 }
 
 /*
@@ -425,13 +425,13 @@ static size_t match_tz(const char *date, int *offp)
 		min = hour % 100;
 		hour = hour / 100;
 	} else if (n != 2) {
-		min = 99; /* random stuff */
+		min = 99;         /* random stuff */
 	} else if (*end == ':') {
 		/* hh:mm? */
 		min = strtoul(end + 1, &end, 10);
 		if (end - (date + 1) != 5)
-			min = 99; /* random stuff */
-	} /* otherwise we parsed "hh" */
+			min = 99;             /* random stuff */
+	}     /* otherwise we parsed "hh" */
 
 	/*
 	 * Don't accept any random stuff. Even though some places have
@@ -504,7 +504,7 @@ static int parse_date_basic(const char *date, git_time_t *timestamp, int *offset
 
 	if (*date == '@' &&
 	    !match_object_header_date(date + 1, timestamp, offset))
-		return 0; /* success */
+		return 0;         /* success */
 	for (;;) {
 		size_t match = 0;
 		unsigned char c = *date;
@@ -538,7 +538,7 @@ static int parse_date_basic(const char *date, git_time_t *timestamp, int *offset
 
 	if (!tm_gmt)
 		*timestamp -= *offset * 60;
-	return 0; /* success */
+	return 0;     /* success */
 }
 
 
@@ -567,13 +567,13 @@ static git_time_t update_tm(struct tm *tm, struct tm *now, unsigned long sec)
 
 static void date_now(struct tm *tm, struct tm *now, int *num)
 {
-   GIT_UNUSED(num);
+	GIT_UNUSED(num);
 	update_tm(tm, now, 0);
 }
 
 static void date_yesterday(struct tm *tm, struct tm *now, int *num)
 {
-   GIT_UNUSED(num);
+	GIT_UNUSED(num);
 	update_tm(tm, now, 24*60*60);
 }
 
@@ -588,19 +588,19 @@ static void date_time(struct tm *tm, struct tm *now, int hour)
 
 static void date_midnight(struct tm *tm, struct tm *now, int *num)
 {
-   GIT_UNUSED(num);
+	GIT_UNUSED(num);
 	date_time(tm, now, 0);
 }
 
 static void date_noon(struct tm *tm, struct tm *now, int *num)
 {
-   GIT_UNUSED(num);
+	GIT_UNUSED(num);
 	date_time(tm, now, 12);
 }
 
 static void date_tea(struct tm *tm, struct tm *now, int *num)
 {
-   GIT_UNUSED(num);
+	GIT_UNUSED(num);
 	date_time(tm, now, 17);
 }
 
@@ -608,7 +608,7 @@ static void date_pm(struct tm *tm, struct tm *now, int *num)
 {
 	int hour, n = *num;
 	*num = 0;
-   GIT_UNUSED(now);
+	GIT_UNUSED(now);
 
 	hour = tm->tm_hour;
 	if (n) {
@@ -623,7 +623,7 @@ static void date_am(struct tm *tm, struct tm *now, int *num)
 {
 	int hour, n = *num;
 	*num = 0;
-   GIT_UNUSED(now);
+	GIT_UNUSED(now);
 
 	hour = tm->tm_hour;
 	if (n) {
@@ -637,8 +637,8 @@ static void date_am(struct tm *tm, struct tm *now, int *num)
 static void date_never(struct tm *tm, struct tm *now, int *num)
 {
 	time_t n = 0;
-   GIT_UNUSED(now);
-   GIT_UNUSED(num);
+	GIT_UNUSED(now);
+	GIT_UNUSED(num);
 	p_localtime_r(&n, tm);
 }
 
@@ -749,7 +749,7 @@ static const char *approxidate_alpha(const char *date, struct tm *tm, struct tm 
 
 	if (match_string(date, "months") >= 5) {
 		int n;
-		update_tm(tm, now, 0); /* fill in date fields if needed */
+		update_tm(tm, now, 0);         /* fill in date fields if needed */
 		n = tm->tm_mon - *num;
 		*num = 0;
 		while (n < 0) {
@@ -762,7 +762,7 @@ static const char *approxidate_alpha(const char *date, struct tm *tm, struct tm 
 	}
 
 	if (match_string(date, "years") >= 4) {
-		update_tm(tm, now, 0); /* fill in date fields if needed */
+		update_tm(tm, now, 0);         /* fill in date fields if needed */
 		tm->tm_year -= *num;
 		*num = 0;
 		*touched = 1;
@@ -823,8 +823,8 @@ static void pending_number(struct tm *tm, int *num)
 }
 
 static git_time_t approxidate_str(const char *date,
-	time_t time_sec,
-	int *error_ret)
+                                  time_t time_sec,
+                                  int *error_ret)
 {
 	int number = 0;
 	int touched = 0;
@@ -872,7 +872,7 @@ int git__date_parse(git_time_t *out, const char *date)
 		return -1;
 
 	*out = approxidate_str(date, time_sec, &error_ret);
-   return error_ret;
+	return error_ret;
 }
 
 int git__date_rfc2822_fmt(char *out, size_t len, const git_time *date)
@@ -889,12 +889,12 @@ int git__date_rfc2822_fmt(char *out, size_t len, const git_time *date)
 		return -1;
 
 	written = p_snprintf(out, len, "%.3s, %u %.3s %.4u %02u:%02u:%02u %+03d%02d",
-		weekday_names[gmt.tm_wday],
-		gmt.tm_mday,
-		month_names[gmt.tm_mon],
-		gmt.tm_year + 1900,
-		gmt.tm_hour, gmt.tm_min, gmt.tm_sec,
-		date->offset / 60, date->offset % 60);
+	                     weekday_names[gmt.tm_wday],
+	                     gmt.tm_mday,
+	                     month_names[gmt.tm_mon],
+	                     gmt.tm_year + 1900,
+	                     gmt.tm_hour, gmt.tm_min, gmt.tm_sec,
+	                     date->offset / 60, date->offset % 60);
 
 	if (written < 0 || (written > (int) len - 1))
 		return -1;

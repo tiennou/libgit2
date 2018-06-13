@@ -85,7 +85,7 @@ static int fetchhead_ref_write(
 		type = "branch ";
 		name = fetchhead_ref->ref_name + strlen(GIT_REFS_HEADS_DIR);
 	} else if(git__prefixcmp(fetchhead_ref->ref_name,
-		GIT_REFS_TAGS_DIR) == 0) {
+	                         GIT_REFS_TAGS_DIR) == 0) {
 		type = "tag ";
 		name = fetchhead_ref->ref_name + strlen(GIT_REFS_TAGS_DIR);
 	} else if (!git__strcmp(fetchhead_ref->ref_name, GIT_HEAD_FILE)) {
@@ -99,11 +99,11 @@ static int fetchhead_ref_write(
 		return git_filebuf_printf(file, "%s\t\t%s\n", oid, fetchhead_ref->remote_url);
 
 	return git_filebuf_printf(file, "%s\t%s\t%s'%s' of %s\n",
-		oid,
-		(fetchhead_ref->is_merge) ? "" : "not-for-merge",
-		type,
-		name,
-		fetchhead_ref->remote_url);
+	                          oid,
+	                          (fetchhead_ref->is_merge) ? "" : "not-for-merge",
+	                          type,
+	                          name,
+	                          fetchhead_ref->remote_url);
 }
 
 int git_fetchhead_write(git_repository *repo, git_vector *fetchhead_refs)
@@ -128,7 +128,7 @@ int git_fetchhead_write(git_repository *repo, git_vector *fetchhead_refs)
 	git_vector_sort(fetchhead_refs);
 
 	git_vector_foreach(fetchhead_refs, i, fetchhead_ref)
-		fetchhead_ref_write(&file, fetchhead_ref);
+	fetchhead_ref_write(&file, fetchhead_ref);
 
 	return git_filebuf_commit(&file);
 }
@@ -149,7 +149,7 @@ static int fetchhead_ref_parse(
 
 	if (!*line) {
 		giterr_set(GITERR_FETCHHEAD,
-			"empty line in FETCH_HEAD line %"PRIuZ, line_num);
+		           "empty line in FETCH_HEAD line %" PRIuZ, line_num);
 		return -1;
 	}
 
@@ -163,7 +163,7 @@ static int fetchhead_ref_parse(
 
 	if (strlen(oid_str) != GIT_OID_HEXSZ) {
 		giterr_set(GITERR_FETCHHEAD,
-			"invalid object ID in FETCH_HEAD line %"PRIuZ, line_num);
+		           "invalid object ID in FETCH_HEAD line %" PRIuZ, line_num);
 		return -1;
 	}
 
@@ -171,8 +171,8 @@ static int fetchhead_ref_parse(
 		const git_error *oid_err = giterr_last();
 		const char *err_msg = oid_err ? oid_err->message : "invalid object ID";
 
-		giterr_set(GITERR_FETCHHEAD, "%s in FETCH_HEAD line %"PRIuZ,
-			err_msg, line_num);
+		giterr_set(GITERR_FETCHHEAD, "%s in FETCH_HEAD line %" PRIuZ,
+		           err_msg, line_num);
 		return -1;
 	}
 
@@ -180,7 +180,7 @@ static int fetchhead_ref_parse(
 	if (*line) {
 		if ((is_merge_str = git__strsep(&line, "\t")) == NULL) {
 			giterr_set(GITERR_FETCHHEAD,
-				"invalid description data in FETCH_HEAD line %"PRIuZ, line_num);
+			           "invalid description data in FETCH_HEAD line %" PRIuZ, line_num);
 			return -1;
 		}
 
@@ -190,13 +190,13 @@ static int fetchhead_ref_parse(
 			*is_merge = 0;
 		else {
 			giterr_set(GITERR_FETCHHEAD,
-				"invalid for-merge entry in FETCH_HEAD line %"PRIuZ, line_num);
+			           "invalid for-merge entry in FETCH_HEAD line %" PRIuZ, line_num);
 			return -1;
 		}
 
 		if ((desc = line) == NULL) {
 			giterr_set(GITERR_FETCHHEAD,
-				"invalid description in FETCH_HEAD line %"PRIuZ, line_num);
+			           "invalid description in FETCH_HEAD line %" PRIuZ, line_num);
 			return -1;
 		}
 
@@ -211,9 +211,9 @@ static int fetchhead_ref_parse(
 
 		if (name) {
 			if ((desc = strstr(name, "' ")) == NULL ||
-				git__prefixcmp(desc, "' of ") != 0) {
+			    git__prefixcmp(desc, "' of ") != 0) {
 				giterr_set(GITERR_FETCHHEAD,
-					"invalid description in FETCH_HEAD line %"PRIuZ, line_num);
+				           "invalid description in FETCH_HEAD line %" PRIuZ, line_num);
 				return -1;
 			}
 
@@ -235,8 +235,8 @@ static int fetchhead_ref_parse(
 }
 
 int git_repository_fetchhead_foreach(git_repository *repo,
-	git_repository_fetchhead_foreach_cb cb,
-	void *payload)
+                                     git_repository_fetchhead_foreach_cb cb,
+                                     void *payload)
 {
 	git_buf path = GIT_BUF_INIT, file = GIT_BUF_INIT, name = GIT_BUF_INIT;
 	const char *ref_name;
@@ -261,7 +261,7 @@ int git_repository_fetchhead_foreach(git_repository *repo,
 		++line_num;
 
 		if ((error = fetchhead_ref_parse(
-				&oid, &is_merge, &name, &remote_url, line, line_num)) < 0)
+				 &oid, &is_merge, &name, &remote_url, line, line_num)) < 0)
 			goto done;
 
 		if (git_buf_len(&name) > 0)
@@ -277,7 +277,7 @@ int git_repository_fetchhead_foreach(git_repository *repo,
 	}
 
 	if (*buffer) {
-		giterr_set(GITERR_FETCHHEAD, "no EOL at line %"PRIuZ, line_num+1);
+		giterr_set(GITERR_FETCHHEAD, "no EOL at line %" PRIuZ, line_num+1);
 		error = -1;
 		goto done;
 	}

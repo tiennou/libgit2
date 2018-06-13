@@ -45,8 +45,8 @@ struct git_annotated_commit {
 };
 
 extern int git_annotated_commit_from_head(git_annotated_commit **out,
-	git_repository *repo);
+                                          git_repository *repo);
 extern int git_annotated_commit_from_commit(git_annotated_commit **out,
-	git_commit *commit);
+                                            git_commit *commit);
 
 #endif

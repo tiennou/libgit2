@@ -265,7 +265,7 @@ size_t git_delta_index_size(git_delta_index *index)
  * The maximum size for any opcode sequence, including the initial header
  * plus rabin window plus biggest copy.
  */
-#define MAX_OP_SIZE	(5 + 5 + 1 + RABIN_WINDOW + 7)
+#define MAX_OP_SIZE (5 + 5 + 1 + RABIN_WINDOW + 7)
 
 int git_delta_create_from_index(
 	void **out,
@@ -346,7 +346,7 @@ int git_delta_create_from_index(
 					/* this is our best match so far */
 					msize = (unsigned int)(ref - entry->ptr);
 					moff = (unsigned int)(entry->ptr - ref_data);
-					if (msize >= 4096) /* good enough */
+					if (msize >= 4096)                     /* good enough */
 						break;
 				}
 			}
@@ -375,8 +375,8 @@ int git_delta_create_from_index(
 					bufpos--;
 					if (--inscnt)
 						continue;
-					bufpos--;  /* remove count slot */
-					inscnt--;  /* make it -1 */
+					bufpos--;                     /* remove count slot */
+					inscnt--;                     /* make it -1 */
 					break;
 				}
 				buf[bufpos - inscnt - 1] = inscnt;
@@ -449,11 +449,11 @@ int git_delta_create_from_index(
 }
 
 /*
-* Delta application was heavily cribbed from BinaryDelta.java in JGit, which
-* itself was heavily cribbed from <code>patch-delta.c</code> in the
-* GIT project.	The original delta patching code was written by
-* Nicolas Pitre <nico@cam.org>.
-*/
+ * Delta application was heavily cribbed from BinaryDelta.java in JGit, which
+ * itself was heavily cribbed from <code>patch-delta.c</code> in the
+ * GIT project.	The original delta patching code was written by
+ * Nicolas Pitre <nico@cam.org>.
+ */
 
 static int hdr_sz(
 	size_t *size,
@@ -487,7 +487,7 @@ int git_delta_read_header(
 {
 	const unsigned char *delta_end = delta + delta_len;
 	if ((hdr_sz(base_out, &delta, delta_end) < 0) ||
-		(hdr_sz(result_out, &delta, delta_end) < 0))
+	    (hdr_sz(result_out, &delta, delta_end) < 0))
 		return -1;
 	return 0;
 }
@@ -518,7 +518,7 @@ int git_delta_read_header_fromstream(
 	delta = buffer;
 	delta_end = delta + len;
 	if ((hdr_sz(base_sz, &delta, delta_end) < 0) ||
-		(hdr_sz(res_sz, &delta, delta_end) < 0))
+	    (hdr_sz(res_sz, &delta, delta_end) < 0))
 		return -1;
 
 	return 0;
@@ -540,9 +540,9 @@ int git_delta_apply(
 	*out_len = 0;
 
 	/* Check that the base size matches the data we were given;
-	* if not we would underflow while accessing data from the
-	* base object, resulting in data corruption or segfault.
-	*/
+	 * if not we would underflow while accessing data from the
+	 * base object, resulting in data corruption or segfault.
+	 */
 	if ((hdr_sz(&base_sz, &delta, delta_end) < 0) || (base_sz != base_len)) {
 		giterr_set(GITERR_INVALID, "failed to apply delta: base size does not match given data");
 		return -1;
@@ -565,7 +565,7 @@ int git_delta_apply(
 		unsigned char cmd = *delta++;
 		if (cmd & 0x80) {
 			/* cmd is a copy instruction; copy from the base.
-			*/
+			 */
 			size_t off = 0, len = 0;
 
 			if (cmd & 0x01) off = *delta++;
@@ -576,7 +576,7 @@ int git_delta_apply(
 			if (cmd & 0x10) len = *delta++;
 			if (cmd & 0x20) len |= *delta++ << 8UL;
 			if (cmd & 0x40) len |= *delta++ << 16UL;
-			if (!len)		len = 0x10000;
+			if (!len) len = 0x10000;
 
 			if (base_len < off + len || res_sz < len)
 				goto fail;
@@ -587,8 +587,8 @@ int git_delta_apply(
 		}
 		else if (cmd) {
 			/* cmd is a literal insert instruction; copy from
-			* the delta stream itself.
-			*/
+			 * the delta stream itself.
+			 */
 			if (delta_end - delta < cmd || res_sz < cmd)
 				goto fail;
 			memcpy(res_dp, delta, cmd);
@@ -599,7 +599,7 @@ int git_delta_apply(
 		}
 		else {
 			/* cmd == 0 is reserved for future encodings.
-			*/
+			 */
 			goto fail;
 		}
 	}

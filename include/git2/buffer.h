@@ -118,19 +118,19 @@ GIT_EXTERN(int) git_buf_set(
 	git_buf *buffer, const void *data, size_t datalen);
 
 /**
-* Check quickly if buffer looks like it contains binary data
-*
-* @param buf Buffer to check
-* @return 1 if buffer looks like non-text data
-*/
+ * Check quickly if buffer looks like it contains binary data
+ *
+ * @param buf Buffer to check
+ * @return 1 if buffer looks like non-text data
+ */
 GIT_EXTERN(int) git_buf_is_binary(const git_buf *buf);
 
 /**
-* Check quickly if buffer contains a NUL byte
-*
-* @param buf Buffer to check
-* @return 1 if buffer contains a NUL byte
-*/
+ * Check quickly if buffer contains a NUL byte
+ *
+ * @param buf Buffer to check
+ * @return 1 if buffer contains a NUL byte
+ */
 GIT_EXTERN(int) git_buf_contains_nul(const git_buf *buf);
 
 GIT_END_DECL

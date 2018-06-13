@@ -31,7 +31,7 @@ static int interesting(git_pqueue *list, git_commit_list *roots)
 }
 
 static int mark_parents(git_revwalk *walk, git_commit_list_node *one,
-	git_commit_list_node *two)
+                        git_commit_list_node *two)
 {
 	unsigned int i;
 	git_commit_list *roots = NULL;
@@ -106,7 +106,7 @@ on_error:
 
 
 static int ahead_behind(git_commit_list_node *one, git_commit_list_node *two,
-	size_t *ahead, size_t *behind)
+                        size_t *ahead, size_t *behind)
 {
 	git_commit_list_node *commit;
 	git_pqueue pq;
@@ -118,12 +118,12 @@ static int ahead_behind(git_commit_list_node *one, git_commit_list_node *two,
 		return -1;
 
 	if ((error = git_pqueue_insert(&pq, one)) < 0 ||
-		(error = git_pqueue_insert(&pq, two)) < 0)
+	    (error = git_pqueue_insert(&pq, two)) < 0)
 		goto done;
 
 	while ((commit = git_pqueue_pop(&pq)) != NULL) {
 		if (commit->flags & RESULT ||
-			(commit->flags & (PARENT1 | PARENT2)) == (PARENT1 | PARENT2))
+		    (commit->flags & (PARENT1 | PARENT2)) == (PARENT1 | PARENT2))
 			continue;
 		else if (commit->flags & PARENT1)
 			(*ahead)++;
@@ -144,7 +144,7 @@ done:
 }
 
 int git_graph_ahead_behind(size_t *ahead, size_t *behind, git_repository *repo,
-	const git_oid *local, const git_oid *upstream)
+                           const git_oid *local, const git_oid *upstream)
 {
 	git_revwalk *walk;
 	git_commit_list_node *commit_u, *commit_l;

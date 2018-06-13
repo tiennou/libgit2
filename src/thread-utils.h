@@ -59,7 +59,7 @@ GIT_INLINE(void) git_atomic_set(git_atomic *a, int val)
 #elif defined(__GNUC__)
 	__sync_lock_test_and_set(&a->val, val);
 #else
-#	error "Unsupported architecture for atomic operations"
+#   error "Unsupported architecture for atomic operations"
 #endif
 }
 
@@ -70,7 +70,7 @@ GIT_INLINE(int) git_atomic_inc(git_atomic *a)
 #elif defined(__GNUC__)
 	return __sync_add_and_fetch(&a->val, 1);
 #else
-#	error "Unsupported architecture for atomic operations"
+#   error "Unsupported architecture for atomic operations"
 #endif
 }
 
@@ -81,7 +81,7 @@ GIT_INLINE(int) git_atomic_add(git_atomic *a, int32_t addend)
 #elif defined(__GNUC__)
 	return __sync_add_and_fetch(&a->val, addend);
 #else
-#	error "Unsupported architecture for atomic operations"
+#   error "Unsupported architecture for atomic operations"
 #endif
 }
 
@@ -92,7 +92,7 @@ GIT_INLINE(int) git_atomic_dec(git_atomic *a)
 #elif defined(__GNUC__)
 	return __sync_sub_and_fetch(&a->val, 1);
 #else
-#	error "Unsupported architecture for atomic operations"
+#   error "Unsupported architecture for atomic operations"
 #endif
 }
 
@@ -105,7 +105,7 @@ GIT_INLINE(void *) git___compare_and_swap(
 #elif defined(__GNUC__)
 	foundval = __sync_val_compare_and_swap(ptr, oldval, newval);
 #else
-#	error "Unsupported architecture for atomic operations"
+#   error "Unsupported architecture for atomic operations"
 #endif
 	return (foundval == oldval) ? oldval : newval;
 }
@@ -129,7 +129,7 @@ GIT_INLINE(int64_t) git_atomic64_add(git_atomic64 *a, int64_t addend)
 #elif defined(__GNUC__)
 	return __sync_add_and_fetch(&a->val, addend);
 #else
-#	error "Unsupported architecture for atomic operations"
+#   error "Unsupported architecture for atomic operations"
 #endif
 }
 
@@ -144,29 +144,33 @@ GIT_INLINE(int64_t) git_atomic64_add(git_atomic64 *a, int64_t addend)
 /* Pthreads Mutex */
 #define git_mutex unsigned int
 GIT_INLINE(int) git_mutex_init(git_mutex *mutex) \
-	{ GIT_UNUSED(mutex); return 0; }
+	{
+	GIT_UNUSED(mutex); return 0;
+	}
 GIT_INLINE(int) git_mutex_lock(git_mutex *mutex) \
-	{ GIT_UNUSED(mutex); return 0; }
+	{
+	GIT_UNUSED(mutex); return 0;
+	}
 #define git_mutex_unlock(a) (void)0
 #define git_mutex_free(a) (void)0
 
 /* Pthreads condition vars */
 #define git_cond unsigned int
-#define git_cond_init(c, a)	(void)0
+#define git_cond_init(c, a) (void)0
 #define git_cond_free(c) (void)0
-#define git_cond_wait(c, l)	(void)0
+#define git_cond_wait(c, l) (void)0
 #define git_cond_signal(c) (void)0
 #define git_cond_broadcast(c) (void)0
 
 /* Pthreads rwlock */
 #define git_rwlock unsigned int
-#define git_rwlock_init(a)		0
-#define git_rwlock_rdlock(a)	0
-#define git_rwlock_rdunlock(a)	(void)0
-#define git_rwlock_wrlock(a)	0
-#define git_rwlock_wrunlock(a)	(void)0
-#define git_rwlock_free(a)		(void)0
-#define GIT_RWLOCK_STATIC_INIT	0
+#define git_rwlock_init(a)      0
+#define git_rwlock_rdlock(a)    0
+#define git_rwlock_rdunlock(a)  (void)0
+#define git_rwlock_wrlock(a)    0
+#define git_rwlock_wrunlock(a)  (void)0
+#define git_rwlock_free(a)      (void)0
+#define GIT_RWLOCK_STATIC_INIT  0
 
 
 GIT_INLINE(void) git_atomic_set(git_atomic *a, int val)

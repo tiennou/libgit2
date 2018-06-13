@@ -48,7 +48,7 @@ static char *stdalloc__strndup(const char *str, size_t n, const char *file, int 
 	length = p_strnlen(str, n);
 
 	if (GIT_ADD_SIZET_OVERFLOW(&alloclength, length, 1) ||
-		!(ptr = stdalloc__malloc(alloclength, file, line)))
+	    !(ptr = stdalloc__malloc(alloclength, file, line)))
 		return NULL;
 
 	if (length)
@@ -65,7 +65,7 @@ static char *stdalloc__substrdup(const char *start, size_t n, const char *file, 
 	size_t alloclen;
 
 	if (GIT_ADD_SIZET_OVERFLOW(&alloclen, n, 1) ||
-		!(ptr = stdalloc__malloc(alloclen, file, line)))
+	    !(ptr = stdalloc__malloc(alloclen, file, line)))
 		return NULL;
 
 	memcpy(ptr, start, n);
@@ -92,7 +92,7 @@ static void *stdalloc__reallocarray(void *ptr, size_t nelem, size_t elsize, cons
 	GIT_UNUSED(line);
 
 	return GIT_MULTIPLY_SIZET_OVERFLOW(&newsize, nelem, elsize) ?
-		NULL : realloc(ptr, newsize);
+	       NULL : realloc(ptr, newsize);
 }
 
 static void *stdalloc__mallocarray(size_t nelem, size_t elsize, const char *file, int line)

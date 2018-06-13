@@ -23,10 +23,10 @@
 static bool valid_filemode(const int filemode)
 {
 	return (filemode == GIT_FILEMODE_TREE
-		|| filemode == GIT_FILEMODE_BLOB
-		|| filemode == GIT_FILEMODE_BLOB_EXECUTABLE
-		|| filemode == GIT_FILEMODE_LINK
-		|| filemode == GIT_FILEMODE_COMMIT);
+	        || filemode == GIT_FILEMODE_BLOB
+	        || filemode == GIT_FILEMODE_BLOB_EXECUTABLE
+	        || filemode == GIT_FILEMODE_LINK
+	        || filemode == GIT_FILEMODE_COMMIT);
 }
 
 GIT_INLINE(git_filemode_t) normalize_filemode(git_filemode_t filemode)
@@ -54,8 +54,8 @@ GIT_INLINE(git_filemode_t) normalize_filemode(git_filemode_t filemode)
 static int valid_entry_name(git_repository *repo, const char *filename)
 {
 	return *filename != '\0' &&
-		git_path_isvalid(repo, filename, 0,
-		GIT_PATH_REJECT_TRAVERSAL | GIT_PATH_REJECT_DOT_GIT | GIT_PATH_REJECT_SLASH);
+	       git_path_isvalid(repo, filename, 0,
+	                        GIT_PATH_REJECT_TRAVERSAL | GIT_PATH_REJECT_DOT_GIT | GIT_PATH_REJECT_SLASH);
 }
 
 static int entry_sort_cmp(const void *a, const void *b)
@@ -137,7 +137,7 @@ static int homing_search_cmp(const void *key, const void *array_member)
 		ksearch->filename,
 		entry->filename,
 		len1 < len2 ? len1 : len2
-	);
+		);
 }
 
 /*
@@ -179,8 +179,8 @@ static int tree_key_search(
 	 * the same prefix as the filename we're looking for */
 
 	if (git_array_search(&homing,
-		tree->entries, &homing_search_cmp, &ksearch) < 0)
-		return GIT_ENOTFOUND; /* just a signal error; not passed back to user */
+	                     tree->entries, &homing_search_cmp, &ksearch) < 0)
+		return GIT_ENOTFOUND;         /* just a signal error; not passed back to user */
 
 	/* We found a common prefix. Look forward as long as
 	 * there are entries that share the common prefix */
@@ -191,7 +191,7 @@ static int tree_key_search(
 			break;
 
 		if (entry->filename_len == filename_len &&
-			memcmp(filename, entry->filename, filename_len) == 0) {
+		    memcmp(filename, entry->filename, filename_len) == 0) {
 			if (at_pos)
 				*at_pos = i;
 
@@ -211,7 +211,7 @@ static int tree_key_search(
 				break;
 
 			if (entry->filename_len == filename_len &&
-				memcmp(filename, entry->filename, filename_len) == 0) {
+			    memcmp(filename, entry->filename, filename_len) == 0) {
 				if (at_pos)
 					*at_pos = i;
 
@@ -478,7 +478,7 @@ static size_t find_next_dir(const char *dirname, git_index *index, size_t start)
 		const git_index_entry *entry = git_index_get_byindex(index, i);
 		if (strlen(entry->path) < dirlen ||
 		    memcmp(entry->path, dirname, dirlen) ||
-			(dirlen > 0 && entry->path[dirlen] != '/')) {
+		    (dirlen > 0 && entry->path[dirlen] != '/')) {
 			break;
 		}
 	}
@@ -531,7 +531,7 @@ static int write_tree(
 	const git_tree_cache *cache;
 
 	cache = git_tree_cache_get(index->tree, dirname);
-	if (cache != NULL && cache->entry_count >= 0){
+	if (cache != NULL && cache->entry_count >= 0) {
 		git_oid_cpy(oid, &cache->oid);
 		return (int)find_next_dir(dirname, index, start);
 	}
@@ -548,14 +548,14 @@ static int write_tree(
 		const git_index_entry *entry = git_index_get_byindex(index, i);
 		const char *filename, *next_slash;
 
-	/*
-	 * If we've left our (sub)tree, exit the loop and return. The
-	 * first check is an early out (and security for the
-	 * third). The second check is a simple prefix comparison. The
-	 * third check catches situations where there is a directory
-	 * win32/sys and a file win32mmap.c. Without it, the following
-	 * code believes there is a file win32/mmap.c
-	 */
+		/*
+		 * If we've left our (sub)tree, exit the loop and return. The
+		 * first check is an early out (and security for the
+		 * third). The second check is a simple prefix comparison. The
+		 * third check catches situations where there is a directory
+		 * win32/sys and a file win32mmap.c. Without it, the following
+		 * code believes there is a file win32/mmap.c
+		 */
 		if (strlen(entry->path) < dirname_len ||
 		    memcmp(entry->path, dirname, dirname_len) ||
 		    (dirname_len > 0 && entry->path[dirname_len] != '/')) {
@@ -580,7 +580,7 @@ static int write_tree(
 				git__free(subdir);
 				goto on_error;
 			} else {
-				i = written - 1; /* -1 because of the loop increment */
+				i = written - 1;                 /* -1 because of the loop increment */
 			}
 
 			/*
@@ -591,7 +591,7 @@ static int write_tree(
 			 */
 			last_comp = strrchr(subdir, '/');
 			if (last_comp) {
-				last_comp++; /* Get rid of the '/' */
+				last_comp++;                 /* Get rid of the '/' */
 			} else {
 				last_comp = subdir;
 			}
@@ -630,7 +630,7 @@ int git_tree__write_index(
 
 	if (git_index_has_conflicts(index)) {
 		giterr_set(GITERR_INDEX,
-			"cannot create a tree from a not fully merged index.");
+		           "cannot create a tree from a not fully merged index.");
 		return GIT_EUNMERGED;
 	}
 
@@ -697,9 +697,9 @@ int git_treebuilder_new(
 
 		git_array_foreach(source->entries, i, entry_src) {
 			if (append_entry(
-				bld, entry_src->filename,
-				entry_src->oid,
-				entry_src->attr) < 0)
+					bld, entry_src->filename,
+					entry_src->oid,
+					entry_src->attr) < 0)
 				goto on_error;
 		}
 	}
@@ -879,10 +879,10 @@ void git_treebuilder_filter(
 	assert(bld && filter);
 
 	git_strmap_foreach(bld->map, filename, entry, {
-			if (filter(entry, payload)) {
-				git_strmap_delete(bld->map, filename);
-				git_tree_entry_free(entry);
-			}
+		if (filter(entry, payload)) {
+		    git_strmap_delete(bld->map, filename);
+		    git_tree_entry_free(entry);
+		}
 	});
 }
 
@@ -938,7 +938,7 @@ int git_tree_entry_bypath(
 
 	if (entry == NULL) {
 		giterr_set(GITERR_TREE,
-			   "the path '%.*s' does not exist in the given tree", (int) filename_len, path);
+		           "the path '%.*s' does not exist in the given tree", (int) filename_len, path);
 		return GIT_ENOTFOUND;
 	}
 
@@ -948,7 +948,7 @@ int git_tree_entry_bypath(
 		 * then this entry *must* be a tree */
 		if (!git_tree_entry__is_tree(entry)) {
 			giterr_set(GITERR_TREE,
-				   "the path '%.*s' exists but is not a tree", (int) filename_len, path);
+			           "the path '%.*s' exists but is not a tree", (int) filename_len, path);
 			return GIT_ENOTFOUND;
 		}
 
@@ -957,7 +957,7 @@ int git_tree_entry_bypath(
 		 * walking down the path */
 		if (path[filename_len + 1] != '\0')
 			break;
-		/* fall through */
+	/* fall through */
 	case '\0':
 		/* If there are no more components in the path, return
 		 * this entry */
@@ -971,7 +971,7 @@ int git_tree_entry_bypath(
 		entry_out,
 		subtree,
 		path + filename_len + 1
-	);
+		);
 
 	git_tree_free(subtree);
 	return error;
@@ -991,11 +991,11 @@ static int tree_walk(
 	git_array_foreach(tree->entries, i, entry) {
 		if (preorder) {
 			error = callback(path->ptr, entry, payload);
-			if (error < 0) { /* negative value stops iteration */
+			if (error < 0) {             /* negative value stops iteration */
 				giterr_set_after_callback_function(error, "git_tree_walk");
 				break;
 			}
-			if (error > 0) { /* positive value skips this entry */
+			if (error > 0) {             /* positive value skips this entry */
 				error = 0;
 				continue;
 			}
@@ -1027,7 +1027,7 @@ static int tree_walk(
 
 		if (!preorder) {
 			error = callback(path->ptr, entry, payload);
-			if (error < 0) { /* negative value stops iteration */
+			if (error < 0) {             /* negative value stops iteration */
 				giterr_set_after_callback_function(error, "git_tree_walk");
 				break;
 			}
@@ -1169,7 +1169,7 @@ int git_tree_create_updated(git_oid *out, git_repository *repo, git_tree *baseli
 		return error;
 
 	/* Sort the entries for treversal */
-	for (i = 0 ; i < nupdates; i++)	{
+	for (i = 0; i < nupdates; i++) {
 		if ((error = git_vector_insert_sorted(&entries, (void *) &updates[i], on_dup_entry)) < 0)
 			goto cleanup;
 	}
@@ -1250,37 +1250,37 @@ int git_tree_create_updated(git_oid *out, git_repository *repo, git_tree *baseli
 
 		/* After all that, we're finally at the place where we want to perform the update */
 		switch (update->action) {
-			case GIT_TREE_UPDATE_UPSERT:
-			{
-				/* Make sure we're replacing something of the same type */
-				tree_stack_entry *last = git_array_last(stack);
-				char *basename = git_path_basename(update->path);
-				const git_tree_entry *e = git_treebuilder_get(last->bld, basename);
-				if (e && git_tree_entry_type(e) != git_object__type_from_filemode(update->filemode)) {
-					git__free(basename);
-					giterr_set(GITERR_TREE, "cannot replace '%s' with '%s' at '%s'",
-						   git_object_type2string(git_tree_entry_type(e)),
-						   git_object_type2string(git_object__type_from_filemode(update->filemode)),
-						   update->path);
-					error = -1;
-					goto cleanup;
-				}
-
-				error = git_treebuilder_insert(NULL, last->bld, basename, &update->id, update->filemode);
+		case GIT_TREE_UPDATE_UPSERT:
+		{
+			/* Make sure we're replacing something of the same type */
+			tree_stack_entry *last = git_array_last(stack);
+			char *basename = git_path_basename(update->path);
+			const git_tree_entry *e = git_treebuilder_get(last->bld, basename);
+			if (e && git_tree_entry_type(e) != git_object__type_from_filemode(update->filemode)) {
 				git__free(basename);
-				break;
-			}
-			case GIT_TREE_UPDATE_REMOVE:
-			{
-				char *basename = git_path_basename(update->path);
-				error = git_treebuilder_remove(git_array_last(stack)->bld, basename);
-				git__free(basename);
-				break;
-			}
-			default:
-				giterr_set(GITERR_TREE, "unknown action for update");
+				giterr_set(GITERR_TREE, "cannot replace '%s' with '%s' at '%s'",
+				           git_object_type2string(git_tree_entry_type(e)),
+				           git_object_type2string(git_object__type_from_filemode(update->filemode)),
+				           update->path);
 				error = -1;
 				goto cleanup;
+			}
+
+			error = git_treebuilder_insert(NULL, last->bld, basename, &update->id, update->filemode);
+			git__free(basename);
+			break;
+		}
+		case GIT_TREE_UPDATE_REMOVE:
+		{
+			char *basename = git_path_basename(update->path);
+			error = git_treebuilder_remove(git_array_last(stack)->bld, basename);
+			git__free(basename);
+			break;
+		}
+		default:
+			giterr_set(GITERR_TREE, "unknown action for update");
+			error = -1;
+			goto cleanup;
 		}
 
 		if (error < 0)

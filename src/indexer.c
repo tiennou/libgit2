@@ -32,11 +32,11 @@ struct entry {
 };
 
 struct git_indexer {
-	unsigned int parsed_header :1,
-		pack_committed :1,
-		have_stream :1,
-		have_delta :1,
-		do_fsync :1;
+	unsigned int parsed_header : 1,
+	             pack_committed : 1,
+	             have_stream : 1,
+	             have_delta : 1,
+	             do_fsync : 1;
 	struct git_pack_header hdr;
 	struct git_pack_file *pack;
 	unsigned int mode;
@@ -105,12 +105,12 @@ static int objects_cmp(const void *a, const void *b)
 }
 
 int git_indexer_new(
-		git_indexer **out,
-		const char *prefix,
-		unsigned int mode,
-		git_odb *odb,
-		git_transfer_progress_cb progress_cb,
-		void *progress_payload)
+	git_indexer **out,
+	const char *prefix,
+	unsigned int mode,
+	git_odb *odb,
+	git_transfer_progress_cb progress_cb,
+	void *progress_payload)
 {
 	git_indexer *idx;
 	git_buf path = GIT_BUF_INIT, tmp_path = GIT_BUF_INIT;
@@ -194,7 +194,7 @@ static int hash_header(git_hash_ctx *ctx, git_off_t len, git_otype type)
 	int error;
 
 	if ((error = git_odb__format_object_header(&hdrlen,
-		buffer, sizeof(buffer), (size_t)len, type)) < 0)
+	                                           buffer, sizeof(buffer), (size_t)len, type)) < 0)
 		return error;
 
 	return git_hash_update(ctx, buffer, hdrlen);
@@ -690,7 +690,7 @@ static int index_path(git_buf *path, git_indexer *idx, const char *suffix)
 		slash--;
 
 	if (git_buf_grow(path, slash + 1 + strlen(prefix) +
-					 GIT_OID_HEXSZ + strlen(suffix) + 1) < 0)
+	                 GIT_OID_HEXSZ + strlen(suffix) + 1) < 0)
 		return -1;
 
 	git_buf_truncate(path, slash);
@@ -1007,7 +1007,7 @@ int git_indexer_commit(git_indexer *idx, git_transfer_progress *stats)
 	git_vector_sort(&idx->objects);
 
 	/* Use the trailer hash as the pack file name to ensure
-	 * files with different contents have different names */
+	* files with different contents have different names */
 	git_oid_cpy(&idx->hash, &trailer_hash);
 
 	git_buf_sets(&filename, idx->pack->pack_name);
@@ -1017,9 +1017,9 @@ int git_indexer_commit(git_indexer *idx, git_transfer_progress *stats)
 		return -1;
 
 	if (git_filebuf_open(&index_file, filename.ptr,
-		GIT_FILEBUF_HASH_CONTENTS |
-		(idx->do_fsync ? GIT_FILEBUF_FSYNC : 0),
-		idx->mode) < 0)
+	                     GIT_FILEBUF_HASH_CONTENTS |
+	                     (idx->do_fsync ? GIT_FILEBUF_FSYNC : 0),
+	                     idx->mode) < 0)
 		goto on_error;
 
 	/* Write out the header */
@@ -1116,7 +1116,7 @@ int git_indexer_commit(git_indexer *idx, git_transfer_progress *stats)
 
 	/* And fsync the parent directory if we're asked to. */
 	if (idx->do_fsync &&
-		git_futils_fsync_parent(git_buf_cstr(&filename)) < 0)
+	    git_futils_fsync_parent(git_buf_cstr(&filename)) < 0)
 		goto on_error;
 
 	idx->pack_committed = 1;

@@ -70,7 +70,7 @@ static int push_commit(git_revwalk *walk, const git_oid *oid, int uninteresting,
 
 	commit = git_revwalk__commit_lookup(walk, &commit_id);
 	if (commit == NULL)
-		return -1; /* error already reported by failed lookup */
+		return -1;         /* error already reported by failed lookup */
 
 	/* A previous hide already told us we don't want this commit  */
 	if (commit->uninteresting)
@@ -423,7 +423,7 @@ static int limit_list(git_commit_list **out, git_revwalk *walk, git_commit_list 
 		}
 
 		if (!commit->uninteresting && walk->hide_cb && walk->hide_cb(&commit->oid, walk->hide_cb_payload))
-				continue;
+			continue;
 
 		time = commit->time;
 		p = &git_commit_list_insert(commit, p)->next;
@@ -695,7 +695,7 @@ void git_revwalk_reset(git_revwalk *walk)
 		commit->uninteresting = 0;
 		commit->added = 0;
 		commit->flags = 0;
-		});
+	});
 
 	git_pqueue_clear(&walk->iterator_time);
 	git_commit_list_free(&walk->iterator_topo);

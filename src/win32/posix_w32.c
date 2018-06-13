@@ -36,10 +36,10 @@
 #define WIN32_MODE_MASK (_S_IREAD | _S_IWRITE)
 
 /* GetFinalPathNameByHandleW signature */
-typedef DWORD(WINAPI *PFGetFinalPathNameByHandleW)(HANDLE, LPWSTR, DWORD, DWORD);
+typedef DWORD (WINAPI *PFGetFinalPathNameByHandleW)(HANDLE, LPWSTR, DWORD, DWORD);
 
 unsigned long git_win32__createfile_sharemode =
- FILE_SHARE_READ | FILE_SHARE_WRITE;
+	FILE_SHARE_READ | FILE_SHARE_WRITE;
 int git_win32__retries = 10;
 
 GIT_INLINE(void) set_errno(void)
@@ -160,7 +160,7 @@ GIT_INLINE(bool) last_error_retryable(void)
 	int os_error = GetLastError();
 
 	return (os_error == ERROR_SHARING_VIOLATION ||
-		os_error == ERROR_ACCESS_DENIED);
+	        os_error == ERROR_ACCESS_DENIED);
 }
 
 #define do_with_retries(fn, remediation) \
@@ -383,8 +383,8 @@ int p_readlink(const char *path, char *buf, size_t bufsiz)
 	 * we need to buffer the result on the stack. */
 
 	if (git_win32_path_from_utf8(path_w, path) < 0 ||
-		git_win32_path_readlink_w(target_w, path_w) < 0 ||
-		(len = git_win32_path_to_utf8(target, target_w)) < 0)
+	    git_win32_path_readlink_w(target_w, path_w) < 0 ||
+	    (len = git_win32_path_to_utf8(target, target_w)) < 0)
 		return -1;
 
 	bufsiz = min((size_t)len, bufsiz);
@@ -448,7 +448,7 @@ GIT_INLINE(void) open_opts_from_posix(struct open_opts *opts, int flags, mode_t 
 	}
 
 	opts->attributes = ((flags & O_CREAT) && !(mode & S_IWRITE)) ?
-		FILE_ATTRIBUTE_READONLY : FILE_ATTRIBUTE_NORMAL;
+	                   FILE_ATTRIBUTE_READONLY : FILE_ATTRIBUTE_NORMAL;
 	opts->osf_flags = flags & (O_RDONLY | O_APPEND);
 
 	opts->security.nLength = sizeof(SECURITY_ATTRIBUTES);
@@ -463,7 +463,7 @@ GIT_INLINE(int) open_once(
 	int fd;
 
 	HANDLE handle = CreateFileW(path, opts->access, opts->sharing,
-		&opts->security, opts->creation_disposition, opts->attributes, 0);
+	                            &opts->security, opts->creation_disposition, opts->attributes, 0);
 
 	if (handle == INVALID_HANDLE_VALUE) {
 		if (last_error_retryable())
@@ -633,10 +633,10 @@ static int getfinalpath_w(
 		return -1;
 
 	/* Use FILE_FLAG_BACKUP_SEMANTICS so we can open a directory. Do not
-	* specify FILE_FLAG_OPEN_REPARSE_POINT; we want to open a handle to the
-	* target of the link. */
+	 * specify FILE_FLAG_OPEN_REPARSE_POINT; we want to open a handle to the
+	 * target of the link. */
 	hFile = CreateFileW(path, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_DELETE,
-		NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
+	                    NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
 
 	if (INVALID_HANDLE_VALUE == hFile)
 		return -1;
@@ -669,7 +669,7 @@ int p_fstat(int fd, struct stat *buf)
 	HANDLE fh = (HANDLE)_get_osfhandle(fd);
 
 	if (fh == INVALID_HANDLE_VALUE ||
-		!GetFileInformationByHandle(fh, &fhInfo)) {
+	    !GetFileInformationByHandle(fh, &fhInfo)) {
 		errno = EBADF;
 		return -1;
 	}
@@ -684,7 +684,7 @@ int p_stat(const char* path, struct stat* buf)
 	int len;
 
 	if ((len = git_win32_path_from_utf8(path_w, path)) < 0 ||
-		lstat_w(path_w, buf, false) < 0)
+	    lstat_w(path_w, buf, false) < 0)
 		return -1;
 
 	/* The item is a symbolic link or mount point. No need to iterate
@@ -727,18 +727,18 @@ int p_rmdir(const char* path)
 
 	if (error == -1) {
 		switch (GetLastError()) {
-			/* _wrmdir() is documented to return EACCES if "A program has an open
-			 * handle to the directory."  This sounds like what everybody else calls
-			 * EBUSY.  Let's convert appropriate error codes.
-			 */
-			case ERROR_SHARING_VIOLATION:
-				errno = EBUSY;
-				break;
+		/* _wrmdir() is documented to return EACCES if "A program has an open
+		 * handle to the directory."  This sounds like what everybody else calls
+		 * EBUSY.  Let's convert appropriate error codes.
+		 */
+		case ERROR_SHARING_VIOLATION:
+			errno = EBUSY;
+			break;
 
-			/* This error can be returned when trying to rmdir an extant file. */
-			case ERROR_DIRECTORY:
-				errno = ENOTDIR;
-				break;
+		/* This error can be returned when trying to rmdir an extant file. */
+		case ERROR_DIRECTORY:
+			errno = ENOTDIR;
+			break;
 		}
 	}
 
@@ -832,7 +832,7 @@ int p_mkstemp(char *tmp_path)
 		return -1;
 #endif
 
-	return p_open(tmp_path, O_RDWR | O_CREAT | O_EXCL, 0744); //-V536
+	return p_open(tmp_path, O_RDWR | O_CREAT | O_EXCL, 0744);     //-V536
 }
 
 int p_access(const char* path, mode_t mode)
@@ -862,7 +862,7 @@ int p_rename(const char *from, const char *to)
 	git_win32_path wfrom, wto;
 
 	if (git_win32_path_from_utf8(wfrom, from) < 0 ||
-		git_win32_path_from_utf8(wto, to) < 0)
+	    git_win32_path_from_utf8(wto, to) < 0)
 		return -1;
 
 	do_with_retries(rename_once(wfrom, wto), ensure_writable(wto));
@@ -871,7 +871,7 @@ int p_rename(const char *from, const char *to)
 int p_recv(GIT_SOCKET socket, void *buffer, size_t length, int flags)
 {
 	if ((size_t)((int)length) != length)
-		return -1; /* giterr_set will be done by caller */
+		return -1;         /* giterr_set will be done by caller */
 
 	return recv(socket, buffer, (int)length, flags);
 }
@@ -879,7 +879,7 @@ int p_recv(GIT_SOCKET socket, void *buffer, size_t length, int flags)
 int p_send(GIT_SOCKET socket, const void *buffer, size_t length, int flags)
 {
 	if ((size_t)((int)length) != length)
-		return -1; /* giterr_set will be done by caller */
+		return -1;         /* giterr_set will be done by caller */
 
 	return send(socket, buffer, (int)length, flags);
 }

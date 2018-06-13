@@ -43,7 +43,7 @@ typedef struct {
 	void *message_cb_payload;
 	git_vector refs;
 	unsigned connected : 1,
-		have_refs : 1;
+	         have_refs : 1;
 } transport_local;
 
 static void free_head(git_remote_head *head)
@@ -59,7 +59,7 @@ static void free_heads(git_vector *heads)
 	size_t i;
 
 	git_vector_foreach(heads, i, head)
-		free_head(head);
+	free_head(head);
 
 	git_vector_free(heads);
 }
@@ -123,7 +123,7 @@ static int add_ref(transport_local *t, const char *name)
 	/* If it's not an annotated tag, or if we're mocking
 	 * git-receive-pack, just get out */
 	if (git_object_type(obj) != GIT_OBJ_TAG ||
-		t->direction != GIT_DIRECTION_FETCH) {
+	    t->direction != GIT_DIRECTION_FETCH) {
 		git_object_free(obj);
 		return 0;
 	}
@@ -309,7 +309,7 @@ static int local_push_update_remote_ref(
 	if (lref[0] != '\0') {
 		/* Create or update a ref */
 		error = git_reference_create(NULL, remote_repo, rref, loid,
-					     !git_oid_iszero(roid), NULL);
+		                             !git_oid_iszero(roid), NULL);
 	} else {
 		/* Delete a ref */
 		if ((error = git_reference_lookup(&remote_ref, remote_repo, rref)) < 0) {
@@ -333,7 +333,7 @@ static int transfer_to_push_transfer(const git_transfer_progress *stats, void *p
 		return 0;
 
 	return cbs->push_transfer_progress(stats->received_objects, stats->total_objects, stats->received_bytes,
-					   cbs->payload);
+	                                   cbs->payload);
 }
 
 static int local_push(
@@ -379,7 +379,7 @@ static int local_push(
 	}
 
 	if ((error = git_repository_item_path(&odb_path, remote_repo, GIT_REPOSITORY_ITEM_OBJECTS)) < 0
-		|| (error = git_buf_joinpath(&odb_path, odb_path.ptr, "pack")) < 0)
+	    || (error = git_buf_joinpath(&odb_path, odb_path.ptr, "pack")) < 0)
 		goto on_error;
 
 	error = git_packbuilder_write(push->pb, odb_path.ptr, 0, transfer_to_push_transfer, (void *) cbs);
@@ -406,25 +406,25 @@ static int local_push(
 		}
 
 		error = local_push_update_remote_ref(remote_repo, spec->refspec.src, spec->refspec.dst,
-			&spec->loid, &spec->roid);
+		                                     &spec->loid, &spec->roid);
 
 		switch (error) {
-			case GIT_OK:
-				break;
-			case GIT_EINVALIDSPEC:
-				status->msg = git__strdup("funny refname");
-				break;
-			case GIT_ENOTFOUND:
-				status->msg = git__strdup("Remote branch not found to delete");
-				break;
-			default:
-				last = giterr_last();
+		case GIT_OK:
+			break;
+		case GIT_EINVALIDSPEC:
+			status->msg = git__strdup("funny refname");
+			break;
+		case GIT_ENOTFOUND:
+			status->msg = git__strdup("Remote branch not found to delete");
+			break;
+		default:
+			last = giterr_last();
 
-				if (last && last->message)
-					status->msg = git__strdup(last->message);
-				else
-					status->msg = git__strdup("Unspecified error encountered");
-				break;
+			if (last && last->message)
+				status->msg = git__strdup(last->message);
+			else
+				status->msg = git__strdup("Unspecified error encountered");
+			break;
 		}
 
 		/* failed to allocate memory for a status message */
@@ -445,8 +445,8 @@ static int local_push(
 		url = git__strdup(t->url);
 
 		if (!url || t->parent.close(&t->parent) < 0 ||
-			t->parent.connect(&t->parent, url,
-			NULL, NULL, NULL, GIT_DIRECTION_PUSH, flags))
+		    t->parent.connect(&t->parent, url,
+		                      NULL, NULL, NULL, GIT_DIRECTION_PUSH, flags))
 			goto on_error;
 	}
 
@@ -531,11 +531,11 @@ static int foreach_reference_cb(git_reference *reference, void *payload)
 }
 
 static int local_download_pack(
-		git_transport *transport,
-		git_repository *repo,
-		git_transfer_progress *stats,
-		git_transfer_progress_cb progress_cb,
-		void *progress_payload)
+	git_transport *transport,
+	git_repository *repo,
+	git_transfer_progress *stats,
+	git_transfer_progress_cb progress_cb,
+	void *progress_payload)
 {
 	transport_local *t = (transport_local*)transport;
 	git_revwalk *walk = NULL;
@@ -707,8 +707,8 @@ static void local_free(git_transport *transport)
 }
 
 /**************
- * Public API *
- **************/
+* Public API *
+**************/
 
 int git_transport_local(git_transport **out, git_remote *owner, void *param)
 {

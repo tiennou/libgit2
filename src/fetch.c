@@ -126,9 +126,9 @@ int git_fetch_negotiate(git_remote *remote, const git_fetch_options *opts)
 	 * server what we want and what we have.
 	 */
 	return t->negotiate_fetch(t,
-		remote->repo,
-		(const git_remote_head * const *)remote->refs.contents,
-		remote->refs.length);
+	                          remote->repo,
+	                          (const git_remote_head * const *)remote->refs.contents,
+	                          remote->refs.length);
 }
 
 int git_fetch_download_pack(git_remote *remote, const git_remote_callbacks *callbacks)

@@ -102,7 +102,7 @@ static int diff_update_lines(
 		break;
 	default:
 		giterr_set(GITERR_INVALID, "unknown diff line origin %02x",
-			(unsigned int)line->origin);
+		           (unsigned int)line->origin);
 		return -1;
 	}
 
@@ -140,8 +140,8 @@ static int git_xdiff_cb(void *priv, mmbuffer_t *bufs, int len)
 		info->hunk.header[info->hunk.header_len] = '\0';
 
 		if (output->hunk_cb != NULL &&
-			(output->error = output->hunk_cb(
-				delta, &info->hunk, output->payload)))
+		    (output->error = output->hunk_cb(
+				 delta, &info->hunk, output->payload)))
 			return output->error;
 
 		info->old_lineno = info->hunk.old_start;
@@ -223,13 +223,13 @@ static int git_xdiff(git_patch_generated_output *output, git_patch_generated *pa
 	git_patch_generated_new_data(&info.xd_new_data.ptr, &info.xd_new_data.size, patch);
 
 	if (info.xd_old_data.size > GIT_XDIFF_MAX_SIZE ||
-		info.xd_new_data.size > GIT_XDIFF_MAX_SIZE) {
+	    info.xd_new_data.size > GIT_XDIFF_MAX_SIZE) {
 		giterr_set(GITERR_INVALID, "files too large for diff");
 		return -1;
 	}
 
 	xdl_diff(&info.xd_old_data, &info.xd_new_data,
-		&xo->params, &xo->config, &xo->callback);
+	         &xo->params, &xo->config, &xo->callback);
 
 	git_diff_find_context_clear(&findctxt);
 

@@ -66,7 +66,7 @@ static void *pool_alloc_page(git_pool *pool, uint32_t size)
 	size_t alloc_size;
 
 	if (GIT_ADD_SIZET_OVERFLOW(&alloc_size, new_page_size, sizeof(git_pool_page)) ||
-		!(page = git__malloc(alloc_size)))
+	    !(page = git__malloc(alloc_size)))
 		return NULL;
 
 	page->size = new_page_size;
@@ -105,7 +105,7 @@ bool git_pool__ptr_in_pool(git_pool *pool, void *ptr)
 	git_pool_page *scan;
 	for (scan = pool->pages; scan != NULL; scan = scan->next)
 		if ((void *)scan->data <= ptr &&
-			(void *)(((char *)scan->data) + scan->size) > ptr)
+		    (void *)(((char *)scan->data) + scan->size) > ptr)
 			return true;
 	return false;
 }

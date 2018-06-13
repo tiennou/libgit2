@@ -93,16 +93,16 @@ extern void git_path_string_to_dir(char* path, size_t size);
 GIT_INLINE(int) git_path_is_dot_or_dotdot(const char *name)
 {
 	return (name[0] == '.' &&
-			  (name[1] == '\0' ||
-				(name[1] == '.' && name[2] == '\0')));
+	        (name[1] == '\0' ||
+	         (name[1] == '.' && name[2] == '\0')));
 }
 
 #ifdef GIT_WIN32
 GIT_INLINE(int) git_path_is_dot_or_dotdotW(const wchar_t *name)
 {
 	return (name[0] == L'.' &&
-			  (name[1] == L'\0' ||
-				(name[1] == L'.' && name[2] == L'\0')));
+	        (name[1] == L'\0' ||
+	         (name[1] == L'.' && name[2] == L'\0')));
 }
 
 #define git_path_is_absolute(p) \
@@ -124,7 +124,7 @@ GIT_INLINE(void) git_path_mkposix(char *path)
 	}
 }
 #else
-#	define git_path_mkposix(p) /* blank */
+#   define git_path_mkposix(p) /* blank */
 
 #define git_path_is_absolute(p) \
 	((p)[0] == '/')
@@ -318,7 +318,7 @@ enum {
  * Walk each directory entry, except '.' and '..', calling fn(state).
  *
  * @param pathbuf Buffer the function reads the initial directory
- * 		path from, and updates with each successive entry's name.
+ *      path from, and updates with each successive entry's name.
  * @param flags Combination of GIT_PATH_DIR flags.
  * @param callback Callback for each entry. Passed the `payload` and each
  *		successive path inside the directory as a full path.  This may
@@ -571,8 +571,8 @@ extern void git_path_diriter_free(git_path_diriter *diriter);
  * @param contents Vector to fill with directory entry names.
  * @param path The directory to read from.
  * @param prefix_len When inserting entries, the trailing part of path
- * 		will be prefixed after this length.  I.e. given path "/a/b" and
- * 		prefix_len 3, the entries will look like "b/e1", "b/e2", etc.
+ *      will be prefixed after this length.  I.e. given path "/a/b" and
+ *      prefix_len 3, the entries will look like "b/e1", "b/e2", etc.
  * @param flags Combination of GIT_PATH_DIR flags.
  */
 extern int git_path_dirload(
@@ -618,7 +618,7 @@ extern int git_path_from_url_or_path(git_buf *local_path_out, const char *url_or
 	GIT_PATH_REJECT_TRAVERSAL
 #endif
 
- /* Paths that should never be written into the working directory. */
+/* Paths that should never be written into the working directory. */
 #define GIT_PATH_REJECT_WORKDIR_DEFAULTS \
 	GIT_PATH_REJECT_FILESYSTEM_DEFAULTS | GIT_PATH_REJECT_DOT_GIT
 

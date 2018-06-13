@@ -79,8 +79,8 @@ on_error:
 }
 
 static int validate_tree_and_parents(git_array_oid_t *parents, git_repository *repo, const git_oid *tree,
-				     git_commit_parent_callback parent_cb, void *parent_payload,
-				     const git_oid *current_id, bool validate)
+                                     git_commit_parent_callback parent_cb, void *parent_payload,
+                                     const git_oid *current_id, bool validate)
 {
 	size_t i;
 	int error;
@@ -151,8 +151,8 @@ static int git_commit__create_internal(
 		goto cleanup;
 
 	error = git_commit__create_buffer_internal(&buf, author, committer,
-						   message_encoding, message, tree,
-						   &parents);
+	                                           message_encoding, message, tree,
+	                                           &parents);
 
 	if (error < 0)
 		goto cleanup;
@@ -477,8 +477,8 @@ bad_buffer:
 }
 
 #define GIT_COMMIT_GETTER(_rvalue, _name, _return) \
-	_rvalue git_commit_##_name(const git_commit *commit) \
-	{\
+	_rvalue git_commit_ ## _name(const git_commit *commit) \
+	{ \
 		assert(commit); \
 		return _return; \
 	}
@@ -535,9 +535,9 @@ const char *git_commit_summary(git_commit *commit)
 				/* process any recorded whitespace */
 				if (space) {
 					if(space_contains_newline)
-						git_buf_putc(&summary, ' '); /* if the space contains a newline, collapse to ' ' */
+						git_buf_putc(&summary, ' ');                         /* if the space contains a newline, collapse to ' ' */
 					else
-						git_buf_put(&summary, space, (msg - space)); /* otherwise copy it */
+						git_buf_put(&summary, space, (msg - space));                         /* otherwise copy it */
 					space = NULL;
 				}
 				/* copy the next character */
@@ -574,7 +574,7 @@ const char *git_commit_body(git_commit *commit)
 				break;
 
 		if (*msg)
-			    commit->body = git__strndup(msg, end - msg + 1);
+			commit->body = git__strndup(msg, end - msg + 1);
 	}
 
 	return commit->body;
@@ -668,7 +668,7 @@ int git_commit_header_field(git_buf *out, const git_commit *commit, const char *
 			continue;
 		}
 
-		buf++; /* skip the SP */
+		buf++;         /* skip the SP */
 
 		git_buf_put(out, buf, eol - buf);
 		if (git_buf_oom(out))
@@ -750,7 +750,7 @@ int git_commit_extract_signature(git_buf *signature, git_buf *signed_data, git_r
 		if (!eol)
 			goto malformed;
 
-		h++; /* skip the SP */
+		h++;         /* skip the SP */
 
 		git_buf_put(signature, h, eol - h);
 		if (git_buf_oom(signature))
@@ -796,14 +796,14 @@ cleanup:
 }
 
 int git_commit_create_buffer(git_buf *out,
-	git_repository *repo,
-	const git_signature *author,
-	const git_signature *committer,
-	const char *message_encoding,
-	const char *message,
-	const git_tree *tree,
-	size_t parent_count,
-	const git_commit *parents[])
+                             git_repository *repo,
+                             const git_signature *author,
+                             const git_signature *committer,
+                             const char *message_encoding,
+                             const char *message,
+                             const git_tree *tree,
+                             size_t parent_count,
+                             const git_commit *parents[])
 {
 	int error;
 	commit_parent_data data = { parent_count, parents, repo };

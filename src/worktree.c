@@ -22,8 +22,8 @@ static bool is_worktree_dir(const char *dir)
 		return -1;
 
 	error = git_path_contains_file(&buf, "commondir")
-		&& git_path_contains_file(&buf, "gitdir")
-		&& git_path_contains_file(&buf, "HEAD");
+	        && git_path_contains_file(&buf, "gitdir")
+	        && git_path_contains_file(&buf, "HEAD");
 
 	git_buf_dispose(&buf);
 	return error;
@@ -242,24 +242,24 @@ int git_worktree_validate(const git_worktree *wt)
 	git_buf_puts(&buf, wt->gitdir_path);
 	if (!is_worktree_dir(buf.ptr)) {
 		giterr_set(GITERR_WORKTREE,
-			"Worktree gitdir ('%s') is not valid",
-			wt->gitlink_path);
+		           "Worktree gitdir ('%s') is not valid",
+		           wt->gitlink_path);
 		err = -1;
 		goto out;
 	}
 
 	if (!git_path_exists(wt->parent_path)) {
 		giterr_set(GITERR_WORKTREE,
-			"Worktree parent directory ('%s') does not exist ",
-			wt->parent_path);
+		           "Worktree parent directory ('%s') does not exist ",
+		           wt->parent_path);
 		err = -2;
 		goto out;
 	}
 
 	if (!git_path_exists(wt->commondir_path)) {
 		giterr_set(GITERR_WORKTREE,
-			"Worktree common directory ('%s') does not exist ",
-			wt->commondir_path);
+		           "Worktree common directory ('%s') does not exist ",
+		           wt->commondir_path);
 		err = -3;
 		goto out;
 	}
@@ -271,16 +271,16 @@ out:
 }
 
 int git_worktree_add_init_options(git_worktree_add_options *opts,
-	unsigned int version)
+                                  unsigned int version)
 {
 	GIT_INIT_STRUCTURE_FROM_TEMPLATE(opts, version,
-		git_worktree_add_options, GIT_WORKTREE_ADD_OPTIONS_INIT);
+	                                 git_worktree_add_options, GIT_WORKTREE_ADD_OPTIONS_INIT);
 	return 0;
 }
 
 int git_worktree_add(git_worktree **out, git_repository *repo,
-	const char *name, const char *worktree,
-	const git_worktree_add_options *opts)
+                     const char *name, const char *worktree,
+                     const git_worktree_add_options *opts)
 {
 	git_buf gitdir = GIT_BUF_INIT, wddir = GIT_BUF_INIT, buf = GIT_BUF_INIT;
 	git_reference *ref = NULL, *head = NULL;
@@ -491,12 +491,12 @@ int git_worktree_prune_init_options(
 	unsigned int version)
 {
 	GIT_INIT_STRUCTURE_FROM_TEMPLATE(opts, version,
-		git_worktree_prune_options, GIT_WORKTREE_PRUNE_OPTIONS_INIT);
+	                                 git_worktree_prune_options, GIT_WORKTREE_PRUNE_OPTIONS_INIT);
 	return 0;
 }
 
 int git_worktree_is_prunable(git_worktree *wt,
-	git_worktree_prune_options *opts)
+                             git_worktree_prune_options *opts)
 {
 	git_buf reason = GIT_BUF_INIT;
 	git_worktree_prune_options popts = GIT_WORKTREE_PRUNE_OPTIONS_INIT;
@@ -509,7 +509,7 @@ int git_worktree_is_prunable(git_worktree *wt,
 		memcpy(&popts, opts, sizeof(popts));
 
 	if ((popts.flags & GIT_WORKTREE_PRUNE_LOCKED) == 0 &&
-		git_worktree_is_locked(&reason, wt))
+	    git_worktree_is_locked(&reason, wt))
 	{
 		if (!reason.size)
 			git_buf_attach_notowned(&reason, "no reason given", 15);
@@ -520,7 +520,7 @@ int git_worktree_is_prunable(git_worktree *wt,
 	}
 
 	if ((popts.flags & GIT_WORKTREE_PRUNE_VALID) == 0 &&
-		git_worktree_validate(wt) == 0)
+	    git_worktree_validate(wt) == 0)
 	{
 		giterr_set(GITERR_WORKTREE, "Not pruning valid working tree");
 		return 0;
@@ -530,7 +530,7 @@ int git_worktree_is_prunable(git_worktree *wt,
 }
 
 int git_worktree_prune(git_worktree *wt,
-	git_worktree_prune_options *opts)
+                       git_worktree_prune_options *opts)
 {
 	git_worktree_prune_options popts = GIT_WORKTREE_PRUNE_OPTIONS_INIT;
 	git_buf path = GIT_BUF_INIT;
@@ -564,7 +564,7 @@ int git_worktree_prune(git_worktree *wt,
 	/* Skip deletion of the actual working tree if it does
 	 * not exist or deletion was not requested */
 	if ((popts.flags & GIT_WORKTREE_PRUNE_WORKING_TREE) == 0 ||
-		!git_path_exists(wt->gitlink_path))
+	    !git_path_exists(wt->gitlink_path))
 	{
 		goto out;
 	}

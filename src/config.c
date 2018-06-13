@@ -204,7 +204,7 @@ static int find_internal_file_by_level(
 
 	if (pos == -1) {
 		giterr_set(GITERR_CONFIG,
-			"no config file exists for the given level '%i'", (int)level);
+		           "no config file exists for the given level '%i'", (int)level);
 		return GIT_ENOTFOUND;
 	}
 
@@ -260,7 +260,7 @@ static int git_config__add_internal(
 		try_remove_existing_file_internal(cfg, level);
 
 	if ((result = git_vector_insert_sorted(&cfg->files,
-			internal, &duplicate_level)) < 0)
+	                                       internal, &duplicate_level)) < 0)
 		return result;
 
 	git_vector_sort(&cfg->files);
@@ -575,8 +575,8 @@ int git_config_foreach_match(
 }
 
 /**************
- * Setters
- **************/
+* Setters
+**************/
 
 typedef enum {
 	BACKEND_USE_SET,
@@ -584,12 +584,12 @@ typedef enum {
 } backend_use;
 
 static const char *uses[] = {
-    "set",
-    "delete"
+	"set",
+	"delete"
 };
 
 static int get_backend_for_use(git_config_backend **out,
-	git_config *cfg, const char *name, backend_use use)
+                               git_config *cfg, const char *name, backend_use use)
 {
 	size_t i;
 	file_internal *f;
@@ -598,8 +598,8 @@ static int get_backend_for_use(git_config_backend **out,
 
 	if (git_vector_length(&cfg->files) == 0) {
 		giterr_set(GITERR_CONFIG,
-			"cannot %s value for '%s' when no config files exist",
-			uses[use], name);
+		           "cannot %s value for '%s' when no config files exist",
+		           uses[use], name);
 		return GIT_ENOTFOUND;
 	}
 
@@ -611,8 +611,8 @@ static int get_backend_for_use(git_config_backend **out,
 	}
 
 	giterr_set(GITERR_CONFIG,
-		"cannot %s value for '%s' when all config files are readonly",
-		uses[use], name);
+	           "cannot %s value for '%s' when all config files are readonly",
+	           uses[use], name);
 	return GIT_ENOTFOUND;
 }
 
@@ -628,7 +628,7 @@ int git_config_delete_entry(git_config *cfg, const char *name)
 
 int git_config_set_int64(git_config *cfg, const char *name, int64_t value)
 {
-	char str_value[32]; /* All numbers should fit in here */
+	char str_value[32];     /* All numbers should fit in here */
 	p_snprintf(str_value, sizeof(str_value), "%" PRId64, value);
 	return git_config_set_string(cfg, name, str_value);
 }
@@ -677,13 +677,13 @@ int git_config__update_entry(
 	if ((error = git_config__lookup_entry(&ce, config, key, false)) < 0)
 		return error;
 
-	if (!ce && only_if_existing) /* entry doesn't exist */
+	if (!ce && only_if_existing)     /* entry doesn't exist */
 		return 0;
-	if (ce && !overwrite_existing) /* entry would be overwritten */
+	if (ce && !overwrite_existing)     /* entry would be overwritten */
 		return 0;
-	if (value && ce && ce->value && !strcmp(ce->value, value)) /* no change */
+	if (value && ce && ce->value && !strcmp(ce->value, value))     /* no change */
 		return 0;
-	if (!value && (!ce || !ce->value)) /* asked to delete absent entry */
+	if (!value && (!ce || !ce->value))     /* asked to delete absent entry */
 		return 0;
 
 	if (!value)
@@ -696,8 +696,8 @@ int git_config__update_entry(
 }
 
 /***********
- * Getters
- ***********/
+* Getters
+***********/
 
 static int config_error_notfound(const char *name)
 {
@@ -856,10 +856,10 @@ int git_config_get_path(git_buf *out, const git_config *cfg, const char *name)
 	if ((error = get_entry(&entry, cfg, name, true, GET_ALL_ERRORS)) < 0)
 		return error;
 
-	 error = git_config_parse_path(out, entry->value);
-	 git_config_entry_free(entry);
+	error = git_config_parse_path(out, entry->value);
+	git_config_entry_free(entry);
 
-	 return error;
+	return error;
 }
 
 int git_config_get_string(
@@ -1128,7 +1128,7 @@ int git_config__global_location(git_buf *buf)
 	/* find unescaped separator or end of string */
 	for (sep = start = git_buf_cstr(paths); *sep; ++sep) {
 		if (*sep == GIT_PATH_LIST_SEPARATOR &&
-			(sep <= start || sep[-1] != '\\'))
+		    (sep <= start || sep[-1] != '\\'))
 			break;
 	}
 
@@ -1149,20 +1149,20 @@ int git_config_open_default(git_config **out)
 
 	if (!git_config_find_global(&buf) || !git_config__global_location(&buf)) {
 		error = git_config_add_file_ondisk(cfg, buf.ptr,
-			GIT_CONFIG_LEVEL_GLOBAL, NULL, 0);
+		                                   GIT_CONFIG_LEVEL_GLOBAL, NULL, 0);
 	}
 
 	if (!error && !git_config_find_xdg(&buf))
 		error = git_config_add_file_ondisk(cfg, buf.ptr,
-			GIT_CONFIG_LEVEL_XDG, NULL, 0);
+		                                   GIT_CONFIG_LEVEL_XDG, NULL, 0);
 
 	if (!error && !git_config_find_system(&buf))
 		error = git_config_add_file_ondisk(cfg, buf.ptr,
-			GIT_CONFIG_LEVEL_SYSTEM, NULL, 0);
+		                                   GIT_CONFIG_LEVEL_SYSTEM, NULL, 0);
 
 	if (!error && !git_config_find_programdata(&buf))
 		error = git_config_add_file_ondisk(cfg, buf.ptr,
-			GIT_CONFIG_LEVEL_PROGRAMDATA, NULL, 0);
+		                                   GIT_CONFIG_LEVEL_PROGRAMDATA, NULL, 0);
 
 	git_buf_dispose(&buf);
 
@@ -1212,8 +1212,8 @@ int git_config_unlock(git_config *cfg, int commit)
 }
 
 /***********
- * Parsers
- ***********/
+* Parsers
+***********/
 
 int git_config_lookup_map_value(
 	int *out,
@@ -1235,7 +1235,7 @@ int git_config_lookup_map_value(
 			int bool_val;
 
 			if (git__parse_bool(&bool_val, value) == 0 &&
-				bool_val == (int)m->cvar_type) {
+			    bool_val == (int)m->cvar_type) {
 				*out = m->map_value;
 				return 0;
 			}
@@ -1262,7 +1262,7 @@ fail_parse:
 }
 
 int git_config_lookup_map_enum(git_cvar_t *type_out, const char **str_out,
-			       const git_cvar_map *maps, size_t map_n, int enum_val)
+                               const git_cvar_map *maps, size_t map_n, int enum_val)
 {
 	size_t i;
 
@@ -1307,12 +1307,12 @@ int git_config_parse_int64(int64_t *out, const char *value)
 	case 'g':
 	case 'G':
 		num *= 1024;
-		/* fallthrough */
+	/* fallthrough */
 
 	case 'm':
 	case 'M':
 		num *= 1024;
-		/* fallthrough */
+	/* fallthrough */
 
 	case 'k':
 	case 'K':
@@ -1323,7 +1323,7 @@ int git_config_parse_int64(int64_t *out, const char *value)
 		if (num_end[1] != '\0')
 			return -1;
 
-		/* fallthrough */
+	/* fallthrough */
 
 	case '\0':
 		*out = num;
@@ -1394,7 +1394,7 @@ int git_config__normalize_name(const char *in, char **out)
 
 	/* Validate and downcase up to first dot and after last dot */
 	if (git_config_file_normalize_section(name, fdot) < 0 ||
-		git_config_file_normalize_section(ldot + 1, NULL) < 0)
+	    git_config_file_normalize_section(ldot + 1, NULL) < 0)
 		goto invalid;
 
 	/* If there is a middle range, make sure it doesn't have newlines */
@@ -1426,7 +1426,7 @@ static int rename_config_entries_cb(
 	size_t base_len = git_buf_len(data->name);
 
 	if (base_len > 0 &&
-		!(error = git_buf_puts(data->name, entry->name + data->old_len)))
+	    !(error = git_buf_puts(data->name, entry->name + data->old_len)))
 	{
 		error = git_config_set_string(
 			data->config, git_buf_cstr(data->name), entry->value);
@@ -1466,8 +1466,8 @@ int git_config_rename_section(
 		goto cleanup;
 
 	if (new_section_name != NULL &&
-		(error = git_config_file_normalize_section(
-			replace.ptr, strchr(replace.ptr, '.'))) < 0)
+	    (error = git_config_file_normalize_section(
+			 replace.ptr, strchr(replace.ptr, '.'))) < 0)
 	{
 		giterr_set(
 			GITERR_CONFIG, "invalid config section '%s'", new_section_name);

@@ -12,8 +12,8 @@
 #include "buffer.h"
 
 /********************************************
- * New error handling
- ********************************************/
+* New error handling
+********************************************/
 
 static git_error g_git_oom_error = {
 	"Out of memory",

@@ -103,7 +103,7 @@ static int write_add_refspec(git_repository *repo, const char *name, const char 
 	int error;
 
 	if ((error = git_repository_config__weakptr(&cfg, repo)) < 0)
-	    return error;
+		return error;
 
 	fmt = fetch ? CONFIG_FETCH_FMT : CONFIG_PUSH_FMT;
 
@@ -177,7 +177,7 @@ static int canonicalize_url(git_buf *out, const char *in)
 	 * to //server/path for compatibility with core git.
 	 */
 	if (in[0] == '\\' && in[1] == '\\' &&
-		(git__isalpha(in[2]) || git__isdigit(in[2]))) {
+	    (git__isalpha(in[2]) || git__isdigit(in[2]))) {
 		const char *c;
 		for (c = in; *c; c++)
 			git_buf_putc(out, *c == '\\' ? '/' : *c);
@@ -209,7 +209,7 @@ static int create_internal(git_remote **out, git_repository *repo, const char *n
 	remote->repo = repo;
 
 	if ((error = git_vector_init(&remote->refs, 32, NULL)) < 0 ||
-		(error = canonicalize_url(&canonical_url, url)) < 0)
+	    (error = canonicalize_url(&canonical_url, url)) < 0)
 		goto on_error;
 
 	if (repo) {
@@ -227,8 +227,8 @@ static int create_internal(git_remote **out, git_repository *repo, const char *n
 			goto on_error;
 
 		if (repo &&
-			((error = git_repository_config__weakptr(&config_rw, repo)) < 0 ||
-			(error = git_config_set_string(config_rw, var.ptr, canonical_url.ptr)) < 0))
+		    ((error = git_repository_config__weakptr(&config_rw, repo)) < 0 ||
+		     (error = git_config_set_string(config_rw, var.ptr, canonical_url.ptr)) < 0))
 			goto on_error;
 	}
 
@@ -646,7 +646,7 @@ int set_transport_callbacks(git_transport *t, const git_remote_callbacks *cbs)
 		return 0;
 
 	return t->set_callbacks(t, cbs->sideband_progress, NULL,
-				cbs->certificate_check, cbs->payload);
+	                        cbs->certificate_check, cbs->payload);
 }
 
 static int set_transport_custom_headers(git_transport *t, const git_strarray *custom_headers)
@@ -684,16 +684,16 @@ int git_remote_connect(git_remote *remote, git_direction direction, const git_re
 	url = git_remote__urlfordirection(remote, direction);
 	if (url == NULL) {
 		giterr_set(GITERR_INVALID,
-			"Malformed remote '%s' - missing %s URL",
-			remote->name ? remote->name : "(anonymous)",
-			direction == GIT_DIRECTION_FETCH ? "fetch" : "push");
+		           "Malformed remote '%s' - missing %s URL",
+		           remote->name ? remote->name : "(anonymous)",
+		           direction == GIT_DIRECTION_FETCH ? "fetch" : "push");
 		return -1;
 	}
 
 	/* If we don't have a transport object yet, and the caller specified a
 	 * custom transport factory, use that */
 	if (!t && transport &&
-		(error = transport(&t, remote, payload)) < 0)
+	    (error = transport(&t, remote, payload)) < 0)
 		return error;
 
 	/* If we still don't have a transport, then use the global
@@ -939,10 +939,10 @@ on_error:
 }
 
 int git_remote_fetch(
-		git_remote *remote,
-		const git_strarray *refspecs,
-		const git_fetch_options *opts,
-		const char *reflog_message)
+	git_remote *remote,
+	const git_strarray *refspecs,
+	const git_fetch_options *opts,
+	const char *reflog_message)
 {
 	int error, update_fetchhead = 1;
 	git_remote_autotag_option_t tagopt = remote->download_tags;
@@ -980,7 +980,7 @@ int git_remote_fetch(
 		git_buf_sets(&reflog_msg_buf, reflog_message);
 	else {
 		git_buf_printf(&reflog_msg_buf, "fetch %s",
-				remote->name ? remote->name : remote->url);
+		               remote->name ? remote->name : remote->url);
 	}
 
 	/* Create "remote/foo" branches for all remote branches */
@@ -1115,8 +1115,8 @@ static int git_remote_write_fetchhead(git_remote *remote, git_refspec *spec, git
 	/* Determine what to merge: if refspec was a wildcard, just use HEAD */
 	if (git_refspec_is_wildcard(spec)) {
 		if ((error = git_reference_lookup(&head_ref, remote->repo, GIT_HEAD_FILE)) < 0 ||
-			(error = remote_head_for_ref(&merge_remote_ref, remote, spec, update_heads, head_ref)) < 0)
-				goto cleanup;
+		    (error = remote_head_for_ref(&merge_remote_ref, remote, spec, update_heads, head_ref)) < 0)
+			goto cleanup;
 	} else {
 		/* If we're fetching a single refspec, that's the only thing that should be in FETCH_HEAD. */
 		if ((error = remote_head_for_fetchspec_src(&merge_remote_ref, update_heads, git_refspec_src(spec))) < 0)
@@ -1128,15 +1128,15 @@ static int git_remote_write_fetchhead(git_remote *remote, git_refspec *spec, git
 		int merge_this_fetchhead = (merge_remote_ref == remote_ref);
 
 		if (!include_all_fetchheads &&
-			!git_refspec_src_matches(spec, remote_ref->name) &&
-			!merge_this_fetchhead)
+		    !git_refspec_src_matches(spec, remote_ref->name) &&
+		    !merge_this_fetchhead)
 			continue;
 
 		if (git_fetchhead_ref_create(&fetchhead_ref,
-			&remote_ref->oid,
-			merge_this_fetchhead,
-			remote_ref->name,
-			git_remote_url(remote)) < 0)
+		                             &remote_ref->oid,
+		                             merge_this_fetchhead,
+		                             remote_ref->name,
+		                             git_remote_url(remote)) < 0)
 			goto cleanup;
 
 		if (git_vector_insert(&fetchhead_refs, fetchhead_ref) < 0)
@@ -1298,13 +1298,13 @@ cleanup:
 }
 
 static int update_tips_for_spec(
-		git_remote *remote,
-		const git_remote_callbacks *callbacks,
-		int update_fetchhead,
-		git_remote_autotag_option_t tagopt,
-		git_refspec *spec,
-		git_vector *refs,
-		const char *log_message)
+	git_remote *remote,
+	const git_remote_callbacks *callbacks,
+	int update_fetchhead,
+	git_remote_autotag_option_t tagopt,
+	git_refspec *spec,
+	git_vector *refs,
+	const char *log_message)
 {
 	int error = 0, autotag;
 	unsigned int i = 0;
@@ -1358,7 +1358,7 @@ static int update_tips_for_spec(
 			} else {
 				/*
 				 * no rhs mans store it in FETCH_HEAD, even if we don't
-				 update anything else.
+				   update anything else.
 				 */
 				if ((error = git_vector_insert(&update_heads, head)) < 0)
 					goto on_error;
@@ -1394,8 +1394,8 @@ static int update_tips_for_spec(
 			continue;
 
 		/* In autotag mode, don't overwrite any locally-existing tags */
-		error = git_reference_create(&ref, remote->repo, refname.ptr, &head->oid, !autotag, 
-				log_message);
+		error = git_reference_create(&ref, remote->repo, refname.ptr, &head->oid, !autotag,
+		                             log_message);
 
 		if (error == GIT_EEXISTS)
 			continue;
@@ -1436,8 +1436,8 @@ on_error:
  * well as the head which we matched.
  */
 static int next_head(const git_remote *remote, git_vector *refs,
-		     git_refspec **out_spec, git_remote_head **out_head,
-		     size_t *out_i, size_t *out_j, size_t *out_k)
+                     git_refspec **out_spec, git_remote_head **out_head,
+                     size_t *out_i, size_t *out_j, size_t *out_k)
 {
 	const git_vector *active, *passive;
 	git_remote_head *head;
@@ -1467,7 +1467,7 @@ static int next_head(const git_remote *remote, git_vector *refs,
 				passive_spec = git_vector_get(passive, k);
 
 				if (!git_refspec_src_matches(passive_spec, head->name))
-				    continue;
+					continue;
 
 				*out_spec = passive_spec;
 				*out_head = head;
@@ -1486,7 +1486,7 @@ static int next_head(const git_remote *remote, git_vector *refs,
 }
 
 static int opportunistic_updates(const git_remote *remote, const git_remote_callbacks *callbacks,
-				 git_vector *refs, const char *msg)
+                                 git_vector *refs, const char *msg)
 {
 	size_t i, j, k;
 	git_refspec *spec;
@@ -1556,11 +1556,11 @@ static int truncate_fetch_head(const char *gitdir)
 }
 
 int git_remote_update_tips(
-		git_remote *remote,
-		const git_remote_callbacks *callbacks,
-		int update_fetchhead,
-		git_remote_autotag_option_t download_tags,
-		const char *reflog_message)
+	git_remote *remote,
+	const git_remote_callbacks *callbacks,
+	int update_fetchhead,
+	git_remote_autotag_option_t download_tags,
+	const char *reflog_message)
 {
 	git_refspec *spec, tagspec;
 	git_vector refs = GIT_VECTOR_INIT;
@@ -1678,9 +1678,9 @@ static int remote_list_cb(const git_config_entry *entry, void *payload)
 	/* we know name matches "remote.<stuff>.(push)?url" */
 
 	if (!strcmp(&name[namelen - 4], ".url"))
-		remote_name = git__strndup(name, namelen - 4); /* strip ".url" */
+		remote_name = git__strndup(name, namelen - 4);         /* strip ".url" */
 	else
-		remote_name = git__strndup(name, namelen - 8); /* strip ".pushurl" */
+		remote_name = git__strndup(name, namelen - 8);         /* strip ".pushurl" */
 	GITERR_CHECK_ALLOC(remote_name);
 
 	return git_vector_insert(list, remote_name);
@@ -1774,15 +1774,15 @@ static int rename_remote_config_section(
 	const char *new_name)
 {
 	git_buf old_section_name = GIT_BUF_INIT,
-		new_section_name = GIT_BUF_INIT;
+	        new_section_name = GIT_BUF_INIT;
 	int error = -1;
 
 	if (git_buf_printf(&old_section_name, "remote.%s", old_name) < 0)
 		goto cleanup;
 
 	if (new_name &&
-		(git_buf_printf(&new_section_name, "remote.%s", new_name) < 0))
-			goto cleanup;
+	    (git_buf_printf(&new_section_name, "remote.%s", new_name) < 0))
+		goto cleanup;
 
 	error = git_config_rename_section(
 		repo,
@@ -1855,12 +1855,12 @@ static int rename_one_remote_reference(
 		goto cleanup;
 
 	if ((error = git_buf_printf(&log_message,
-					"renamed remote %s to %s",
-					old_remote_name, new_remote_name)) < 0)
+	                            "renamed remote %s to %s",
+	                            old_remote_name, new_remote_name)) < 0)
 		goto cleanup;
 
 	if ((error = git_reference_rename(&ref, reference_in, git_buf_cstr(&new_name), 1,
-					  git_buf_cstr(&log_message))) < 0)
+	                                  git_buf_cstr(&log_message))) < 0)
 		goto cleanup;
 
 	if (git_reference_type(ref) != GIT_REF_SYMBOLIC)
@@ -1880,7 +1880,7 @@ static int rename_one_remote_reference(
 		goto cleanup;
 
 	error = git_reference_symbolic_set_target(&dummy, ref, git_buf_cstr(&new_name),
-						  git_buf_cstr(&log_message));
+	                                          git_buf_cstr(&log_message));
 
 	git_reference_free(dummy);
 
@@ -1938,7 +1938,7 @@ static int rename_fetch_refspecs(git_vector *problems, git_remote *remote, const
 		return error;
 
 	if ((error = git_buf_printf(
-			&base, "+refs/heads/*:refs/remotes/%s/*", remote->name)) < 0)
+			 &base, "+refs/heads/*:refs/remotes/%s/*", remote->name)) < 0)
 		return error;
 
 	git_vector_foreach(&remote->refspecs, i, spec) {
@@ -1965,14 +1965,14 @@ static int rename_fetch_refspecs(git_vector *problems, git_remote *remote, const
 
 		if (git_buf_printf(
 				&val, "+refs/heads/*:refs/remotes/%s/*", new_name) < 0 ||
-			git_buf_printf(&var, "remote.%s.fetch", new_name) < 0)
+		    git_buf_printf(&var, "remote.%s.fetch", new_name) < 0)
 		{
 			error = -1;
 			break;
 		}
 
 		if ((error = git_config_set_string(
-				config, git_buf_cstr(&var), git_buf_cstr(&val))) < 0)
+				 config, git_buf_cstr(&var), git_buf_cstr(&val))) < 0)
 			break;
 	}
 
@@ -1983,7 +1983,7 @@ static int rename_fetch_refspecs(git_vector *problems, git_remote *remote, const
 	if (error < 0) {
 		char *str;
 		git_vector_foreach(problems, i, str)
-			git__free(str);
+		git__free(str);
 
 		git_vector_free(problems);
 	}
@@ -2519,9 +2519,9 @@ char *apply_insteadof(git_config *config, const char *url, int direction)
 
 		/* Cut off prefix and suffix of the value */
 		replacement_length =
-		    strlen(entry->name) - (prefix_length + suffix_length);
+			strlen(entry->name) - (prefix_length + suffix_length);
 		replacement = git__strndup(entry->name + prefix_length,
-				replacement_length);
+		                           replacement_length);
 	}
 
 	git_config_iterator_free(iter);

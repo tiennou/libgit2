@@ -77,18 +77,18 @@ int git_diff_file_stats__full_to_buf(
 	}
 
 	if (git_buf_putcn(out, ' ', padding) < 0 ||
-		git_buf_puts(out, " | ") < 0)
+	    git_buf_puts(out, " | ") < 0)
 		goto on_error;
 
 	if (delta->flags & GIT_DIFF_FLAG_BINARY) {
 		if (git_buf_printf(out,
-				"Bin %" PRIuZ " -> %" PRIuZ " bytes", old_size, new_size) < 0)
+		                   "Bin %" PRIuZ " -> %" PRIuZ " bytes", old_size, new_size) < 0)
 			goto on_error;
 	}
 	else {
 		if (git_buf_printf(out,
-				"%*" PRIuZ, stats->max_digits,
-				filestat->insertions + filestat->deletions) < 0)
+		                   "%*" PRIuZ, stats->max_digits,
+		                   filestat->insertions + filestat->deletions) < 0)
 			goto on_error;
 
 		if (filestat->insertions || filestat->deletions) {
@@ -97,17 +97,17 @@ int git_diff_file_stats__full_to_buf(
 
 			if (!width) {
 				if (git_buf_putcn(out, '+', filestat->insertions) < 0 ||
-					git_buf_putcn(out, '-', filestat->deletions) < 0)
+				    git_buf_putcn(out, '-', filestat->deletions) < 0)
 					goto on_error;
 			} else {
 				size_t total = filestat->insertions + filestat->deletions;
 				size_t full = (total * width + stats->max_filestat / 2) /
-					stats->max_filestat;
+				              stats->max_filestat;
 				size_t plus = full * filestat->insertions / total;
 				size_t minus = full - plus;
 
 				if (git_buf_putcn(out, '+', max(plus,  1)) < 0 ||
-					git_buf_putcn(out, '-', max(minus, 1)) < 0)
+				    git_buf_putcn(out, '-', max(minus, 1)) < 0)
 					goto on_error;
 			}
 		}
@@ -131,7 +131,7 @@ int git_diff_file_stats__number_to_buf(
 		error = git_buf_printf(out, "%-8c" "%-8c" "%s\n", '-', '-', path);
 	else
 		error = git_buf_printf(out, "%-8" PRIuZ "%-8" PRIuZ "%s\n",
-			filestats->insertions, filestats->deletions, path);
+		                       filestats->insertions, filestats->deletions, path);
 
 	return error;
 }
@@ -143,15 +143,15 @@ int git_diff_file_stats__summary_to_buf(
 	if (delta->old_file.mode != delta->new_file.mode) {
 		if (delta->old_file.mode == 0) {
 			git_buf_printf(out, " create mode %06o %s\n",
-				delta->new_file.mode, delta->new_file.path);
+			               delta->new_file.mode, delta->new_file.path);
 		}
 		else if (delta->new_file.mode == 0) {
 			git_buf_printf(out, " delete mode %06o %s\n",
-				delta->old_file.mode, delta->old_file.path);
+			               delta->old_file.mode, delta->old_file.path);
 		}
 		else {
 			git_buf_printf(out, " mode change %06o => %06o %s\n",
-				delta->old_file.mode, delta->new_file.mode, delta->new_file.path);
+			               delta->old_file.mode, delta->new_file.mode, delta->new_file.path);
 		}
 	}
 
@@ -341,7 +341,7 @@ void git_diff_stats_free(git_diff_stats *stats)
 	if (stats == NULL)
 		return;
 
-	git_diff_free(stats->diff); /* bumped refcount in constructor */
+	git_diff_free(stats->diff);     /* bumped refcount in constructor */
 	git__free(stats->filestats);
 	git__free(stats);
 }

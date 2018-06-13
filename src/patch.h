@@ -1,9 +1,9 @@
 /*
-* Copyright (C) the libgit2 contributors. All rights reserved.
-*
-* This file is part of libgit2, distributed under the GNU GPL v2 with
-* a Linking Exception. For full terms see the included COPYING file.
-*/
+ * Copyright (C) the libgit2 contributors. All rights reserved.
+ *
+ * This file is part of libgit2, distributed under the GNU GPL v2 with
+ * a Linking Exception. For full terms see the included COPYING file.
+ */
 #ifndef INCLUDE_patch_h__
 #define INCLUDE_patch_h__
 
@@ -22,7 +22,7 @@ typedef struct git_patch_hunk {
 struct git_patch {
 	git_refcount rc;
 
-	git_repository *repo; /* may be null */
+	git_repository *repo;     /* may be null */
 
 	git_diff_options diff_opts;
 

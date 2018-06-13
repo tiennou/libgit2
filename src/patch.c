@@ -1,9 +1,9 @@
 /*
-* Copyright (C) the libgit2 contributors. All rights reserved.
-*
-* This file is part of libgit2, distributed under the GNU GPL v2 with
-* a Linking Exception. For full terms see the included COPYING file.
-*/
+ * Copyright (C) the libgit2 contributors. All rights reserved.
+ *
+ * This file is part of libgit2, distributed under the GNU GPL v2 with
+ * a Linking Exception. For full terms see the included COPYING file.
+ */
 
 #include "patch.h"
 
@@ -79,7 +79,7 @@ size_t git_patch_size(
 		git_buf file_header = GIT_BUF_INIT;
 
 		if (git_diff_delta__format_file_header(
-			&file_header, patch->delta, NULL, NULL, 0) < 0)
+				&file_header, patch->delta, NULL, NULL, 0) < 0)
 			giterr_clear();
 		else
 			out += git_buf_len(&file_header);
@@ -111,8 +111,8 @@ int git_patch_line_stats(
 		case GIT_DIFF_LINE_DELETION: totals[2]++; break;
 		default:
 			/* diff --stat and --numstat don't count EOFNL marks because
-			* they will always be paired with a ADDITION or DELETION line.
-			*/
+			 * they will always be paired with a ADDITION or DELETION line.
+			 */
 			break;
 		}
 	}
@@ -194,8 +194,8 @@ int git_patch_get_line_in_hunk(
 	}
 
 	if (line_of_hunk >= hunk->line_count ||
-		!(line = git_array_get(
-			patch->lines, hunk->line_start + line_of_hunk))) {
+	    !(line = git_array_get(
+			  patch->lines, hunk->line_start + line_of_hunk))) {
 		if (out) *out = NULL;
 		return patch_error_outofrange("line");
 	}

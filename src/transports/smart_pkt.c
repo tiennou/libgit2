@@ -268,7 +268,7 @@ static int ok_pkt(git_pkt **out, const char *line, size_t len)
 
 	pkt->type = GIT_PKT_OK;
 
-	line += 3; /* skip "ok " */
+	line += 3;     /* skip "ok " */
 	if (!(ptr = strchr(line, '\n'))) {
 		giterr_set(GITERR_NET, "invalid packet line");
 		git__free(pkt);
@@ -299,7 +299,7 @@ static int ng_pkt(git_pkt **out, const char *line, size_t len)
 	pkt->ref = NULL;
 	pkt->type = GIT_PKT_NG;
 
-	line += 3; /* skip "ng " */
+	line += 3;     /* skip "ng " */
 	if (!(ptr = strchr(line, ' ')))
 		goto out_err;
 	len = ptr - line;
@@ -370,7 +370,7 @@ static int32_t parse_len(const char *line)
 					num[k] = '.';
 				}
 			}
-			
+
 			giterr_set(GITERR_NET, "invalid hex digit in length: '%s'", num);
 			return -1;
 		}
@@ -446,12 +446,12 @@ int git_pkt_parse_line(
 		return GIT_ERROR;
 	}
 
-	if (len == 0) { /* Flush pkt */
+	if (len == 0) {     /* Flush pkt */
 		*out = line;
 		return flush_pkt(head);
 	}
 
-	len -= PKT_LEN_SIZE; /* the encoded length includes its own size */
+	len -= PKT_LEN_SIZE;     /* the encoded length includes its own size */
 
 	if (*line == GIT_SIDE_BAND_DATA)
 		ret = data_pkt(head, line, len);
@@ -539,18 +539,18 @@ static int buffer_want_with_caps(const git_remote_head *head, transport_smart_ca
 		return -1;
 
 	len = strlen("XXXXwant ") + GIT_OID_HEXSZ + 1 /* NUL */ +
-		 git_buf_len(&str) + 1 /* LF */;
+	      git_buf_len(&str) + 1 /* LF */;
 
 	if (len > 0xffff) {
 		giterr_set(GITERR_NET,
-			"tried to produce packet with invalid length %" PRIuZ, len);
+		           "tried to produce packet with invalid length %" PRIuZ, len);
 		return -1;
 	}
 
 	git_buf_grow_by(buf, len);
 	git_oid_fmt(oid, &head->oid);
 	git_buf_printf(buf,
-		"%04xwant %s %s\n", (unsigned int)len, oid, git_buf_cstr(&str));
+	               "%04xwant %s %s\n", (unsigned int)len, oid, git_buf_cstr(&str));
 	git_buf_dispose(&str);
 
 	GITERR_CHECK_ALLOC_BUF(buf);

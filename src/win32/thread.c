@@ -43,15 +43,15 @@ int git_threads_init(void)
 
 	if (hModule) {
 		win32_srwlock_initialize = (win32_srwlock_fn)
-			GetProcAddress(hModule, "InitializeSRWLock");
+		                           GetProcAddress(hModule, "InitializeSRWLock");
 		win32_srwlock_acquire_shared = (win32_srwlock_fn)
-			GetProcAddress(hModule, "AcquireSRWLockShared");
+		                               GetProcAddress(hModule, "AcquireSRWLockShared");
 		win32_srwlock_release_shared = (win32_srwlock_fn)
-			GetProcAddress(hModule, "ReleaseSRWLockShared");
+		                               GetProcAddress(hModule, "ReleaseSRWLockShared");
 		win32_srwlock_acquire_exclusive = (win32_srwlock_fn)
-			GetProcAddress(hModule, "AcquireSRWLockExclusive");
+		                                  GetProcAddress(hModule, "AcquireSRWLockExclusive");
 		win32_srwlock_release_exclusive = (win32_srwlock_fn)
-			GetProcAddress(hModule, "ReleaseSRWLockExclusive");
+		                                  GetProcAddress(hModule, "ReleaseSRWLockExclusive");
 	}
 
 	return 0;

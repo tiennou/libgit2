@@ -28,8 +28,8 @@ int git__utf8_to_16(wchar_t *dest, size_t dest_size, const char *src)
 	int len;
 
 	/* Length of -1 indicates NULL termination of the input string. Subtract 1 from the result to
-	* turn 0 into -1 (an error code) and to not count the NULL terminator as part of the string's
-	* length. MultiByteToWideChar never returns int's minvalue, so underflow is not possible */
+	 * turn 0 into -1 (an error code) and to not count the NULL terminator as part of the string's
+	 * length. MultiByteToWideChar never returns int's minvalue, so underflow is not possible */
 	if ((len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, src, -1, dest, (int)dest_size) - 1) < 0)
 		git__set_errno();
 

@@ -67,7 +67,7 @@ struct git_transport {
 		git_transport *transport);
 
 	/* Executes the push whose context is in the git_push object. */
-	int(*push)(git_transport *transport, git_push *push, const git_remote_callbacks *callbacks);
+	int (*push)(git_transport *transport, git_push *push, const git_remote_callbacks *callbacks);
 
 	/* This function may be called after a successful call to connect(), when
 	 * the direction is FETCH. The function performs a negotiation to calculate
@@ -305,10 +305,10 @@ struct git_smart_subtransport_stream {
  * smart transport */
 struct git_smart_subtransport {
 	int (* action)(
-			git_smart_subtransport_stream **out,
-			git_smart_subtransport *transport,
-			const char *url,
-			git_smart_service_t action);
+		git_smart_subtransport_stream **out,
+		git_smart_subtransport *transport,
+		const char *url,
+		git_smart_service_t action);
 
 	/* Subtransports are guaranteed a call to close() between
 	 * calls to action(), except for the following two "natural" progressions

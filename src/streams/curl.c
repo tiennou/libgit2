@@ -347,7 +347,7 @@ int git_curl_stream_new(git_stream **out, const char *host, const char *port)
 	/* curl_easy_setopt(handle, CURLOPT_VERBOSE, 1); */
 
 	st->parent.version = GIT_STREAM_VERSION;
-	st->parent.encrypted = 0; /* we don't encrypt ourselves */
+	st->parent.encrypted = 0;     /* we don't encrypt ourselves */
 	st->parent.proxy_support = 1;
 	st->parent.connect = curls_connect;
 	st->parent.certificate = curls_certificate;

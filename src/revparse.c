@@ -113,8 +113,8 @@ static int revparse_lookup_object(
 		return error;
 
 	if ((strlen(spec) < GIT_OID_HEXSZ) &&
-		((error = maybe_abbrev(object_out, repo, spec)) != GIT_ENOTFOUND))
-			return error;
+	    ((error = maybe_abbrev(object_out, repo, spec)) != GIT_ENOTFOUND))
+		return error;
 
 	if ((error = maybe_describe(object_out, repo, spec)) != GIT_ENOTFOUND)
 		return error;
@@ -246,7 +246,7 @@ static int retrieve_oid_from_reflog(git_oid *oid, git_reference *ref, size_t ide
 notfound:
 	giterr_set(
 		GITERR_REFERENCE,
-		"reflog for '%s' has only %"PRIuZ" entries, asked for %"PRIuZ,
+		"reflog for '%s' has only %" PRIuZ " entries, asked for %" PRIuZ,
 		git_reference_name(ref), numentries, identifier);
 
 	git_reflog_free(reflog);
@@ -386,7 +386,7 @@ static int handle_caret_parent_syntax(git_object **out, git_object *obj, int n)
 
 	if ((error = git_object_peel(&temp_commit, obj, GIT_OBJ_COMMIT)) < 0)
 		return (error == GIT_EAMBIGUOUS || error == GIT_ENOTFOUND) ?
-			GIT_EINVALIDSPEC : error;
+		       GIT_EINVALIDSPEC : error;
 
 	if (n == 0) {
 		*out = temp_commit;
@@ -406,7 +406,7 @@ static int handle_linear_syntax(git_object **out, git_object *obj, int n)
 
 	if ((error = git_object_peel(&temp_commit, obj, GIT_OBJ_COMMIT)) < 0)
 		return (error == GIT_EAMBIGUOUS || error == GIT_ENOTFOUND) ?
-			GIT_EINVALIDSPEC : error;
+		       GIT_EINVALIDSPEC : error;
 
 	error = git_commit_nth_gen_ancestor((git_commit **)out, (git_commit*)temp_commit, n);
 
@@ -491,7 +491,7 @@ static int handle_grep_syntax(git_object **out, git_repository *repo, const git_
 		if ((error = git_revwalk_push_glob(walk, "refs/*")) < 0)
 			goto cleanup;
 	} else if ((error = git_revwalk_push(walk, spec_oid)) < 0)
-			goto cleanup;
+		goto cleanup;
 
 	error = walk_and_search(out, walk, &preg);
 
@@ -585,7 +585,7 @@ static int extract_how_many(int *n, const char *spec, size_t *pos)
 			*pos = end_ptr - spec;
 		}
 
-	} 	while (spec[(*pos)] == kind && kind == '~');
+	}   while (spec[(*pos)] == kind && kind == '~');
 
 	*n = accumulated;
 
@@ -786,7 +786,7 @@ int revparse__ext(
 					base_rev = temp_object;
 				break;
 			}
-			/* fall through */
+		/* fall through */
 
 		default:
 			if ((error = ensure_left_hand_identifier_is_not_known_yet(base_rev, reference)) < 0)
@@ -814,7 +814,7 @@ cleanup:
 	if (error) {
 		if (error == GIT_EINVALIDSPEC)
 			giterr_set(GITERR_INVALID,
-				"failed to parse revision specifier - Invalid pattern '%s'", spec);
+			           "failed to parse revision specifier - Invalid pattern '%s'", spec);
 
 		git_object_free(base_rev);
 		git_reference_free(reference);

@@ -129,9 +129,9 @@ extern size_t p_fsync__cnt;
  * Platform-dependent methods
  */
 #ifdef GIT_WIN32
-#	include "win32/posix.h"
+#   include "win32/posix.h"
 #else
-#	include "unix/posix.h"
+#   include "unix/posix.h"
 #endif
 
 #include "strnlen.h"
@@ -144,11 +144,11 @@ GIT_INLINE(int) p_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **res
 	return 0;
 }
 #else /* NO_READDIR_R */
-#	define p_readdir_r(d,e,r) readdir_r(d,e,r)
+#   define p_readdir_r(d,e,r) readdir_r(d,e,r)
 #endif
 
 #ifdef NO_ADDRINFO
-#	include <netdb.h>
+#   include <netdb.h>
 struct addrinfo {
 	struct hostent *ai_hostent;
 	struct servent *ai_servent;
@@ -163,13 +163,13 @@ struct addrinfo {
 };
 
 extern int p_getaddrinfo(const char *host, const char *port,
-	struct addrinfo *hints, struct addrinfo **info);
+                         struct addrinfo *hints, struct addrinfo **info);
 extern void p_freeaddrinfo(struct addrinfo *info);
 extern const char *p_gai_strerror(int ret);
 #else
-#	define p_getaddrinfo(a, b, c, d) getaddrinfo(a, b, c, d)
-#	define p_freeaddrinfo(a) freeaddrinfo(a)
-#	define p_gai_strerror(c) gai_strerror(c)
+#   define p_getaddrinfo(a, b, c, d) getaddrinfo(a, b, c, d)
+#   define p_freeaddrinfo(a) freeaddrinfo(a)
+#   define p_gai_strerror(c) gai_strerror(c)
 #endif /* NO_ADDRINFO */
 
 #endif

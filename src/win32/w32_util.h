@@ -16,14 +16,14 @@
 
 /*
 
-#include "common.h"
-#include "path.h"
-#include "path_w32.h"
-#include "utf-conv.h"
-#include "posix.h"
-#include "reparse.h"
-#include "dir.h"
-*/
+ #include "common.h"
+ #include "path.h"
+ #include "path_w32.h"
+ #include "utf-conv.h"
+ #include "posix.h"
+ #include "reparse.h"
+ #include "dir.h"
+ */
 
 
 GIT_INLINE(bool) git_win32__isalpha(wchar_t c)
@@ -88,7 +88,7 @@ GIT_INLINE(void) git_win32__filetime_to_timespec(
 	struct timespec *ts)
 {
 	long long winTime = ((long long)ft->dwHighDateTime << 32) + ft->dwLowDateTime;
-	winTime -= 116444736000000000LL; /* Windows to Unix Epoch conversion */
+	winTime -= 116444736000000000LL;     /* Windows to Unix Epoch conversion */
 	ts->tv_sec = (time_t)(winTime / 10000000);
 #ifdef GIT_USE_NSEC
 	ts->tv_nsec = (winTime % 10000000) * 100;
@@ -101,7 +101,7 @@ GIT_INLINE(void) git_win32__timeval_to_filetime(
 	FILETIME *ft, const struct p_timeval tv)
 {
 	long long ticks = (tv.tv_sec * 10000000LL) +
-		(tv.tv_usec * 10LL) + 116444736000000000LL;
+	                  (tv.tv_usec * 10LL) + 116444736000000000LL;
 
 	ft->dwHighDateTime = ((ticks >> 32) & 0xffffffffLL);
 	ft->dwLowDateTime = (ticks & 0xffffffffLL);
@@ -146,12 +146,12 @@ GIT_INLINE(void) git_win32__file_information_to_stat(
 	const BY_HANDLE_FILE_INFORMATION *fileinfo)
 {
 	git_win32__stat_init(st,
-		fileinfo->dwFileAttributes,
-		fileinfo->nFileSizeHigh,
-		fileinfo->nFileSizeLow,
-		fileinfo->ftCreationTime,
-		fileinfo->ftLastAccessTime,
-		fileinfo->ftLastWriteTime);
+	                     fileinfo->dwFileAttributes,
+	                     fileinfo->nFileSizeHigh,
+	                     fileinfo->nFileSizeLow,
+	                     fileinfo->ftCreationTime,
+	                     fileinfo->ftLastAccessTime,
+	                     fileinfo->ftLastWriteTime);
 }
 
 GIT_INLINE(int) git_win32__file_attribute_to_stat(
@@ -160,12 +160,12 @@ GIT_INLINE(int) git_win32__file_attribute_to_stat(
 	const wchar_t *path)
 {
 	git_win32__stat_init(st,
-		attrdata->dwFileAttributes,
-		attrdata->nFileSizeHigh,
-		attrdata->nFileSizeLow,
-		attrdata->ftCreationTime,
-		attrdata->ftLastAccessTime,
-		attrdata->ftLastWriteTime);
+	                     attrdata->dwFileAttributes,
+	                     attrdata->nFileSizeHigh,
+	                     attrdata->nFileSizeLow,
+	                     attrdata->ftCreationTime,
+	                     attrdata->ftLastAccessTime,
+	                     attrdata->ftLastWriteTime);
 
 	if (attrdata->dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT && path) {
 		git_win32_path target;

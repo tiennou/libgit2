@@ -39,7 +39,7 @@ SSL_CTX *git__ssl_ctx;
 #define GIT_SSL_DEFAULT_CIPHERS "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-DSS-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA:DHE-DSS-AES128-SHA256:DHE-DSS-AES256-SHA256:DHE-DSS-AES128-SHA:DHE-DSS-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA"
 
 #if (defined(OPENSSL_VERSION_NUMBER) && OPENSSL_VERSION_NUMBER < 0x10100000L) || \
-     (defined(LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x20700000L)
+    (defined(LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x20700000L)
 # define OPENSSL_LEGACY_API
 #endif
 
@@ -77,44 +77,44 @@ static void BIO_meth_free(BIO_METHOD *biom)
 	git__free(biom);
 }
 
-static int BIO_meth_set_write(BIO_METHOD *biom, int (*write) (BIO *, const char *, int))
+static int BIO_meth_set_write(BIO_METHOD *biom, int (*write)(BIO *, const char *, int))
 {
 	biom->bwrite = write;
 	return 1;
 }
 
-static int BIO_meth_set_read(BIO_METHOD *biom, int (*read) (BIO *, char *, int))
+static int BIO_meth_set_read(BIO_METHOD *biom, int (*read)(BIO *, char *, int))
 {
 	biom->bread = read;
 	return 1;
 }
 
-static int BIO_meth_set_puts(BIO_METHOD *biom, int (*puts) (BIO *, const char *))
+static int BIO_meth_set_puts(BIO_METHOD *biom, int (*puts)(BIO *, const char *))
 {
 	biom->bputs = puts;
 	return 1;
 }
 
-static int BIO_meth_set_gets(BIO_METHOD *biom, int (*gets) (BIO *, char *, int))
+static int BIO_meth_set_gets(BIO_METHOD *biom, int (*gets)(BIO *, char *, int))
 
 {
 	biom->bgets = gets;
 	return 1;
 }
 
-static int BIO_meth_set_ctrl(BIO_METHOD *biom, long (*ctrl) (BIO *, int, long, void *))
+static int BIO_meth_set_ctrl(BIO_METHOD *biom, long (*ctrl)(BIO *, int, long, void *))
 {
 	biom->ctrl = ctrl;
 	return 1;
 }
 
-static int BIO_meth_set_create(BIO_METHOD *biom, int (*create) (BIO *))
+static int BIO_meth_set_create(BIO_METHOD *biom, int (*create)(BIO *))
 {
 	biom->create = create;
 	return 1;
 }
 
-static int BIO_meth_set_destroy(BIO_METHOD *biom, int (*destroy) (BIO *))
+static int BIO_meth_set_destroy(BIO_METHOD *biom, int (*destroy)(BIO *))
 {
 	biom->destroy = destroy;
 	return 1;
@@ -753,7 +753,7 @@ int git_openssl__set_cert_location(const char *file, const char *path)
 
 		ERR_error_string_n(ERR_get_error(), errmsg, sizeof(errmsg));
 		giterr_set(GITERR_SSL, "OpenSSL error: failed to load certificates: %s",
-			errmsg);
+		           errmsg);
 
 		return -1;
 	}

@@ -12,8 +12,8 @@
 #include "git2/buffer.h"
 
 /* typedef struct {
- *  	char   *ptr;
- *  	size_t asize, size;
+ *      char   *ptr;
+ *      size_t asize, size;
  * } git_buf;
  */
 

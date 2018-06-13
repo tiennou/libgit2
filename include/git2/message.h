@@ -41,8 +41,8 @@ GIT_EXTERN(int) git_message_prettify(git_buf *out, const char *message, int stri
  * Represents a single git message trailer.
  */
 typedef struct {
-  const char *key;
-  const char *value;
+	const char *key;
+	const char *value;
 } git_message_trailer;
 
 /**
@@ -52,11 +52,11 @@ typedef struct {
  * and should not be used by callers.
  */
 typedef struct {
-  git_message_trailer *trailers;
-  size_t count;
+	git_message_trailer *trailers;
+	size_t count;
 
-  /* private */
-  char *_trailer_block;
+	/* private */
+	char *_trailer_block;
 } git_message_trailer_array;
 
 /**

@@ -33,7 +33,7 @@ static int verify_last_error(git_filebuf *file)
 
 	case BUFERR_ZLIB:
 		giterr_set(GITERR_ZLIB,
-			"Buffer error when writing out ZLib data");
+		           "Buffer error when writing out ZLib data");
 		return -1;
 
 	default:
@@ -47,9 +47,9 @@ static int lock_file(git_filebuf *file, int flags, mode_t mode)
 		if (flags & GIT_FILEBUF_FORCE)
 			p_unlink(file->path_lock);
 		else {
-			giterr_clear(); /* actual OS error code just confuses */
+			giterr_clear();             /* actual OS error code just confuses */
 			giterr_set(GITERR_OS,
-				"failed to lock file '%s' for writing", file->path_lock);
+			           "failed to lock file '%s' for writing", file->path_lock);
 			return GIT_ELOCKED;
 		}
 	}
@@ -76,8 +76,8 @@ static int lock_file(git_filebuf *file, int flags, mode_t mode)
 		source = p_open(file->path_original, O_RDONLY);
 		if (source < 0) {
 			giterr_set(GITERR_OS,
-				"failed to open file '%s' for reading",
-				file->path_original);
+			           "failed to open file '%s' for reading",
+			           file->path_original);
 			return -1;
 		}
 
@@ -551,7 +551,7 @@ int git_filebuf_printf(git_filebuf *file, const char *format, ...)
 	} while (len + 1 <= space_left);
 
 	if (GIT_ADD_SIZET_OVERFLOW(&alloclen, len, 1) ||
-		!(tmp_buffer = git__malloc(alloclen))) {
+	    !(tmp_buffer = git__malloc(alloclen))) {
 		file->last_error = BUFERR_MEM;
 		return -1;
 	}
@@ -584,7 +584,7 @@ int git_filebuf_stats(time_t *mtime, size_t *size, git_filebuf *file)
 
 	if (res < 0) {
 		giterr_set(GITERR_OS, "could not get stat info for '%s'",
-			file->path_original);
+		           file->path_original);
 		return res;
 	}
 

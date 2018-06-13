@@ -18,12 +18,12 @@
 #include "git2/merge.h"
 #include "git2/sys/merge.h"
 
-#define GIT_MERGE_MSG_FILE		"MERGE_MSG"
-#define GIT_MERGE_MODE_FILE		"MERGE_MODE"
-#define GIT_MERGE_FILE_MODE		0666
+#define GIT_MERGE_MSG_FILE      "MERGE_MSG"
+#define GIT_MERGE_MODE_FILE     "MERGE_MODE"
+#define GIT_MERGE_FILE_MODE     0666
 
-#define GIT_MERGE_DEFAULT_RENAME_THRESHOLD	50
-#define GIT_MERGE_DEFAULT_TARGET_LIMIT		1000
+#define GIT_MERGE_DEFAULT_RENAME_THRESHOLD  50
+#define GIT_MERGE_DEFAULT_TARGET_LIMIT      1000
 
 
 /** Internal merge flags. */
@@ -199,7 +199,7 @@ GIT_INLINE(uint32_t) git_merge_file__best_mode(
 	 */
 	if (!ancestor) {
 		if (ours == GIT_FILEMODE_BLOB_EXECUTABLE ||
-			theirs == GIT_FILEMODE_BLOB_EXECUTABLE)
+		    theirs == GIT_FILEMODE_BLOB_EXECUTABLE)
 			return GIT_FILEMODE_BLOB_EXECUTABLE;
 
 		return GIT_FILEMODE_BLOB;

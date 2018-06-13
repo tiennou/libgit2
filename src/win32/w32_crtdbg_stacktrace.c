@@ -28,11 +28,11 @@ typedef struct {
  * and aggregated into this row.
  */
 typedef struct {
-	git_win32__crtdbg_stacktrace__uid uid; /* must be first */
+	git_win32__crtdbg_stacktrace__uid uid;     /* must be first */
 	git_win32__stack__raw_data raw_data;
-	unsigned int count_allocs; /* times this alloc signature seen since init */
-	unsigned int count_allocs_at_last_checkpoint; /* times since last mark */
-	unsigned int transient_count_leaks; /* sum of leaks */
+	unsigned int count_allocs;     /* times this alloc signature seen since init */
+	unsigned int count_allocs_at_last_checkpoint;     /* times since last mark */
+	unsigned int transient_count_leaks;     /* sum of leaks */
 } git_win32__crtdbg_stacktrace__row;
 
 static CRITICAL_SECTION g_crtdbg_stacktrace_cs;
@@ -58,7 +58,7 @@ static CRITICAL_SECTION g_crtdbg_stacktrace_cs;
  */
 
 #define MY_ROW_LIMIT (1024 * 1024)
-static git_win32__crtdbg_stacktrace__row  g_cs_rows[MY_ROW_LIMIT];
+static git_win32__crtdbg_stacktrace__row g_cs_rows[MY_ROW_LIMIT];
 static git_win32__crtdbg_stacktrace__row *g_cs_index[MY_ROW_LIMIT];
 
 static unsigned int g_cs_end = MY_ROW_LIMIT;
@@ -100,7 +100,7 @@ static char *crtdbg__strndup(const char *str, size_t n, const char *file, int li
 	length = p_strnlen(str, n);
 
 	if (GIT_ADD_SIZET_OVERFLOW(&alloclength, length, 1) ||
-		!(ptr = crtdbg__malloc(alloclength, file, line)))
+	    !(ptr = crtdbg__malloc(alloclength, file, line)))
 		return NULL;
 
 	if (length)
@@ -117,7 +117,7 @@ static char *crtdbg__substrdup(const char *start, size_t n, const char *file, in
 	size_t alloclen;
 
 	if (GIT_ADD_SIZET_OVERFLOW(&alloclen, n, 1) ||
-		!(ptr = crtdbg__malloc(alloclen, file, line)))
+	    !(ptr = crtdbg__malloc(alloclen, file, line)))
 		return NULL;
 
 	memcpy(ptr, start, n);
@@ -137,7 +137,7 @@ static void *crtdbg__reallocarray(void *ptr, size_t nelem, size_t elsize, const 
 	size_t newsize;
 
 	return GIT_MULTIPLY_SIZET_OVERFLOW(&newsize, nelem, elsize) ?
-		NULL : _realloc_dbg(ptr, newsize, _NORMAL_BLOCK, git_win32__crtdbg_stacktrace(1,file), line);
+	       NULL : _realloc_dbg(ptr, newsize, _NORMAL_BLOCK, git_win32__crtdbg_stacktrace(1,file), line);
 }
 
 static void *crtdbg__mallocarray(size_t nelem, size_t elsize, const char *file, int line)
@@ -216,10 +216,10 @@ static git_win32__crtdbg_stacktrace__row * insert_unique(
  */
 static int __cdecl report_hook(int nRptType, char *szMsg, int *retVal)
 {
-	static int hook_result = TRUE; /* FALSE to get stock dump; TRUE to suppress. */
+	static int hook_result = TRUE;     /* FALSE to get stock dump; TRUE to suppress. */
 	unsigned int pos;
 
-	*retVal = 0; /* do not invoke debugger */
+	*retVal = 0;     /* do not invoke debugger */
 
 	if ((szMsg[0] != '#') || (szMsg[1] != '#'))
 		return hook_result;
@@ -272,8 +272,8 @@ static void dump_summary(const char *label)
 
 	if (g_limit_reached) {
 		sprintf(buf,
-				"LEAK SUMMARY: de-dup row table[%d] filled. Increase MY_ROW_LIMIT.\n",
-				MY_ROW_LIMIT);
+		        "LEAK SUMMARY: de-dup row table[%d] filled. Increase MY_ROW_LIMIT.\n",
+		        MY_ROW_LIMIT);
 		my_output(buf);
 	}
 
@@ -282,11 +282,11 @@ static void dump_summary(const char *label)
 
 	if (g_transient_leaks_since_mark) {
 		sprintf(buf, "LEAK CHECKPOINT %d: leaks %d unique %d: %s\n",
-				g_checkpoint_id, g_transient_count_total_leaks, g_transient_count_dedup_leaks, label);
+		        g_checkpoint_id, g_transient_count_total_leaks, g_transient_count_dedup_leaks, label);
 		my_output(buf);
 	} else {
 		sprintf(buf, "LEAK SUMMARY: TOTAL leaks %d de-duped %d: %s\n",
-				g_transient_count_total_leaks, g_transient_count_dedup_leaks, label);
+		        g_transient_count_total_leaks, g_transient_count_dedup_leaks, label);
 		my_output(buf);
 	}
 	my_output("\n");
@@ -294,9 +294,9 @@ static void dump_summary(const char *label)
 	for (k = 0; k < g_cs_ins; k++) {
 		if (g_cs_rows[k].transient_count_leaks > 0) {
 			sprintf(buf, "LEAK: %s leaked %d of %d times:\n",
-					g_cs_rows[k].uid.uid,
-					g_cs_rows[k].transient_count_leaks,
-					g_cs_rows[k].count_allocs);
+			        g_cs_rows[k].uid.uid,
+			        g_cs_rows[k].transient_count_leaks,
+			        g_cs_rows[k].count_allocs);
 			my_output(buf);
 
 			if (git_win32__stack_format(

@@ -91,9 +91,9 @@ static int git_sysdir_guess_global_dirs(git_buf *out)
 	 * of the effective user.
 	 */
 	if (uid == euid)
-	    error = git__getenv(out, "HOME");
+		error = git__getenv(out, "HOME");
 	else
-	    error = get_passwd_home(out, euid);
+		error = get_passwd_home(out, euid);
 
 	if (error == GIT_ENOTFOUND) {
 		giterr_clear();
@@ -255,7 +255,7 @@ int git_sysdir_set(git_sysdir_t which, const char *search_path)
 
 	if (git_buf_len(&git_sysdir__dirs[which].buf))
 		git_buf_join(&merge, GIT_PATH_LIST_SEPARATOR,
-			merge.ptr, git_sysdir__dirs[which].buf.ptr);
+		             merge.ptr, git_sysdir__dirs[which].buf.ptr);
 
 	expand_path += strlen(PATH_MAGIC);
 	if (*expand_path)
@@ -289,7 +289,7 @@ static int git_sysdir_find_in_dirlist(
 		/* find unescaped separator or end of string */
 		for (next = scan; *next; ++next) {
 			if (*next == GIT_PATH_LIST_SEPARATOR &&
-				(next <= scan || next[-1] != '\\'))
+			    (next <= scan || next[-1] != '\\'))
 				break;
 		}
 

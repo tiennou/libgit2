@@ -423,9 +423,9 @@ static int _git_ssh_authenticate_session(
 	} while (LIBSSH2_ERROR_EAGAIN == rc || LIBSSH2_ERROR_TIMEOUT == rc);
 
 	if (rc == LIBSSH2_ERROR_PASSWORD_EXPIRED ||
-		rc == LIBSSH2_ERROR_AUTHENTICATION_FAILED ||
-		rc == LIBSSH2_ERROR_PUBLICKEY_UNVERIFIED)
-			return GIT_EAUTH;
+	    rc == LIBSSH2_ERROR_AUTHENTICATION_FAILED ||
+	    rc == LIBSSH2_ERROR_PUBLICKEY_UNVERIFIED)
+		return GIT_EAUTH;
 
 	if (rc != LIBSSH2_ERROR_NONE) {
 		if (!giterr_last())
@@ -445,7 +445,7 @@ static int request_creds(git_cred **out, ssh_subtransport *t, const char *user, 
 		no_callback = 1;
 	} else {
 		error = t->owner->cred_acquire_cb(&cred, t->owner->url, user, auth_methods,
-						  t->owner->cred_acquire_payload);
+		                                  t->owner->cred_acquire_payload);
 
 		if (error == GIT_PASSTHROUGH)
 			no_callback = 1;
@@ -732,17 +732,17 @@ static int _ssh_action(
 	ssh_subtransport *t = (ssh_subtransport *) subtransport;
 
 	switch (action) {
-		case GIT_SERVICE_UPLOADPACK_LS:
-			return ssh_uploadpack_ls(t, url, stream);
+	case GIT_SERVICE_UPLOADPACK_LS:
+		return ssh_uploadpack_ls(t, url, stream);
 
-		case GIT_SERVICE_UPLOADPACK:
-			return ssh_uploadpack(t, url, stream);
+	case GIT_SERVICE_UPLOADPACK:
+		return ssh_uploadpack(t, url, stream);
 
-		case GIT_SERVICE_RECEIVEPACK_LS:
-			return ssh_receivepack_ls(t, url, stream);
+	case GIT_SERVICE_RECEIVEPACK_LS:
+		return ssh_receivepack_ls(t, url, stream);
 
-		case GIT_SERVICE_RECEIVEPACK:
-			return ssh_receivepack(t, url, stream);
+	case GIT_SERVICE_RECEIVEPACK:
+		return ssh_receivepack(t, url, stream);
 	}
 
 	*stream = NULL;
@@ -866,7 +866,7 @@ int git_transport_ssh_with_paths(git_transport **out, git_remote *owner, void *p
 	int error;
 	git_smart_subtransport_definition ssh_definition = {
 		git_smart_subtransport_ssh,
-		0, /* no RPC */
+		0,         /* no RPC */
 		NULL,
 	};
 
@@ -903,7 +903,7 @@ int git_transport_ssh_with_paths(git_transport **out, git_remote *owner, void *p
 #ifdef GIT_SSH
 static void shutdown_ssh(void)
 {
-    libssh2_exit();
+	libssh2_exit();
 }
 #endif
 

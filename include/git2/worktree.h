@@ -84,8 +84,8 @@ GIT_EXTERN(int) git_worktree_validate(const git_worktree *wt);
 typedef struct git_worktree_add_options {
 	unsigned int version;
 
-	int lock; /**< lock newly created worktree */
-	git_reference *ref; /**< reference to use for the new worktree HEAD */
+	int lock;     /**< lock newly created worktree */
+	git_reference *ref;     /**< reference to use for the new worktree HEAD */
 } git_worktree_add_options;
 
 #define GIT_WORKTREE_ADD_OPTIONS_VERSION 1
@@ -102,7 +102,7 @@ typedef struct git_worktree_add_options {
  * @return Zero on success; -1 on failure.
  */
 int git_worktree_add_init_options(git_worktree_add_options *opts,
-	unsigned int version);
+                                  unsigned int version);
 
 /**
  * Add a new working tree
@@ -119,8 +119,8 @@ int git_worktree_add_init_options(git_worktree_add_options *opts,
  * @return 0 or an error code
  */
 GIT_EXTERN(int) git_worktree_add(git_worktree **out, git_repository *repo,
-	const char *name, const char *path,
-	const git_worktree_add_options *opts);
+                                 const char *name, const char *path,
+                                 const git_worktree_add_options *opts);
 
 /**
  * Lock worktree if not already locked
@@ -174,7 +174,7 @@ GIT_EXTERN(const char *) git_worktree_name(const git_worktree *wt);
  *  is valid for the lifetime of the git_worktree.
  */
 GIT_EXTERN(const char *) git_worktree_path(const git_worktree *wt);
- 
+
 /**
  * Flags which can be passed to git_worktree_prune to alter its
  * behavior.
@@ -233,7 +233,7 @@ GIT_EXTERN(int) git_worktree_prune_init_options(
  * positive value.
  */
 GIT_EXTERN(int) git_worktree_is_prunable(git_worktree *wt,
-	git_worktree_prune_options *opts);
+                                         git_worktree_prune_options *opts);
 
 /**
  * Prune working tree
@@ -248,7 +248,7 @@ GIT_EXTERN(int) git_worktree_is_prunable(git_worktree *wt,
  * @return 0 or an error code
  */
 GIT_EXTERN(int) git_worktree_prune(git_worktree *wt,
-	git_worktree_prune_options *opts);
+                                   git_worktree_prune_options *opts);
 
 /** @} */
 GIT_END_DECL

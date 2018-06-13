@@ -222,7 +222,7 @@ static int recv_pkt(git_pkt **out_pkt, git_pkt_type *out_type, gitno_buffer *buf
 			error = GIT_EBUFS;
 
 		if (error == 0)
-			break; /* return the pkt */
+			break;             /* return the pkt */
 
 		if (error < 0 && error != GIT_EBUFS)
 			return error;
@@ -570,7 +570,7 @@ int git_smart__download_pack(
 	}
 
 	if ((error = git_repository_odb__weakptr(&odb, repo)) < 0 ||
-		((error = git_odb_write_pack(&writepack, odb, transfer_progress_cb, progress_payload)) != 0))
+	    ((error = git_odb_write_pack(&writepack, odb, transfer_progress_cb, progress_payload)) != 0))
 		goto done;
 
 	/*
@@ -661,7 +661,7 @@ static int gen_pktline(git_buf *buf, git_push *push)
 		len = 2*GIT_OID_HEXSZ + 7 + strlen(spec->refspec.dst);
 
 		if (i == 0) {
-			++len; /* '\0' */
+			++len;             /* '\0' */
 			if (push->report_status)
 				len += strlen(GIT_CAP_REPORT_STATUS) + 1;
 			len += strlen(GIT_CAP_SIDE_BAND_64K) + 1;
@@ -670,7 +670,7 @@ static int gen_pktline(git_buf *buf, git_push *push)
 		git_oid_fmt(old_id, &spec->roid);
 		git_oid_fmt(new_id, &spec->loid);
 
-		git_buf_printf(buf, "%04"PRIxZ"%s %s %s", len, old_id, new_id, spec->refspec.dst);
+		git_buf_printf(buf, "%04" PRIxZ "%s %s %s", len, old_id, new_id, spec->refspec.dst);
 
 		if (i == 0) {
 			git_buf_putc(buf, '\0');
@@ -695,36 +695,36 @@ static int add_push_report_pkt(git_push *push, git_pkt *pkt)
 	push_status *status;
 
 	switch (pkt->type) {
-		case GIT_PKT_OK:
-			status = git__calloc(1, sizeof(push_status));
-			GITERR_CHECK_ALLOC(status);
-			status->msg = NULL;
-			status->ref = git__strdup(((git_pkt_ok *)pkt)->ref);
-			if (!status->ref ||
-				git_vector_insert(&push->status, status) < 0) {
-				git_push_status_free(status);
-				return -1;
-			}
-			break;
-		case GIT_PKT_NG:
-			status = git__calloc(1, sizeof(push_status));
-			GITERR_CHECK_ALLOC(status);
-			status->ref = git__strdup(((git_pkt_ng *)pkt)->ref);
-			status->msg = git__strdup(((git_pkt_ng *)pkt)->msg);
-			if (!status->ref || !status->msg ||
-				git_vector_insert(&push->status, status) < 0) {
-				git_push_status_free(status);
-				return -1;
-			}
-			break;
-		case GIT_PKT_UNPACK:
-			push->unpack_ok = ((git_pkt_unpack *)pkt)->unpack_ok;
-			break;
-		case GIT_PKT_FLUSH:
-			return GIT_ITEROVER;
-		default:
-			giterr_set(GITERR_NET, "report-status: protocol error");
+	case GIT_PKT_OK:
+		status = git__calloc(1, sizeof(push_status));
+		GITERR_CHECK_ALLOC(status);
+		status->msg = NULL;
+		status->ref = git__strdup(((git_pkt_ok *)pkt)->ref);
+		if (!status->ref ||
+		    git_vector_insert(&push->status, status) < 0) {
+			git_push_status_free(status);
 			return -1;
+		}
+		break;
+	case GIT_PKT_NG:
+		status = git__calloc(1, sizeof(push_status));
+		GITERR_CHECK_ALLOC(status);
+		status->ref = git__strdup(((git_pkt_ng *)pkt)->ref);
+		status->msg = git__strdup(((git_pkt_ng *)pkt)->msg);
+		if (!status->ref || !status->msg ||
+		    git_vector_insert(&push->status, status) < 0) {
+			git_push_status_free(status);
+			return -1;
+		}
+		break;
+	case GIT_PKT_UNPACK:
+		push->unpack_ok = ((git_pkt_unpack *)pkt)->unpack_ok;
+		break;
+	case GIT_PKT_FLUSH:
+		return GIT_ITEROVER;
+	default:
+		giterr_set(GITERR_NET, "report-status: protocol error");
+		return -1;
 	}
 
 	return 0;
@@ -795,7 +795,7 @@ static int parse_report(transport_smart *transport, git_push *push)
 	for (;;) {
 		if (buf->offset > 0)
 			error = git_pkt_parse_line(&pkt, buf->data,
-						   &line_end, buf->offset);
+			                           &line_end, buf->offset);
 		else
 			error = GIT_EBUFS;
 
@@ -823,24 +823,24 @@ static int parse_report(transport_smart *transport, git_push *push)
 		error = 0;
 
 		switch (pkt->type) {
-			case GIT_PKT_DATA:
-				/* This is a sideband packet which contains other packets */
-				error = add_push_report_sideband_pkt(push, (git_pkt_data *)pkt, &data_pkt_buf);
-				break;
-			case GIT_PKT_ERR:
-				giterr_set(GITERR_NET, "report-status: Error reported: %s",
-					((git_pkt_err *)pkt)->error);
-				error = -1;
-				break;
-			case GIT_PKT_PROGRESS:
-				if (transport->progress_cb) {
-					git_pkt_progress *p = (git_pkt_progress *) pkt;
-					error = transport->progress_cb(p->data, p->len, transport->message_cb_payload);
-				}
-				break;
-			default:
-				error = add_push_report_pkt(push, pkt);
-				break;
+		case GIT_PKT_DATA:
+			/* This is a sideband packet which contains other packets */
+			error = add_push_report_sideband_pkt(push, (git_pkt_data *)pkt, &data_pkt_buf);
+			break;
+		case GIT_PKT_ERR:
+			giterr_set(GITERR_NET, "report-status: Error reported: %s",
+			           ((git_pkt_err *)pkt)->error);
+			error = -1;
+			break;
+		case GIT_PKT_PROGRESS:
+			if (transport->progress_cb) {
+				git_pkt_progress *p = (git_pkt_progress *) pkt;
+				error = transport->progress_cb(p->data, p->len, transport->message_cb_payload);
+			}
+			break;
+		default:
+			error = add_push_report_pkt(push, pkt);
+			break;
 		}
 
 		git_pkt_free(pkt);
@@ -876,7 +876,7 @@ static int add_ref_from_push_spec(git_vector *refs, push_spec *push_spec)
 	added->head.name = git__strdup(push_spec->refspec.dst);
 
 	if (!added->head.name ||
-		git_vector_insert(refs, added) < 0) {
+	    git_vector_insert(refs, added) < 0) {
 		git_pkt_free((git_pkt *)added);
 		return -1;
 	}
@@ -937,13 +937,13 @@ static int update_refs_from_report(
 
 		/* Add case */
 		if (cmp < 0 &&
-			!push_status->msg &&
-			add_ref_from_push_spec(refs, push_spec) < 0)
+		    !push_status->msg &&
+		    add_ref_from_push_spec(refs, push_spec) < 0)
 			return -1;
 
 		/* Update case, delete case */
 		if (cmp == 0 &&
-			!push_status->msg)
+		    !push_status->msg)
 			git_oid_cpy(&ref->head.oid, &push_spec->loid);
 	}
 
@@ -953,7 +953,7 @@ static int update_refs_from_report(
 
 		/* Add case */
 		if (!push_status->msg &&
-			add_ref_from_push_spec(refs, push_spec) < 0)
+		    add_ref_from_push_spec(refs, push_spec) < 0)
 			return -1;
 	}
 
@@ -1018,23 +1018,23 @@ int git_smart__push(git_transport *transport, git_push *push, const git_remote_c
 	}
 
 #ifdef PUSH_DEBUG
-{
-	git_remote_head *head;
-	char hex[GIT_OID_HEXSZ+1]; hex[GIT_OID_HEXSZ] = '\0';
+	{
+		git_remote_head *head;
+		char hex[GIT_OID_HEXSZ+1]; hex[GIT_OID_HEXSZ] = '\0';
 
-	git_vector_foreach(&push->remote->refs, i, head) {
-		git_oid_fmt(hex, &head->oid);
-		fprintf(stderr, "%s (%s)\n", hex, head->name);
-	}
+		git_vector_foreach(&push->remote->refs, i, head) {
+			git_oid_fmt(hex, &head->oid);
+			fprintf(stderr, "%s (%s)\n", hex, head->name);
+		}
 
-	git_vector_foreach(&push->specs, i, spec) {
-		git_oid_fmt(hex, &spec->roid);
-		fprintf(stderr, "%s (%s) -> ", hex, spec->lref);
-		git_oid_fmt(hex, &spec->loid);
-		fprintf(stderr, "%s (%s)\n", hex, spec->rref ?
-			spec->rref : spec->lref);
+		git_vector_foreach(&push->specs, i, spec) {
+			git_oid_fmt(hex, &spec->roid);
+			fprintf(stderr, "%s (%s) -> ", hex, spec->lref);
+			git_oid_fmt(hex, &spec->loid);
+			fprintf(stderr, "%s (%s)\n", hex, spec->rref ?
+			        spec->rref : spec->lref);
+		}
 	}
-}
 #endif
 
 	/*
@@ -1049,12 +1049,12 @@ int git_smart__push(git_transport *transport, git_push *push, const git_remote_c
 	}
 
 	if ((error = git_smart__get_push_stream(t, &packbuilder_payload.stream)) < 0 ||
-		(error = gen_pktline(&pktline, push)) < 0 ||
-		(error = packbuilder_payload.stream->write(packbuilder_payload.stream, git_buf_cstr(&pktline), git_buf_len(&pktline))) < 0)
+	    (error = gen_pktline(&pktline, push)) < 0 ||
+	    (error = packbuilder_payload.stream->write(packbuilder_payload.stream, git_buf_cstr(&pktline), git_buf_len(&pktline))) < 0)
 		goto done;
 
 	if (need_pack &&
-		(error = git_packbuilder_foreach(push->pb, &stream_thunk, &packbuilder_payload)) < 0)
+	    (error = git_packbuilder_foreach(push->pb, &stream_thunk, &packbuilder_payload)) < 0)
 		goto done;
 
 	/* If we sent nothing or the server doesn't support report-status, then
@@ -1067,10 +1067,10 @@ int git_smart__push(git_transport *transport, git_push *push, const git_remote_c
 	/* If progress is being reported write the final report */
 	if (cbs && cbs->push_transfer_progress) {
 		error = cbs->push_transfer_progress(
-					push->pb->nr_written,
-					push->pb->nr_objects,
-					packbuilder_payload.last_bytes,
-					cbs->payload);
+			push->pb->nr_written,
+			push->pb->nr_objects,
+			packbuilder_payload.last_bytes,
+			cbs->payload);
 
 		if (error < 0)
 			goto done;

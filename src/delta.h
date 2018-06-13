@@ -76,7 +76,7 @@ GIT_INLINE(int) git_delta(
 
 	if (index) {
 		error = git_delta_create_from_index(out, out_len,
-			index, trg_buf, trg_bufsize, max_delta_size);
+		                                    index, trg_buf, trg_bufsize, max_delta_size);
 
 		git_delta_index_free(index);
 	}
@@ -85,20 +85,20 @@ GIT_INLINE(int) git_delta(
 }
 
 /* the smallest possible delta size is 4 bytes */
-#define GIT_DELTA_SIZE_MIN	4
+#define GIT_DELTA_SIZE_MIN  4
 
 /**
-* Apply a git binary delta to recover the original content.
-* The caller is responsible for freeing the returned buffer.
-*
-* @param out the output buffer
-* @param out_len the length of the output buffer
-* @param base the base to copy from during copy instructions.
-* @param base_len number of bytes available at base.
-* @param delta the delta to execute copy/insert instructions from.
-* @param delta_len total number of bytes in the delta.
-* @return 0 on success or an error code
-*/
+ * Apply a git binary delta to recover the original content.
+ * The caller is responsible for freeing the returned buffer.
+ *
+ * @param out the output buffer
+ * @param out_len the length of the output buffer
+ * @param base the base to copy from during copy instructions.
+ * @param base_len number of bytes available at base.
+ * @param delta the delta to execute copy/insert instructions from.
+ * @param delta_len total number of bytes in the delta.
+ * @return 0 on success or an error code
+ */
 extern int git_delta_apply(
 	void **out,
 	size_t *out_len,
@@ -108,14 +108,14 @@ extern int git_delta_apply(
 	size_t delta_len);
 
 /**
-* Read the header of a git binary delta.
-*
-* @param base_out pointer to store the base size field.
-* @param result_out pointer to store the result size field.
-* @param delta the delta to execute copy/insert instructions from.
-* @param delta_len total number of bytes in the delta.
-* @return 0 on success or an error code
-*/
+ * Read the header of a git binary delta.
+ *
+ * @param base_out pointer to store the base size field.
+ * @param result_out pointer to store the result size field.
+ * @param delta the delta to execute copy/insert instructions from.
+ * @param delta_len total number of bytes in the delta.
+ * @return 0 on success or an error code
+ */
 extern int git_delta_read_header(
 	size_t *base_out,
 	size_t *result_out,

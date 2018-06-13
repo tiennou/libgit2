@@ -95,11 +95,11 @@ int gitno__match_host(const char *pattern, const char *host)
 			if (c == '\0')
 				return 0;
 
-	/*
-	 * We've found a pattern, so move towards the next matching
-	 * char. The '.' is handled specially because wildcards aren't
-	 * allowed to cross subdomains.
-	 */
+			/*
+			 * We've found a pattern, so move towards the next matching
+			 * char. The '.' is handled specially because wildcards aren't
+			 * allowed to cross subdomains.
+			 */
 
 			while(*host) {
 				char h = git__tolower(*host);
@@ -123,9 +123,9 @@ static const char *prefix_http = "http://";
 static const char *prefix_https = "https://";
 
 int gitno_connection_data_from_url(
-		gitno_connection_data *data,
-		const char *url,
-		const char *service_suffix)
+	gitno_connection_data *data,
+	const char *url,
+	const char *service_suffix)
 {
 	int error = -1;
 	const char *default_port = NULL, *path_search_start = NULL;
@@ -218,10 +218,10 @@ int gitno_extract_url_parts(
 	struct http_parser_url u = {0};
 	bool has_host, has_port, has_path, has_userinfo;
 	git_buf host = GIT_BUF_INIT,
-		port = GIT_BUF_INIT,
-		path = GIT_BUF_INIT,
-		username = GIT_BUF_INIT,
-		password = GIT_BUF_INIT;
+	        port = GIT_BUF_INIT,
+	        path = GIT_BUF_INIT,
+	        username = GIT_BUF_INIT,
+	        password = GIT_BUF_INIT;
 	int error = 0;
 
 	if (http_parser_parse_url(url, strlen(url), false, &u)) {
@@ -278,10 +278,10 @@ int gitno_extract_url_parts(
 	}
 
 	if (git_buf_oom(&host) ||
-		git_buf_oom(&port) ||
-		git_buf_oom(&path) ||
-		git_buf_oom(&username) ||
-		git_buf_oom(&password))
+	    git_buf_oom(&port) ||
+	    git_buf_oom(&path) ||
+	    git_buf_oom(&username) ||
+	    git_buf_oom(&password))
 		return -1;
 
 	*host_out = git_buf_detach(&host);

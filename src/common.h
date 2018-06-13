@@ -49,7 +49,7 @@
 # include "win32/error.h"
 # include "win32/version.h"
 # ifdef GIT_THREADS
-#	include "win32/thread.h"
+#   include "win32/thread.h"
 # endif
 
 #else
@@ -57,8 +57,8 @@
 # include <unistd.h>
 # include <strings.h>
 # ifdef GIT_THREADS
-#	include <pthread.h>
-#	include <sched.h>
+#   include <pthread.h>
+#   include <sched.h>
 # endif
 #define GIT_STDLIB_CALL
 
@@ -127,7 +127,7 @@ GIT_INLINE(int) giterr_set_after_callback_function(
 		const git_error *e = giterr_last();
 		if (!e || !e->message)
 			giterr_set(e ? e->klass : GITERR_CALLBACK,
-				"%s callback returned %d", action, error_code);
+			           "%s callback returned %d", action, error_code);
 	}
 	return error_code;
 }
@@ -204,9 +204,9 @@ GIT_INLINE(void) git__init_structure(void *structure, size_t len, unsigned int v
 #define GIT_INIT_STRUCTURE(S,V) git__init_structure(S, sizeof(*S), V)
 
 #define GIT_INIT_STRUCTURE_FROM_TEMPLATE(PTR,VERSION,TYPE,TPL) do { \
-	TYPE _tmpl = TPL; \
-	GITERR_CHECK_VERSION(&(VERSION), _tmpl.version, #TYPE);	\
-	memcpy((PTR), &_tmpl, sizeof(_tmpl)); } while (0)
+		TYPE _tmpl = TPL; \
+		GITERR_CHECK_VERSION(&(VERSION), _tmpl.version, #TYPE); \
+		memcpy((PTR), &_tmpl, sizeof(_tmpl)); } while (0)
 
 
 /** Check for additive overflow, setting an error if would occur. */
@@ -223,18 +223,18 @@ GIT_INLINE(void) git__init_structure(void *structure, size_t len, unsigned int v
 
 #define GITERR_CHECK_ALLOC_ADD3(out, one, two, three) \
 	if (GIT_ADD_SIZET_OVERFLOW(out, one, two) || \
-		GIT_ADD_SIZET_OVERFLOW(out, *(out), three)) { return -1; }
+	    GIT_ADD_SIZET_OVERFLOW(out, *(out), three)) { return -1; }
 
 #define GITERR_CHECK_ALLOC_ADD4(out, one, two, three, four) \
 	if (GIT_ADD_SIZET_OVERFLOW(out, one, two) || \
-		GIT_ADD_SIZET_OVERFLOW(out, *(out), three) || \
-		GIT_ADD_SIZET_OVERFLOW(out, *(out), four)) { return -1; }
+	    GIT_ADD_SIZET_OVERFLOW(out, *(out), three) || \
+	    GIT_ADD_SIZET_OVERFLOW(out, *(out), four)) { return -1; }
 
 #define GITERR_CHECK_ALLOC_ADD5(out, one, two, three, four, five) \
 	if (GIT_ADD_SIZET_OVERFLOW(out, one, two) || \
-		GIT_ADD_SIZET_OVERFLOW(out, *(out), three) || \
-		GIT_ADD_SIZET_OVERFLOW(out, *(out), four) || \
-		GIT_ADD_SIZET_OVERFLOW(out, *(out), five)) { return -1; }
+	    GIT_ADD_SIZET_OVERFLOW(out, *(out), three) || \
+	    GIT_ADD_SIZET_OVERFLOW(out, *(out), four) || \
+	    GIT_ADD_SIZET_OVERFLOW(out, *(out), five)) { return -1; }
 
 /** Check for multiplicative overflow, failing if it would occur. */
 #define GITERR_CHECK_ALLOC_MULTIPLY(out, nelem, elsize) \

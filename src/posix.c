@@ -44,8 +44,8 @@ int p_getaddrinfo(
 		ainfo->ai_port = htons(atol(port));
 
 	memcpy(&ainfo->ai_addr_in.sin_addr,
-			ainfo->ai_hostent->h_addr_list[0],
-			ainfo->ai_hostent->h_length);
+	       ainfo->ai_hostent->h_addr_list[0],
+	       ainfo->ai_hostent->h_length);
 
 	ainfo->ai_protocol = 0;
 	ainfo->ai_socktype = hints->ai_socktype;
@@ -71,8 +71,8 @@ int p_getaddrinfo(
 		}
 		memcpy(ai->ai_next, ainfo, sizeof(struct addrinfo));
 		memcpy(&ai->ai_next->ai_addr_in.sin_addr,
-			ainfo->ai_hostent->h_addr_list[p],
-			ainfo->ai_hostent->h_length);
+		       ainfo->ai_hostent->h_addr_list[p],
+		       ainfo->ai_hostent->h_length);
 		ai->ai_next->ai_addr = (struct addrinfo *)&ai->ai_next->ai_addr_in;
 		ai = ai->ai_next;
 	}
@@ -137,7 +137,7 @@ int p_getcwd(char *buffer_out, size_t size)
 		return -1;
 
 	git_path_mkposix(buffer_out);
-	git_path_string_to_dir(buffer_out, size); /* append trailing slash */
+	git_path_string_to_dir(buffer_out, size);     /* append trailing slash */
 
 	return 0;
 }
@@ -251,8 +251,8 @@ int p_mmap(git_map *out, size_t len, int prot, int flags, int fd, git_off_t offs
 	GITERR_CHECK_ALLOC(out->data);
 
 	if (!git__is_ssizet(len) ||
-		(p_lseek(fd, offset, SEEK_SET) < 0) ||
-		(p_read(fd, out->data, len) != (ssize_t)len)) {
+	    (p_lseek(fd, offset, SEEK_SET) < 0) ||
+	    (p_read(fd, out->data, len) != (ssize_t)len)) {
 		giterr_set(GITERR_OS, "mmap emulation failed");
 		return -1;
 	}

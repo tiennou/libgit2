@@ -11,9 +11,9 @@
 #include "common.h"
 
 #if defined (_MSC_VER)
-#	define GIT_RESTRICT __restrict
+#   define GIT_RESTRICT __restrict
 #else
-#	define GIT_RESTRICT __restrict__
+#   define GIT_RESTRICT __restrict__
 #endif
 
 typedef struct {
@@ -38,8 +38,8 @@ typedef struct {
 int git_threads_init(void);
 
 int git_thread_create(git_thread *GIT_RESTRICT,
-	void *(*) (void *),
-	void *GIT_RESTRICT);
+                      void *(*)(void *),
+                      void *GIT_RESTRICT);
 int git_thread_join(git_thread *, void **);
 size_t git_thread_currentid(void);
 void git_thread_exit(void *);

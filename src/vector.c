@@ -10,7 +10,7 @@
 #include "integer.h"
 
 /* In elements, not bytes */
-#define MIN_ALLOCSIZE	8
+#define MIN_ALLOCSIZE   8
 
 GIT_INLINE(size_t) compute_new_size(git_vector *v)
 {
@@ -129,7 +129,7 @@ int git_vector_insert(git_vector *v, void *element)
 	assert(v);
 
 	if (v->length >= v->_alloc_size &&
-		resize_vector(v, compute_new_size(v)) < 0)
+	    resize_vector(v, compute_new_size(v)) < 0)
 		return -1;
 
 	v->contents[v->length++] = element;
@@ -151,7 +151,7 @@ int git_vector_insert_sorted(
 		git_vector_sort(v);
 
 	if (v->length >= v->_alloc_size &&
-		resize_vector(v, compute_new_size(v)) < 0)
+	    resize_vector(v, compute_new_size(v)) < 0)
 		return -1;
 
 	/* If we find the element and have a duplicate handler callback,
@@ -159,7 +159,7 @@ int git_vector_insert_sorted(
 	 * proceed with normal insert.
 	 */
 	if (!git__bsearch(v->contents, v->length, element, v->_cmp, &pos) &&
-		on_dup && (result = on_dup(&v->contents[pos], element)) < 0)
+	    on_dup && (result = on_dup(&v->contents[pos], element)) < 0)
 		return result;
 
 	/* shift elements to the right */
@@ -244,7 +244,7 @@ int git_vector_remove(git_vector *v, size_t idx)
 
 	if (shift_count)
 		memmove(&v->contents[idx], &v->contents[idx + 1],
-			shift_count * sizeof(void *));
+		        shift_count * sizeof(void *));
 
 	v->length--;
 	return 0;
@@ -256,7 +256,7 @@ void git_vector_pop(git_vector *v)
 		v->length--;
 }
 
-void git_vector_uniq(git_vector *v, void  (*git_free_cb)(void *))
+void git_vector_uniq(git_vector *v, void (*git_free_cb)(void *))
 {
 	git_vector_cmp cmp;
 	size_t i, j;
@@ -267,7 +267,7 @@ void git_vector_uniq(git_vector *v, void  (*git_free_cb)(void *))
 	git_vector_sort(v);
 	cmp = v->_cmp ? v->_cmp : strict_comparison;
 
-	for (i = 0, j = 1 ; j < v->length; ++j)
+	for (i = 0, j = 1; j < v->length; ++j)
 		if (!cmp(v->contents[i], v->contents[j])) {
 			if (git_free_cb)
 				git_free_cb(v->contents[i]);
@@ -319,12 +319,12 @@ void git_vector_swap(git_vector *a, git_vector *b)
 int git_vector_resize_to(git_vector *v, size_t new_length)
 {
 	if (new_length > v->_alloc_size &&
-		resize_vector(v, new_length) < 0)
+	    resize_vector(v, new_length) < 0)
 		return -1;
 
 	if (new_length > v->length)
 		memset(&v->contents[v->length], 0,
-			sizeof(void *) * (new_length - v->length));
+		       sizeof(void *) * (new_length - v->length));
 
 	v->length = new_length;
 
@@ -343,7 +343,7 @@ int git_vector_insert_null(git_vector *v, size_t idx, size_t insert_len)
 		return -1;
 
 	memmove(&v->contents[idx + insert_len], &v->contents[idx],
-		sizeof(void *) * (v->length - idx));
+	        sizeof(void *) * (v->length - idx));
 	memset(&v->contents[idx], 0, sizeof(void *) * insert_len);
 
 	v->length = new_length;
@@ -354,7 +354,7 @@ int git_vector_remove_range(git_vector *v, size_t idx, size_t remove_len)
 {
 	size_t new_length = v->length - remove_len;
 	size_t end_idx = 0;
-	
+
 	assert(remove_len > 0);
 
 	if (git__add_sizet_overflow(&end_idx, idx, remove_len))
@@ -364,7 +364,7 @@ int git_vector_remove_range(git_vector *v, size_t idx, size_t remove_len)
 
 	if (end_idx < v->length)
 		memmove(&v->contents[idx], &v->contents[end_idx],
-			sizeof(void *) * (v->length - end_idx));
+		        sizeof(void *) * (v->length - end_idx));
 
 	memset(&v->contents[new_length], 0, sizeof(void *) * remove_len);
 

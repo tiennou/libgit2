@@ -43,12 +43,12 @@ int git_reset_default(
 	if (target) {
 		if (git_object_owner(target) != repo) {
 			giterr_set(GITERR_OBJECT,
-				"%s_default - The given target does not belong to this repository.", ERROR_MSG);
+			           "%s_default - The given target does not belong to this repository.", ERROR_MSG);
 			return -1;
 		}
 
 		if ((error = git_object_peel(&commit, target, GIT_OBJ_COMMIT)) < 0 ||
-			(error = git_commit_tree(&tree, (git_commit *)commit)) < 0)
+		    (error = git_commit_tree(&tree, (git_commit *)commit)) < 0)
 			goto cleanup;
 	}
 
@@ -56,16 +56,16 @@ int git_reset_default(
 	opts.flags = GIT_DIFF_REVERSE;
 
 	if ((error = git_diff_tree_to_index(
-		&diff, repo, tree, index, &opts)) < 0)
-			goto cleanup;
+			 &diff, repo, tree, index, &opts)) < 0)
+		goto cleanup;
 
 	for (i = 0, max_i = git_diff_num_deltas(diff); i < max_i; ++i) {
 		const git_diff_delta *delta = git_diff_get_delta(diff, i);
 
 		assert(delta->status == GIT_DELTA_ADDED ||
-			delta->status == GIT_DELTA_MODIFIED ||
-			delta->status == GIT_DELTA_CONFLICTED ||
-			delta->status == GIT_DELTA_DELETED);
+		       delta->status == GIT_DELTA_MODIFIED ||
+		       delta->status == GIT_DELTA_CONFLICTED ||
+		       delta->status == GIT_DELTA_DELETED);
 
 		error = git_index_conflict_remove(index, delta->old_file.path);
 		if (error < 0) {
@@ -120,23 +120,23 @@ static int reset(
 
 	if (git_object_owner(target) != repo) {
 		giterr_set(GITERR_OBJECT,
-			"%s - The given target does not belong to this repository.", ERROR_MSG);
+		           "%s - The given target does not belong to this repository.", ERROR_MSG);
 		return -1;
 	}
 
 	if (reset_type != GIT_RESET_SOFT &&
-		(error = git_repository__ensure_not_bare(repo,
-			reset_type == GIT_RESET_MIXED ? "reset mixed" : "reset hard")) < 0)
+	    (error = git_repository__ensure_not_bare(repo,
+	                                             reset_type == GIT_RESET_MIXED ? "reset mixed" : "reset hard")) < 0)
 		return error;
 
 	if ((error = git_object_peel(&commit, target, GIT_OBJ_COMMIT)) < 0 ||
-		(error = git_repository_index(&index, repo)) < 0 ||
-		(error = git_commit_tree(&tree, (git_commit *)commit)) < 0)
+	    (error = git_repository_index(&index, repo)) < 0 ||
+	    (error = git_commit_tree(&tree, (git_commit *)commit)) < 0)
 		goto cleanup;
 
 	if (reset_type == GIT_RESET_SOFT &&
-		(git_repository_state(repo) == GIT_REPOSITORY_STATE_MERGE ||
-		 git_index_has_conflicts(index)))
+	    (git_repository_state(repo) == GIT_REPOSITORY_STATE_MERGE ||
+	     git_index_has_conflicts(index)))
 	{
 		giterr_set(GITERR_OBJECT, "%s (soft) in the middle of a merge", ERROR_MSG);
 		error = GIT_EUNMERGED;
@@ -156,14 +156,14 @@ static int reset(
 
 	/* move HEAD to the new target */
 	if ((error = git_reference__update_terminal(repo, GIT_HEAD_FILE,
-		git_object_id(commit), NULL, git_buf_cstr(&log_message))) < 0)
+	                                            git_object_id(commit), NULL, git_buf_cstr(&log_message))) < 0)
 		goto cleanup;
 
 	if (reset_type > GIT_RESET_SOFT) {
 		/* reset index to the target content */
 
 		if ((error = git_index_read_tree(index, tree)) < 0 ||
-			(error = git_index_write(index)) < 0)
+		    (error = git_index_write(index)) < 0)
 			goto cleanup;
 
 		if ((error = git_repository_state_cleanup(repo)) < 0) {

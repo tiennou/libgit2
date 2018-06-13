@@ -139,9 +139,9 @@ typedef struct git_stash_apply_options {
 
 #define GIT_STASH_APPLY_OPTIONS_VERSION 1
 #define GIT_STASH_APPLY_OPTIONS_INIT { \
-	GIT_STASH_APPLY_OPTIONS_VERSION, \
-	GIT_STASH_APPLY_DEFAULT, \
-	GIT_CHECKOUT_OPTIONS_INIT }
+		GIT_STASH_APPLY_OPTIONS_VERSION, \
+		GIT_STASH_APPLY_DEFAULT, \
+		GIT_CHECKOUT_OPTIONS_INIT }
 
 /**
  * Initialize git_stash_apply_options structure
@@ -249,7 +249,7 @@ GIT_EXTERN(int) git_stash_drop(
  *
  * @return 0 on success, GIT_ENOTFOUND if there's no stashed state for the given
  * index, or error code. (see git_stash_apply() above for details)
-*/
+ */
 GIT_EXTERN(int) git_stash_pop(
 	git_repository *repo,
 	size_t index,

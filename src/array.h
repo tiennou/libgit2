@@ -39,7 +39,7 @@
 #define GITERR_CHECK_ARRAY(a) GITERR_CHECK_ALLOC((a).ptr)
 
 
-typedef git_array_t(char) git_array_generic_t;
+typedef git_array_t (char) git_array_generic_t;
 
 /* use a generic array for growth so this can return the new item */
 GIT_INLINE(void *) git_array_grow(void *_a, size_t item_size)
@@ -69,8 +69,8 @@ on_oom:
 
 #define git_array_alloc(a) \
 	(((a).size >= (a).asize) ? \
-	git_array_grow(&(a), sizeof(*(a).ptr)) : \
-	((a).ptr ? &(a).ptr[(a).size++] : NULL))
+	 git_array_grow(&(a), sizeof(*(a).ptr)) : \
+	 ((a).ptr ? &(a).ptr[(a).size++] : NULL))
 
 #define git_array_last(a) ((a).size ? &(a).ptr[(a).size - 1] : NULL)
 
@@ -105,10 +105,10 @@ GIT_INLINE(int) git_array__search(
 			base = part;
 			break;
 		}
-		if (cmp > 0) { /* key > p; take right partition */
+		if (cmp > 0) {         /* key > p; take right partition */
 			base = part + 1 * item_size;
 			lim--;
-		} /* else take left partition */
+		}         /* else take left partition */
 	}
 
 	if (out)
@@ -119,6 +119,6 @@ GIT_INLINE(int) git_array__search(
 
 #define git_array_search(out, a, cmp, key) \
 	git_array__search(out, (a).ptr, sizeof(*(a).ptr), (a).size, \
-		(cmp), (key))
+	                  (cmp), (key))
 
 #endif

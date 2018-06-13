@@ -69,7 +69,7 @@ GIT_EXTERN(const git_index_name_entry *) git_index_name_get_byindex(
  * @param theirs the path of the file as it existed in their tree
  */
 GIT_EXTERN(int) git_index_name_add(git_index *index,
-	const char *ancestor, const char *ours, const char *theirs);
+                                   const char *ancestor, const char *ours, const char *theirs);
 
 /**
  * Remove all filename conflict entries.
@@ -153,9 +153,9 @@ GIT_EXTERN(const git_index_reuc_entry *) git_index_reuc_get_byindex(git_index *i
  * @return 0 or an error code
  */
 GIT_EXTERN(int) git_index_reuc_add(git_index *index, const char *path,
-	int ancestor_mode, const git_oid *ancestor_id,
-	int our_mode, const git_oid *our_id,
-	int their_mode, const git_oid *their_id);
+                                   int ancestor_mode, const git_oid *ancestor_id,
+                                   int our_mode, const git_oid *our_id,
+                                   int their_mode, const git_oid *their_id);
 
 /**
  * Remove an resolve undo entry from the index

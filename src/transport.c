@@ -112,8 +112,8 @@ static int transport_find_fn(
 }
 
 /**************
- * Public API *
- **************/
+* Public API *
+**************/
 
 int git_transport_new(git_transport **out, git_remote *owner, const char *url)
 {
