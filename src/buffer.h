@@ -21,7 +21,10 @@ extern char git_buf__initbuf[];
 extern char git_buf__oom[];
 
 /* Use to initialize buffer structure when git_buf is on stack */
-#define GIT_BUF_INIT { git_buf__initbuf, 0, 0 }
+#define GIT_BUF_INIT           \
+	{                          \
+		git_buf__initbuf, 0, 0 \
+	}
 
 GIT_INLINE(bool) git_buf_is_allocated(const git_buf *buf)
 {
@@ -58,8 +61,7 @@ extern int git_buf_grow_by(git_buf *buffer, size_t additional_size);
  * existing data pointed to be `ptr` even if `asize` is zero will be copied
  * into the newly allocated buffer.
  */
-extern int git_buf_try_grow(
-	git_buf *buf, size_t target_size, bool mark_oom);
+extern int git_buf_try_grow(git_buf *buf, size_t target_size, bool mark_oom);
 
 /**
  * Sanitizes git_buf structures provided from user input.  Users of the
@@ -78,8 +80,7 @@ extern int git_buf_attach(git_buf *buf, char *ptr, size_t asize);
 /* Populates a `git_buf` where the contents are not "owned" by the
  * buffer, and calls to `git_buf_free` will not free the given buf.
  */
-extern void git_buf_attach_notowned(
-	git_buf *buf, const char *ptr, size_t size);
+extern void git_buf_attach_notowned(git_buf *buf, const char *ptr, size_t size);
 
 /**
  * Test if there have been any reallocation failures with this git_buf.
@@ -123,7 +124,11 @@ int git_buf_join_n(git_buf *buf, char separator, int nbuf, ...);
 /** Fast join of two strings - first may legally point into `buf` data */
 int git_buf_join(git_buf *buf, char separator, const char *str_a, const char *str_b);
 /** Fast join of three strings - cannot reference `buf` data */
-int git_buf_join3(git_buf *buf, char separator, const char *str_a, const char *str_b, const char *str_c);
+int git_buf_join3(git_buf *buf,
+	char separator,
+	const char *str_a,
+	const char *str_b,
+	const char *str_c);
 
 /**
  * Join two strings as paths, inserting a slash between as needed.
@@ -151,15 +156,18 @@ void git_buf_copy_cstr(char *data, size_t datasize, const git_buf *buf);
 GIT_INLINE(ssize_t) git_buf_rfind_next(const git_buf *buf, char ch)
 {
 	ssize_t idx = (ssize_t)buf->size - 1;
-	while (idx >= 0 && buf->ptr[idx] == ch) idx--;
-	while (idx >= 0 && buf->ptr[idx] != ch) idx--;
+	while (idx >= 0 && buf->ptr[idx] == ch)
+		idx--;
+	while (idx >= 0 && buf->ptr[idx] != ch)
+		idx--;
 	return idx;
 }
 
 GIT_INLINE(ssize_t) git_buf_rfind(const git_buf *buf, char ch)
 {
 	ssize_t idx = (ssize_t)buf->size - 1;
-	while (idx >= 0 && buf->ptr[idx] != ch) idx--;
+	while (idx >= 0 && buf->ptr[idx] != ch)
+		idx--;
 	return idx;
 }
 
@@ -211,8 +219,7 @@ int git_buf_decode_percent(git_buf *buf, const char *str, size_t len);
  *
  * @return 0 or an error code.
  */
-int git_buf_splice(
-	git_buf *buf,
+int git_buf_splice(git_buf *buf,
 	size_t where,
 	size_t nb_to_remove,
 	const char *data,

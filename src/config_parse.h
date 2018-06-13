@@ -26,15 +26,13 @@ typedef struct {
 	git_parse_ctx ctx;
 } git_config_parser;
 
-typedef int (*git_config_parser_section_cb)(
-	git_config_parser *parser,
+typedef int (*git_config_parser_section_cb)(git_config_parser *parser,
 	const char *current_section,
 	const char *line,
 	size_t line_len,
 	void *data);
 
-typedef int (*git_config_parser_variable_cb)(
-	git_config_parser *parser,
+typedef int (*git_config_parser_variable_cb)(git_config_parser *parser,
 	const char *current_section,
 	char *var_name,
 	char *var_value,
@@ -42,19 +40,16 @@ typedef int (*git_config_parser_variable_cb)(
 	size_t line_len,
 	void *data);
 
-typedef int (*git_config_parser_comment_cb)(
-	git_config_parser *parser,
+typedef int (*git_config_parser_comment_cb)(git_config_parser *parser,
 	const char *line,
 	size_t line_len,
 	void *data);
 
-typedef int (*git_config_parser_eof_cb)(
-	git_config_parser *parser,
+typedef int (*git_config_parser_eof_cb)(git_config_parser *parser,
 	const char *current_section,
 	void *data);
 
-int git_config_parse(
-	git_config_parser *parser,
+int git_config_parse(git_config_parser *parser,
 	git_config_parser_section_cb on_section,
 	git_config_parser_variable_cb on_variable,
 	git_config_parser_comment_cb on_comment,

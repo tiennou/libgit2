@@ -20,11 +20,11 @@ int gitno_recv(gitno_buffer *buf)
 	return buf->recv(buf);
 }
 
-void gitno_buffer_setup_callback(
-	gitno_buffer *buf,
+void gitno_buffer_setup_callback(gitno_buffer *buf,
 	char *data,
 	size_t len,
-	int (*recv)(gitno_buffer *buf), void *cb_data)
+	int (*recv)(gitno_buffer *buf),
+	void *cb_data)
 {
 	memset(data, 0x0, len);
 	buf->data = data;
@@ -36,7 +36,7 @@ void gitno_buffer_setup_callback(
 
 static int recv_stream(gitno_buffer *buf)
 {
-	git_stream *io = (git_stream *) buf->cb_data;
+	git_stream *io = (git_stream *)buf->cb_data;
 	int ret;
 
 	ret = git_stream_read(io, buf->data + buf->offset, buf->len - buf->offset);
@@ -63,7 +63,7 @@ void gitno_consume(gitno_buffer *buf, const char *ptr)
 	size_t consumed;
 
 	assert(ptr - buf->data >= 0);
-	assert(ptr - buf->data <= (int) buf->len);
+	assert(ptr - buf->data <= (int)buf->len);
 
 	consumed = ptr - buf->data;
 
@@ -95,13 +95,13 @@ int gitno__match_host(const char *pattern, const char *host)
 			if (c == '\0')
 				return 0;
 
-	/*
-	 * We've found a pattern, so move towards the next matching
-	 * char. The '.' is handled specially because wildcards aren't
-	 * allowed to cross subdomains.
-	 */
+			/*
+			 * We've found a pattern, so move towards the next matching
+			 * char. The '.' is handled specially because wildcards aren't
+			 * allowed to cross subdomains.
+			 */
 
-			while(*host) {
+			while (*host) {
 				char h = git__tolower(*host);
 				if (c == h)
 					return gitno__match_host(pattern, host++);
@@ -122,10 +122,9 @@ int gitno__match_host(const char *pattern, const char *host)
 static const char *prefix_http = "http://";
 static const char *prefix_https = "https://";
 
-int gitno_connection_data_from_url(
-		gitno_connection_data *data,
-		const char *url,
-		const char *service_suffix)
+int gitno_connection_data_from_url(gitno_connection_data *data,
+	const char *url,
+	const char *service_suffix)
 {
 	int error = -1;
 	const char *default_port = NULL, *path_search_start = NULL;
@@ -159,9 +158,8 @@ int gitno_connection_data_from_url(
 		goto cleanup;
 	}
 
-	error = gitno_extract_url_parts(
-		&data->host, &data->port, &data->path, &data->user, &data->pass,
-		url, default_port);
+	error = gitno_extract_url_parts(&data->host, &data->port, &data->path,
+		&data->user, &data->pass, url, default_port);
 
 	if (url[0] == '/') {
 		/* Relative redirect; reuse original host name and port */
@@ -177,7 +175,7 @@ int gitno_connection_data_from_url(
 		size_t suffixlen = service_suffix ? strlen(service_suffix) : 0;
 
 		if (suffixlen &&
-		    !memcmp(path + pathlen - suffixlen, service_suffix, suffixlen)) {
+			!memcmp(path + pathlen - suffixlen, service_suffix, suffixlen)) {
 			git__free(data->path);
 			data->path = git__strndup(path, pathlen - suffixlen);
 		} else {
@@ -193,21 +191,26 @@ int gitno_connection_data_from_url(
 	}
 
 cleanup:
-	if (original_host) git__free(original_host);
+	if (original_host)
+		git__free(original_host);
 	return error;
 }
 
 void gitno_connection_data_free_ptrs(gitno_connection_data *d)
 {
-	git__free(d->host); d->host = NULL;
-	git__free(d->port); d->port = NULL;
-	git__free(d->path); d->path = NULL;
-	git__free(d->user); d->user = NULL;
-	git__free(d->pass); d->pass = NULL;
+	git__free(d->host);
+	d->host = NULL;
+	git__free(d->port);
+	d->port = NULL;
+	git__free(d->path);
+	d->path = NULL;
+	git__free(d->user);
+	d->user = NULL;
+	git__free(d->pass);
+	d->pass = NULL;
 }
 
-int gitno_extract_url_parts(
-	char **host_out,
+int gitno_extract_url_parts(char **host_out,
 	char **port_out,
 	char **path_out,
 	char **username_out,
@@ -215,13 +218,10 @@ int gitno_extract_url_parts(
 	const char *url,
 	const char *default_port)
 {
-	struct http_parser_url u = {0};
+	struct http_parser_url u = { 0 };
 	bool has_host, has_port, has_path, has_userinfo;
-	git_buf host = GIT_BUF_INIT,
-		port = GIT_BUF_INIT,
-		path = GIT_BUF_INIT,
-		username = GIT_BUF_INIT,
-		password = GIT_BUF_INIT;
+	git_buf host = GIT_BUF_INIT, port = GIT_BUF_INIT, path = GIT_BUF_INIT,
+			username = GIT_BUF_INIT, password = GIT_BUF_INIT;
 	int error = 0;
 
 	if (http_parser_parse_url(url, strlen(url), false, &u)) {
@@ -277,11 +277,8 @@ int gitno_extract_url_parts(
 		}
 	}
 
-	if (git_buf_oom(&host) ||
-		git_buf_oom(&port) ||
-		git_buf_oom(&path) ||
-		git_buf_oom(&username) ||
-		git_buf_oom(&password))
+	if (git_buf_oom(&host) || git_buf_oom(&port) || git_buf_oom(&path) ||
+		git_buf_oom(&username) || git_buf_oom(&password))
 		return -1;
 
 	*host_out = git_buf_detach(&host);

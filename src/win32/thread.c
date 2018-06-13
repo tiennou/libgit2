@@ -11,7 +11,7 @@
 
 #define CLEAN_THREAD_EXIT 0x6F012842
 
-typedef void (WINAPI *win32_srwlock_fn)(GIT_SRWLOCK *);
+typedef void(WINAPI *win32_srwlock_fn)(GIT_SRWLOCK *);
 
 static win32_srwlock_fn win32_srwlock_initialize;
 static win32_srwlock_fn win32_srwlock_acquire_shared;
@@ -42,38 +42,34 @@ int git_threads_init(void)
 	HMODULE hModule = GetModuleHandleW(L"kernel32");
 
 	if (hModule) {
-		win32_srwlock_initialize = (win32_srwlock_fn)
-			GetProcAddress(hModule, "InitializeSRWLock");
-		win32_srwlock_acquire_shared = (win32_srwlock_fn)
-			GetProcAddress(hModule, "AcquireSRWLockShared");
-		win32_srwlock_release_shared = (win32_srwlock_fn)
-			GetProcAddress(hModule, "ReleaseSRWLockShared");
-		win32_srwlock_acquire_exclusive = (win32_srwlock_fn)
-			GetProcAddress(hModule, "AcquireSRWLockExclusive");
-		win32_srwlock_release_exclusive = (win32_srwlock_fn)
-			GetProcAddress(hModule, "ReleaseSRWLockExclusive");
+		win32_srwlock_initialize = (win32_srwlock_fn)GetProcAddress(
+			hModule, "InitializeSRWLock");
+		win32_srwlock_acquire_shared = (win32_srwlock_fn)GetProcAddress(
+			hModule, "AcquireSRWLockShared");
+		win32_srwlock_release_shared = (win32_srwlock_fn)GetProcAddress(
+			hModule, "ReleaseSRWLockShared");
+		win32_srwlock_acquire_exclusive = (win32_srwlock_fn)GetProcAddress(
+			hModule, "AcquireSRWLockExclusive");
+		win32_srwlock_release_exclusive = (win32_srwlock_fn)GetProcAddress(
+			hModule, "ReleaseSRWLockExclusive");
 	}
 
 	return 0;
 }
 
-int git_thread_create(
-	git_thread *GIT_RESTRICT thread,
-	void *(*start_routine)(void*),
+int git_thread_create(git_thread *GIT_RESTRICT thread,
+	void *(*start_routine)(void *),
 	void *GIT_RESTRICT arg)
 {
 	thread->result = NULL;
 	thread->param = arg;
 	thread->proc = start_routine;
-	thread->thread = CreateThread(
-		NULL, 0, git_win32__threadproc, thread, 0, NULL);
+	thread->thread = CreateThread(NULL, 0, git_win32__threadproc, thread, 0, NULL);
 
 	return thread->thread ? 0 : -1;
 }
 
-int git_thread_join(
-	git_thread *thread,
-	void **value_ptr)
+int git_thread_join(git_thread *thread, void **value_ptr)
 {
 	DWORD exit;
 

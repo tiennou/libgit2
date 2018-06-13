@@ -17,8 +17,7 @@
 #include "delta.h"
 #include "zstream.h"
 
-#define apply_err(...) \
-	( giterr_set(GITERR_PATCH, __VA_ARGS__), -1 )
+#define apply_err(...) (giterr_set(GITERR_PATCH, __VA_ARGS__), -1)
 
 typedef struct {
 	/* The lines that we allocate ourself are allocated out of the pool.
@@ -28,21 +27,19 @@ typedef struct {
 	git_vector lines;
 } patch_image;
 
-static void patch_line_init(
-	git_diff_line *out,
-	const char *in,
-	size_t in_len,
-	size_t in_offset)
+static void patch_line_init(git_diff_line *out, const char *in, size_t in_len, size_t in_offset)
 {
 	out->content = in;
 	out->content_len = in_len;
 	out->content_offset = in_offset;
 }
 
-#define PATCH_IMAGE_INIT { GIT_POOL_INIT, GIT_VECTOR_INIT }
+#define PATCH_IMAGE_INIT               \
+	{                                  \
+		GIT_POOL_INIT, GIT_VECTOR_INIT \
+	}
 
-static int patch_image_init_fromstr(
-	patch_image *out, const char *in, size_t in_len)
+static int patch_image_init_fromstr(patch_image *out, const char *in, size_t in_len)
 {
 	git_diff_line *line;
 	const char *start, *end;
@@ -81,17 +78,13 @@ static void patch_image_free(patch_image *image)
 	git_vector_free(&image->lines);
 }
 
-static bool match_hunk(
-	patch_image *image,
-	patch_image *preimage,
-	size_t linenum)
+static bool match_hunk(patch_image *image, patch_image *preimage, size_t linenum)
 {
 	bool match = 0;
 	size_t i;
 
 	/* Ensure this hunk is within the image boundaries. */
-	if (git_vector_length(&preimage->lines) + linenum >
-		git_vector_length(&image->lines))
+	if (git_vector_length(&preimage->lines) + linenum > git_vector_length(&image->lines))
 		return 0;
 
 	match = 1;
@@ -102,7 +95,8 @@ static bool match_hunk(
 		git_diff_line *image_line = git_vector_get(&image->lines, linenum + i);
 
 		if (preimage_line->content_len != image_line->content_len ||
-			memcmp(preimage_line->content, image_line->content, image_line->content_len) != 0) {
+			memcmp(preimage_line->content, image_line->content,
+				image_line->content_len) != 0) {
 			match = 0;
 			break;
 		}
@@ -111,11 +105,7 @@ static bool match_hunk(
 	return match;
 }
 
-static bool find_hunk_linenum(
-	size_t *out,
-	patch_image *image,
-	patch_image *preimage,
-	size_t linenum)
+static bool find_hunk_linenum(size_t *out, patch_image *image, patch_image *preimage, size_t linenum)
 {
 	size_t max = git_vector_length(&image->lines);
 	bool match;
@@ -129,8 +119,7 @@ static bool find_hunk_linenum(
 	return match;
 }
 
-static int update_hunk(
-	patch_image *image,
+static int update_hunk(patch_image *image,
 	unsigned int linenum,
 	patch_image *preimage,
 	patch_image *postimage)
@@ -141,11 +130,9 @@ static int update_hunk(
 	int error = 0;
 
 	if (postlen > prelen)
-		error = git_vector_insert_null(
-			&image->lines, linenum, (postlen - prelen));
+		error = git_vector_insert_null(&image->lines, linenum, (postlen - prelen));
 	else if (prelen > postlen)
-		error = git_vector_remove_range(
-			&image->lines, linenum, (prelen - postlen));
+		error = git_vector_remove_range(&image->lines, linenum, (prelen - postlen));
 
 	if (error) {
 		giterr_set_oom();
@@ -153,17 +140,13 @@ static int update_hunk(
 	}
 
 	for (i = 0; i < git_vector_length(&postimage->lines); i++) {
-		image->lines.contents[linenum + i] =
-			git_vector_get(&postimage->lines, i);
+		image->lines.contents[linenum + i] = git_vector_get(&postimage->lines, i);
 	}
 
 	return 0;
 }
 
-static int apply_hunk(
-	patch_image *image,
-	git_patch *patch,
-	git_patch_hunk *hunk)
+static int apply_hunk(patch_image *image, git_patch *patch, git_patch_hunk *hunk)
 {
 	patch_image preimage = PATCH_IMAGE_INIT, postimage = PATCH_IMAGE_INIT;
 	size_t line_num, i;
@@ -174,7 +157,7 @@ static int apply_hunk(
 		git_diff_line *line = git_array_get(patch->lines, linenum);
 
 		if (!line) {
-			error = apply_err("preimage does not contain line %"PRIuZ, linenum);
+			error = apply_err("preimage does not contain line %" PRIuZ, linenum);
 			goto done;
 		}
 
@@ -194,8 +177,7 @@ static int apply_hunk(
 	line_num = hunk->hunk.new_start ? hunk->hunk.new_start - 1 : 0;
 
 	if (!find_hunk_linenum(&line_num, image, &preimage, line_num)) {
-		error = apply_err("hunk at line %d did not apply",
-			hunk->hunk.new_start);
+		error = apply_err("hunk at line %d did not apply", hunk->hunk.new_start);
 		goto done;
 	}
 
@@ -208,11 +190,7 @@ done:
 	return error;
 }
 
-static int apply_hunks(
-	git_buf *out,
-	const char *source,
-	size_t source_len,
-	git_patch *patch)
+static int apply_hunks(git_buf *out, const char *source, size_t source_len, git_patch *patch)
 {
 	git_patch_hunk *hunk;
 	git_diff_line *line;
@@ -223,12 +201,12 @@ static int apply_hunks(
 	if ((error = patch_image_init_fromstr(&image, source, source_len)) < 0)
 		goto done;
 
-	git_array_foreach(patch->hunks, i, hunk) {
+	git_array_foreach (patch->hunks, i, hunk) {
 		if ((error = apply_hunk(&image, patch, hunk)) < 0)
 			goto done;
 	}
 
-	git_vector_foreach(&image.lines, i, line)
+	git_vector_foreach (&image.lines, i, line)
 		git_buf_put(out, line->content, line->content_len);
 
 done:
@@ -237,8 +215,7 @@ done:
 	return error;
 }
 
-static int apply_binary_delta(
-	git_buf *out,
+static int apply_binary_delta(git_buf *out,
 	const char *source,
 	size_t source_len,
 	git_diff_binary_file *binary_file)
@@ -250,8 +227,7 @@ static int apply_binary_delta(
 	if (binary_file->datalen == 0)
 		return git_buf_put(out, source, source_len);
 
-	error = git_zstream_inflatebuf(&inflated,
-		binary_file->data, binary_file->datalen);
+	error = git_zstream_inflatebuf(&inflated, binary_file->data, binary_file->datalen);
 
 	if (!error && inflated.size != binary_file->inflatedlen) {
 		error = apply_err("inflated delta does not match expected length");
@@ -271,11 +247,9 @@ static int apply_binary_delta(
 		out->ptr = data;
 		out->size = data_len;
 		out->asize = data_len;
-	}
-	else if (binary_file->type == GIT_DIFF_BINARY_LITERAL) {
+	} else if (binary_file->type == GIT_DIFF_BINARY_LITERAL) {
 		git_buf_swap(out, &inflated);
-	}
-	else {
+	} else {
 		error = apply_err("unknown binary delta type");
 		goto done;
 	}
@@ -285,11 +259,7 @@ done:
 	return error;
 }
 
-static int apply_binary(
-	git_buf *out,
-	const char *source,
-	size_t source_len,
-	git_patch *patch)
+static int apply_binary(git_buf *out, const char *source, size_t source_len, git_patch *patch)
 {
 	git_buf reverse = GIT_BUF_INIT;
 	int error = 0;
@@ -303,17 +273,15 @@ static int apply_binary(
 		goto done;
 
 	/* first, apply the new_file delta to the given source */
-	if ((error = apply_binary_delta(out, source, source_len,
-			&patch->binary.new_file)) < 0)
+	if ((error = apply_binary_delta(out, source, source_len, &patch->binary.new_file)) < 0)
 		goto done;
 
 	/* second, apply the old_file delta to sanity check the result */
-	if ((error = apply_binary_delta(&reverse, out->ptr, out->size,
-			&patch->binary.old_file)) < 0)
+	if ((error = apply_binary_delta(
+			 &reverse, out->ptr, out->size, &patch->binary.old_file)) < 0)
 		goto done;
 
-	if (source_len != reverse.size ||
-		memcmp(source, reverse.ptr, source_len) != 0) {
+	if (source_len != reverse.size || memcmp(source, reverse.ptr, source_len) != 0) {
 		error = apply_err("binary patch did not apply cleanly");
 		goto done;
 	}
@@ -326,8 +294,7 @@ done:
 	return error;
 }
 
-int git_apply__patch(
-	git_buf *contents_out,
+int git_apply__patch(git_buf *contents_out,
 	char **filename_out,
 	unsigned int *mode_out,
 	const char *source,
@@ -347,8 +314,7 @@ int git_apply__patch(
 		const git_diff_file *newfile = &patch->delta->new_file;
 
 		filename = git__strdup(newfile->path);
-		mode = newfile->mode ?
-			newfile->mode : GIT_FILEMODE_BLOB;
+		mode = newfile->mode ? newfile->mode : GIT_FILEMODE_BLOB;
 	}
 
 	if (patch->delta->flags & GIT_DIFF_FLAG_BINARY)
@@ -361,8 +327,7 @@ int git_apply__patch(
 	if (error)
 		goto done;
 
-	if (patch->delta->status == GIT_DELTA_DELETED &&
-		git_buf_len(contents_out) > 0) {
+	if (patch->delta->status == GIT_DELTA_DELETED && git_buf_len(contents_out) > 0) {
 		error = apply_err("removal patch leaves file contents");
 		goto done;
 	}

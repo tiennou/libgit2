@@ -16,15 +16,14 @@
 /**
  * This is supposedly defined in WinBase.h (from Windows.h) but there were linker issues.
  */
-USHORT WINAPI RtlCaptureStackBackTrace(ULONG, ULONG, PVOID*, PULONG);
+USHORT WINAPI RtlCaptureStackBackTrace(ULONG, ULONG, PVOID *, PULONG);
 
-static bool   g_win32_stack_initialized = false;
+static bool g_win32_stack_initialized = false;
 static HANDLE g_win32_stack_process = INVALID_HANDLE_VALUE;
-static git_win32__stack__aux_cb_alloc  g_aux_cb_alloc  = NULL;
+static git_win32__stack__aux_cb_alloc g_aux_cb_alloc = NULL;
 static git_win32__stack__aux_cb_lookup g_aux_cb_lookup = NULL;
 
-int git_win32__stack__set_aux_cb(
-	git_win32__stack__aux_cb_alloc cb_alloc,
+int git_win32__stack__set_aux_cb(git_win32__stack__aux_cb_alloc cb_alloc,
 	git_win32__stack__aux_cb_lookup cb_lookup)
 {
 	g_aux_cb_alloc = cb_alloc;
@@ -61,7 +60,7 @@ int git_win32__stack_capture(git_win32__stack__raw_data *pdata, int skip)
 
 	memset(pdata, 0, sizeof(*pdata));
 	pdata->nr_frames = RtlCaptureStackBackTrace(
-		skip+1, GIT_WIN32__STACK__MAX_FRAMES, pdata->frames, NULL);
+		skip + 1, GIT_WIN32__STACK__MAX_FRAMES, pdata->frames, NULL);
 
 	/* If an "aux" data provider was registered, ask it to capture
 	 * whatever data it needs and give us an "aux_id" to it so that
@@ -73,17 +72,17 @@ int git_win32__stack_capture(git_win32__stack__raw_data *pdata, int skip)
 	return 0;
 }
 
-int git_win32__stack_compare(
-	git_win32__stack__raw_data *d1,
+int git_win32__stack_compare(git_win32__stack__raw_data *d1,
 	git_win32__stack__raw_data *d2)
 {
 	return memcmp(d1, d2, sizeof(*d1));
 }
 
-int git_win32__stack_format(
-	char *pbuf, int buf_len,
+int git_win32__stack_format(char *pbuf,
+	int buf_len,
 	const git_win32__stack__raw_data *pdata,
-	const char *prefix, const char *suffix)
+	const char *prefix,
+	const char *suffix)
 {
 #define MY_MAX_FILENAME 255
 
@@ -120,7 +119,7 @@ int git_win32__stack_format(
 	memset(&line, 0, sizeof(line));
 	line.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
 
-	for (k=0; k < pdata->nr_frames; k++) {
+	for (k = 0; k < pdata->nr_frames; k++) {
 		DWORD64 frame_k = (DWORD64)pdata->frames[k];
 		DWORD dwUnused;
 
@@ -130,9 +129,9 @@ int git_win32__stack_format(
 			const char *pfile;
 
 			pslash = strrchr(line.FileName, '\\');
-			pfile = ((pslash) ? (pslash+1) : line.FileName);
-			p_snprintf(detail, sizeof(detail), "%s%s:%d> %s%s",
-					   prefix, pfile, line.LineNumber, s.symbol.Name, suffix);
+			pfile = ((pslash) ? (pslash + 1) : line.FileName);
+			p_snprintf(detail, sizeof(detail), "%s%s:%d> %s%s", prefix, pfile,
+				line.LineNumber, s.symbol.Name, suffix);
 		} else {
 			/* This happens when we cross into another module.
 			 * For example, in CLAR tests, this is typically
@@ -156,29 +155,27 @@ int git_win32__stack_format(
 	 * allocs that occur before the aux callbacks were registered.
 	 */
 	if (pdata->aux_id > 0) {
-		p_snprintf(detail, sizeof(detail), "%saux_id: %d%s",
-				   prefix, pdata->aux_id, suffix);
+		p_snprintf(detail, sizeof(detail), "%saux_id: %d%s", prefix,
+			pdata->aux_id, suffix);
 		detail_len = strlen(detail);
 		if ((buf_used + detail_len + 1) < buf_len) {
 			memcpy(&pbuf[buf_used], detail, detail_len);
 			buf_used += detail_len;
 		}
 
-		/* If an "aux" data provider is still registered, ask it to append its detailed
-		 * data to the end of ours using the "aux_id" it gave us when this de-duped
-		 * item was created.
+		/* If an "aux" data provider is still registered, ask it to append its
+		 * detailed data to the end of ours using the "aux_id" it gave us when
+		 * this de-duped item was created.
 		 */
 		if (g_aux_cb_lookup)
-			(g_aux_cb_lookup)(pdata->aux_id, &pbuf[buf_used], (buf_len - buf_used - 1));
+			(g_aux_cb_lookup)(
+				pdata->aux_id, &pbuf[buf_used], (buf_len - buf_used - 1));
 	}
 
 	return GIT_OK;
 }
 
-int git_win32__stack(
-	char * pbuf, int buf_len,
-	int skip,
-	const char *prefix, const char *suffix)
+int git_win32__stack(char *pbuf, int buf_len, int skip, const char *prefix, const char *suffix)
 {
 	git_win32__stack__raw_data data;
 	int error;

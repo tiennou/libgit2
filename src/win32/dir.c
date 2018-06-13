@@ -40,8 +40,7 @@ git__DIR *git__opendir(const char *dir)
 	return new;
 }
 
-int git__readdir_ext(
-	git__DIR *d,
+int git__readdir_ext(git__DIR *d,
 	struct git__dirent *entry,
 	struct git__dirent **result,
 	int *is_dir)
@@ -119,4 +118,3 @@ int git__closedir(git__DIR *d)
 	git__free(d);
 	return 0;
 }
-

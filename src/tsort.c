@@ -16,15 +16,14 @@
  */
 
 #ifndef MAX
-#	define MAX(x,y) (((x) > (y) ? (x) : (y)))
+#define MAX(x, y) (((x) > (y) ? (x) : (y)))
 #endif
 
 #ifndef MIN
-#	define MIN(x,y) (((x) < (y) ? (x) : (y)))
+#define MIN(x, y) (((x) < (y) ? (x) : (y)))
 #endif
 
-static int binsearch(
-	void **dst, const void *x, size_t size, git__sort_r_cmp cmp, void *payload)
+static int binsearch(void **dst, const void *x, size_t size, git__sort_r_cmp cmp, void *payload)
 {
 	int l, c, r;
 	void *lx, *cx;
@@ -52,10 +51,12 @@ static int binsearch(
 	while (1) {
 		const int val = cmp(x, cx, payload);
 		if (val < 0) {
-			if (c - l <= 1) return c;
+			if (c - l <= 1)
+				return c;
 			r = c;
 		} else if (val > 0) {
-			if (r - c <= 1) return c + 1;
+			if (r - c <= 1)
+				return c + 1;
 			l = c;
 			lx = cx;
 		} else {
@@ -70,8 +71,7 @@ static int binsearch(
 }
 
 /* Binary insertion sort, but knowing that the first "start" entries are sorted. Used in timsort. */
-static void bisort(
-	void **dst, size_t start, size_t size, git__sort_r_cmp cmp, void *payload)
+static void bisort(void **dst, size_t start, size_t size, git__sort_r_cmp cmp, void *payload)
 {
 	size_t i;
 	void *x;
@@ -119,8 +119,7 @@ static void reverse_elements(void **dst, ssize_t start, ssize_t end)
 	}
 }
 
-static ssize_t count_run(
-	void **dst, ssize_t start, ssize_t size, struct tsort_store *store)
+static ssize_t count_run(void **dst, ssize_t start, ssize_t size, struct tsort_store *store)
 {
 	ssize_t curr = start + 2;
 
@@ -139,13 +138,13 @@ static ssize_t count_run(
 
 	if (store->cmp(dst[start], dst[start + 1], store->payload) <= 0) {
 		while (curr < size - 1 &&
-				store->cmp(dst[curr - 1], dst[curr], store->payload) <= 0)
+			store->cmp(dst[curr - 1], dst[curr], store->payload) <= 0)
 			curr++;
 
 		return curr - start;
 	} else {
 		while (curr < size - 1 &&
-				store->cmp(dst[curr - 1], dst[curr], store->payload) > 0)
+			store->cmp(dst[curr - 1], dst[curr], store->payload) > 0)
 			curr++;
 
 		/* reverse in-place */
@@ -203,7 +202,10 @@ static int resize(struct tsort_store *store, size_t new_size)
 	return 0;
 }
 
-static void merge(void **dst, const struct tsort_run *stack, ssize_t stack_curr, struct tsort_store *store)
+static void merge(void **dst,
+	const struct tsort_run *stack,
+	ssize_t stack_curr,
+	struct tsort_store *store)
 {
 	const ssize_t A = stack[stack_curr - 2].length;
 	const ssize_t B = stack[stack_curr - 1].length;
@@ -253,7 +255,11 @@ static void merge(void **dst, const struct tsort_run *stack, ssize_t stack_curr,
 	}
 }
 
-static ssize_t collapse(void **dst, struct tsort_run *stack, ssize_t stack_curr, struct tsort_store *store, ssize_t size)
+static ssize_t collapse(void **dst,
+	struct tsort_run *stack,
+	ssize_t stack_curr,
+	struct tsort_store *store,
+	ssize_t size)
 {
 	ssize_t A, B, C;
 
@@ -276,8 +282,7 @@ static ssize_t collapse(void **dst, struct tsort_run *stack, ssize_t stack_curr,
 			stack[0].length += stack[1].length;
 			stack_curr--;
 			break;
-		}
-		else if (stack_curr == 2)
+		} else if (stack_curr == 2)
 			break;
 
 		A = stack[stack_curr - 3].length;
@@ -307,35 +312,35 @@ static ssize_t collapse(void **dst, struct tsort_run *stack, ssize_t stack_curr,
 	return stack_curr;
 }
 
-#define PUSH_NEXT() do {\
-	len = count_run(dst, curr, size, store);\
-	run = minrun;\
-	if (run > (ssize_t)size - curr) run = size - curr;\
-	if (run > len) {\
-		bisort(&dst[curr], len, run, cmp, payload);\
-		len = run;\
-	}\
-	run_stack[stack_curr].start = curr;\
-	run_stack[stack_curr++].length = len;\
-	curr += len;\
-	if (curr == (ssize_t)size) {\
-		/* finish up */ \
-		while (stack_curr > 1) { \
-			merge(dst, run_stack, stack_curr, store); \
-			run_stack[stack_curr - 2].length += run_stack[stack_curr - 1].length; \
-			stack_curr--; \
-		} \
-		if (store->storage != NULL) {\
-			git__free(store->storage);\
-			store->storage = NULL;\
-		}\
-		return;\
-	}\
-}\
-while (0)
+#define PUSH_NEXT()                                                                   \
+	do {                                                                              \
+		len = count_run(dst, curr, size, store);                                      \
+		run = minrun;                                                                 \
+		if (run > (ssize_t)size - curr)                                               \
+			run = size - curr;                                                        \
+		if (run > len) {                                                              \
+			bisort(&dst[curr], len, run, cmp, payload);                               \
+			len = run;                                                                \
+		}                                                                             \
+		run_stack[stack_curr].start = curr;                                           \
+		run_stack[stack_curr++].length = len;                                         \
+		curr += len;                                                                  \
+		if (curr == (ssize_t)size) {                                                  \
+			/* finish up */                                                           \
+			while (stack_curr > 1) {                                                  \
+				merge(dst, run_stack, stack_curr, store);                             \
+				run_stack[stack_curr - 2].length += run_stack[stack_curr - 1].length; \
+				stack_curr--;                                                         \
+			}                                                                         \
+			if (store->storage != NULL) {                                             \
+				git__free(store->storage);                                            \
+				store->storage = NULL;                                                \
+			}                                                                         \
+			return;                                                                   \
+		}                                                                             \
+	} while (0)
 
-void git__tsort_r(
-	void **dst, size_t size, git__sort_r_cmp cmp, void *payload)
+void git__tsort_r(void **dst, size_t size, git__sort_r_cmp cmp, void *payload)
 {
 	struct tsort_store _store, *store = &_store;
 	struct tsort_run run_stack[128];

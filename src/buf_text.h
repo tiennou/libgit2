@@ -36,8 +36,7 @@ typedef struct {
  * @param esc_with String to insert in from of each found character
  * @return 0 on success, <0 on failure (probably allocation problem)
  */
-extern int git_buf_text_puts_escaped(
-	git_buf *buf,
+extern int git_buf_text_puts_escaped(git_buf *buf,
 	const char *string,
 	const char *esc_chars,
 	const char *esc_with);
@@ -116,7 +115,8 @@ extern int git_buf_text_detect_bom(git_bom_t *bom, const git_buf *buf);
  * @param skip_bom Exclude leading BOM from stats if true
  * @return Does the buffer heuristically look like binary data
  */
-extern bool git_buf_text_gather_stats(
-	git_buf_text_stats *stats, const git_buf *buf, bool skip_bom);
+extern bool git_buf_text_gather_stats(git_buf_text_stats *stats,
+	const git_buf *buf,
+	bool skip_bom);
 
 #endif

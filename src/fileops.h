@@ -22,19 +22,23 @@
  * Read whole files into an in-memory buffer for processing
  */
 extern int git_futils_readbuffer(git_buf *obj, const char *path);
-extern int git_futils_readbuffer_updated(
-	git_buf *obj, const char *path, git_oid *checksum, int *updated);
+extern int git_futils_readbuffer_updated(git_buf *obj,
+	const char *path,
+	git_oid *checksum,
+	int *updated);
 extern int git_futils_readbuffer_fd(git_buf *obj, git_file fd, size_t len);
 
 /* Additional constants for `git_futils_writebuffer`'s `open_flags`.  We
  * support these internally and they will be removed before the `open` call.
  */
 #ifndef O_FSYNC
-# define O_FSYNC (1 << 31)
+#define O_FSYNC (1 << 31)
 #endif
 
-extern int git_futils_writebuffer(
-	const git_buf *buf, const char *path, int open_flags, mode_t mode);
+extern int git_futils_writebuffer(const git_buf *buf,
+	const char *path,
+	int open_flags,
+	mode_t mode);
 
 /**
  * File utils
@@ -50,7 +54,9 @@ extern int git_futils_writebuffer(
  * Create and open a file, while also
  * creating all the folders in its path
  */
-extern int git_futils_creat_withpath(const char *path, const mode_t dirmode, const mode_t mode);
+extern int git_futils_creat_withpath(const char *path,
+	const mode_t dirmode,
+	const mode_t mode);
 
 /**
  * Create and open a process-locked file
@@ -61,7 +67,9 @@ extern int git_futils_creat_locked(const char *path, const mode_t mode);
  * Create and open a process-locked file, while
  * also creating all the folders in its path
  */
-extern int git_futils_creat_locked_withpath(const char *path, const mode_t dirmode, const mode_t mode);
+extern int git_futils_creat_locked_withpath(const char *path,
+	const mode_t dirmode,
+	const mode_t mode);
 
 /**
  * Create a path recursively.
@@ -96,15 +104,13 @@ typedef enum {
 	GIT_MKDIR_REMOVE_SYMLINKS = 256,
 } git_futils_mkdir_flags;
 
-struct git_futils_mkdir_perfdata
-{
+struct git_futils_mkdir_perfdata {
 	size_t stat_calls;
 	size_t mkdir_calls;
 	size_t chmod_calls;
 };
 
-struct git_futils_mkdir_options
-{
+struct git_futils_mkdir_options {
 	git_strmap *dir_map;
 	git_pool *pool;
 	struct git_futils_mkdir_perfdata perfdata;
@@ -124,7 +130,11 @@ struct git_futils_mkdir_options
  * @param opts Extended options, or null.
  * @return 0 on success, else error code
  */
-extern int git_futils_mkdir_relative(const char *path, const char *base, mode_t mode, uint32_t flags, struct git_futils_mkdir_options *opts);
+extern int git_futils_mkdir_relative(const char *path,
+	const char *base,
+	mode_t mode,
+	uint32_t flags,
+	struct git_futils_mkdir_options *opts);
 
 /**
  * Create a directory or entire path.  Similar to `git_futils_mkdir_relative`
@@ -152,11 +162,11 @@ extern int git_futils_mkpath2file(const char *path, const mode_t mode);
  */
 typedef enum {
 	GIT_RMDIR_EMPTY_HIERARCHY = 0,
-	GIT_RMDIR_REMOVE_FILES    = (1 << 0),
-	GIT_RMDIR_SKIP_NONEMPTY   = (1 << 1),
-	GIT_RMDIR_EMPTY_PARENTS   = (1 << 2),
+	GIT_RMDIR_REMOVE_FILES = (1 << 0),
+	GIT_RMDIR_SKIP_NONEMPTY = (1 << 1),
+	GIT_RMDIR_EMPTY_PARENTS = (1 << 2),
 	GIT_RMDIR_REMOVE_BLOCKERS = (1 << 3),
-	GIT_RMDIR_SKIP_ROOT       = (1 << 4),
+	GIT_RMDIR_SKIP_ROOT = (1 << 4),
 } git_futils_rmdir_flags;
 
 /**
@@ -187,10 +197,7 @@ extern int git_futils_mv_withpath(const char *from, const char *to, const mode_t
  *
  * The filemode will be used for the newly created file.
  */
-extern int git_futils_cp(
-	const char *from,
-	const char *to,
-	mode_t filemode);
+extern int git_futils_cp(const char *from, const char *to, mode_t filemode);
 
 /**
  * Set the files atime and mtime to the given time, or the current time
@@ -216,12 +223,12 @@ extern int git_futils_touch(const char *path, time_t *when);
  */
 typedef enum {
 	GIT_CPDIR_CREATE_EMPTY_DIRS = (1u << 0),
-	GIT_CPDIR_COPY_SYMLINKS     = (1u << 1),
-	GIT_CPDIR_COPY_DOTFILES     = (1u << 2),
-	GIT_CPDIR_OVERWRITE         = (1u << 3),
-	GIT_CPDIR_CHMOD_DIRS        = (1u << 4),
-	GIT_CPDIR_SIMPLE_TO_MODE    = (1u << 5),
-	GIT_CPDIR_LINK_FILES        = (1u << 6),
+	GIT_CPDIR_COPY_SYMLINKS = (1u << 1),
+	GIT_CPDIR_COPY_DOTFILES = (1u << 2),
+	GIT_CPDIR_OVERWRITE = (1u << 3),
+	GIT_CPDIR_CHMOD_DIRS = (1u << 4),
+	GIT_CPDIR_SIMPLE_TO_MODE = (1u << 5),
+	GIT_CPDIR_LINK_FILES = (1u << 6),
 } git_futils_cpdir_flags;
 
 /**
@@ -236,11 +243,7 @@ typedef enum {
  * will actually be copied from the source files and the `dirmode` arg
  * will be ignored.
  */
-extern int git_futils_cp_r(
-	const char *from,
-	const char *to,
-	uint32_t flags,
-	mode_t dirmode);
+extern int git_futils_cp_r(const char *from, const char *to, uint32_t flags, mode_t dirmode);
 
 /**
  * Open a file readonly and set error if needed.
@@ -257,14 +260,15 @@ extern int git_futils_truncate(const char *path, int mode);
  */
 extern git_off_t git_futils_filesize(git_file fd);
 
-#define GIT_PERMS_IS_EXEC(MODE)		(((MODE) & 0111) != 0)
-#define GIT_PERMS_CANONICAL(MODE)	(GIT_PERMS_IS_EXEC(MODE) ? 0755 : 0644)
-#define GIT_PERMS_FOR_WRITE(MODE)   (GIT_PERMS_IS_EXEC(MODE) ? 0777 : 0666)
+#define GIT_PERMS_IS_EXEC(MODE) (((MODE)&0111) != 0)
+#define GIT_PERMS_CANONICAL(MODE) (GIT_PERMS_IS_EXEC(MODE) ? 0755 : 0644)
+#define GIT_PERMS_FOR_WRITE(MODE) (GIT_PERMS_IS_EXEC(MODE) ? 0777 : 0666)
 
-#define GIT_MODE_PERMS_MASK			0777
-#define GIT_MODE_TYPE_MASK			0170000
-#define GIT_MODE_TYPE(MODE)			((MODE) & GIT_MODE_TYPE_MASK)
-#define GIT_MODE_ISBLOB(MODE)		(GIT_MODE_TYPE(MODE) == GIT_MODE_TYPE(GIT_FILEMODE_BLOB))
+#define GIT_MODE_PERMS_MASK 0777
+#define GIT_MODE_TYPE_MASK 0170000
+#define GIT_MODE_TYPE(MODE) ((MODE)&GIT_MODE_TYPE_MASK)
+#define GIT_MODE_ISBLOB(MODE) \
+	(GIT_MODE_TYPE(MODE) == GIT_MODE_TYPE(GIT_FILEMODE_BLOB))
 
 /**
  * Convert a mode_t from the OS to a legal git mode_t value.
@@ -287,11 +291,7 @@ extern mode_t git_futils_canonical_mode(mode_t raw_mode);
  * - 0 on success;
  * - -1 on error.
  */
-extern int git_futils_mmap_ro(
-	git_map *out,
-	git_file fd,
-	git_off_t begin,
-	size_t len);
+extern int git_futils_mmap_ro(git_map *out, git_file fd, git_off_t begin, size_t len);
 
 /**
  * Read-only map an entire file.
@@ -303,9 +303,7 @@ extern int git_futils_mmap_ro(
  * - GIT_ENOTFOUND if not found;
  * - -1 on an unspecified OS related error.
  */
-extern int git_futils_mmap_ro_file(
-	git_map *out,
-	const char *path);
+extern int git_futils_mmap_ro_file(git_map *out, const char *path);
 
 /**
  * Release the memory associated with a previous memory mapping.
@@ -330,7 +328,7 @@ extern int git_futils_fake_symlink(const char *new, const char *old);
  */
 typedef struct {
 	struct timespec mtime;
-	git_off_t  size;
+	git_off_t size;
 	unsigned int ino;
 } git_futils_filestamp;
 
@@ -347,8 +345,7 @@ typedef struct {
  * @param path Path to stat and check if changed
  * @return 0 if up-to-date, 1 if out-of-date, GIT_ENOTFOUND if cannot stat
  */
-extern int git_futils_filestamp_check(
-	git_futils_filestamp *stamp, const char *path);
+extern int git_futils_filestamp_check(git_futils_filestamp *stamp, const char *path);
 
 /**
  * Set or reset file stamp data
@@ -360,14 +357,14 @@ extern int git_futils_filestamp_check(
  * @param tgt File stamp to write to
  * @param src File stamp to copy from or NULL to clear the target
  */
-extern void git_futils_filestamp_set(
-	git_futils_filestamp *tgt, const git_futils_filestamp *src);
+extern void git_futils_filestamp_set(git_futils_filestamp *tgt,
+	const git_futils_filestamp *src);
 
 /**
  * Set file stamp data from stat structure
  */
-extern void git_futils_filestamp_set_from_stat(
-	git_futils_filestamp *stamp, struct stat *st);
+extern void git_futils_filestamp_set_from_stat(git_futils_filestamp *stamp,
+	struct stat *st);
 
 /**
  * `fsync` the parent directory of the given path, if `fsync` is

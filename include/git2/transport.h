@@ -136,8 +136,20 @@ typedef struct _LIBSSH2_USERAUTH_KBDINT_PROMPT LIBSSH2_USERAUTH_KBDINT_PROMPT;
 typedef struct _LIBSSH2_USERAUTH_KBDINT_RESPONSE LIBSSH2_USERAUTH_KBDINT_RESPONSE;
 #endif
 
-typedef int (*git_cred_sign_callback)(LIBSSH2_SESSION *session, unsigned char **sig, size_t *sig_len, const unsigned char *data, size_t data_len, void **abstract);
-typedef void (*git_cred_ssh_interactive_callback)(const char* name, int name_len, const char* instruction, int instruction_len, int num_prompts, const LIBSSH2_USERAUTH_KBDINT_PROMPT* prompts, LIBSSH2_USERAUTH_KBDINT_RESPONSE* responses, void **abstract);
+typedef int (*git_cred_sign_callback)(LIBSSH2_SESSION *session,
+	unsigned char **sig,
+	size_t *sig_len,
+	const unsigned char *data,
+	size_t data_len,
+	void **abstract);
+typedef void (*git_cred_ssh_interactive_callback)(const char *name,
+	int name_len,
+	const char *instruction,
+	int instruction_len,
+	int num_prompts,
+	const LIBSSH2_USERAUTH_KBDINT_PROMPT *prompts,
+	LIBSSH2_USERAUTH_KBDINT_RESPONSE *responses,
+	void **abstract);
 
 /**
  * A ssh key from disk
@@ -198,10 +210,8 @@ GIT_EXTERN(int) git_cred_has_username(git_cred *cred);
  * @param password The password of the credential.
  * @return 0 for success or an error code for failure
  */
-GIT_EXTERN(int) git_cred_userpass_plaintext_new(
-	git_cred **out,
-	const char *username,
-	const char *password);
+GIT_EXTERN(int)
+git_cred_userpass_plaintext_new(git_cred **out, const char *username, const char *password);
 
 /**
  * Create a new passphrase-protected ssh key credential object.
@@ -214,8 +224,8 @@ GIT_EXTERN(int) git_cred_userpass_plaintext_new(
  * @param passphrase The passphrase of the credential.
  * @return 0 for success or an error code for failure
  */
-GIT_EXTERN(int) git_cred_ssh_key_new(
-	git_cred **out,
+GIT_EXTERN(int)
+git_cred_ssh_key_new(git_cred **out,
 	const char *username,
 	const char *publickey,
 	const char *privatekey,
@@ -230,8 +240,8 @@ GIT_EXTERN(int) git_cred_ssh_key_new(
  * @param payload Additional data to pass to the callback.
  * @return 0 for success or an error code for failure.
  */
-GIT_EXTERN(int) git_cred_ssh_interactive_new(
-	git_cred **out,
+GIT_EXTERN(int)
+git_cred_ssh_interactive_new(git_cred **out,
 	const char *username,
 	git_cred_ssh_interactive_callback prompt_callback,
 	void *payload);
@@ -244,9 +254,8 @@ GIT_EXTERN(int) git_cred_ssh_interactive_new(
  * @param username username to use to authenticate
  * @return 0 for success or an error code for failure
  */
-GIT_EXTERN(int) git_cred_ssh_key_from_agent(
-	git_cred **out,
-	const char *username);
+GIT_EXTERN(int)
+git_cred_ssh_key_from_agent(git_cred **out, const char *username);
 
 /**
  * Create an ssh key credential with a custom signing function.
@@ -266,8 +275,8 @@ GIT_EXTERN(int) git_cred_ssh_key_from_agent(
  * @param payload Additional data to pass to the callback.
  * @return 0 for success or an error code for failure
  */
-GIT_EXTERN(int) git_cred_ssh_custom_new(
-	git_cred **out,
+GIT_EXTERN(int)
+git_cred_ssh_custom_new(git_cred **out,
 	const char *username,
 	const char *publickey,
 	size_t publickey_len,
@@ -300,8 +309,8 @@ GIT_EXTERN(int) git_cred_username_new(git_cred **cred, const char *username);
  * @param passphrase The passphrase of the credential.
  * @return 0 for success or an error code for failure
  */
-GIT_EXTERN(int) git_cred_ssh_key_memory_new(
-	git_cred **out,
+GIT_EXTERN(int)
+git_cred_ssh_key_memory_new(git_cred **out,
 	const char *username,
 	const char *publickey,
 	const char *privatekey,
@@ -330,8 +339,7 @@ GIT_EXTERN(void) git_cred_free(git_cred *cred);
  * @return 0 for success, < 0 to indicate an error, > 0 to indicate
  *       no credential was acquired
  */
-typedef int (*git_cred_acquire_cb)(
-	git_cred **cred,
+typedef int (*git_cred_acquire_cb)(git_cred **cred,
 	const char *url,
 	const char *username_from_url,
 	unsigned int allowed_types,

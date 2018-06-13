@@ -38,7 +38,7 @@ void git_reflog_free(git_reflog *reflog)
 	if (reflog->db)
 		GIT_REFCOUNT_DEC(reflog->db, git_refdb__free);
 
-	for (i=0; i < reflog->entries.length; i++) {
+	for (i = 0; i < reflog->entries.length; i++) {
 		entry = git_vector_get(&reflog->entries, i);
 
 		git_reflog_entry__free(entry);
@@ -49,7 +49,7 @@ void git_reflog_free(git_reflog *reflog)
 	git__free(reflog);
 }
 
-int git_reflog_read(git_reflog **reflog, git_repository *repo,  const char *name)
+int git_reflog_read(git_reflog **reflog, git_repository *repo, const char *name)
 {
 	git_refdb *refdb;
 	int error;
@@ -72,7 +72,10 @@ int git_reflog_write(git_reflog *reflog)
 	return db->backend->reflog_write(db->backend, reflog);
 }
 
-int git_reflog_append(git_reflog *reflog, const git_oid *new_oid, const git_signature *committer, const char *msg)
+int git_reflog_append(git_reflog *reflog,
+	const git_oid *new_oid,
+	const git_signature *committer,
+	const char *msg)
 {
 	git_reflog_entry *entry;
 	const git_reflog_entry *previous;
@@ -149,7 +152,7 @@ size_t git_reflog_entrycount(git_reflog *reflog)
 	return reflog->entries.length;
 }
 
-const git_reflog_entry * git_reflog_entry_byindex(const git_reflog *reflog, size_t idx)
+const git_reflog_entry *git_reflog_entry_byindex(const git_reflog *reflog, size_t idx)
 {
 	assert(reflog);
 
@@ -160,25 +163,25 @@ const git_reflog_entry * git_reflog_entry_byindex(const git_reflog *reflog, size
 		&reflog->entries, reflog_inverse_index(idx, reflog->entries.length));
 }
 
-const git_oid * git_reflog_entry_id_old(const git_reflog_entry *entry)
+const git_oid *git_reflog_entry_id_old(const git_reflog_entry *entry)
 {
 	assert(entry);
 	return &entry->oid_old;
 }
 
-const git_oid * git_reflog_entry_id_new(const git_reflog_entry *entry)
+const git_oid *git_reflog_entry_id_new(const git_reflog_entry *entry)
 {
 	assert(entry);
 	return &entry->oid_cur;
 }
 
-const git_signature * git_reflog_entry_committer(const git_reflog_entry *entry)
+const git_signature *git_reflog_entry_committer(const git_reflog_entry *entry)
 {
 	assert(entry);
 	return entry->committer;
 }
 
-const char * git_reflog_entry_message(const git_reflog_entry *entry)
+const char *git_reflog_entry_message(const git_reflog_entry *entry)
 {
 	assert(entry);
 	return entry->msg;
@@ -194,14 +197,13 @@ int git_reflog_drop(git_reflog *reflog, size_t idx, int rewrite_previous_entry)
 	entry = (git_reflog_entry *)git_reflog_entry_byindex(reflog, idx);
 
 	if (entry == NULL) {
-		giterr_set(GITERR_REFERENCE, "no reflog entry at index %"PRIuZ, idx);
+		giterr_set(GITERR_REFERENCE, "no reflog entry at index %" PRIuZ, idx);
 		return GIT_ENOTFOUND;
 	}
 
 	git_reflog_entry__free(entry);
 
-	if (git_vector_remove(
-			&reflog->entries, reflog_inverse_index(idx, entrycount)) < 0)
+	if (git_vector_remove(&reflog->entries, reflog_inverse_index(idx, entrycount)) < 0)
 		return -1;
 
 	if (!rewrite_previous_entry)

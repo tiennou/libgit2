@@ -1,17 +1,16 @@
 /*
-* Copyright (C) the libgit2 contributors. All rights reserved.
-*
-* This file is part of libgit2, distributed under the GNU GPL v2 with
-* a Linking Exception. For full terms see the included COPYING file.
-*/
+ * Copyright (C) the libgit2 contributors. All rights reserved.
+ *
+ * This file is part of libgit2, distributed under the GNU GPL v2 with
+ * a Linking Exception. For full terms see the included COPYING file.
+ */
 
 #include "patch.h"
 
 #include "git2/patch.h"
 #include "diff.h"
 
-int git_patch__invoke_callbacks(
-	git_patch *patch,
+int git_patch__invoke_callbacks(git_patch *patch,
 	git_diff_file_cb file_cb,
 	git_diff_binary_cb binary_cb,
 	git_diff_hunk_cb hunk_cb,
@@ -47,8 +46,7 @@ int git_patch__invoke_callbacks(
 			continue;
 
 		for (j = 0; !error && j < h->line_count; ++j) {
-			git_diff_line *l =
-				git_array_get(patch->lines, h->line_start + j);
+			git_diff_line *l = git_array_get(patch->lines, h->line_start + j);
 
 			error = line_cb(patch->delta, &h->hunk, l, payload);
 		}
@@ -57,8 +55,7 @@ int git_patch__invoke_callbacks(
 	return error;
 }
 
-size_t git_patch_size(
-	git_patch *patch,
+size_t git_patch_size(git_patch *patch,
 	int include_context,
 	int include_hunk_headers,
 	int include_file_headers)
@@ -79,7 +76,7 @@ size_t git_patch_size(
 		git_buf file_header = GIT_BUF_INIT;
 
 		if (git_diff_delta__format_file_header(
-			&file_header, patch->delta, NULL, NULL, 0) < 0)
+				&file_header, patch->delta, NULL, NULL, 0) < 0)
 			giterr_clear();
 		else
 			out += git_buf_len(&file_header);
@@ -90,8 +87,7 @@ size_t git_patch_size(
 	return out;
 }
 
-int git_patch_line_stats(
-	size_t *total_ctxt,
+int git_patch_line_stats(size_t *total_ctxt,
 	size_t *total_adds,
 	size_t *total_dels,
 	const git_patch *patch)
@@ -106,13 +102,19 @@ int git_patch_line_stats(
 			continue;
 
 		switch (line->origin) {
-		case GIT_DIFF_LINE_CONTEXT:  totals[0]++; break;
-		case GIT_DIFF_LINE_ADDITION: totals[1]++; break;
-		case GIT_DIFF_LINE_DELETION: totals[2]++; break;
+		case GIT_DIFF_LINE_CONTEXT:
+			totals[0]++;
+			break;
+		case GIT_DIFF_LINE_ADDITION:
+			totals[1]++;
+			break;
+		case GIT_DIFF_LINE_DELETION:
+			totals[2]++;
+			break;
 		default:
 			/* diff --stat and --numstat don't count EOFNL marks because
-			* they will always be paired with a ADDITION or DELETION line.
-			*/
+			 * they will always be paired with a ADDITION or DELETION line.
+			 */
 			break;
 		}
 	}
@@ -145,8 +147,7 @@ static int patch_error_outofrange(const char *thing)
 	return GIT_ENOTFOUND;
 }
 
-int git_patch_get_hunk(
-	const git_diff_hunk **out,
+int git_patch_get_hunk(const git_diff_hunk **out,
 	size_t *lines_in_hunk,
 	git_patch *patch,
 	size_t hunk_idx)
@@ -157,13 +158,17 @@ int git_patch_get_hunk(
 	hunk = git_array_get(patch->hunks, hunk_idx);
 
 	if (!hunk) {
-		if (out) *out = NULL;
-		if (lines_in_hunk) *lines_in_hunk = 0;
+		if (out)
+			*out = NULL;
+		if (lines_in_hunk)
+			*lines_in_hunk = 0;
 		return patch_error_outofrange("hunk");
 	}
 
-	if (out) *out = &hunk->hunk;
-	if (lines_in_hunk) *lines_in_hunk = hunk->line_count;
+	if (out)
+		*out = &hunk->hunk;
+	if (lines_in_hunk)
+		*lines_in_hunk = hunk->line_count;
 	return 0;
 }
 
@@ -177,8 +182,7 @@ int git_patch_num_lines_in_hunk(const git_patch *patch, size_t hunk_idx)
 	return (int)hunk->line_count;
 }
 
-int git_patch_get_line_in_hunk(
-	const git_diff_line **out,
+int git_patch_get_line_in_hunk(const git_diff_line **out,
 	git_patch *patch,
 	size_t hunk_idx,
 	size_t line_of_hunk)
@@ -189,18 +193,20 @@ int git_patch_get_line_in_hunk(
 	assert(patch);
 
 	if (!(hunk = git_array_get(patch->hunks, hunk_idx))) {
-		if (out) *out = NULL;
+		if (out)
+			*out = NULL;
 		return patch_error_outofrange("hunk");
 	}
 
 	if (line_of_hunk >= hunk->line_count ||
-		!(line = git_array_get(
-			patch->lines, hunk->line_start + line_of_hunk))) {
-		if (out) *out = NULL;
+		!(line = git_array_get(patch->lines, hunk->line_start + line_of_hunk))) {
+		if (out)
+			*out = NULL;
 		return patch_error_outofrange("line");
 	}
 
-	if (out) *out = line;
+	if (out)
+		*out = line;
 	return 0;
 }
 

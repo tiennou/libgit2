@@ -10,8 +10,9 @@
 #include "pool.h"
 #include "tree.h"
 
-static git_tree_cache *find_child(
-	const git_tree_cache *tree, const char *path, const char *end)
+static git_tree_cache *find_child(const git_tree_cache *tree,
+	const char *path,
+	const char *end)
 {
 	size_t i, dirlen = end ? (size_t)(end - path) : strlen(path);
 
@@ -72,8 +73,9 @@ const git_tree_cache *git_tree_cache_get(const git_tree_cache *tree, const char 
 }
 
 static int read_tree_internal(git_tree_cache **out,
-			      const char **buffer_in, const char *buffer_end,
-			      git_pool *pool)
+	const char **buffer_in,
+	const char *buffer_end,
+	git_pool *pool)
 {
 	git_tree_cache *tree = NULL;
 	const char *name_start, *buffer;
@@ -99,7 +101,7 @@ static int read_tree_internal(git_tree_cache **out,
 	if (*buffer != ' ' || ++buffer >= buffer_end)
 		goto corrupted;
 
-	 /* Number of children of the tree, newline-terminated */
+	/* Number of children of the tree, newline-terminated */
 	if (git__strtol32(&count, buffer, &buffer, 10) < 0 || count < 0)
 		goto corrupted;
 
@@ -122,7 +124,8 @@ static int read_tree_internal(git_tree_cache **out,
 	if (tree->children_count > 0) {
 		unsigned int i;
 
-		tree->children = git_pool_malloc(pool, tree->children_count * sizeof(git_tree_cache *));
+		tree->children = git_pool_malloc(
+			pool, tree->children_count * sizeof(git_tree_cache *));
 		GITERR_CHECK_ALLOC(tree->children);
 
 		memset(tree->children, 0x0, tree->children_count * sizeof(git_tree_cache *));
@@ -137,12 +140,15 @@ static int read_tree_internal(git_tree_cache **out,
 	*out = tree;
 	return 0;
 
- corrupted:
+corrupted:
 	giterr_set(GITERR_INDEX, "corrupted TREE extension in index");
 	return -1;
 }
 
-int git_tree_cache_read(git_tree_cache **tree, const char *buffer, size_t buffer_size, git_pool *pool)
+int git_tree_cache_read(git_tree_cache **tree,
+	const char *buffer,
+	size_t buffer_size,
+	git_pool *pool)
 {
 	const char *buffer_end = buffer + buffer_size;
 
@@ -150,7 +156,8 @@ int git_tree_cache_read(git_tree_cache **tree, const char *buffer, size_t buffer
 		return -1;
 
 	if (buffer < buffer_end) {
-		giterr_set(GITERR_INDEX, "corrupted TREE extension in index (unexpected trailing data)");
+		giterr_set(GITERR_INDEX,
+			"corrupted TREE extension in index (unexpected trailing data)");
 		return -1;
 	}
 
@@ -197,7 +204,8 @@ static int read_tree_recursive(git_tree_cache *cache, const git_tree *tree, git_
 			continue;
 		}
 
-		if ((error = git_tree_cache_new(&cache->children[j], git_tree_entry_name(entry), pool)) < 0)
+		if ((error = git_tree_cache_new(
+				 &cache->children[j], git_tree_entry_name(entry), pool)) < 0)
 			return error;
 
 		if ((error = git_tree_lookup(&subtree, repo, git_tree_entry_id(entry))) < 0)
@@ -253,10 +261,11 @@ static void write_tree(git_buf *out, git_tree_cache *tree)
 {
 	size_t i;
 
-	git_buf_printf(out, "%s%c%"PRIdZ" %"PRIuZ"\n", tree->name, 0, tree->entry_count, tree->children_count);
+	git_buf_printf(out, "%s%c%" PRIdZ " %" PRIuZ "\n", tree->name, 0,
+		tree->entry_count, tree->children_count);
 
 	if (tree->entry_count != -1)
-		git_buf_put(out, (const char *) &tree->oid, GIT_OID_RAWSZ);
+		git_buf_put(out, (const char *)&tree->oid, GIT_OID_RAWSZ);
 
 	for (i = 0; i < tree->children_count; i++)
 		write_tree(out, tree->children[i]);

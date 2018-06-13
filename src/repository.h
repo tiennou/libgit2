@@ -38,18 +38,18 @@ extern bool git_repository__fsync_gitdir;
 /** Cvar cache identifiers */
 typedef enum {
 	GIT_CVAR_AUTO_CRLF = 0, /* core.autocrlf */
-	GIT_CVAR_EOL,           /* core.eol */
-	GIT_CVAR_SYMLINKS,      /* core.symlinks */
-	GIT_CVAR_IGNORECASE,    /* core.ignorecase */
-	GIT_CVAR_FILEMODE,      /* core.filemode */
-	GIT_CVAR_IGNORESTAT,    /* core.ignorestat */
-	GIT_CVAR_TRUSTCTIME,    /* core.trustctime */
-	GIT_CVAR_ABBREV,        /* core.abbrev */
-	GIT_CVAR_PRECOMPOSE,    /* core.precomposeunicode */
-	GIT_CVAR_SAFE_CRLF,		/* core.safecrlf */
+	GIT_CVAR_EOL, /* core.eol */
+	GIT_CVAR_SYMLINKS, /* core.symlinks */
+	GIT_CVAR_IGNORECASE, /* core.ignorecase */
+	GIT_CVAR_FILEMODE, /* core.filemode */
+	GIT_CVAR_IGNORESTAT, /* core.ignorestat */
+	GIT_CVAR_TRUSTCTIME, /* core.trustctime */
+	GIT_CVAR_ABBREV, /* core.abbrev */
+	GIT_CVAR_PRECOMPOSE, /* core.precomposeunicode */
+	GIT_CVAR_SAFE_CRLF, /* core.safecrlf */
 	GIT_CVAR_LOGALLREFUPDATES, /* core.logallrefupdates */
-	GIT_CVAR_PROTECTHFS,    /* core.protectHFS */
-	GIT_CVAR_PROTECTNTFS,   /* core.protectNTFS */
+	GIT_CVAR_PROTECTHFS, /* core.protectHFS */
+	GIT_CVAR_PROTECTNTFS, /* core.protectNTFS */
 	GIT_CVAR_FSYNCOBJECTFILES, /* core.fsyncObjectFiles */
 	GIT_CVAR_CACHE_MAX
 } git_cvar_cached;
@@ -119,7 +119,7 @@ typedef enum {
 enum {
 	GIT_REPOSITORY_INIT__HAS_DOTGIT = (1u << 16),
 	GIT_REPOSITORY_INIT__NATURAL_WD = (1u << 17),
-	GIT_REPOSITORY_INIT__IS_REINIT  = (1u << 18),
+	GIT_REPOSITORY_INIT__IS_REINIT = (1u << 18),
 };
 
 /** Internal structure for repository object */
@@ -144,8 +144,8 @@ struct git_repository {
 
 	git_array_t(git_buf) reserved_names;
 
-	unsigned is_bare:1;
-	unsigned is_worktree:1;
+	unsigned is_bare : 1;
+	unsigned is_worktree : 1;
 
 	unsigned int lru_counter;
 
@@ -171,7 +171,9 @@ int git_repository_create_head(const char *git_dir, const char *ref_name);
  * return value is passed back to the caller of
  * `git_repository_foreach_head`
  */
-typedef int (*git_repository_foreach_head_cb)(git_repository *repo, const char *path, void *payload);
+typedef int (*git_repository_foreach_head_cb)(git_repository *repo,
+	const char *path,
+	void *payload);
 
 /*
  * Iterate over repository and all worktree HEADs.
@@ -181,7 +183,9 @@ typedef int (*git_repository_foreach_head_cb)(git_repository *repo, const char *
  * executed with the given payload. The return value equals the
  * return value of the last executed callback function.
  */
-int git_repository_foreach_head(git_repository *repo, git_repository_foreach_head_cb cb, void *payload);
+int git_repository_foreach_head(git_repository *repo,
+	git_repository_foreach_head_cb cb,
+	void *payload);
 
 /*
  * Weak pointers to repository internals.
@@ -204,15 +208,13 @@ int git_repository_index__weakptr(git_index **out, git_repository *repo);
 int git_repository__cvar(int *out, git_repository *repo, git_cvar_cached cvar);
 void git_repository__cvar_cache_clear(git_repository *repo);
 
-GIT_INLINE(int) git_repository__ensure_not_bare(
-	git_repository *repo,
-	const char *operation_name)
+GIT_INLINE(int)
+git_repository__ensure_not_bare(git_repository *repo, const char *operation_name)
 {
 	if (!git_repository_is_bare(repo))
 		return 0;
 
-	giterr_set(
-		GITERR_REPOSITORY,
+	giterr_set(GITERR_REPOSITORY,
 		"cannot %s. This operation is not allowed against bare repositories.",
 		operation_name);
 
@@ -240,7 +242,9 @@ extern size_t git_repository__reserved_names_posix_len;
  * shortname.  If that fails, this function returns false, but out and outlen
  * will still be populated with good defaults.
  */
-bool git_repository__reserved_names(
-	git_buf **out, size_t *outlen, git_repository *repo, bool include_ntfs);
+bool git_repository__reserved_names(git_buf **out,
+	size_t *outlen,
+	git_repository *repo,
+	bool include_ntfs);
 
 #endif

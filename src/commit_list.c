@@ -13,8 +13,8 @@
 
 int git_commit_list_time_cmp(const void *a, const void *b)
 {
-	int64_t time_a = ((git_commit_list_node *) a)->time;
-	int64_t time_b = ((git_commit_list_node *) b)->time;
+	int64_t time_a = ((git_commit_list_node *)a)->time;
+	int64_t time_b = ((git_commit_list_node *)b)->time;
 
 	if (time_a < time_b)
 		return 1;
@@ -24,7 +24,8 @@ int git_commit_list_time_cmp(const void *a, const void *b)
 	return 0;
 }
 
-git_commit_list *git_commit_list_insert(git_commit_list_node *item, git_commit_list **list_p)
+git_commit_list *git_commit_list_insert(git_commit_list_node *item,
+	git_commit_list **list_p)
 {
 	git_commit_list *new_list = git__malloc(sizeof(git_commit_list));
 	if (new_list != NULL) {
@@ -35,7 +36,8 @@ git_commit_list *git_commit_list_insert(git_commit_list_node *item, git_commit_l
 	return new_list;
 }
 
-git_commit_list *git_commit_list_insert_by_date(git_commit_list_node *item, git_commit_list **list_p)
+git_commit_list *git_commit_list_insert_by_date(git_commit_list_node *item,
+	git_commit_list **list_p)
 {
 	git_commit_list **pp = list_p;
 	git_commit_list *p;
@@ -66,14 +68,15 @@ static int commit_error(git_commit_list_node *commit, const char *msg)
 	return -1;
 }
 
-static git_commit_list_node **alloc_parents(
-	git_revwalk *walk, git_commit_list_node *commit, size_t n_parents)
+static git_commit_list_node **alloc_parents(git_revwalk *walk,
+	git_commit_list_node *commit,
+	size_t n_parents)
 {
 	if (n_parents <= PARENTS_PER_COMMIT)
 		return (git_commit_list_node **)((char *)commit + sizeof(git_commit_list_node));
 
-	return (git_commit_list_node **)git_pool_malloc(
-		&walk->commit_pool, (uint32_t)(n_parents * sizeof(git_commit_list_node *)));
+	return (git_commit_list_node **)git_pool_malloc(&walk->commit_pool,
+		(uint32_t)(n_parents * sizeof(git_commit_list_node *)));
 }
 
 
@@ -105,8 +108,7 @@ git_commit_list_node *git_commit_list_pop(git_commit_list **stack)
 	return item;
 }
 
-static int commit_quick_parse(
-	git_revwalk *walk,
+static int commit_quick_parse(git_revwalk *walk,
 	git_commit_list_node *commit,
 	const uint8_t *buffer,
 	size_t buffer_len)
@@ -120,7 +122,8 @@ static int commit_quick_parse(
 	buffer += strlen("tree ") + GIT_OID_HEXSZ + 1;
 
 	parents_start = buffer;
-	while (buffer + parent_len < buffer_end && memcmp(buffer, "parent ", strlen("parent ")) == 0) {
+	while (buffer + parent_len < buffer_end &&
+		memcmp(buffer, "parent ", strlen("parent ")) == 0) {
 		parents++;
 		buffer += parent_len;
 	}
@@ -171,7 +174,8 @@ static int commit_quick_parse(
 			buffer--;
 	}
 
-	if ((buffer == committer_start) || (git__strtol64(&commit_time, (char *)(buffer + 1), NULL, 10) < 0))
+	if ((buffer == committer_start) ||
+		(git__strtol64(&commit_time, (char *)(buffer + 1), NULL, 10) < 0))
 		return commit_error(commit, "cannot parse commit time");
 
 	commit->time = commit_time;
@@ -194,12 +198,9 @@ int git_commit_list_parse(git_revwalk *walk, git_commit_list_node *commit)
 		giterr_set(GITERR_INVALID, "object is no commit object");
 		error = -1;
 	} else
-		error = commit_quick_parse(
-			walk, commit,
-			(const uint8_t *)git_odb_object_data(obj),
-			git_odb_object_size(obj));
+		error = commit_quick_parse(walk, commit,
+			(const uint8_t *)git_odb_object_data(obj), git_odb_object_size(obj));
 
 	git_odb_object_free(obj);
 	return error;
 }
-

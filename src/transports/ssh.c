@@ -81,7 +81,8 @@ static int gen_proto(git_buf *request, const char *cmd, const char *url)
 		}
 	}
 	repo = strchr(url, ':');
-	if (repo) repo++;
+	if (repo)
+		repo++;
 
 done:
 	if (!repo) {
@@ -89,7 +90,8 @@ done:
 		return -1;
 	}
 
-	len = strlen(cmd) + 1 /* Space */ + 1 /* Quote */ + strlen(repo) + 1 /* Quote */ + 1;
+	len = strlen(cmd) + 1 /* Space */ + 1 /* Quote */ + strlen(repo) +
+		1 /* Quote */ + 1;
 
 	git_buf_grow(request, len);
 	git_buf_puts(request, cmd);
@@ -125,8 +127,7 @@ cleanup:
 	return error;
 }
 
-static int ssh_stream_read(
-	git_smart_subtransport_stream *stream,
+static int ssh_stream_read(git_smart_subtransport_stream *stream,
 	char *buffer,
 	size_t buf_size,
 	size_t *bytes_read)
@@ -165,8 +166,7 @@ static int ssh_stream_read(
 	return 0;
 }
 
-static int ssh_stream_write(
-	git_smart_subtransport_stream *stream,
+static int ssh_stream_write(git_smart_subtransport_stream *stream,
 	const char *buffer,
 	size_t len)
 {
@@ -227,8 +227,7 @@ static void ssh_stream_free(git_smart_subtransport_stream *stream)
 	git__free(s);
 }
 
-static int ssh_stream_alloc(
-	ssh_subtransport *t,
+static int ssh_stream_alloc(ssh_subtransport *t,
 	const char *url,
 	const char *cmd,
 	git_smart_subtransport_stream **stream)
@@ -257,10 +256,7 @@ static int ssh_stream_alloc(
 	return 0;
 }
 
-static int git_ssh_extract_url_parts(
-	char **host,
-	char **username,
-	const char *url)
+static int git_ssh_extract_url_parts(char **host, char **username, const char *url)
 {
 	char *colon, *at;
 	const char *start;
@@ -289,7 +285,8 @@ static int git_ssh_extract_url_parts(
 	return 0;
 }
 
-static int ssh_agent_auth(LIBSSH2_SESSION *session, git_cred_ssh_key *c) {
+static int ssh_agent_auth(LIBSSH2_SESSION *session, git_cred_ssh_key *c)
+{
 	int rc = LIBSSH2_ERROR_NONE;
 
 	struct libssh2_agent_publickey *curr, *prev = NULL;
@@ -343,9 +340,7 @@ shutdown:
 	return rc;
 }
 
-static int _git_ssh_authenticate_session(
-	LIBSSH2_SESSION* session,
-	git_cred* cred)
+static int _git_ssh_authenticate_session(LIBSSH2_SESSION *session, git_cred *cred)
 {
 	int rc;
 
@@ -361,9 +356,8 @@ static int _git_ssh_authenticate_session(
 			git_cred_ssh_key *c = (git_cred_ssh_key *)cred;
 
 			if (c->privatekey)
-				rc = libssh2_userauth_publickey_fromfile(
-					session, c->username, c->publickey,
-					c->privatekey, c->passphrase);
+				rc = libssh2_userauth_publickey_fromfile(session, c->username,
+					c->publickey, c->privatekey, c->passphrase);
 			else
 				rc = ssh_agent_auth(session, c);
 
@@ -372,9 +366,9 @@ static int _git_ssh_authenticate_session(
 		case GIT_CREDTYPE_SSH_CUSTOM: {
 			git_cred_ssh_custom *c = (git_cred_ssh_custom *)cred;
 
-			rc = libssh2_userauth_publickey(
-				session, c->username, (const unsigned char *)c->publickey,
-				c->publickey_len, c->sign_callback, &c->payload);
+			rc = libssh2_userauth_publickey(session, c->username,
+				(const unsigned char *)c->publickey, c->publickey_len,
+				c->sign_callback, &c->payload);
 			break;
 		}
 		case GIT_CREDTYPE_SSH_INTERACTIVE: {
@@ -405,15 +399,10 @@ static int _git_ssh_authenticate_session(
 			assert(c->username);
 			assert(c->privatekey);
 
-			rc = libssh2_userauth_publickey_frommemory(
-				session,
-				c->username,
-				strlen(c->username),
-				c->publickey,
-				c->publickey ? strlen(c->publickey) : 0,
-				c->privatekey,
-				strlen(c->privatekey),
-				c->passphrase);
+			rc = libssh2_userauth_publickey_frommemory(session, c->username,
+				strlen(c->username), c->publickey,
+				c->publickey ? strlen(c->publickey) : 0, c->privatekey,
+				strlen(c->privatekey), c->passphrase);
 			break;
 		}
 #endif
@@ -422,10 +411,9 @@ static int _git_ssh_authenticate_session(
 		}
 	} while (LIBSSH2_ERROR_EAGAIN == rc || LIBSSH2_ERROR_TIMEOUT == rc);
 
-	if (rc == LIBSSH2_ERROR_PASSWORD_EXPIRED ||
-		rc == LIBSSH2_ERROR_AUTHENTICATION_FAILED ||
+	if (rc == LIBSSH2_ERROR_PASSWORD_EXPIRED || rc == LIBSSH2_ERROR_AUTHENTICATION_FAILED ||
 		rc == LIBSSH2_ERROR_PUBLICKEY_UNVERIFIED)
-			return GIT_EAUTH;
+		return GIT_EAUTH;
 
 	if (rc != LIBSSH2_ERROR_NONE) {
 		if (!giterr_last())
@@ -444,8 +432,8 @@ static int request_creds(git_cred **out, ssh_subtransport *t, const char *user, 
 	if (!t->owner->cred_acquire_cb) {
 		no_callback = 1;
 	} else {
-		error = t->owner->cred_acquire_cb(&cred, t->owner->url, user, auth_methods,
-						  t->owner->cred_acquire_payload);
+		error = t->owner->cred_acquire_cb(&cred, t->owner->url, user,
+			auth_methods, t->owner->cred_acquire_payload);
 
 		if (error == GIT_PASSTHROUGH)
 			no_callback = 1;
@@ -473,13 +461,11 @@ static int request_creds(git_cred **out, ssh_subtransport *t, const char *user, 
 	return 0;
 }
 
-static int _git_ssh_session_create(
-	LIBSSH2_SESSION** session,
-	git_stream *io)
+static int _git_ssh_session_create(LIBSSH2_SESSION **session, git_stream *io)
 {
 	int rc = 0;
-	LIBSSH2_SESSION* s;
-	git_socket_stream *socket = (git_socket_stream *) io;
+	LIBSSH2_SESSION *s;
+	git_socket_stream *socket = (git_socket_stream *)io;
 
 	assert(session);
 
@@ -506,20 +492,19 @@ static int _git_ssh_session_create(
 	return 0;
 }
 
-static int _git_ssh_setup_conn(
-	ssh_subtransport *t,
+static int _git_ssh_setup_conn(ssh_subtransport *t,
 	const char *url,
 	const char *cmd,
 	git_smart_subtransport_stream **stream)
 {
-	char *host=NULL, *port=NULL, *path=NULL, *user=NULL, *pass=NULL;
-	const char *default_port="22";
+	char *host = NULL, *port = NULL, *path = NULL, *user = NULL, *pass = NULL;
+	const char *default_port = "22";
 	int auth_methods, error = 0;
 	size_t i;
 	ssh_stream *s;
 	git_cred *cred = NULL;
-	LIBSSH2_SESSION* session=NULL;
-	LIBSSH2_CHANNEL* channel=NULL;
+	LIBSSH2_SESSION *session = NULL;
+	LIBSSH2_CHANNEL *channel = NULL;
 
 	t->current_stream = NULL;
 
@@ -535,7 +520,8 @@ static int _git_ssh_setup_conn(
 		const char *p = ssh_prefixes[i];
 
 		if (!git__prefixcmp(url, p)) {
-			if ((error = gitno_extract_url_parts(&host, &port, &path, &user, &pass, url, default_port)) < 0)
+			if ((error = gitno_extract_url_parts(
+					 &host, &port, &path, &user, &pass, url, default_port)) < 0)
 				goto done;
 
 			goto post_extract;
@@ -548,14 +534,14 @@ static int _git_ssh_setup_conn(
 
 post_extract:
 	if ((error = git_socket_stream_new(&s->io, host, port)) < 0 ||
-	    (error = git_stream_connect(s->io)) < 0)
+		(error = git_stream_connect(s->io)) < 0)
 		goto done;
 
 	if ((error = _git_ssh_session_create(&session, s->io)) < 0)
 		goto done;
 
 	if (t->owner->certificate_check_cb != NULL) {
-		git_cert_hostkey cert = {{ 0 }}, *cert_ptr;
+		git_cert_hostkey cert = { { 0 } }, *cert_ptr;
 		const char *key;
 
 		cert.parent.cert_type = GIT_CERT_HOSTKEY_LIBSSH2;
@@ -583,7 +569,8 @@ post_extract:
 
 		cert_ptr = &cert;
 
-		error = t->owner->certificate_check_cb((git_cert *) cert_ptr, 0, host, t->owner->message_cb_payload);
+		error = t->owner->certificate_check_cb(
+			(git_cert *)cert_ptr, 0, host, t->owner->message_cb_payload);
 		if (error < 0) {
 			if (!giterr_last())
 				giterr_set(GITERR_NET, "user cancelled hostkey check");
@@ -597,7 +584,7 @@ post_extract:
 		if ((error = request_creds(&cred, t, NULL, GIT_CREDTYPE_USERNAME)) < 0)
 			goto done;
 
-		user = git__strdup(((git_cred_username *) cred)->username);
+		user = git__strdup(((git_cred_username *)cred)->username);
 		cred->free(cred);
 		cred = NULL;
 		if (!user)
@@ -670,8 +657,7 @@ done:
 	return error;
 }
 
-static int ssh_uploadpack_ls(
-	ssh_subtransport *t,
+static int ssh_uploadpack_ls(ssh_subtransport *t,
 	const char *url,
 	git_smart_subtransport_stream **stream)
 {
@@ -680,8 +666,7 @@ static int ssh_uploadpack_ls(
 	return _git_ssh_setup_conn(t, url, cmd, stream);
 }
 
-static int ssh_uploadpack(
-	ssh_subtransport *t,
+static int ssh_uploadpack(ssh_subtransport *t,
 	const char *url,
 	git_smart_subtransport_stream **stream)
 {
@@ -696,8 +681,7 @@ static int ssh_uploadpack(
 	return -1;
 }
 
-static int ssh_receivepack_ls(
-	ssh_subtransport *t,
+static int ssh_receivepack_ls(ssh_subtransport *t,
 	const char *url,
 	git_smart_subtransport_stream **stream)
 {
@@ -707,8 +691,7 @@ static int ssh_receivepack_ls(
 	return _git_ssh_setup_conn(t, url, cmd, stream);
 }
 
-static int ssh_receivepack(
-	ssh_subtransport *t,
+static int ssh_receivepack(ssh_subtransport *t,
 	const char *url,
 	git_smart_subtransport_stream **stream)
 {
@@ -723,26 +706,25 @@ static int ssh_receivepack(
 	return -1;
 }
 
-static int _ssh_action(
-	git_smart_subtransport_stream **stream,
+static int _ssh_action(git_smart_subtransport_stream **stream,
 	git_smart_subtransport *subtransport,
 	const char *url,
 	git_smart_service_t action)
 {
-	ssh_subtransport *t = (ssh_subtransport *) subtransport;
+	ssh_subtransport *t = (ssh_subtransport *)subtransport;
 
 	switch (action) {
-		case GIT_SERVICE_UPLOADPACK_LS:
-			return ssh_uploadpack_ls(t, url, stream);
+	case GIT_SERVICE_UPLOADPACK_LS:
+		return ssh_uploadpack_ls(t, url, stream);
 
-		case GIT_SERVICE_UPLOADPACK:
-			return ssh_uploadpack(t, url, stream);
+	case GIT_SERVICE_UPLOADPACK:
+		return ssh_uploadpack(t, url, stream);
 
-		case GIT_SERVICE_RECEIVEPACK_LS:
-			return ssh_receivepack_ls(t, url, stream);
+	case GIT_SERVICE_RECEIVEPACK_LS:
+		return ssh_receivepack_ls(t, url, stream);
 
-		case GIT_SERVICE_RECEIVEPACK:
-			return ssh_receivepack(t, url, stream);
+	case GIT_SERVICE_RECEIVEPACK:
+		return ssh_receivepack(t, url, stream);
 	}
 
 	*stream = NULL;
@@ -751,7 +733,7 @@ static int _ssh_action(
 
 static int _ssh_close(git_smart_subtransport *subtransport)
 {
-	ssh_subtransport *t = (ssh_subtransport *) subtransport;
+	ssh_subtransport *t = (ssh_subtransport *)subtransport;
 
 	assert(!t->current_stream);
 
@@ -762,7 +744,7 @@ static int _ssh_close(git_smart_subtransport *subtransport)
 
 static void _ssh_free(git_smart_subtransport *subtransport)
 {
-	ssh_subtransport *t = (ssh_subtransport *) subtransport;
+	ssh_subtransport *t = (ssh_subtransport *)subtransport;
 
 	assert(!t->current_stream);
 
@@ -824,8 +806,7 @@ static int list_auth_methods(int *out, LIBSSH2_SESSION *session, const char *use
 }
 #endif
 
-int git_smart_subtransport_ssh(
-	git_smart_subtransport **out, git_transport *owner, void *param)
+int git_smart_subtransport_ssh(git_smart_subtransport **out, git_transport *owner, void *param)
 {
 #ifdef GIT_SSH
 	ssh_subtransport *t;
@@ -842,7 +823,7 @@ int git_smart_subtransport_ssh(
 	t->parent.close = _ssh_close;
 	t->parent.free = _ssh_free;
 
-	*out = (git_smart_subtransport *) t;
+	*out = (git_smart_subtransport *)t;
 	return 0;
 #else
 	GIT_UNUSED(owner);
@@ -851,7 +832,8 @@ int git_smart_subtransport_ssh(
 	assert(out);
 	*out = NULL;
 
-	giterr_set(GITERR_INVALID, "cannot create SSH transport. Library was built without SSH support");
+	giterr_set(GITERR_INVALID,
+		"cannot create SSH transport. Library was built without SSH support");
 	return -1;
 #endif
 }
@@ -859,7 +841,7 @@ int git_smart_subtransport_ssh(
 int git_transport_ssh_with_paths(git_transport **out, git_remote *owner, void *payload)
 {
 #ifdef GIT_SSH
-	git_strarray *paths = (git_strarray *) payload;
+	git_strarray *paths = (git_strarray *)payload;
 	git_transport *transport;
 	transport_smart *smart;
 	ssh_subtransport *t;
@@ -878,8 +860,8 @@ int git_transport_ssh_with_paths(git_transport **out, git_remote *owner, void *p
 	if ((error = git_transport_smart(&transport, owner, &ssh_definition)) < 0)
 		return error;
 
-	smart = (transport_smart *) transport;
-	t = (ssh_subtransport *) smart->wrapped;
+	smart = (transport_smart *)transport;
+	t = (ssh_subtransport *)smart->wrapped;
 
 	t->cmd_uploadpack = git__strdup(paths->strings[0]);
 	GITERR_CHECK_ALLOC(t->cmd_uploadpack);
@@ -895,7 +877,8 @@ int git_transport_ssh_with_paths(git_transport **out, git_remote *owner, void *p
 	assert(out);
 	*out = NULL;
 
-	giterr_set(GITERR_INVALID, "cannot create SSH transport. Library was built without SSH support");
+	giterr_set(GITERR_INVALID,
+		"cannot create SSH transport. Library was built without SSH support");
 	return -1;
 #endif
 }
@@ -903,7 +886,7 @@ int git_transport_ssh_with_paths(git_transport **out, git_remote *owner, void *p
 #ifdef GIT_SSH
 static void shutdown_ssh(void)
 {
-    libssh2_exit();
+	libssh2_exit();
 }
 #endif
 

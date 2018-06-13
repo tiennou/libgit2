@@ -164,7 +164,13 @@ void git_refdb_iterator_free(git_reference_iterator *iter)
 	iter->free(iter);
 }
 
-int git_refdb_write(git_refdb *db, git_reference *ref, int force, const git_signature *who, const char *message, const git_oid *old_id, const char *old_target)
+int git_refdb_write(git_refdb *db,
+	git_reference *ref,
+	int force,
+	const git_signature *who,
+	const char *message,
+	const git_oid *old_id,
+	const char *old_target)
 {
 	assert(db && db->backend);
 
@@ -174,8 +180,7 @@ int git_refdb_write(git_refdb *db, git_reference *ref, int force, const git_sign
 	return db->backend->write(db->backend, ref, force, who, message, old_id, old_target);
 }
 
-int git_refdb_rename(
-	git_reference **out,
+int git_refdb_rename(git_reference **out,
 	git_refdb *db,
 	const char *old_name,
 	const char *new_name,
@@ -186,7 +191,8 @@ int git_refdb_rename(
 	int error;
 
 	assert(db && db->backend);
-	error = db->backend->rename(out, db->backend, old_name, new_name, force, who, message);
+	error = db->backend->rename(
+		out, db->backend, old_name, new_name, force, who, message);
 	if (error < 0)
 		return error;
 
@@ -198,13 +204,16 @@ int git_refdb_rename(
 	return 0;
 }
 
-int git_refdb_delete(struct git_refdb *db, const char *ref_name, const git_oid *old_id, const char *old_target)
+int git_refdb_delete(struct git_refdb *db,
+	const char *ref_name,
+	const git_oid *old_id,
+	const char *old_target)
 {
 	assert(db && db->backend);
 	return db->backend->del(db->backend, ref_name, old_id, old_target);
 }
 
-int git_refdb_reflog_read(git_reflog **out, git_refdb *db,  const char *name)
+int git_refdb_reflog_read(git_reflog **out, git_refdb *db, const char *name)
 {
 	int error;
 
@@ -252,9 +261,16 @@ int git_refdb_lock(void **payload, git_refdb *db, const char *refname)
 	return db->backend->lock(payload, db->backend, refname);
 }
 
-int git_refdb_unlock(git_refdb *db, void *payload, int success, int update_reflog, const git_reference *ref, const git_signature *sig, const char *message)
+int git_refdb_unlock(git_refdb *db,
+	void *payload,
+	int success,
+	int update_reflog,
+	const git_reference *ref,
+	const git_signature *sig,
+	const char *message)
 {
 	assert(db);
 
-	return db->backend->unlock(db->backend, payload, success, update_reflog, ref, sig, message);
+	return db->backend->unlock(
+		db->backend, payload, success, update_reflog, ref, sig, message);
 }

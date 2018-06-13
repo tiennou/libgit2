@@ -40,7 +40,7 @@ int git_offmap_put(git_offmap *map, const git_off_t key, int *err);
 void git_offmap_insert(git_offmap *map, const git_off_t key, void *value, int *rval);
 void git_offmap_delete(git_offmap *map, const git_off_t key);
 
-#define git_offmap_foreach		kh_foreach
-#define git_offmap_foreach_value	kh_foreach_value
+#define git_offmap_foreach kh_foreach
+#define git_offmap_foreach_value kh_foreach_value
 
 #endif

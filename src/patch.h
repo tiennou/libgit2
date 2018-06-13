@@ -1,9 +1,9 @@
 /*
-* Copyright (C) the libgit2 contributors. All rights reserved.
-*
-* This file is part of libgit2, distributed under the GNU GPL v2 with
-* a Linking Exception. For full terms see the included COPYING file.
-*/
+ * Copyright (C) the libgit2 contributors. All rights reserved.
+ *
+ * This file is part of libgit2, distributed under the GNU GPL v2 with
+ * a Linking Exception. For full terms see the included COPYING file.
+ */
 #ifndef INCLUDE_patch_h__
 #define INCLUDE_patch_h__
 
@@ -38,16 +38,14 @@ struct git_patch {
 	void (*free_fn)(git_patch *patch);
 };
 
-extern int git_patch__invoke_callbacks(
-	git_patch *patch,
+extern int git_patch__invoke_callbacks(git_patch *patch,
 	git_diff_file_cb file_cb,
 	git_diff_binary_cb binary_cb,
 	git_diff_hunk_cb hunk_cb,
 	git_diff_line_cb line_cb,
 	void *payload);
 
-extern int git_patch_line_stats(
-	size_t *total_ctxt,
+extern int git_patch_line_stats(size_t *total_ctxt,
 	size_t *total_adds,
 	size_t *total_dels,
 	const git_patch *patch);
@@ -61,7 +59,10 @@ typedef struct {
 	uint32_t prefix_len;
 } git_patch_options;
 
-#define GIT_PATCH_OPTIONS_INIT { 1 }
+#define GIT_PATCH_OPTIONS_INIT \
+	{                          \
+		1                      \
+	}
 
 extern void git_patch_free(git_patch *patch);
 

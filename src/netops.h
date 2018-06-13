@@ -13,7 +13,7 @@
 #include "stream.h"
 
 #ifdef GIT_OPENSSL
-# include <openssl/ssl.h>
+#include <openssl/ssl.h>
 #endif
 
 typedef struct gitno_ssl {
@@ -58,7 +58,11 @@ enum {
 int gitno__match_host(const char *pattern, const char *host);
 
 void gitno_buffer_setup_fromstream(git_stream *st, gitno_buffer *buf, char *data, size_t len);
-void gitno_buffer_setup_callback(gitno_buffer *buf, char *data, size_t len, int (*recv)(gitno_buffer *buf), void *cb_data);
+void gitno_buffer_setup_callback(gitno_buffer *buf,
+	char *data,
+	size_t len,
+	int (*recv)(gitno_buffer *buf),
+	void *cb_data);
 int gitno_recv(gitno_buffer *buf);
 
 void gitno_consume(gitno_buffer *buf, const char *ptr);
@@ -79,21 +83,19 @@ typedef struct gitno_connection_data {
  * `gitno_connection_data_free_ptrs` is good for this.
  */
 
-int gitno_connection_data_from_url(
-		gitno_connection_data *data,
-		const char *url,
-		const char *service_suffix);
+int gitno_connection_data_from_url(gitno_connection_data *data,
+	const char *url,
+	const char *service_suffix);
 
 /* This frees all the pointers IN the struct, but not the struct itself. */
 void gitno_connection_data_free_ptrs(gitno_connection_data *data);
 
-int gitno_extract_url_parts(
-		char **host,
-		char **port,
-		char **path,
-		char **username,
-		char **password,
-		const char *url,
-		const char *default_port);
+int gitno_extract_url_parts(char **host,
+	char **port,
+	char **path,
+	char **username,
+	char **password,
+	const char *url,
+	const char *default_port);
 
 #endif

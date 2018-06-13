@@ -31,14 +31,16 @@ typedef struct {
 	uint32_t flags;
 } git_filter_options;
 
-#define GIT_FILTER_OPTIONS_INIT {0}
+#define GIT_FILTER_OPTIONS_INIT \
+	{                           \
+		0                       \
+	}
 
 extern int git_filter_global_init(void);
 
 extern void git_filter_free(git_filter *filter);
 
-extern int git_filter_list__load_ext(
-	git_filter_list **filters,
+extern int git_filter_list__load_ext(git_filter_list **filters,
 	git_repository *repo,
 	git_blob *blob, /* can be NULL */
 	const char *path,

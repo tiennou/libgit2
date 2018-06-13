@@ -34,8 +34,8 @@ GIT_BEGIN_DECL
  * @param spec the textual specification for an object
  * @return 0 on success, GIT_ENOTFOUND, GIT_EAMBIGUOUS, GIT_EINVALIDSPEC or an error code
  */
-GIT_EXTERN(int) git_revparse_single(
-	git_object **out, git_repository *repo, const char *spec);
+GIT_EXTERN(int)
+git_revparse_single(git_object **out, git_repository *repo, const char *spec);
 
 /**
  * Find a single object and intermediate reference by a revision string.
@@ -58,8 +58,8 @@ GIT_EXTERN(int) git_revparse_single(
  * @return 0 on success, GIT_ENOTFOUND, GIT_EAMBIGUOUS, GIT_EINVALIDSPEC
  * or an error code
  */
-GIT_EXTERN(int) git_revparse_ext(
-	git_object **object_out,
+GIT_EXTERN(int)
+git_revparse_ext(git_object **object_out,
 	git_reference **reference_out,
 	git_repository *repo,
 	const char *spec);
@@ -70,11 +70,11 @@ GIT_EXTERN(int) git_revparse_ext(
  */
 typedef enum {
 	/** The spec targeted a single object. */
-	GIT_REVPARSE_SINGLE         = 1 << 0,
+	GIT_REVPARSE_SINGLE = 1 << 0,
 	/** The spec targeted a range of commits. */
-	GIT_REVPARSE_RANGE          = 1 << 1,
+	GIT_REVPARSE_RANGE = 1 << 1,
 	/** The spec used the '...' operator, which invokes special semantics. */
-	GIT_REVPARSE_MERGE_BASE     = 1 << 2,
+	GIT_REVPARSE_MERGE_BASE = 1 << 2,
 } git_revparse_mode_t;
 
 /**
@@ -102,10 +102,8 @@ typedef struct {
  * @param spec the rev-parse spec to parse
  * @return 0 on success, GIT_INVALIDSPEC, GIT_ENOTFOUND, GIT_EAMBIGUOUS or an error code
  */
-GIT_EXTERN(int) git_revparse(
-	git_revspec *revspec,
-	git_repository *repo,
-	const char *spec);
+GIT_EXTERN(int)
+git_revparse(git_revspec *revspec, git_repository *repo, const char *spec);
 
 
 /** @} */

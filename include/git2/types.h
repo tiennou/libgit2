@@ -68,14 +68,14 @@ typedef int64_t git_time_t;
 
 /** Basic type (loose or packed) of any Git object. */
 typedef enum {
-	GIT_OBJ_ANY = -2,		/**< Object can be any of the following */
-	GIT_OBJ_BAD = -1,		/**< Object is invalid. */
-	GIT_OBJ__EXT1 = 0,		/**< Reserved for future use. */
-	GIT_OBJ_COMMIT = 1,		/**< A commit object. */
-	GIT_OBJ_TREE = 2,		/**< A tree (directory listing) object. */
-	GIT_OBJ_BLOB = 3,		/**< A file revision object. */
-	GIT_OBJ_TAG = 4,		/**< An annotated tag object. */
-	GIT_OBJ__EXT2 = 5,		/**< Reserved for future use. */
+	GIT_OBJ_ANY = -2, /**< Object can be any of the following */
+	GIT_OBJ_BAD = -1, /**< Object is invalid. */
+	GIT_OBJ__EXT1 = 0, /**< Reserved for future use. */
+	GIT_OBJ_COMMIT = 1, /**< A commit object. */
+	GIT_OBJ_TREE = 2, /**< A tree (directory listing) object. */
+	GIT_OBJ_BLOB = 3, /**< A file revision object. */
+	GIT_OBJ_TAG = 4, /**< An annotated tag object. */
+	GIT_OBJ__EXT2 = 5, /**< Reserved for future use. */
 	GIT_OBJ_OFS_DELTA = 6, /**< A delta, base is given by an offset. */
 	GIT_OBJ_REF_DELTA = 7, /**< A delta, base is given by object id. */
 } git_otype;
@@ -176,7 +176,7 @@ typedef struct git_signature {
 typedef struct git_reference git_reference;
 
 /** Iterator for references */
-typedef struct git_reference_iterator  git_reference_iterator;
+typedef struct git_reference_iterator git_reference_iterator;
 
 /** Transactional interface to references */
 typedef struct git_transaction git_transaction;
@@ -195,24 +195,24 @@ typedef enum {
 	GIT_REF_INVALID = 0, /**< Invalid reference */
 	GIT_REF_OID = 1, /**< A reference which points at an object id */
 	GIT_REF_SYMBOLIC = 2, /**< A reference which points at another reference */
-	GIT_REF_LISTALL = GIT_REF_OID|GIT_REF_SYMBOLIC,
+	GIT_REF_LISTALL = GIT_REF_OID | GIT_REF_SYMBOLIC,
 } git_ref_t;
 
 /** Basic type of any Git branch. */
 typedef enum {
 	GIT_BRANCH_LOCAL = 1,
 	GIT_BRANCH_REMOTE = 2,
-	GIT_BRANCH_ALL = GIT_BRANCH_LOCAL|GIT_BRANCH_REMOTE,
+	GIT_BRANCH_ALL = GIT_BRANCH_LOCAL | GIT_BRANCH_REMOTE,
 } git_branch_t;
 
 /** Valid modes for index and tree entries. */
 typedef enum {
-	GIT_FILEMODE_UNREADABLE          = 0000000,
-	GIT_FILEMODE_TREE                = 0040000,
-	GIT_FILEMODE_BLOB                = 0100644,
-	GIT_FILEMODE_BLOB_EXECUTABLE     = 0100755,
-	GIT_FILEMODE_LINK                = 0120000,
-	GIT_FILEMODE_COMMIT              = 0160000,
+	GIT_FILEMODE_UNREADABLE = 0000000,
+	GIT_FILEMODE_TREE = 0040000,
+	GIT_FILEMODE_BLOB = 0100644,
+	GIT_FILEMODE_BLOB_EXECUTABLE = 0100755,
+	GIT_FILEMODE_LINK = 0120000,
+	GIT_FILEMODE_COMMIT = 0160000,
 } git_filemode_t;
 
 /**
@@ -271,7 +271,8 @@ typedef struct git_transfer_progress {
  * @param stats Structure containing information about the state of the transfer
  * @param payload Payload provided by caller
  */
-typedef int (*git_transfer_progress_cb)(const git_transfer_progress *stats, void *payload);
+typedef int (*git_transfer_progress_cb)(const git_transfer_progress *stats,
+	void *payload);
 
 /**
  * Type for messages delivered by the transport.  Return a negative value
@@ -293,15 +294,15 @@ typedef enum git_cert_t {
 	 * happen when using curl.
 	 */
 	GIT_CERT_NONE,
-        /**
-         * The `data` argument to the callback will be a pointer to
-         * the DER-encoded data.
-         */
+	/**
+	 * The `data` argument to the callback will be a pointer to
+	 * the DER-encoded data.
+	 */
 	GIT_CERT_X509,
-        /**
-         * The `data` argument to the callback will be a pointer to a
-         * `git_cert_hostkey` structure.
-         */
+	/**
+	 * The `data` argument to the callback will be a pointer to a
+	 * `git_cert_hostkey` structure.
+	 */
 	GIT_CERT_HOSTKEY_LIBSSH2,
 	/**
 	 * The `data` argument to the callback will be a pointer to a
@@ -331,7 +332,10 @@ typedef struct {
  * @param host Hostname of the host libgit2 connected to
  * @param payload Payload provided by the caller
  */
-typedef int (*git_transport_certificate_check_cb)(git_cert *cert, int valid, const char *host, void *payload);
+typedef int (*git_transport_certificate_check_cb)(git_cert *cert,
+	int valid,
+	const char *host,
+	void *payload);
 
 /**
  * Opaque structure representing a submodule.
@@ -366,11 +370,11 @@ typedef struct git_submodule git_submodule;
  */
 typedef enum {
 	GIT_SUBMODULE_UPDATE_CHECKOUT = 1,
-	GIT_SUBMODULE_UPDATE_REBASE   = 2,
-	GIT_SUBMODULE_UPDATE_MERGE    = 3,
-	GIT_SUBMODULE_UPDATE_NONE     = 4,
+	GIT_SUBMODULE_UPDATE_REBASE = 2,
+	GIT_SUBMODULE_UPDATE_MERGE = 3,
+	GIT_SUBMODULE_UPDATE_NONE = 4,
 
-	GIT_SUBMODULE_UPDATE_DEFAULT  = 0
+	GIT_SUBMODULE_UPDATE_DEFAULT = 0
 } git_submodule_update_t;
 
 /**
@@ -401,12 +405,12 @@ typedef enum {
  *   when we don't want any particular ignore rule to be specified.
  */
 typedef enum {
-	GIT_SUBMODULE_IGNORE_UNSPECIFIED  = -1, /**< use the submodule's configuration */
+	GIT_SUBMODULE_IGNORE_UNSPECIFIED = -1, /**< use the submodule's configuration */
 
-	GIT_SUBMODULE_IGNORE_NONE      = 1,  /**< any change or untracked == dirty */
-	GIT_SUBMODULE_IGNORE_UNTRACKED = 2,  /**< dirty if tracked files change */
-	GIT_SUBMODULE_IGNORE_DIRTY     = 3,  /**< only dirty if HEAD moved */
-	GIT_SUBMODULE_IGNORE_ALL       = 4,  /**< never dirty */
+	GIT_SUBMODULE_IGNORE_NONE = 1, /**< any change or untracked == dirty */
+	GIT_SUBMODULE_IGNORE_UNTRACKED = 2, /**< dirty if tracked files change */
+	GIT_SUBMODULE_IGNORE_DIRTY = 3, /**< only dirty if HEAD moved */
+	GIT_SUBMODULE_IGNORE_ALL = 4, /**< never dirty */
 } git_submodule_ignore_t;
 
 /**

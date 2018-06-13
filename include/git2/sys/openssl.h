@@ -35,4 +35,3 @@ GIT_EXTERN(int) git_openssl_set_locking(void);
 
 GIT_END_DECL
 #endif
-

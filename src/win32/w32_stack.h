@@ -38,7 +38,9 @@ typedef void (*git_win32__stack__aux_cb_alloc)(unsigned int *aux_id);
  * @param aux_msg A buffer where a formatted message should be written.
  * @param aux_msg_len The size of the buffer.
  */
-typedef void (*git_win32__stack__aux_cb_lookup)(unsigned int aux_id, char *aux_msg, unsigned int aux_msg_len);
+typedef void (*git_win32__stack__aux_cb_lookup)(unsigned int aux_id,
+	char *aux_msg,
+	unsigned int aux_msg_len);
 
 /**
  * Register an "aux" data provider to augment our C stacktrace data.
@@ -50,8 +52,8 @@ typedef void (*git_win32__stack__aux_cb_lookup)(unsigned int aux_id, char *aux_m
  * If you choose to use this feature, it should be registered during
  * initialization and not changed for the duration of the process.
  */
-GIT_EXTERN(int) git_win32__stack__set_aux_cb(
-	git_win32__stack__aux_cb_alloc cb_alloc,
+GIT_EXTERN(int)
+git_win32__stack__set_aux_cb(git_win32__stack__aux_cb_alloc cb_alloc,
 	git_win32__stack__aux_cb_lookup cb_lookup);
 
 /**
@@ -105,8 +107,7 @@ int git_win32__stack_capture(git_win32__stack__raw_data *pdata, int skip);
  * This includes any "aux_id" values in the comparison, so that
  * our de-dup is also "aux" context relative.
  */
-int git_win32__stack_compare(
-	git_win32__stack__raw_data *d1,
+int git_win32__stack_compare(git_win32__stack__raw_data *d1,
 	git_win32__stack__raw_data *d2);
 
 /**
@@ -115,10 +116,11 @@ int git_win32__stack_compare(
  * @param prefix String written before each frame; defaults to "\t".
  * @param suffix String written after each frame; defaults to "\n".
  */
-int git_win32__stack_format(
-	char *pbuf, int buf_len,
+int git_win32__stack_format(char *pbuf,
+	int buf_len,
 	const git_win32__stack__raw_data *pdata,
-	const char *prefix, const char *suffix);
+	const char *prefix,
+	const char *suffix);
 
 /**
  * Convenience routine to capture and format stacktrace into
@@ -131,10 +133,7 @@ int git_win32__stack_format(
  * @param prefix String written before each frame; defaults to "\t".
  * @param suffix String written after each frame; defaults to "\n".
  */
-int git_win32__stack(
-	char * pbuf, int buf_len,
-	int skip,
-	const char *prefix, const char *suffix);
+int git_win32__stack(char *pbuf, int buf_len, int skip, const char *prefix, const char *suffix);
 
 #endif /* GIT_MSVC_CRTDBG */
 #endif

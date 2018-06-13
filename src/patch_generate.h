@@ -39,12 +39,9 @@ typedef struct git_patch_generated git_patch_generated;
 
 extern git_diff_driver *git_patch_generated_driver(git_patch_generated *);
 
-extern void git_patch_generated_old_data(
-	char **, size_t *, git_patch_generated *);
-extern void git_patch_generated_new_data(
-	char **, size_t *, git_patch_generated *);
-extern int git_patch_generated_from_diff(
-	git_patch **, git_diff *, size_t);
+extern void git_patch_generated_old_data(char **, size_t *, git_patch_generated *);
+extern void git_patch_generated_new_data(char **, size_t *, git_patch_generated *);
+extern int git_patch_generated_from_diff(git_patch **, git_diff *, size_t);
 
 typedef struct git_patch_generated_output git_patch_generated_output;
 
@@ -62,8 +59,7 @@ struct git_patch_generated_output {
 	/* this callback is used to do the diff and drive the other callbacks.
 	 * see diff_xdiff.h for how to use this in practice for now.
 	 */
-	int (*diff_cb)(git_patch_generated_output *output,
-		git_patch_generated *patch);
+	int (*diff_cb)(git_patch_generated_output *output, git_patch_generated *patch);
 };
 
 #endif

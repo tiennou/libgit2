@@ -33,10 +33,14 @@ struct memory_packer_db {
 	git_array_t(struct memobject *) commits;
 };
 
-static int impl__write(git_odb_backend *_backend, const git_oid *oid, const void *data, size_t len, git_otype type)
+static int impl__write(git_odb_backend *_backend,
+	const git_oid *oid,
+	const void *data,
+	size_t len,
+	git_otype type)
 {
 	struct memory_packer_db *db = (struct memory_packer_db *)_backend;
-	struct memobject *obj = NULL; 
+	struct memobject *obj = NULL;
 	khiter_t pos;
 	size_t alloc_len;
 	int rval;
@@ -76,7 +80,11 @@ static int impl__exists(git_odb_backend *backend, const git_oid *oid)
 	return git_oidmap_exists(db->objects, oid);
 }
 
-static int impl__read(void **buffer_p, size_t *len_p, git_otype *type_p, git_odb_backend *backend, const git_oid *oid)
+static int impl__read(void **buffer_p,
+	size_t *len_p,
+	git_otype *type_p,
+	git_odb_backend *backend,
+	const git_oid *oid)
 {
 	struct memory_packer_db *db = (struct memory_packer_db *)backend;
 	struct memobject *obj = NULL;
@@ -97,7 +105,10 @@ static int impl__read(void **buffer_p, size_t *len_p, git_otype *type_p, git_odb
 	return 0;
 }
 
-static int impl__read_header(size_t *len_p, git_otype *type_p, git_odb_backend *backend, const git_oid *oid)
+static int impl__read_header(size_t *len_p,
+	git_otype *type_p,
+	git_odb_backend *backend,
+	const git_oid *oid)
 {
 	struct memory_packer_db *db = (struct memory_packer_db *)backend;
 	struct memobject *obj = NULL;
@@ -144,9 +155,8 @@ void git_mempack_reset(git_odb_backend *_backend)
 	struct memory_packer_db *db = (struct memory_packer_db *)_backend;
 	struct memobject *object = NULL;
 
-	git_oidmap_foreach_value(db->objects, object, {
-		git__free(object);
-	});
+	git_oidmap_foreach_value (db->objects, object, { git__free(object); })
+		;
 
 	git_array_clear(db->commits);
 

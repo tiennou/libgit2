@@ -30,20 +30,17 @@ typedef struct git_merge_driver__builtin {
 
 extern int git_merge_driver_global_init(void);
 
-extern int git_merge_driver_for_path(
-	char **name_out,
+extern int git_merge_driver_for_path(char **name_out,
 	git_merge_driver **driver_out,
 	git_repository *repo,
 	const char *path);
 
 /* Merge driver configuration */
-extern int git_merge_driver_for_source(
-	const char **name_out,
+extern int git_merge_driver_for_source(const char **name_out,
 	git_merge_driver **driver_out,
 	const git_merge_driver_source *src);
 
-extern int git_merge_driver__builtin_apply(
-	git_merge_driver *self,
+extern int git_merge_driver__builtin_apply(git_merge_driver *self,
 	const char **path_out,
 	uint32_t *mode_out,
 	git_buf *merged_out,
