@@ -26,9 +26,9 @@ extern bool git_odb__strict_hash_verification;
 
 /* DO NOT EXPORT */
 typedef struct {
-	void *data;			/**< Raw, decompressed object data. */
-	size_t len;			/**< Total number of bytes in data. */
-	git_otype type;		/**< Type of this object. */
+	void *data; /**< Raw, decompressed object data. */
+	size_t len; /**< Total number of bytes in data. */
+	git_otype type; /**< Type of this object. */
 } git_rawobj;
 
 /* EXPORT */
@@ -42,7 +42,7 @@ struct git_odb {
 	git_refcount rc;
 	git_vector backends;
 	git_cache own_cache;
-	unsigned int do_fsync :1;
+	unsigned int do_fsync : 1;
 };
 
 typedef enum {
@@ -58,8 +58,7 @@ int git_odb__set_caps(git_odb *odb, int caps);
  * Add the default loose and packed backends for a database.
  */
 int git_odb__add_default_backends(
-	git_odb *db, const char *objects_dir,
-	bool as_alternates, int alternate_depth);
+	git_odb *db, const char *objects_dir, bool as_alternates, int alternate_depth);
 
 /*
  * Hash a git_rawobj internally.
@@ -70,7 +69,8 @@ int git_odb__hashobj(git_oid *id, git_rawobj *obj);
 /*
  * Format the object header such as it would appear in the on-disk object
  */
-int git_odb__format_object_header(size_t *out_len, char *hdr, size_t hdr_size, git_off_t obj_len, git_otype obj_type);
+int git_odb__format_object_header(
+	size_t *out_len, char *hdr, size_t hdr_size, git_off_t obj_len, git_otype obj_type);
 /*
  * Hash an open file descriptor.
  * This is a performance call when the contents of a fd need to be hashed,
@@ -103,14 +103,12 @@ int git_odb__hashlink(git_oid *out, const char *path);
 /**
  * Generate a GIT_EMISMATCH error for the ODB.
  */
-int git_odb__error_mismatch(
-	const git_oid *expected, const git_oid *actual);
+int git_odb__error_mismatch(const git_oid *expected, const git_oid *actual);
 
 /*
  * Generate a GIT_ENOTFOUND error for the ODB.
  */
-int git_odb__error_notfound(
-	const char *message, const git_oid *oid, size_t oid_len);
+int git_odb__error_notfound(const char *message, const git_oid *oid, size_t oid_len);
 
 /*
  * Generate a GIT_EAMBIGUOUS error for the ODB.
@@ -122,8 +120,7 @@ int git_odb__error_ambiguous(const char *message);
  * not be read.
  */
 int git_odb__read_header_or_object(
-	git_odb_object **out, size_t *len_p, git_otype *type_p,
-	git_odb *db, const git_oid *id);
+	git_odb_object **out, size_t *len_p, git_otype *type_p, git_odb *db, const git_oid *id);
 
 /* freshen an entry in the object database */
 int git_odb__freshen(git_odb *db, const git_oid *id);

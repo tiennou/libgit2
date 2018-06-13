@@ -11,10 +11,8 @@
 
 #include "oid.h"
 
-int sha1_position(const void *table,
-			size_t stride,
-			unsigned lo, unsigned hi,
-			const unsigned char *key)
+int sha1_position(
+	const void *table, size_t stride, unsigned lo, unsigned hi, const unsigned char *key)
 {
 	const unsigned char *base = table;
 
@@ -28,8 +26,8 @@ int sha1_position(const void *table,
 		if (cmp > 0)
 			hi = mi;
 		else
-			lo = mi+1;
+			lo = mi + 1;
 	}
 
-	return -((int)lo)-1;
+	return -((int)lo) - 1;
 }

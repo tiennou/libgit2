@@ -11,6 +11,7 @@
 
 #include "git2/sys/stream.h"
 
-extern int git_stransport_stream_new(git_stream **out, const char *host, const char *port);
+extern int git_stransport_stream_new(
+	git_stream **out, const char *host, const char *port);
 
 #endif

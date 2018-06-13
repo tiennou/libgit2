@@ -38,7 +38,7 @@ struct git_diff_driver {
 	uint32_t binary_flags;
 	uint32_t other_flags;
 	git_array_t(git_diff_driver_pattern) fn_patterns;
-	regex_t  word_pattern;
+	regex_t word_pattern;
 	char name[GIT_FLEX_ARRAY];
 };
 
@@ -51,15 +51,18 @@ struct git_diff_driver_registry {
 #define FORCE_DIFFABLE (GIT_DIFF_FORCE_TEXT | GIT_DIFF_FORCE_BINARY)
 
 static git_diff_driver global_drivers[3] = {
-	{ DIFF_DRIVER_AUTO,   0, 0, },
+	{
+		DIFF_DRIVER_AUTO,
+		0,
+		0,
+	},
 	{ DIFF_DRIVER_BINARY, GIT_DIFF_FORCE_BINARY, 0 },
-	{ DIFF_DRIVER_TEXT,   GIT_DIFF_FORCE_TEXT, 0 },
+	{ DIFF_DRIVER_TEXT, GIT_DIFF_FORCE_TEXT, 0 },
 };
 
 git_diff_driver_registry *git_diff_driver_registry_new(void)
 {
-	git_diff_driver_registry *reg =
-		git__calloc(1, sizeof(git_diff_driver_registry));
+	git_diff_driver_registry *reg = git__calloc(1, sizeof(git_diff_driver_registry));
 	if (!reg)
 		return NULL;
 
@@ -78,7 +81,8 @@ void git_diff_driver_registry_free(git_diff_driver_registry *reg)
 	if (!reg)
 		return;
 
-	git_strmap_foreach_value(reg->drivers, drv, git_diff_driver_free(drv));
+	git_strmap_foreach_value (reg->drivers, drv, git_diff_driver_free(drv))
+		;
 	git_strmap_free(reg->drivers);
 	git__free(reg);
 }
@@ -137,8 +141,7 @@ static int diff_driver_funcname(const git_config_entry *entry, void *payload)
 	return diff_driver_add_patterns(payload, entry->value, 0);
 }
 
-static git_diff_driver_registry *git_repository_driver_registry(
-	git_repository *repo)
+static git_diff_driver_registry *git_repository_driver_registry(git_repository *repo)
 {
 	if (!repo->diff_drivers) {
 		git_diff_driver_registry *reg = git_diff_driver_registry_new();
@@ -154,13 +157,10 @@ static git_diff_driver_registry *git_repository_driver_registry(
 	return repo->diff_drivers;
 }
 
-static int diff_driver_alloc(
-	git_diff_driver **out, size_t *namelen_out, const char *name)
+static int diff_driver_alloc(git_diff_driver **out, size_t *namelen_out, const char *name)
 {
 	git_diff_driver *driver;
-	size_t driverlen = sizeof(git_diff_driver),
-		namelen = strlen(name),
-		alloclen;
+	size_t driverlen = sizeof(git_diff_driver), namelen = strlen(name), alloclen;
 
 	GITERR_CHECK_ALLOC_ADD(&alloclen, driverlen, namelen);
 	GITERR_CHECK_ALLOC_ADD(&alloclen, alloclen, 1);
@@ -179,9 +179,7 @@ static int diff_driver_alloc(
 }
 
 static int git_diff_driver_builtin(
-	git_diff_driver **out,
-	git_diff_driver_registry *reg,
-	const char *driver_name)
+	git_diff_driver **out, git_diff_driver_registry *reg, const char *driver_name)
 {
 	int error = 0;
 	git_diff_driver_definition *ddef = NULL;
@@ -203,14 +201,11 @@ static int git_diff_driver_builtin(
 	drv->type = DIFF_DRIVER_PATTERNLIST;
 
 	if (ddef->fns &&
-		(error = diff_driver_add_patterns(
-			drv, ddef->fns, ddef->flags | REG_EXTENDED)) < 0)
+		(error = diff_driver_add_patterns(drv, ddef->fns, ddef->flags | REG_EXTENDED)) < 0)
 		goto done;
 
 	if (ddef->words &&
-		(error = p_regcomp(
-			&drv->word_pattern, ddef->words, ddef->flags | REG_EXTENDED)))
-	{
+		(error = p_regcomp(&drv->word_pattern, ddef->words, ddef->flags | REG_EXTENDED))) {
 		error = giterr_set_regex(&drv->word_pattern, error);
 		goto done;
 	}
@@ -285,7 +280,7 @@ static int git_diff_driver_load(
 	git_buf_truncate(&name, namelen + strlen("diff.."));
 	git_buf_put(&name, "xfuncname", strlen("xfuncname"));
 	if ((error = git_config_get_multivar_foreach(
-			cfg, name.ptr, NULL, diff_driver_xfuncname, drv)) < 0) {
+			 cfg, name.ptr, NULL, diff_driver_xfuncname, drv)) < 0) {
 		if (error != GIT_ENOTFOUND)
 			goto done;
 		giterr_clear(); /* no diff.<driver>.xfuncname, so just continue */
@@ -294,7 +289,7 @@ static int git_diff_driver_load(
 	git_buf_truncate(&name, namelen + strlen("diff.."));
 	git_buf_put(&name, "funcname", strlen("funcname"));
 	if ((error = git_config_get_multivar_foreach(
-			cfg, name.ptr, NULL, diff_driver_funcname, drv)) < 0) {
+			 cfg, name.ptr, NULL, diff_driver_funcname, drv)) < 0) {
 		if (error != GIT_ENOTFOUND)
 			goto done;
 		giterr_clear(); /* no diff.<driver>.funcname, so just continue */
@@ -353,9 +348,10 @@ done:
 	return error;
 }
 
-int git_diff_driver_lookup(
-	git_diff_driver **out, git_repository *repo,
-	git_attr_session *attrsession, const char *path)
+int git_diff_driver_lookup(git_diff_driver **out,
+	git_repository *repo,
+	git_attr_session *attrsession,
+	const char *path)
 {
 	int error = 0;
 	const char *values[1], *attrs[] = { "diff" };
@@ -365,8 +361,8 @@ int git_diff_driver_lookup(
 
 	if (!repo || !path || !strlen(path))
 		/* just use the auto value */;
-	else if ((error = git_attr_get_many_with_session(values, repo,
-			attrsession, 0, path, 1, attrs)) < 0)
+	else if ((error = git_attr_get_many_with_session(
+				  values, repo, attrsession, 0, path, 1, attrs)) < 0)
 		/* return error below */;
 
 	else if (GIT_ATTR_UNSPECIFIED(values[0]))
@@ -398,7 +394,7 @@ void git_diff_driver_free(git_diff_driver *driver)
 		return;
 
 	for (i = 0; i < git_array_size(driver->fn_patterns); ++i)
-		regfree(& git_array_get(driver->fn_patterns, i)->re);
+		regfree(&git_array_get(driver->fn_patterns, i)->re);
 	git_array_clear(driver->fn_patterns);
 
 	regfree(&driver->word_pattern);
@@ -406,8 +402,7 @@ void git_diff_driver_free(git_diff_driver *driver)
 	git__free(driver);
 }
 
-void git_diff_driver_update_options(
-	uint32_t *option_flags, git_diff_driver *driver)
+void git_diff_driver_update_options(uint32_t *option_flags, git_diff_driver *driver)
 {
 	if ((*option_flags & FORCE_DIFFABLE) == 0)
 		*option_flags |= driver->binary_flags;
@@ -422,8 +417,8 @@ int git_diff_driver_content_is_binary(
 
 	GIT_UNUSED(driver);
 
-	git_buf_attach_notowned(&search, content,
-		min(content_len, GIT_FILTER_BYTES_TO_CHECK_NUL));
+	git_buf_attach_notowned(
+		&search, content, min(content_len, GIT_FILTER_BYTES_TO_CHECK_NUL));
 
 	/* TODO: provide encoding / binary detection callbacks that can
 	 * be UTF-8 aware, etc.  For now, instead of trying to be smart,
@@ -437,16 +432,14 @@ int git_diff_driver_content_is_binary(
 	return 0;
 }
 
-static int diff_context_line__simple(
-	git_diff_driver *driver, git_buf *line)
+static int diff_context_line__simple(git_diff_driver *driver, git_buf *line)
 {
 	char firstch = line->ptr[0];
 	GIT_UNUSED(driver);
 	return (git__isalpha(firstch) || firstch == '_' || firstch == '$');
 }
 
-static int diff_context_line__pattern_match(
-	git_diff_driver *driver, git_buf *line)
+static int diff_context_line__pattern_match(git_diff_driver *driver, git_buf *line)
 {
 	size_t i, maxi = git_array_size(driver->fn_patterns);
 	regmatch_t pmatch[2];
@@ -472,11 +465,7 @@ static int diff_context_line__pattern_match(
 }
 
 static long diff_context_find(
-	const char *line,
-	long line_len,
-	char *out,
-	long out_size,
-	void *payload)
+	const char *line, long line_len, char *out, long out_size, void *payload)
 {
 	git_diff_find_context_payload *ctxt = payload;
 
@@ -497,8 +486,7 @@ static long diff_context_find(
 	return out_size;
 }
 
-void git_diff_find_context_init(
-	git_diff_find_context_fn *findfn_out,
+void git_diff_find_context_init(git_diff_find_context_fn *findfn_out,
 	git_diff_find_context_payload *payload_out,
 	git_diff_driver *driver)
 {
@@ -508,7 +496,8 @@ void git_diff_find_context_init(
 	if (driver) {
 		payload_out->driver = driver;
 		payload_out->match_line = (driver->type == DIFF_DRIVER_PATTERNLIST) ?
-			diff_context_line__pattern_match : diff_context_line__simple;
+			diff_context_line__pattern_match :
+			diff_context_line__simple;
 		git_buf_init(&payload_out->line, 0);
 	}
 }

@@ -15,8 +15,7 @@
 #ifdef GIT_GSSAPI
 
 extern int git_http_auth_negotiate(
-	git_http_auth_context **out,
-	const gitno_connection_data *connection_data);
+	git_http_auth_context **out, const gitno_connection_data *connection_data);
 
 #else
 

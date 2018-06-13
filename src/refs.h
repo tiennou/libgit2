@@ -55,8 +55,8 @@ extern bool git_reference__enable_symbolic_ref_target_validation;
 #define GIT_STASH_FILE "stash"
 #define GIT_REFS_STASH_FILE GIT_REFS_DIR GIT_STASH_FILE
 
-#define GIT_REF_FORMAT__PRECOMPOSE_UNICODE	(1u << 16)
-#define GIT_REF_FORMAT__VALIDATION_DISABLE	(1u << 15)
+#define GIT_REF_FORMAT__PRECOMPOSE_UNICODE (1u << 16)
+#define GIT_REF_FORMAT__VALIDATION_DISABLE (1u << 15)
 
 #define GIT_REFNAME_MAX 1024
 
@@ -78,7 +78,11 @@ struct git_reference {
 git_reference *git_reference__set_name(git_reference *ref, const char *name);
 
 int git_reference__normalize_name(git_buf *buf, const char *name, unsigned int flags);
-int git_reference__update_terminal(git_repository *repo, const char *ref_name, const git_oid *oid, const git_signature *sig, const char *log_message);
+int git_reference__update_terminal(git_repository *repo,
+	const char *ref_name,
+	const git_oid *oid,
+	const git_signature *sig,
+	const char *log_message);
 int git_reference__is_valid_name(const char *refname, unsigned int flags);
 int git_reference__is_branch(const char *ref_name);
 int git_reference__is_remote(const char *ref_name);
@@ -103,10 +107,7 @@ const char *git_reference__shorthand(const char *name);
  * @return 0 on success or < 0 on error; not being able to resolve the reference is an error unless 0 was passed for max_deref
  */
 int git_reference_lookup_resolved(
-	git_reference **reference_out,
-	git_repository *repo,
-	const char *name,
-	int max_deref);
+	git_reference **reference_out, git_repository *repo, const char *name, int max_deref);
 
 /**
  * Read reference from a file.
@@ -122,15 +123,12 @@ int git_reference_lookup_resolved(
  * 'externally visible', or perform the lookup before returning it to the user.
  */
 int git_reference__read_head(
-	git_reference **out,
-	git_repository *repo,
-	const char *path);
+	git_reference **out, git_repository *repo, const char *path);
 
 int git_reference__log_signature(git_signature **out, git_repository *repo);
 
 /** Update a reference after a commit. */
-int git_reference__update_for_commit(
-	git_repository *repo,
+int git_reference__update_for_commit(git_repository *repo,
 	git_reference *ref,
 	const char *ref_name,
 	const git_oid *id,

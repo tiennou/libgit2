@@ -19,8 +19,7 @@ static int note_error_notfound(void)
 	return GIT_ENOTFOUND;
 }
 
-static int find_subtree_in_current_level(
-	git_tree **out,
+static int find_subtree_in_current_level(git_tree **out,
 	git_repository *repo,
 	git_tree *parent,
 	const char *annotated_object_sha,
@@ -40,9 +39,9 @@ static int find_subtree_in_current_level(
 		if (!git__ishex(git_tree_entry_name(entry)))
 			continue;
 
-		if (S_ISDIR(git_tree_entry_filemode(entry))
-			&& strlen(git_tree_entry_name(entry)) == 2
-			&& !strncmp(git_tree_entry_name(entry), annotated_object_sha + fanout, 2))
+		if (S_ISDIR(git_tree_entry_filemode(entry)) &&
+			strlen(git_tree_entry_name(entry)) == 2 &&
+			!strncmp(git_tree_entry_name(entry), annotated_object_sha + fanout, 2))
 			return git_tree_lookup(out, repo, git_tree_entry_id(entry));
 
 		/* Not a DIR, so do we have an already existing blob? */
@@ -53,8 +52,8 @@ static int find_subtree_in_current_level(
 	return note_error_notfound();
 }
 
-static int find_subtree_r(git_tree **out, git_tree *root,
-			git_repository *repo, const char *target, int *fanout)
+static int find_subtree_r(
+	git_tree **out, git_tree *root, git_repository *repo, const char *target, int *fanout)
 {
 	int error;
 	git_tree *subtree = NULL;
@@ -80,7 +79,7 @@ static int find_blob(git_oid *blob, git_tree *tree, const char *target)
 	size_t i;
 	const git_tree_entry *entry;
 
-	for (i=0; i<git_tree_entrycount(tree); i++) {
+	for (i = 0; i < git_tree_entrycount(tree); i++) {
 		entry = git_tree_entry_byindex(tree, i);
 
 		if (!strcmp(git_tree_entry_name(entry), target)) {
@@ -94,8 +93,7 @@ static int find_blob(git_oid *blob, git_tree *tree, const char *target)
 	return note_error_notfound();
 }
 
-static int tree_write(
-	git_tree **out,
+static int tree_write(git_tree **out,
 	git_repository *repo,
 	git_tree *source_tree,
 	const git_oid *object_oid,
@@ -112,7 +110,7 @@ static int tree_write(
 
 	if (object_oid) {
 		if ((error = git_treebuilder_insert(
-				&entry, tb, treeentry_name, object_oid, attributes)) < 0)
+				 &entry, tb, treeentry_name, object_oid, attributes)) < 0)
 			goto cleanup;
 	} else {
 		if ((error = git_treebuilder_remove(tb, treeentry_name)) < 0)
@@ -129,23 +127,20 @@ cleanup:
 	return error;
 }
 
-static int manipulate_note_in_tree_r(
-	git_tree **out,
+static int manipulate_note_in_tree_r(git_tree **out,
 	git_repository *repo,
 	git_tree *parent,
 	git_oid *note_oid,
 	const char *annotated_object_sha,
 	int fanout,
-	int (*note_exists_cb)(
-		git_tree **out,
+	int (*note_exists_cb)(git_tree **out,
 		git_repository *repo,
 		git_tree *parent,
 		git_oid *note_oid,
 		const char *annotated_object_sha,
 		int fanout,
 		int current_error),
-	int (*note_notfound_cb)(
-		git_tree **out,
+	int (*note_notfound_cb)(git_tree **out,
 		git_repository *repo,
 		git_tree *parent,
 		git_oid *note_oid,
@@ -176,9 +171,8 @@ static int manipulate_note_in_tree_r(
 		goto cleanup;
 
 	/* An existing fanout has been found, let's dig deeper */
-	error = manipulate_note_in_tree_r(
-		&new, repo, subtree, note_oid, annotated_object_sha,
-		fanout + 2, note_exists_cb, note_notfound_cb);
+	error = manipulate_note_in_tree_r(&new, repo, subtree, note_oid,
+		annotated_object_sha, fanout + 2, note_exists_cb, note_notfound_cb);
 
 	if (error < 0)
 		goto cleanup;
@@ -186,8 +180,8 @@ static int manipulate_note_in_tree_r(
 	strncpy(subtree_name, annotated_object_sha + fanout, 2);
 	subtree_name[2] = '\0';
 
-	error = tree_write(out, repo, parent, git_tree_id(new),
-			   subtree_name, GIT_FILEMODE_TREE);
+	error = tree_write(
+		out, repo, parent, git_tree_id(new), subtree_name, GIT_FILEMODE_TREE);
 
 
 cleanup:
@@ -196,8 +190,7 @@ cleanup:
 	return error;
 }
 
-static int remove_note_in_tree_eexists_cb(
-	git_tree **out,
+static int remove_note_in_tree_eexists_cb(git_tree **out,
 	git_repository *repo,
 	git_tree *parent,
 	git_oid *note_oid,
@@ -211,8 +204,7 @@ static int remove_note_in_tree_eexists_cb(
 	return tree_write(out, repo, parent, NULL, annotated_object_sha + fanout, 0);
 }
 
-static int remove_note_in_tree_enotfound_cb(
-	git_tree **out,
+static int remove_note_in_tree_enotfound_cb(git_tree **out,
 	git_repository *repo,
 	git_tree *parent,
 	git_oid *note_oid,
@@ -259,17 +251,11 @@ static int insert_note_in_tree_enotfound_cb(git_tree **out,
 	GIT_UNUSED(current_error);
 
 	/* No existing fanout at this level, insert in place */
-	return tree_write(
-		out,
-		repo,
-		parent,
-		note_oid,
-		annotated_object_sha + fanout,
-		GIT_FILEMODE_BLOB);
+	return tree_write(out, repo, parent, note_oid,
+		annotated_object_sha + fanout, GIT_FILEMODE_BLOB);
 }
 
-static int note_write(
-	git_oid *notes_commit_out,
+static int note_write(git_oid *notes_commit_out,
 	git_oid *notes_blob_out,
 	git_repository *repo,
 	const git_signature *author,
@@ -290,19 +276,18 @@ static int note_write(
 	if ((error = git_blob_create_frombuffer(&oid, repo, note, strlen(note))) < 0)
 		goto cleanup;
 
-	if ((error = manipulate_note_in_tree_r(
-		&tree, repo, commit_tree, &oid, target, 0,
-		allow_note_overwrite ? insert_note_in_tree_enotfound_cb : insert_note_in_tree_eexists_cb,
-		insert_note_in_tree_enotfound_cb)) < 0)
+	if ((error = manipulate_note_in_tree_r(&tree, repo, commit_tree, &oid, target,
+			 0, allow_note_overwrite ? insert_note_in_tree_enotfound_cb : insert_note_in_tree_eexists_cb,
+			 insert_note_in_tree_enotfound_cb)) < 0)
 		goto cleanup;
 
 	if (notes_blob_out)
 		git_oid_cpy(notes_blob_out, &oid);
 
 
-	error = git_commit_create(&oid, repo, notes_ref, author, committer,
-				  NULL, GIT_NOTES_DEFAULT_MSG_ADD,
-				  tree, *parents == NULL ? 0 : 1, (const git_commit **) parents);
+	error = git_commit_create(&oid, repo, notes_ref, author, committer, NULL,
+		GIT_NOTES_DEFAULT_MSG_ADD, tree, *parents == NULL ? 0 : 1,
+		(const git_commit **)parents);
 
 	if (notes_commit_out)
 		git_oid_cpy(notes_commit_out, &oid);
@@ -312,11 +297,7 @@ cleanup:
 	return error;
 }
 
-static int note_new(
-	git_note **out,
-	git_oid *note_oid,
-	git_commit *commit,
-	git_blob *blob)
+static int note_new(git_note **out, git_oid *note_oid, git_commit *commit, git_blob *blob)
 {
 	git_note *note = NULL;
 
@@ -337,11 +318,7 @@ static int note_new(
 }
 
 static int note_lookup(
-	git_note **out,
-	git_repository *repo,
-	git_commit *commit,
-	git_tree *tree,
-	const char *target)
+	git_note **out, git_repository *repo, git_commit *commit, git_tree *tree, const char *target)
 {
 	int error, fanout = 0;
 	git_oid oid;
@@ -369,27 +346,26 @@ cleanup:
 	return error;
 }
 
-static int note_remove(
-		git_oid *notes_commit_out,
-		git_repository *repo,
-		const git_signature *author, const git_signature *committer,
-		const char *notes_ref, git_tree *tree,
-		const char *target, git_commit **parents)
+static int note_remove(git_oid *notes_commit_out,
+	git_repository *repo,
+	const git_signature *author,
+	const git_signature *committer,
+	const char *notes_ref,
+	git_tree *tree,
+	const char *target,
+	git_commit **parents)
 {
 	int error;
 	git_tree *tree_after_removal = NULL;
 	git_oid oid;
 
-	if ((error = manipulate_note_in_tree_r(
-		&tree_after_removal, repo, tree, NULL, target, 0,
-		remove_note_in_tree_eexists_cb, remove_note_in_tree_enotfound_cb)) < 0)
+	if ((error = manipulate_note_in_tree_r(&tree_after_removal, repo, tree, NULL, target,
+			 0, remove_note_in_tree_eexists_cb, remove_note_in_tree_enotfound_cb)) < 0)
 		goto cleanup;
 
-	error = git_commit_create(&oid, repo, notes_ref, author, committer,
-	  NULL, GIT_NOTES_DEFAULT_MSG_RM,
-	  tree_after_removal,
-	  *parents == NULL ? 0 : 1,
-	  (const git_commit **) parents);
+	error = git_commit_create(&oid, repo, notes_ref, author, committer, NULL,
+		GIT_NOTES_DEFAULT_MSG_RM, tree_after_removal, *parents == NULL ? 0 : 1,
+		(const git_commit **)parents);
 
 	if (error < 0)
 		goto cleanup;
@@ -407,8 +383,9 @@ static int note_get_default_ref(char **out, git_repository *repo)
 	git_config *cfg;
 	int ret = git_repository_config__weakptr(&cfg, repo);
 
-	*out = (ret != 0) ? NULL : git_config__get_string_force(
-		cfg, "core.notesref", GIT_NOTES_DEFAULT_REF);
+	*out = (ret != 0) ?
+		NULL :
+		git_config__get_string_force(cfg, "core.notesref", GIT_NOTES_DEFAULT_REF);
 
 	return ret;
 }
@@ -425,10 +402,7 @@ static int normalize_namespace(char **out, git_repository *repo, const char *not
 }
 
 static int retrieve_note_commit(
-	git_commit **commit_out,
-	char **notes_ref_out,
-	git_repository *repo,
-	const char *notes_ref)
+	git_commit **commit_out, char **notes_ref_out, git_repository *repo, const char *notes_ref)
 {
 	int error;
 	git_oid oid;
@@ -446,10 +420,7 @@ static int retrieve_note_commit(
 }
 
 int git_note_commit_read(
-	git_note **out,
-	git_repository *repo,
-	git_commit *notes_commit,
-	const git_oid *oid)
+	git_note **out, git_repository *repo, git_commit *notes_commit, const git_oid *oid)
 {
 	int error;
 	git_tree *tree = NULL;
@@ -467,8 +438,8 @@ cleanup:
 	return error;
 }
 
-int git_note_read(git_note **out, git_repository *repo,
-		  const char *notes_ref_in, const git_oid *oid)
+int git_note_read(
+	git_note **out, git_repository *repo, const char *notes_ref_in, const git_oid *oid)
 {
 	int error;
 	char *notes_ref = NULL;
@@ -487,8 +458,7 @@ cleanup:
 	return error;
 }
 
-int git_note_commit_create(
-	git_oid *notes_commit_out,
+int git_note_commit_create(git_oid *notes_commit_out,
 	git_oid *notes_blob_out,
 	git_repository *repo,
 	git_commit *parent,
@@ -508,7 +478,7 @@ int git_note_commit_create(
 		goto cleanup;
 
 	error = note_write(notes_commit_out, notes_blob_out, repo, author,
-			committer, NULL, note, tree, target, &parent, allow_note_overwrite);
+		committer, NULL, note, tree, target, &parent, allow_note_overwrite);
 
 	if (error < 0)
 		goto cleanup;
@@ -518,8 +488,7 @@ cleanup:
 	return error;
 }
 
-int git_note_create(
-	git_oid *out,
+int git_note_create(git_oid *out,
 	git_repository *repo,
 	const char *notes_ref_in,
 	const git_signature *author,
@@ -534,22 +503,17 @@ int git_note_create(
 	git_reference *ref = NULL;
 	git_oid notes_blob_oid, notes_commit_oid;
 
-	error = retrieve_note_commit(&existing_notes_commit, &notes_ref,
-			repo, notes_ref_in);
+	error = retrieve_note_commit(&existing_notes_commit, &notes_ref, repo, notes_ref_in);
 
 	if (error < 0 && error != GIT_ENOTFOUND)
 		goto cleanup;
 
-	error = git_note_commit_create(&notes_commit_oid,
-			&notes_blob_oid,
-			repo, existing_notes_commit, author,
-			committer, oid, note,
-			allow_note_overwrite);
+	error = git_note_commit_create(&notes_commit_oid, &notes_blob_oid, repo,
+		existing_notes_commit, author, committer, oid, note, allow_note_overwrite);
 	if (error < 0)
 		goto cleanup;
 
-	error = git_reference_create(&ref, repo, notes_ref,
-				&notes_commit_oid, 1, NULL);
+	error = git_reference_create(&ref, repo, notes_ref, &notes_commit_oid, 1, NULL);
 
 	if (out != NULL)
 		git_oid_cpy(out, &notes_blob_oid);
@@ -561,13 +525,12 @@ cleanup:
 	return error;
 }
 
-int git_note_commit_remove(
-		git_oid *notes_commit_out,
-		git_repository *repo,
-		git_commit *notes_commit,
-		const git_signature *author,
-		const git_signature *committer,
-		const git_oid *oid)
+int git_note_commit_remove(git_oid *notes_commit_out,
+	git_repository *repo,
+	git_commit *notes_commit,
+	const git_signature *author,
+	const git_signature *committer,
+	const git_oid *oid)
 {
 	int error;
 	git_tree *tree = NULL;
@@ -578,17 +541,19 @@ int git_note_commit_remove(
 	if ((error = git_commit_tree(&tree, notes_commit)) < 0)
 		goto cleanup;
 
-	error = note_remove(notes_commit_out,
-		repo, author, committer, NULL, tree, target, &notes_commit);
+	error = note_remove(notes_commit_out, repo, author, committer, NULL, tree,
+		target, &notes_commit);
 
 cleanup:
 	git_tree_free(tree);
 	return error;
 }
 
-int git_note_remove(git_repository *repo, const char *notes_ref_in,
-		const git_signature *author, const git_signature *committer,
-		const git_oid *oid)
+int git_note_remove(git_repository *repo,
+	const char *notes_ref_in,
+	const git_signature *author,
+	const git_signature *committer,
+	const git_oid *oid)
 {
 	int error;
 	char *notes_ref_target = NULL;
@@ -596,19 +561,19 @@ int git_note_remove(git_repository *repo, const char *notes_ref_in,
 	git_oid new_notes_commit;
 	git_reference *notes_ref = NULL;
 
-	error = retrieve_note_commit(&existing_notes_commit, &notes_ref_target,
-			repo, notes_ref_in);
+	error = retrieve_note_commit(
+		&existing_notes_commit, &notes_ref_target, repo, notes_ref_in);
 
 	if (error < 0)
 		goto cleanup;
 
-	error = git_note_commit_remove(&new_notes_commit, repo,
-			existing_notes_commit, author, committer, oid);
+	error = git_note_commit_remove(
+		&new_notes_commit, repo, existing_notes_commit, author, committer, oid);
 	if (error < 0)
 		goto cleanup;
 
-	error = git_reference_create(&notes_ref, repo, notes_ref_target,
-			&new_notes_commit, 1, NULL);
+	error = git_reference_create(
+		&notes_ref, repo, notes_ref_target, &new_notes_commit, 1, NULL);
 
 cleanup:
 	git__free(notes_ref_target);
@@ -645,13 +610,13 @@ const git_signature *git_note_author(const git_note *note)
 	return note->author;
 }
 
-const char * git_note_message(const git_note *note)
+const char *git_note_message(const git_note *note)
 {
 	assert(note);
 	return note->message;
 }
 
-const git_oid * git_note_id(const git_note *note)
+const git_oid *git_note_id(const git_note *note)
 {
 	assert(note);
 	return &note->id;
@@ -668,9 +633,7 @@ void git_note_free(git_note *note)
 	git__free(note);
 }
 
-static int process_entry_path(
-	const char* entry_path,
-	git_oid *annotated_object_id)
+static int process_entry_path(const char *entry_path, git_oid *annotated_object_id)
 {
 	int error = 0;
 	size_t i = 0, j = 0, len;
@@ -715,10 +678,7 @@ cleanup:
 }
 
 int git_note_foreach(
-	git_repository *repo,
-	const char *notes_ref,
-	git_note_foreach_cb note_cb,
-	void *payload)
+	git_repository *repo, const char *notes_ref, git_note_foreach_cb note_cb, void *payload)
 {
 	int error;
 	git_note_iterator *iter = NULL;
@@ -749,9 +709,7 @@ void git_note_iterator_free(git_note_iterator *it)
 	git_iterator_free(it);
 }
 
-int git_note_commit_iterator_new(
-	git_note_iterator **it,
-	git_commit *notes_commit)
+int git_note_commit_iterator_new(git_note_iterator **it, git_commit *notes_commit)
 {
 	int error;
 	git_tree *tree;
@@ -769,9 +727,7 @@ cleanup:
 }
 
 int git_note_iterator_new(
-	git_note_iterator **it,
-	git_repository *repo,
-	const char *notes_ref_in)
+	git_note_iterator **it, git_repository *repo, const char *notes_ref_in)
 {
 	int error;
 	git_commit *commit = NULL;
@@ -790,10 +746,7 @@ cleanup:
 	return error;
 }
 
-int git_note_next(
-	git_oid* note_id,
-	git_oid* annotated_id,
-	git_note_iterator *it)
+int git_note_next(git_oid *note_id, git_oid *annotated_id, git_note_iterator *it)
 {
 	int error;
 	const git_index_entry *item;

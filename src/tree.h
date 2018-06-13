@@ -57,8 +57,7 @@ int git_tree__prefix_position(const git_tree *tree, const char *prefix);
 /**
  * Write a tree to the given repository
  */
-int git_tree__write_index(
-	git_oid *oid, git_index *index, git_repository *repo);
+int git_tree__write_index(git_oid *oid, git_index *index, git_repository *repo);
 
 /**
  * Obsolete mode kept for compatibility reasons

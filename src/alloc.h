@@ -12,15 +12,20 @@
 
 extern git_allocator git__allocator;
 
-#define git__malloc(len)                      git__allocator.gmalloc(len, __FILE__, __LINE__)
-#define git__calloc(nelem, elsize)            git__allocator.gcalloc(nelem, elsize, __FILE__, __LINE__)
-#define git__strdup(str)                      git__allocator.gstrdup(str, __FILE__, __LINE__)
-#define git__strndup(str, n)                  git__allocator.gstrndup(str, n, __FILE__, __LINE__)
-#define git__substrdup(str, n)                git__allocator.gsubstrdup(str, n, __FILE__, __LINE__)
-#define git__realloc(ptr, size)               git__allocator.grealloc(ptr, size, __FILE__, __LINE__)
-#define git__reallocarray(ptr, nelem, elsize) git__allocator.greallocarray(ptr, nelem, elsize, __FILE__, __LINE__)
-#define git__mallocarray(nelem, elsize)       git__allocator.gmallocarray(nelem, elsize, __FILE__, __LINE__)
-#define git__free                             git__allocator.gfree
+#define git__malloc(len) git__allocator.gmalloc(len, __FILE__, __LINE__)
+#define git__calloc(nelem, elsize) \
+	git__allocator.gcalloc(nelem, elsize, __FILE__, __LINE__)
+#define git__strdup(str) git__allocator.gstrdup(str, __FILE__, __LINE__)
+#define git__strndup(str, n) git__allocator.gstrndup(str, n, __FILE__, __LINE__)
+#define git__substrdup(str, n) \
+	git__allocator.gsubstrdup(str, n, __FILE__, __LINE__)
+#define git__realloc(ptr, size) \
+	git__allocator.grealloc(ptr, size, __FILE__, __LINE__)
+#define git__reallocarray(ptr, nelem, elsize) \
+	git__allocator.greallocarray(ptr, nelem, elsize, __FILE__, __LINE__)
+#define git__mallocarray(nelem, elsize) \
+	git__allocator.gmallocarray(nelem, elsize, __FILE__, __LINE__)
+#define git__free git__allocator.gfree
 
 /**
  * This function is being called by our global setup routines to

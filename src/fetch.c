@@ -19,7 +19,11 @@
 #include "repository.h"
 #include "refs.h"
 
-static int maybe_want(git_remote *remote, git_remote_head *head, git_odb *odb, git_refspec *tagspec, git_remote_autotag_option_t tagopt)
+static int maybe_want(git_remote *remote,
+	git_remote_head *head,
+	git_odb *odb,
+	git_refspec *tagspec,
+	git_remote_autotag_option_t tagopt)
 {
 	int match = 0;
 
@@ -44,8 +48,7 @@ static int maybe_want(git_remote *remote, git_remote_head *head, git_odb *odb, g
 	/* If we have the object, mark it so we don't ask for it */
 	if (git_odb_exists(odb, &head->oid)) {
 		head->local = 1;
-	}
-	else
+	} else
 		remote->need_pack = 1;
 
 	return git_vector_insert(&remote->refs, head);
@@ -125,10 +128,8 @@ int git_fetch_negotiate(git_remote *remote, const git_fetch_options *opts)
 	 * Now we have everything set up so we can start tell the
 	 * server what we want and what we have.
 	 */
-	return t->negotiate_fetch(t,
-		remote->repo,
-		(const git_remote_head * const *)remote->refs.contents,
-		remote->refs.length);
+	return t->negotiate_fetch(t, remote->repo,
+		(const git_remote_head *const *)remote->refs.contents, remote->refs.length);
 }
 
 int git_fetch_download_pack(git_remote *remote, const git_remote_callbacks *callbacks)
@@ -142,7 +143,7 @@ int git_fetch_download_pack(git_remote *remote, const git_remote_callbacks *call
 
 	if (callbacks) {
 		progress = callbacks->transfer_progress;
-		payload  = callbacks->payload;
+		payload = callbacks->payload;
 	}
 
 	return t->download_pack(t, remote->repo, &remote->stats, progress, payload);

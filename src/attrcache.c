@@ -30,8 +30,8 @@ GIT_INLINE(void) attr_cache_unlock(git_attr_cache *cache)
 	git_mutex_unlock(&cache->lock);
 }
 
-GIT_INLINE(git_attr_file_entry *) attr_cache_lookup_entry(
-	git_attr_cache *cache, const char *path)
+GIT_INLINE(git_attr_file_entry *)
+attr_cache_lookup_entry(git_attr_cache *cache, const char *path)
 {
 	khiter_t pos = git_strmap_lookup_index(cache->files, path);
 
@@ -42,10 +42,7 @@ GIT_INLINE(git_attr_file_entry *) attr_cache_lookup_entry(
 }
 
 int git_attr_cache__alloc_file_entry(
-	git_attr_file_entry **out,
-	const char *base,
-	const char *path,
-	git_pool *pool)
+	git_attr_file_entry **out, const char *base, const char *path, git_pool *pool)
 {
 	size_t baselen = 0, pathlen = strlen(path);
 	size_t cachesize = sizeof(git_attr_file_entry) + pathlen + 1;
@@ -156,8 +153,7 @@ static int attr_cache_remove(git_attr_cache *cache, git_attr_file *file)
  * - If file is present, increment refcount before returning it, so the
  *   cache can be unlocked and it won't go away.
  */
-static int attr_cache_lookup(
-	git_attr_file **out_file,
+static int attr_cache_lookup(git_attr_file **out_file,
 	git_attr_file_entry **out_entry,
 	git_repository *repo,
 	git_attr_session *attr_session,
@@ -201,15 +197,14 @@ static int attr_cache_lookup(
 	attr_cache_unlock(cache);
 
 cleanup:
-	*out_file  = file;
+	*out_file = file;
 	*out_entry = entry;
 
 	git_buf_dispose(&path);
 	return error;
 }
 
-int git_attr_cache__get(
-	git_attr_file **out,
+int git_attr_cache__get(git_attr_file **out,
 	git_repository *repo,
 	git_attr_session *attr_session,
 	git_attr_file_source source,
@@ -223,7 +218,7 @@ int git_attr_cache__get(
 	git_attr_file *file = NULL, *updated = NULL;
 
 	if ((error = attr_cache_lookup(
-			&file, &entry, repo, attr_session, source, base, filename)) < 0)
+			 &file, &entry, repo, attr_session, source, base, filename)) < 0)
 		return error;
 
 	/* load file if we don't have one or if existing one is out of date */
@@ -260,9 +255,7 @@ int git_attr_cache__get(
 }
 
 bool git_attr_cache__is_cached(
-	git_repository *repo,
-	git_attr_file_source source,
-	const char *filename)
+	git_repository *repo, git_attr_file_source source, const char *filename)
 {
 	git_attr_cache *cache = git_repository_attr_cache(repo);
 	git_strmap *files;
@@ -299,13 +292,12 @@ static int attr_cache__lookup_path(
 
 		/* expand leading ~/ as needed */
 		if (cfgval && cfgval[0] == '~' && cfgval[1] == '/') {
-			if (! (error = git_sysdir_expand_global_file(&buf, &cfgval[2])))
+			if (!(error = git_sysdir_expand_global_file(&buf, &cfgval[2])))
 				*out = git_buf_detach(&buf);
 		} else if (cfgval) {
 			*out = git__strdup(cfgval);
 		}
-	}
-	else if (!git_sysdir_find_xdg_file(&buf, fallback)) {
+	} else if (!git_sysdir_find_xdg_file(&buf, fallback)) {
 		*out = git_buf_detach(&buf);
 	}
 
@@ -329,23 +321,24 @@ static void attr_cache__free(git_attr_cache *cache)
 		git_attr_file *file;
 		int i;
 
-		git_strmap_foreach_value(cache->files, entry, {
+		git_strmap_foreach_value (cache->files, entry, {
 			for (i = 0; i < GIT_ATTR_FILE_NUM_SOURCES; ++i) {
 				if ((file = git__swap(entry->file[i], NULL)) != NULL) {
 					GIT_REFCOUNT_OWN(file, NULL);
 					git_attr_file__free(file);
 				}
 			}
-		});
+		})
+			;
 		git_strmap_free(cache->files);
 	}
 
 	if (cache->macros != NULL) {
 		git_attr_rule *rule;
 
-		git_strmap_foreach_value(cache->macros, rule, {
-			git_attr_rule__free(rule);
-		});
+		git_strmap_foreach_value (
+			cache->macros, rule, { git_attr_rule__free(rule); })
+			;
 		git_strmap_free(cache->macros);
 	}
 
@@ -453,8 +446,7 @@ int git_attr_cache__insert_macro(git_repository *repo, git_attr_rule *macro)
 	return (error < 0) ? -1 : 0;
 }
 
-git_attr_rule *git_attr_cache__lookup_macro(
-	git_repository *repo, const char *name)
+git_attr_rule *git_attr_cache__lookup_macro(git_repository *repo, const char *name)
 {
 	git_strmap *macros = git_repository_attr_cache(repo)->macros;
 	khiter_t pos;
@@ -466,4 +458,3 @@ git_attr_rule *git_attr_cache__lookup_macro(
 
 	return (git_attr_rule *)git_strmap_value_at(macros, pos);
 }
-

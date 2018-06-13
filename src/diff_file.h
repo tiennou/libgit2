@@ -27,10 +27,7 @@ typedef struct {
 } git_diff_file_content;
 
 extern int git_diff_file_content__init_from_diff(
-	git_diff_file_content *fc,
-	git_diff *diff,
-	git_diff_delta *delta,
-	bool use_old);
+	git_diff_file_content *fc, git_diff *diff, git_diff_delta *delta, bool use_old);
 
 typedef struct {
 	const git_blob *blob;
@@ -39,11 +36,16 @@ typedef struct {
 	const char *as_path;
 } git_diff_file_content_src;
 
-#define GIT_DIFF_FILE_CONTENT_SRC__BLOB(BLOB,PATH) { (BLOB),NULL,0,(PATH) }
-#define GIT_DIFF_FILE_CONTENT_SRC__BUF(BUF,LEN,PATH) { NULL,(BUF),(LEN),(PATH) }
+#define GIT_DIFF_FILE_CONTENT_SRC__BLOB(BLOB, PATH) \
+	{                                               \
+		(BLOB), NULL, 0, (PATH)                     \
+	}
+#define GIT_DIFF_FILE_CONTENT_SRC__BUF(BUF, LEN, PATH) \
+	{                                                  \
+		NULL, (BUF), (LEN), (PATH)                     \
+	}
 
-extern int git_diff_file_content__init_from_src(
-	git_diff_file_content *fc,
+extern int git_diff_file_content__init_from_src(git_diff_file_content *fc,
 	git_repository *repo,
 	const git_diff_options *opts,
 	const git_diff_file_content_src *src,
@@ -51,8 +53,7 @@ extern int git_diff_file_content__init_from_src(
 
 /* this loads the blob/file-on-disk as needed */
 extern int git_diff_file_content__load(
-	git_diff_file_content *fc,
-	git_diff_options *diff_opts);
+	git_diff_file_content *fc, git_diff_options *diff_opts);
 
 /* this releases the blob/file-in-memory */
 extern void git_diff_file_content__unload(git_diff_file_content *fc);

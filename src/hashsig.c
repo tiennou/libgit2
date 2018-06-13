@@ -17,10 +17,10 @@ typedef uint64_t hashsig_state;
 #define HASHSIG_SCALE 100
 
 #define HASHSIG_MAX_RUN 80
-#define HASHSIG_HASH_START	0x012345678ABCDEF0LL
-#define HASHSIG_HASH_SHIFT  5
+#define HASHSIG_HASH_START 0x012345678ABCDEF0LL
+#define HASHSIG_HASH_SHIFT 5
 
-#define HASHSIG_HASH_MIX(S,CH) \
+#define HASHSIG_HASH_MIX(S, CH) \
 	(S) = ((S) << HASHSIG_HASH_SHIFT) - (S) + (hashsig_state)(CH)
 
 #define HASHSIG_HEAP_SIZE ((1 << 7) - 1)
@@ -41,15 +41,15 @@ struct git_hashsig {
 	git_hashsig_option_t opt;
 };
 
-#define HEAP_LCHILD_OF(I) (((I)<<1)+1)
-#define HEAP_RCHILD_OF(I) (((I)<<1)+2)
-#define HEAP_PARENT_OF(I) (((I)-1)>>1)
+#define HEAP_LCHILD_OF(I) (((I) << 1) + 1)
+#define HEAP_RCHILD_OF(I) (((I) << 1) + 2)
+#define HEAP_PARENT_OF(I) (((I)-1) >> 1)
 
 static void hashsig_heap_init(hashsig_heap *h, hashsig_cmp cmp)
 {
-	h->size  = 0;
+	h->size = 0;
 	h->asize = HASHSIG_HEAP_SIZE;
-	h->cmp   = cmp;
+	h->cmp = cmp;
 }
 
 static int hashsig_cmp_max(const void *a, const void *b, void *payload)
@@ -89,7 +89,7 @@ static void hashsig_heap_down(hashsig_heap *h, int el)
 	while (el < h->size / 2) {
 		int lel = HEAP_LCHILD_OF(el), rel = HEAP_RCHILD_OF(el), swapel;
 
-		v  = h->values[el];
+		v = h->values[el];
 		lv = h->values[lel];
 		rv = h->values[rel];
 
@@ -125,7 +125,6 @@ static void hashsig_heap_insert(hashsig_heap *h, hashsig_t val)
 		h->values[0] = h->values[h->size];
 		hashsig_heap_down(h, 0);
 	}
-
 }
 
 typedef struct {
@@ -133,14 +132,13 @@ typedef struct {
 	uint8_t ignore_ch[256];
 } hashsig_in_progress;
 
-static void hashsig_in_progress_init(
-	hashsig_in_progress *prog, git_hashsig *sig)
+static void hashsig_in_progress_init(hashsig_in_progress *prog, git_hashsig *sig)
 {
 	int i;
 
 	/* no more than one can be set */
 	assert(!(sig->opt & GIT_HASHSIG_IGNORE_WHITESPACE) ||
-		   !(sig->opt & GIT_HASHSIG_SMART_WHITESPACE));
+		!(sig->opt & GIT_HASHSIG_SMART_WHITESPACE));
 
 	if (sig->opt & GIT_HASHSIG_IGNORE_WHITESPACE) {
 		for (i = 0; i < 256; ++i)
@@ -156,10 +154,7 @@ static void hashsig_in_progress_init(
 }
 
 static int hashsig_add_hashes(
-	git_hashsig *sig,
-	const uint8_t *data,
-	size_t size,
-	hashsig_in_progress *prog)
+	git_hashsig *sig, const uint8_t *data, size_t size, hashsig_in_progress *prog)
 {
 	const uint8_t *scan = data, *end = data + size;
 	hashsig_state state = HASHSIG_HASH_START;
@@ -169,14 +164,14 @@ static int hashsig_add_hashes(
 	while (scan < end) {
 		state = HASHSIG_HASH_START;
 
-		for (len = 0; scan < end && len < HASHSIG_MAX_RUN; ) {
+		for (len = 0; scan < end && len < HASHSIG_MAX_RUN;) {
 			ch = *scan;
 
 			if (use_ignores)
 				for (; scan < end && git__isspace_nonlf(ch); ch = *scan)
 					++scan;
 			else if (sig->opt &
-					 (GIT_HASHSIG_IGNORE_WHITESPACE | GIT_HASHSIG_SMART_WHITESPACE))
+				(GIT_HASHSIG_IGNORE_WHITESPACE | GIT_HASHSIG_SMART_WHITESPACE))
 				for (; scan < end && ch == '\r'; ch = *scan)
 					++scan;
 
@@ -216,8 +211,7 @@ static int hashsig_finalize_hashes(git_hashsig *sig)
 {
 	if (sig->mins.size < HASHSIG_HEAP_MIN_SIZE &&
 		!(sig->opt & GIT_HASHSIG_ALLOW_SMALL_FILES)) {
-		giterr_set(GITERR_INVALID,
-			"file too small for similarity signature calculation");
+		giterr_set(GITERR_INVALID, "file too small for similarity signature calculation");
 		return GIT_EBUFS;
 	}
 
@@ -241,10 +235,7 @@ static git_hashsig *hashsig_alloc(git_hashsig_option_t opts)
 }
 
 int git_hashsig_create(
-	git_hashsig **out,
-	const char *buf,
-	size_t buflen,
-	git_hashsig_option_t opts)
+	git_hashsig **out, const char *buf, size_t buflen, git_hashsig_option_t opts)
 {
 	int error;
 	hashsig_in_progress prog;
@@ -267,9 +258,7 @@ int git_hashsig_create(
 }
 
 int git_hashsig_create_fromfile(
-	git_hashsig **out,
-	const char *path,
-	git_hashsig_option_t opts)
+	git_hashsig **out, const char *path, git_hashsig_option_t opts)
 {
 	uint8_t buf[0x1000];
 	ssize_t buflen = 0;
@@ -322,7 +311,7 @@ static int hashsig_heap_compare(const hashsig_heap *a, const hashsig_heap *b)
 
 	/* hash heaps are sorted - just look for overlap vs total */
 
-	for (i = 0, j = 0; i < a->size && j < b->size; ) {
+	for (i = 0, j = 0; i < a->size && j < b->size;) {
 		cmp = a->cmp(&a->values[i], &b->values[j], NULL);
 
 		if (cmp < 0)
@@ -330,7 +319,9 @@ static int hashsig_heap_compare(const hashsig_heap *a, const hashsig_heap *b)
 		else if (cmp > 0)
 			++j;
 		else {
-			++i; ++j; ++matches;
+			++i;
+			++j;
+			++matches;
 		}
 	}
 
@@ -344,8 +335,7 @@ int git_hashsig_compare(const git_hashsig *a, const git_hashsig *b)
 	 * similar, otherwise they're dissimilar.
 	 */
 	if (a->mins.size == 0 && b->mins.size == 0) {
-		if ((!a->lines && !b->lines) ||
-			(a->opt & GIT_HASHSIG_IGNORE_WHITESPACE))
+		if ((!a->lines && !b->lines) || (a->opt & GIT_HASHSIG_IGNORE_WHITESPACE))
 			return HASHSIG_SCALE;
 		else
 			return 0;
@@ -358,5 +348,6 @@ int git_hashsig_compare(const git_hashsig *a, const git_hashsig *b)
 		return hashsig_heap_compare(&a->mins, &b->mins);
 	else
 		return (hashsig_heap_compare(&a->mins, &b->mins) +
-				hashsig_heap_compare(&a->maxs, &b->maxs)) / 2;
+				   hashsig_heap_compare(&a->maxs, &b->maxs)) /
+			2;
 }

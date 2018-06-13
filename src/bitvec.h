@@ -39,7 +39,8 @@ GIT_INLINE(int) git_bitvec_init(git_bitvec *bv, size_t capacity)
 }
 
 #define GIT_BITVEC_MASK(BIT) ((uint64_t)1 << (BIT % 64))
-#define GIT_BITVEC_WORD(BV, BIT) (BV->length ? &BV->u.words[BIT / 64] : &BV->u.bits)
+#define GIT_BITVEC_WORD(BV, BIT) \
+	(BV->length ? &BV->u.words[BIT / 64] : &BV->u.bits)
 
 GIT_INLINE(void) git_bitvec_set(git_bitvec *bv, size_t bit, bool on)
 {

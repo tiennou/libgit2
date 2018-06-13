@@ -1,0 +1,41 @@
+---
+AlignConsecutiveAssignments: false
+AlignEscapedNewlines: Left
+AllowShortBlocksOnASingleLine: true
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+BasedOnStyle: WebKit
+BraceWrapping:
+  AfterControlStatement: false
+  AfterFunction: true
+BreakBeforeBinaryOperators: None
+BreakBeforeBraces: Custom
+BreakBeforeTernaryOperators: false
+ColumnLimit: 80
+DerivePointerAlignment: true
+ForEachMacros:
+- git_array_foreach
+- git_attr_file__foreach
+- git_offmap_foreach
+- git_offmap_foreach_value
+- git_oidmap_foreach_value
+- git_strmap_foreach
+- git_strmap_foreach_value
+- git_vector_foreach
+- kh_foreach
+- kh_foreach_value
+IncludeBlocks: Preserve
+Language: Cpp
+MaxEmptyLinesToKeep: 3
+PenaltyBreakAssignment: 100
+PenaltyExcessCharacter: 2
+PointerAlignment: Right
+SortIncludes: false
+SpaceBeforeParens: ControlStatements
+SpacesInSquareBrackets: false
+TabWidth: 4
+UseTab: Always
+BinPackParameters: false
+...

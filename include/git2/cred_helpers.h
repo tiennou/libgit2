@@ -40,12 +40,12 @@ typedef struct git_cred_userpass_payload {
  * @param payload The payload provided when specifying this callback.  (This is
  *        interpreted as a `git_cred_userpass_payload*`.)
  */
-GIT_EXTERN(int) git_cred_userpass(
-		git_cred **cred,
-		const char *url,
-		const char *user_from_url,
-		unsigned int allowed_types,
-		void *payload);
+GIT_EXTERN(int)
+git_cred_userpass(git_cred **cred,
+	const char *url,
+	const char *user_from_url,
+	unsigned int allowed_types,
+	void *payload);
 
 
 /** @} */

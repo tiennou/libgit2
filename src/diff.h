@@ -32,12 +32,12 @@ typedef enum {
 } git_diff_origin_t;
 
 struct git_diff {
-	git_refcount     rc;
-	git_repository   *repo;
+	git_refcount rc;
+	git_repository *repo;
 	git_attr_session attrsession;
 	git_diff_origin_t type;
 	git_diff_options opts;
-	git_vector       deltas;    /* vector of git_diff_delta */
+	git_vector deltas; /* vector of git_diff_delta */
 	git_pool pool;
 	git_iterator_type_t old_src;
 	git_iterator_type_t new_src;
@@ -52,8 +52,7 @@ struct git_diff {
 	void (*free_fn)(git_diff *diff);
 };
 
-extern int git_diff_delta__format_file_header(
-	git_buf *out,
+extern int git_diff_delta__format_file_header(git_buf *out,
 	const git_diff_delta *delta,
 	const char *oldpfx,
 	const char *newpfx,

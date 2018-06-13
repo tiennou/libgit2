@@ -91,9 +91,9 @@ static int git_sysdir_guess_global_dirs(git_buf *out)
 	 * of the effective user.
 	 */
 	if (uid == euid)
-	    error = git__getenv(out, "HOME");
+		error = git__getenv(out, "HOME");
 	else
-	    error = get_passwd_home(out, euid);
+		error = get_passwd_home(out, euid);
 
 	if (error == GIT_ENOTFOUND) {
 		giterr_clear();
@@ -206,10 +206,7 @@ int git_sysdir_get(const git_buf **out, git_sysdir_t which)
 	return 0;
 }
 
-int git_sysdir_get_str(
-	char *out,
-	size_t outlen,
-	git_sysdir_t which)
+int git_sysdir_get_str(char *out, size_t outlen, git_sysdir_t which)
 {
 	const git_buf *path = NULL;
 
@@ -254,8 +251,8 @@ int git_sysdir_set(git_sysdir_t which, const char *search_path)
 		git_buf_set(&merge, search_path, expand_path - search_path);
 
 	if (git_buf_len(&git_sysdir__dirs[which].buf))
-		git_buf_join(&merge, GIT_PATH_LIST_SEPARATOR,
-			merge.ptr, git_sysdir__dirs[which].buf.ptr);
+		git_buf_join(&merge, GIT_PATH_LIST_SEPARATOR, merge.ptr,
+			git_sysdir__dirs[which].buf.ptr);
 
 	expand_path += strlen(PATH_MAGIC);
 	if (*expand_path)
@@ -272,10 +269,7 @@ done:
 }
 
 static int git_sysdir_find_in_dirlist(
-	git_buf *path,
-	const char *name,
-	git_sysdir_t which,
-	const char *label)
+	git_buf *path, const char *name, git_sysdir_t which, const char *label)
 {
 	size_t len;
 	const char *scan, *next = NULL;
@@ -288,8 +282,7 @@ static int git_sysdir_find_in_dirlist(
 	for (scan = git_buf_cstr(syspath); scan; scan = next) {
 		/* find unescaped separator or end of string */
 		for (next = scan; *next; ++next) {
-			if (*next == GIT_PATH_LIST_SEPARATOR &&
-				(next <= scan || next[-1] != '\\'))
+			if (*next == GIT_PATH_LIST_SEPARATOR && (next <= scan || next[-1] != '\\'))
 				break;
 		}
 
@@ -314,20 +307,17 @@ done:
 
 int git_sysdir_find_system_file(git_buf *path, const char *filename)
 {
-	return git_sysdir_find_in_dirlist(
-		path, filename, GIT_SYSDIR_SYSTEM, "system");
+	return git_sysdir_find_in_dirlist(path, filename, GIT_SYSDIR_SYSTEM, "system");
 }
 
 int git_sysdir_find_global_file(git_buf *path, const char *filename)
 {
-	return git_sysdir_find_in_dirlist(
-		path, filename, GIT_SYSDIR_GLOBAL, "global");
+	return git_sysdir_find_in_dirlist(path, filename, GIT_SYSDIR_GLOBAL, "global");
 }
 
 int git_sysdir_find_xdg_file(git_buf *path, const char *filename)
 {
-	return git_sysdir_find_in_dirlist(
-		path, filename, GIT_SYSDIR_XDG, "global/xdg");
+	return git_sysdir_find_in_dirlist(path, filename, GIT_SYSDIR_XDG, "global/xdg");
 }
 
 int git_sysdir_find_programdata_file(git_buf *path, const char *filename)
@@ -338,8 +328,7 @@ int git_sysdir_find_programdata_file(git_buf *path, const char *filename)
 
 int git_sysdir_find_template_dir(git_buf *path)
 {
-	return git_sysdir_find_in_dirlist(
-		path, NULL, GIT_SYSDIR_TEMPLATE, "template");
+	return git_sysdir_find_in_dirlist(path, NULL, GIT_SYSDIR_TEMPLATE, "template");
 }
 
 int git_sysdir_expand_global_file(git_buf *path, const char *filename)

@@ -13,14 +13,14 @@
 #include "reparse.h"
 #include "dir.h"
 
-#define PATH__NT_NAMESPACE     L"\\\\?\\"
+#define PATH__NT_NAMESPACE L"\\\\?\\"
 #define PATH__NT_NAMESPACE_LEN 4
 
-#define PATH__ABSOLUTE_LEN     3
+#define PATH__ABSOLUTE_LEN 3
 
-#define path__is_nt_namespace(p) \
+#define path__is_nt_namespace(p)                                              \
 	(((p)[0] == '\\' && (p)[1] == '\\' && (p)[2] == '?' && (p)[3] == '\\') || \
-	 ((p)[0] == '/' && (p)[1] == '/' && (p)[2] == '?' && (p)[3] == '/'))
+		((p)[0] == '/' && (p)[1] == '/' && (p)[2] == '?' && (p)[3] == '/'))
 
 #define path__is_unc(p) \
 	(((p)[0] == '\\' && (p)[1] == '\\') || ((p)[0] == '/' && (p)[1] == '/'))
@@ -117,8 +117,10 @@ int git_win32_path_canonicalize(git_win32_path path)
 				base = to;
 			} else {
 				/* back up a path segment */
-				while (to > base && to[-1] == L'\\') to--;
-				while (to > base && to[-1] != L'\\') to--;
+				while (to > base && to[-1] == L'\\')
+					to--;
+				while (to > base && to[-1] != L'\\')
+					to--;
 			}
 		} else {
 			if (*next == L'\\' && *from != L'\\')
@@ -132,11 +134,13 @@ int git_win32_path_canonicalize(git_win32_path path)
 
 		from += len;
 
-		while (*from == L'\\') from++;
+		while (*from == L'\\')
+			from++;
 	}
 
 	/* Strip trailing backslashes */
-	while (to > base && to[-1] == L'\\') to--;
+	while (to > base && to[-1] == L'\\')
+		to--;
 
 	*to = L'\0';
 
@@ -162,7 +166,7 @@ int git_win32_path__cwd(wchar_t *out, size_t len)
 			return -1;
 		}
 
-		memmove(out+2, out, sizeof(wchar_t) * cwd_len);
+		memmove(out + 2, out, sizeof(wchar_t) * cwd_len);
 		out[0] = L'U';
 		out[1] = L'N';
 		out[2] = L'C';
@@ -220,7 +224,7 @@ int git_win32_path_from_utf8(git_win32_path out, const char *src)
 			goto on_error;
 		}
 
-		/* Skip the drive letter specification ("C:") */	
+		/* Skip the drive letter specification ("C:") */
 		if (git__utf8_to_16(dest + 2, MAX_PATH - 2, src) < 0)
 			goto on_error;
 	}
@@ -285,15 +289,14 @@ char *git_win32_path_8dot3_name(const char *path)
 
 	len = GetShortPathNameW(longpath, shortpath, GIT_WIN_PATH_UTF16);
 
-	while (len && shortpath[len-1] == L'\\')
+	while (len && shortpath[len - 1] == L'\\')
 		shortpath[--len] = L'\0';
 
 	if (len == 0 || len >= GIT_WIN_PATH_UTF16)
 		return NULL;
 
 	for (start = shortpath + (len - 1);
-		start > shortpath && *(start-1) != '/' && *(start-1) != '\\';
-		start--)
+		 start > shortpath && *(start - 1) != '/' && *(start - 1) != '\\'; start--)
 		namelen++;
 
 	/* We may not have actually been given a short name.  But if we have,
@@ -315,7 +318,7 @@ static bool path_is_volume(wchar_t *target, size_t target_len)
 }
 
 /* On success, returns the length, in characters, of the path stored in dest.
-* On failure, returns a negative value. */
+ * On failure, returns a negative value. */
 int git_win32_path_readlink_w(git_win32_path dest, const git_win32_path path)
 {
 	BYTE buf[MAXIMUM_REPARSE_DATA_BUFFER_SIZE];
@@ -336,8 +339,8 @@ int git_win32_path_readlink_w(git_win32_path dest, const git_win32_path path)
 		return -1;
 	}
 
-	if (!DeviceIoControl(handle, FSCTL_GET_REPARSE_POINT, NULL, 0,
-		reparse_buf, sizeof(buf), &ioctl_ret, NULL)) {
+	if (!DeviceIoControl(handle, FSCTL_GET_REPARSE_POINT, NULL, 0, reparse_buf,
+			sizeof(buf), &ioctl_ret, NULL)) {
 		errno = EINVAL;
 		goto on_error;
 	}
@@ -345,14 +348,17 @@ int git_win32_path_readlink_w(git_win32_path dest, const git_win32_path path)
 	switch (reparse_buf->ReparseTag) {
 	case IO_REPARSE_TAG_SYMLINK:
 		target = reparse_buf->SymbolicLinkReparseBuffer.PathBuffer +
-			(reparse_buf->SymbolicLinkReparseBuffer.SubstituteNameOffset / sizeof(WCHAR));
-		target_len = reparse_buf->SymbolicLinkReparseBuffer.SubstituteNameLength / sizeof(WCHAR);
-	break;
+			(reparse_buf->SymbolicLinkReparseBuffer.SubstituteNameOffset /
+				sizeof(WCHAR));
+		target_len = reparse_buf->SymbolicLinkReparseBuffer.SubstituteNameLength /
+			sizeof(WCHAR);
+		break;
 	case IO_REPARSE_TAG_MOUNT_POINT:
 		target = reparse_buf->MountPointReparseBuffer.PathBuffer +
 			(reparse_buf->MountPointReparseBuffer.SubstituteNameOffset / sizeof(WCHAR));
-		target_len = reparse_buf->MountPointReparseBuffer.SubstituteNameLength / sizeof(WCHAR);
-	break;
+		target_len = reparse_buf->MountPointReparseBuffer.SubstituteNameLength /
+			sizeof(WCHAR);
+		break;
 	default:
 		errno = EINVAL;
 		goto on_error;
@@ -360,8 +366,8 @@ int git_win32_path_readlink_w(git_win32_path dest, const git_win32_path path)
 
 	if (path_is_volume(target, target_len)) {
 		/* This path is a reparse point that represents another volume mounted
-		* at this location, it is not a symbolic link our input was canonical.
-		*/
+		 * at this location, it is not a symbolic link our input was canonical.
+		 */
 		errno = EINVAL;
 		error = -1;
 	} else if (target_len) {
@@ -369,7 +375,7 @@ int git_win32_path_readlink_w(git_win32_path dest, const git_win32_path path)
 		target_len = git_win32__canonicalize_path(target, target_len);
 
 		/* Need one additional character in the target buffer
-		* for the terminating NULL. */
+		 * for the terminating NULL. */
 		if (GIT_WIN_PATH_UTF16 > target_len) {
 			wcscpy(dest, target);
 			error = (int)target_len;

@@ -21,7 +21,7 @@ static int interesting(git_pqueue *list, git_commit_list *roots)
 			return 1;
 	}
 
-	while(roots) {
+	while (roots) {
 		if ((roots->item->flags & STALE) == 0)
 			return 1;
 		roots = roots->next;
@@ -30,8 +30,8 @@ static int interesting(git_pqueue *list, git_commit_list *roots)
 	return 0;
 }
 
-static int mark_parents(git_revwalk *walk, git_commit_list_node *one,
-	git_commit_list_node *two)
+static int mark_parents(
+	git_revwalk *walk, git_commit_list_node *one, git_commit_list_node *two)
 {
 	unsigned int i;
 	git_commit_list *roots = NULL;
@@ -105,8 +105,8 @@ on_error:
 }
 
 
-static int ahead_behind(git_commit_list_node *one, git_commit_list_node *two,
-	size_t *ahead, size_t *behind)
+static int ahead_behind(
+	git_commit_list_node *one, git_commit_list_node *two, size_t *ahead, size_t *behind)
 {
 	git_commit_list_node *commit;
 	git_pqueue pq;
@@ -143,8 +143,11 @@ done:
 	return error;
 }
 
-int git_graph_ahead_behind(size_t *ahead, size_t *behind, git_repository *repo,
-	const git_oid *local, const git_oid *upstream)
+int git_graph_ahead_behind(size_t *ahead,
+	size_t *behind,
+	git_repository *repo,
+	const git_oid *local,
+	const git_oid *upstream)
 {
 	git_revwalk *walk;
 	git_commit_list_node *commit_u, *commit_l;
@@ -174,7 +177,8 @@ on_error:
 	return -1;
 }
 
-int git_graph_descendant_of(git_repository *repo, const git_oid *commit, const git_oid *ancestor)
+int git_graph_descendant_of(
+	git_repository *repo, const git_oid *commit, const git_oid *ancestor)
 {
 	git_oid merge_base;
 	int error;

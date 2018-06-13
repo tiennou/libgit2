@@ -13,7 +13,8 @@
 
 static void set_parse_error(git_config_parser *reader, int col, const char *error_str)
 {
-	giterr_set(GITERR_CONFIG, "failed to parse config file: %s (in %s:%"PRIuZ", column %d)",
+	giterr_set(GITERR_CONFIG,
+		"failed to parse config file: %s (in %s:%" PRIuZ ", column %d)",
 		error_str, reader->file->path, reader->ctx.line_num, col);
 }
 
@@ -32,8 +33,7 @@ static int strip_comments(char *line, int in_quotes)
 		if (ptr[0] == '"' && ptr > line && ptr[-1] != '\\')
 			quote_count++;
 
-		if ((ptr[0] == ';' || ptr[0] == '#') &&
-			(quote_count % 2) == 0 &&
+		if ((ptr[0] == ';' || ptr[0] == '#') && (quote_count % 2) == 0 &&
 			(backslash_count % 2) == 0) {
 			ptr[0] = '\0';
 			break;
@@ -55,7 +55,8 @@ static int strip_comments(char *line, int in_quotes)
 }
 
 
-static int parse_section_header_ext(git_config_parser *reader, const char *line, const char *base_name, char **section_name)
+static int parse_section_header_ext(
+	git_config_parser *reader, const char *line, const char *base_name, char **section_name)
 {
 	int c, rpos;
 	char *first_quote, *last_quote;
@@ -85,8 +86,7 @@ static int parse_section_header_ext(git_config_parser *reader, const char *line,
 	GITERR_CHECK_ALLOC_ADD(&alloc_len, base_name_len, quoted_len);
 	GITERR_CHECK_ALLOC_ADD(&alloc_len, alloc_len, 2);
 
-	if (git_buf_grow(&buf, alloc_len) < 0 ||
-	    git_buf_printf(&buf, "%s.", base_name) < 0)
+	if (git_buf_grow(&buf, alloc_len) < 0 || git_buf_printf(&buf, "%s.", base_name) < 0)
 		goto end_error;
 
 	rpos = 0;
@@ -178,7 +178,7 @@ static int parse_section_header(git_config_parser *reader, char **section_out)
 	c = line[pos++];
 
 	do {
-		if (git__isspace(c)){
+		if (git__isspace(c)) {
 			name[name_length] = '\0';
 			result = parse_section_header_ext(reader, line, name, section_out);
 			git__free(line);
@@ -267,8 +267,7 @@ static int skip_bom(git_parse_ctx *parser)
 */
 
 /* '\"' -> '"' etc */
-static int unescape_line(
-	char **out, bool *is_multi, const char *ptr, int quote_count)
+static int unescape_line(char **out, bool *is_multi, const char *ptr, int quote_count)
 {
 	char *str, *fixed, *esc;
 	size_t ptr_len = strlen(ptr), alloc_len;
@@ -454,8 +453,7 @@ on_error:
 	return -1;
 }
 
-int git_config_parse(
-	git_config_parser *parser,
+int git_config_parse(git_config_parser *parser,
 	git_config_parser_section_cb on_section,
 	git_config_parser_variable_cb on_variable,
 	git_config_parser_comment_cb on_comment,
@@ -481,7 +479,7 @@ int git_config_parse(
 		 * to preserve whitespaces when writing back the file.
 		 */
 		if (git_parse_peek(&c, ctx, GIT_PARSE_PEEK_SKIP_WHITESPACE) < 0 &&
-		    git_parse_peek(&c, ctx, 0) < 0)
+			git_parse_peek(&c, ctx, 0) < 0)
 			continue;
 
 		switch (c) {
@@ -489,7 +487,8 @@ int git_config_parse(
 			git__free(current_section);
 			current_section = NULL;
 
-			if ((result = parse_section_header(parser, &current_section)) == 0 && on_section) {
+			if ((result = parse_section_header(parser, &current_section)) == 0 &&
+				on_section) {
 				result = on_section(parser, current_section, line_start, line_len, data);
 			}
 			break;
@@ -506,8 +505,10 @@ int git_config_parse(
 			break;
 
 		default: /* assume variable declaration */
-			if ((result = parse_variable(parser, &var_name, &var_value)) == 0 && on_variable) {
-				result = on_variable(parser, current_section, var_name, var_value, line_start, line_len, data);
+			if ((result = parse_variable(parser, &var_name, &var_value)) == 0 &&
+				on_variable) {
+				result = on_variable(parser, current_section, var_name,
+					var_value, line_start, line_len, data);
 			}
 			break;
 		}

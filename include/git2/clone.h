@@ -67,11 +67,7 @@ typedef enum {
  * @return 0, GIT_EINVALIDSPEC, GIT_EEXISTS or an error code
  */
 typedef int (*git_remote_create_cb)(
-	git_remote **out,
-	git_repository *repo,
-	const char *name,
-	const char *url,
-	void *payload);
+	git_remote **out, git_repository *repo, const char *name, const char *url, void *payload);
 
 /**
  * The signature of a function matchin git_repository_init, with an
@@ -88,10 +84,7 @@ typedef int (*git_remote_create_cb)(
  * @return 0, or a negative value to indicate error
  */
 typedef int (*git_repository_create_cb)(
-	git_repository **out,
-	const char *path,
-	int bare,
-	void *payload);
+	git_repository **out, const char *path, int bare, void *payload);
 
 /**
  * Clone options structure
@@ -133,7 +126,7 @@ typedef struct git_clone_options {
 	 * The name of the branch to checkout. NULL means use the
 	 * remote's default branch.
 	 */
-	const char* checkout_branch;
+	const char *checkout_branch;
 
 	/**
 	 * A callback used to create the new repository into which to
@@ -164,9 +157,11 @@ typedef struct git_clone_options {
 } git_clone_options;
 
 #define GIT_CLONE_OPTIONS_VERSION 1
-#define GIT_CLONE_OPTIONS_INIT { GIT_CLONE_OPTIONS_VERSION, \
-	{ GIT_CHECKOUT_OPTIONS_VERSION, GIT_CHECKOUT_SAFE }, \
-	GIT_FETCH_OPTIONS_INIT }
+#define GIT_CLONE_OPTIONS_INIT                                                          \
+	{                                                                                   \
+		GIT_CLONE_OPTIONS_VERSION,                                                      \
+			{ GIT_CHECKOUT_OPTIONS_VERSION, GIT_CHECKOUT_SAFE }, GIT_FETCH_OPTIONS_INIT \
+	}
 
 /**
  * Initialize git_clone_options structure
@@ -178,9 +173,8 @@ typedef struct git_clone_options {
  * @param version The struct version; pass `GIT_CLONE_OPTIONS_VERSION`.
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_clone_init_options(
-	git_clone_options *opts,
-	unsigned int version);
+GIT_EXTERN(int)
+git_clone_init_options(git_clone_options *opts, unsigned int version);
 
 /**
  * Clone a remote repository.
@@ -198,8 +192,8 @@ GIT_EXTERN(int) git_clone_init_options(
  *         function, or a negative value to indicate an error (use
  *         `giterr_last` for a detailed error message)
  */
-GIT_EXTERN(int) git_clone(
-	git_repository **out,
+GIT_EXTERN(int)
+git_clone(git_repository **out,
 	const char *url,
 	const char *local_path,
 	const git_clone_options *options);

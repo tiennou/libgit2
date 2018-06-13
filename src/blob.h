@@ -23,8 +23,7 @@ void git_blob__free(void *blob);
 int git_blob__parse(void *blob, git_odb_object *obj);
 int git_blob__getbuf(git_buf *buffer, git_blob *blob);
 
-extern int git_blob__create_from_paths(
-	git_oid *out_oid,
+extern int git_blob__create_from_paths(git_oid *out_oid,
 	struct stat *out_st,
 	git_repository *repo,
 	const char *full_path,

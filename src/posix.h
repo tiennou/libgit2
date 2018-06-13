@@ -16,7 +16,7 @@
 /* stat: file mode type testing macros */
 #ifndef S_IFGITLINK
 #define S_IFGITLINK 0160000
-#define S_ISGITLINK(m) (((m) & S_IFMT) == S_IFGITLINK)
+#define S_ISGITLINK(m) (((m)&S_IFMT) == S_IFGITLINK)
 #endif
 
 #ifndef S_IFLNK
@@ -34,19 +34,19 @@
 #endif
 
 #ifndef S_ISLNK
-#define S_ISLNK(m) (((m) & _S_IFMT) == _S_IFLNK)
+#define S_ISLNK(m) (((m)&_S_IFMT) == _S_IFLNK)
 #endif
 
 #ifndef S_ISDIR
-#define S_ISDIR(m) (((m) & _S_IFMT) == _S_IFDIR)
+#define S_ISDIR(m) (((m)&_S_IFMT) == _S_IFDIR)
 #endif
 
 #ifndef S_ISREG
-#define S_ISREG(m) (((m) & _S_IFMT) == _S_IFREG)
+#define S_ISREG(m) (((m)&_S_IFMT) == _S_IFREG)
 #endif
 
 #ifndef S_ISFIFO
-#define S_ISFIFO(m) (((m) & _S_IFMT) == _S_IFIFO)
+#define S_ISFIFO(m) (((m)&_S_IFMT) == _S_IFIFO)
 #endif
 
 /* if S_ISGID is not defined, then don't try to set it */
@@ -87,7 +87,7 @@
 /* define some standard errnos that the runtime may be missing.  for example,
  * mingw lacks EAFNOSUPPORT. */
 #ifndef EAFNOSUPPORT
-#define EAFNOSUPPORT (INT_MAX-1)
+#define EAFNOSUPPORT (INT_MAX - 1)
 #endif
 
 typedef int git_file;
@@ -129,26 +129,27 @@ extern size_t p_fsync__cnt;
  * Platform-dependent methods
  */
 #ifdef GIT_WIN32
-#	include "win32/posix.h"
+#include "win32/posix.h"
 #else
-#	include "unix/posix.h"
+#include "unix/posix.h"
 #endif
 
 #include "strnlen.h"
 
 #ifdef NO_READDIR_R
-GIT_INLINE(int) p_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result)
+GIT_INLINE(int)
+p_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result)
 {
 	GIT_UNUSED(entry);
 	*result = readdir(dirp);
 	return 0;
 }
 #else /* NO_READDIR_R */
-#	define p_readdir_r(d,e,r) readdir_r(d,e,r)
+#define p_readdir_r(d, e, r) readdir_r(d, e, r)
 #endif
 
 #ifdef NO_ADDRINFO
-#	include <netdb.h>
+#include <netdb.h>
 struct addrinfo {
 	struct hostent *ai_hostent;
 	struct servent *ai_servent;
@@ -162,14 +163,14 @@ struct addrinfo {
 	struct addrinfo *ai_next;
 };
 
-extern int p_getaddrinfo(const char *host, const char *port,
-	struct addrinfo *hints, struct addrinfo **info);
+extern int p_getaddrinfo(
+	const char *host, const char *port, struct addrinfo *hints, struct addrinfo **info);
 extern void p_freeaddrinfo(struct addrinfo *info);
 extern const char *p_gai_strerror(int ret);
 #else
-#	define p_getaddrinfo(a, b, c, d) getaddrinfo(a, b, c, d)
-#	define p_freeaddrinfo(a) freeaddrinfo(a)
-#	define p_gai_strerror(c) gai_strerror(c)
+#define p_getaddrinfo(a, b, c, d) getaddrinfo(a, b, c, d)
+#define p_freeaddrinfo(a) freeaddrinfo(a)
+#define p_gai_strerror(c) gai_strerror(c)
 #endif /* NO_ADDRINFO */
 
 #endif

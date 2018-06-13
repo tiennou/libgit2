@@ -77,8 +77,16 @@ typedef struct {
 	unsigned int depth;
 } diskfile_parse_state;
 
-static int config_read(diskfile_entries *entries, const git_repository *repo, git_config_file *file, git_config_level_t level, int depth);
-static int config_write(diskfile_backend *cfg, const char *orig_key, const char *key, const regex_t *preg, const char *value);
+static int config_read(diskfile_entries *entries,
+	const git_repository *repo,
+	git_config_file *file,
+	git_config_level_t level,
+	int depth);
+static int config_write(diskfile_backend *cfg,
+	const char *orig_key,
+	const char *key,
+	const regex_t *preg,
+	const char *value);
 static char *escape_value(const char *ptr);
 
 int git_config_file__snapshot(git_config_backend **out, diskfile_backend *in);
@@ -97,8 +105,8 @@ static void config_entry_list_free(config_entry_list *list)
 	while (list != NULL) {
 		next = list->next;
 
-		git__free((char*) list->entry->name);
-		git__free((char *) list->entry->value);
+		git__free((char *)list->entry->name);
+		git__free((char *)list->entry->value);
 		git__free(list->entry);
 		git__free(list);
 
@@ -182,7 +190,8 @@ static void diskfile_entries_free(diskfile_entries *entries)
 	if (git_atomic_dec(&entries->refcount) != 0)
 		return;
 
-	git_strmap_foreach_value(entries->map, list, config_entry_list_free(list));
+	git_strmap_foreach_value (entries->map, list, config_entry_list_free(list))
+		;
 	git_strmap_free(entries->map);
 
 	list = entries->list;
@@ -205,8 +214,8 @@ static diskfile_entries *diskfile_entries_take(diskfile_header *h)
 	diskfile_entries *entries;
 
 	if (git_mutex_lock(&h->values_mutex) < 0) {
-	    giterr_set(GITERR_OS, "failed to lock config backend");
-	    return NULL;
+		giterr_set(GITERR_OS, "failed to lock config backend");
+		return NULL;
 	}
 
 	entries = h->entries;
@@ -243,7 +252,7 @@ static void config_file_clear(struct config_file *file)
 	if (file == NULL)
 		return;
 
-	git_array_foreach(file->includes, i, include) {
+	git_array_foreach (file->includes, i, include) {
 		config_file_clear(include);
 	}
 	git_array_clear(file->includes);
@@ -251,7 +260,8 @@ static void config_file_clear(struct config_file *file)
 	git__free(file->path);
 }
 
-static int config_open(git_config_backend *cfg, git_config_level_t level, const git_repository *repo)
+static int config_open(
+	git_config_backend *cfg, git_config_level_t level, const git_repository *repo)
 {
 	int res;
 	diskfile_backend *b = (diskfile_backend *)cfg;
@@ -265,7 +275,8 @@ static int config_open(git_config_backend *cfg, git_config_level_t level, const 
 	if (!git_path_exists(b->file.path))
 		return 0;
 
-	if (res < 0 || (res = config_read(b->header.entries, repo, &b->file, level, 0)) < 0) {
+	if (res < 0 ||
+		(res = config_read(b->header.entries, repo, &b->file, level, 0)) < 0) {
 		diskfile_entries_free(b->header.entries);
 		b->header.entries = NULL;
 	}
@@ -294,7 +305,7 @@ static int config_is_modified(int *modified, struct config_file *file)
 		goto out;
 	}
 
-	git_array_foreach(file->includes, i, include) {
+	git_array_foreach (file->includes, i, include) {
 		if ((error = config_is_modified(modified, include)) < 0 || *modified)
 			goto out;
 	}
@@ -327,7 +338,7 @@ static int config_refresh(git_config_backend *cfg)
 		goto out;
 
 	/* Reparse the current configuration */
-	git_array_foreach(b->file.includes, i, include) {
+	git_array_foreach (b->file.includes, i, include) {
 		config_file_clear(include);
 	}
 	git_array_clear(b->file.includes);
@@ -365,18 +376,15 @@ static void backend_free(git_config_backend *_backend)
 	git__free(backend);
 }
 
-static void config_iterator_free(
-	git_config_iterator* iter)
+static void config_iterator_free(git_config_iterator *iter)
 {
 	iter->backend->free(iter->backend);
 	git__free(iter);
 }
 
-static int config_iterator_next(
-	git_config_entry **entry,
-	git_config_iterator *iter)
+static int config_iterator_next(git_config_entry **entry, git_config_iterator *iter)
 {
-	git_config_file_iter *it = (git_config_file_iter *) iter;
+	git_config_file_iter *it = (git_config_file_iter *)iter;
 
 	if (!it->head)
 		return GIT_ITEROVER;
@@ -388,13 +396,12 @@ static int config_iterator_next(
 }
 
 static int config_iterator_new(
-	git_config_iterator **iter,
-	struct git_config_backend* backend)
+	git_config_iterator **iter, struct git_config_backend *backend)
 {
 	diskfile_header *h;
 	git_config_file_iter *it;
 	git_config_backend *snapshot;
-	diskfile_header *bh = (diskfile_header *) backend;
+	diskfile_header *bh = (diskfile_header *)backend;
 	int error;
 
 	if ((error = config_snapshot(&snapshot, backend)) < 0)
@@ -413,7 +420,7 @@ static int config_iterator_new(
 	it->parent.next = config_iterator_next;
 	it->parent.free = config_iterator_free;
 
-	*iter = (git_config_iterator *) it;
+	*iter = (git_config_iterator *)it;
 
 	return 0;
 }
@@ -456,8 +463,7 @@ static int config_set(git_config_backend *cfg, const char *name, const char *val
 
 		/* don't update if old and new values already match */
 		if ((!existing->entry->value && !value) ||
-			(existing->entry->value && value &&
-			 !strcmp(existing->entry->value, value))) {
+			(existing->entry->value && value && !strcmp(existing->entry->value, value))) {
 			ret = 0;
 			goto out;
 		}
@@ -485,7 +491,7 @@ out:
 /* release the map containing the entry as an equivalent to freeing it */
 static void free_diskfile_entry(git_config_entry *entry)
 {
-	diskfile_entries *map = (diskfile_entries *) entry->payload;
+	diskfile_entries *map = (diskfile_entries *)entry->payload;
 	diskfile_entries_free(map);
 }
 
@@ -605,7 +611,8 @@ static int config_delete(git_config_backend *cfg, const char *name)
 	return config_refresh(cfg);
 }
 
-static int config_delete_multivar(git_config_backend *cfg, const char *name, const char *regexp)
+static int config_delete_multivar(
+	git_config_backend *cfg, const char *name, const char *regexp)
 {
 	diskfile_backend *b = (diskfile_backend *)cfg;
 	diskfile_entries *map;
@@ -653,17 +660,18 @@ out:
 
 static int config_snapshot(git_config_backend **out, git_config_backend *in)
 {
-	diskfile_backend *b = (diskfile_backend *) in;
+	diskfile_backend *b = (diskfile_backend *)in;
 
 	return git_config_file__snapshot(out, b);
 }
 
 static int config_lock(git_config_backend *_cfg)
 {
-	diskfile_backend *cfg = (diskfile_backend *) _cfg;
+	diskfile_backend *cfg = (diskfile_backend *)_cfg;
 	int error;
 
-	if ((error = git_filebuf_open(&cfg->locked_buf, cfg->file.path, 0, GIT_CONFIG_FILE_MODE)) < 0)
+	if ((error = git_filebuf_open(
+			 &cfg->locked_buf, cfg->file.path, 0, GIT_CONFIG_FILE_MODE)) < 0)
 		return error;
 
 	error = git_futils_readbuffer(&cfg->locked_content, cfg->file.path);
@@ -674,16 +682,16 @@ static int config_lock(git_config_backend *_cfg)
 
 	cfg->locked = true;
 	return 0;
-
 }
 
 static int config_unlock(git_config_backend *_cfg, int success)
 {
-	diskfile_backend *cfg = (diskfile_backend *) _cfg;
+	diskfile_backend *cfg = (diskfile_backend *)_cfg;
 	int error = 0;
 
 	if (success) {
-		git_filebuf_write(&cfg->locked_buf, cfg->locked_content.ptr, cfg->locked_content.size);
+		git_filebuf_write(&cfg->locked_buf, cfg->locked_content.ptr,
+			cfg->locked_content.size);
 		error = git_filebuf_commit(&cfg->locked_buf);
 	}
 
@@ -725,7 +733,8 @@ int git_config_file__ondisk(git_config_backend **out, const char *path)
 	return 0;
 }
 
-static int config_set_readonly(git_config_backend *cfg, const char *name, const char *value)
+static int config_set_readonly(
+	git_config_backend *cfg, const char *name, const char *value)
 {
 	GIT_UNUSED(cfg);
 	GIT_UNUSED(name);
@@ -745,7 +754,8 @@ static int config_set_multivar_readonly(
 	return config_error_readonly();
 }
 
-static int config_delete_multivar_readonly(git_config_backend *cfg, const char *name, const char *regexp)
+static int config_delete_multivar_readonly(
+	git_config_backend *cfg, const char *name, const char *regexp)
 {
 	GIT_UNUSED(cfg);
 	GIT_UNUSED(name);
@@ -789,15 +799,17 @@ static void backend_readonly_free(git_config_backend *_backend)
 	git__free(backend);
 }
 
-static int config_readonly_open(git_config_backend *cfg, git_config_level_t level, const git_repository *repo)
+static int config_readonly_open(
+	git_config_backend *cfg, git_config_level_t level, const git_repository *repo)
 {
-	diskfile_readonly_backend *b = (diskfile_readonly_backend *) cfg;
+	diskfile_readonly_backend *b = (diskfile_readonly_backend *)cfg;
 	diskfile_backend *src = b->snapshot_from;
 	diskfile_header *src_header = &src->header;
 	diskfile_entries *entries;
 	int error;
 
-	if (!src_header->parent.readonly && (error = config_refresh(&src_header->parent)) < 0)
+	if (!src_header->parent.readonly &&
+		(error = config_refresh(&src_header->parent)) < 0)
 		return error;
 
 	/* We're just copying data, don't care about the level or repo*/
@@ -884,8 +896,8 @@ static char *escape_value(const char *ptr)
 	return git_buf_detach(&buf);
 }
 
-static int parse_include(git_config_parser *reader,
-	diskfile_parse_state *parse_data, const char *file)
+static int parse_include(
+	git_config_parser *reader, diskfile_parse_state *parse_data, const char *file)
 {
 	struct config_file *include;
 	git_buf path = GIT_BUF_INIT;
@@ -907,8 +919,8 @@ static int parse_include(git_config_parser *reader,
 	git_array_init(include->includes);
 	include->path = git_buf_detach(&path);
 
-	result = config_read(parse_data->entries, parse_data->repo,
-		include, parse_data->level, parse_data->depth+1);
+	result = config_read(parse_data->entries, parse_data->repo, include,
+		parse_data->level, parse_data->depth + 1);
 
 	if (result == GIT_ENOTFOUND) {
 		giterr_clear();
@@ -918,8 +930,7 @@ static int parse_include(git_config_parser *reader,
 	return result;
 }
 
-static int do_match_gitdir(
-	int *matches,
+static int do_match_gitdir(int *matches,
 	const git_repository *repo,
 	const char *cfg_file,
 	const char *value,
@@ -946,7 +957,7 @@ static int do_match_gitdir(
 	if (git_path_is_dirsep(value[strlen(value) - 1]))
 		git_buf_puts(&path, "**");
 
-	fnmatch_flags = FNM_PATHNAME|FNM_LEADING_DIR;
+	fnmatch_flags = FNM_PATHNAME | FNM_LEADING_DIR;
 	if (case_insensitive)
 		fnmatch_flags |= FNM_IGNORECASE;
 
@@ -961,33 +972,28 @@ out:
 }
 
 static int conditional_match_gitdir(
-	int *matches,
-	const git_repository *repo,
-	const char *cfg_file,
-	const char *value)
+	int *matches, const git_repository *repo, const char *cfg_file, const char *value)
 {
 	return do_match_gitdir(matches, repo, cfg_file, value, false);
 }
 
 static int conditional_match_gitdir_i(
-	int *matches,
-	const git_repository *repo,
-	const char *cfg_file,
-	const char *value)
+	int *matches, const git_repository *repo, const char *cfg_file, const char *value)
 {
 	return do_match_gitdir(matches, repo, cfg_file, value, true);
 }
 
 static const struct {
 	const char *prefix;
-	int (*matches)(int *matches, const git_repository *repo, const char *cfg, const char *value);
-} conditions[] = {
-	{ "gitdir:", conditional_match_gitdir },
-	{ "gitdir/i:", conditional_match_gitdir_i }
-};
+	int (*matches)(
+		int *matches, const git_repository *repo, const char *cfg, const char *value);
+} conditions[] = { { "gitdir:", conditional_match_gitdir },
+	{ "gitdir/i:", conditional_match_gitdir_i } };
 
 static int parse_conditional_include(git_config_parser *reader,
-	diskfile_parse_state *parse_data, const char *section, const char *file)
+	diskfile_parse_state *parse_data,
+	const char *section,
+	const char *file)
 {
 	char *condition;
 	size_t i;
@@ -997,16 +1003,14 @@ static int parse_conditional_include(git_config_parser *reader,
 		return 0;
 
 	condition = git__substrdup(section + strlen("includeIf."),
-				   strlen(section) - strlen("includeIf.") - strlen(".path"));
+		strlen(section) - strlen("includeIf.") - strlen(".path"));
 
 	for (i = 0; i < ARRAY_SIZE(conditions); i++) {
 		if (git__prefixcmp(condition, conditions[i].prefix))
 			continue;
 
-		if ((error = conditions[i].matches(&matches,
-						   parse_data->repo,
-						   parse_data->file_path,
-						   condition + strlen(conditions[i].prefix))) < 0)
+		if ((error = conditions[i].matches(&matches, parse_data->repo,
+				 parse_data->file_path, condition + strlen(conditions[i].prefix))) < 0)
 			break;
 
 		if (matches)
@@ -1019,8 +1023,7 @@ static int parse_conditional_include(git_config_parser *reader,
 	return error;
 }
 
-static int read_on_variable(
-	git_config_parser *reader,
+static int read_on_variable(git_config_parser *reader,
 	const char *current_section,
 	char *var_name,
 	char *var_value,
@@ -1061,16 +1064,15 @@ static int read_on_variable(
 	if (!git__strcmp(entry->name, "include.path"))
 		result = parse_include(reader, parse_data, entry->value);
 	else if (!git__prefixcmp(entry->name, "includeif.") &&
-	         !git__suffixcmp(entry->name, ".path"))
-		result = parse_conditional_include(reader, parse_data,
-						   entry->name, entry->value);
+		!git__suffixcmp(entry->name, ".path"))
+		result = parse_conditional_include(
+			reader, parse_data, entry->name, entry->value);
 
 
 	return result;
 }
 
-static int config_read(
-	diskfile_entries *entries,
+static int config_read(diskfile_entries *entries,
 	const git_repository *repo,
 	git_config_file *file,
 	git_config_level_t level,
@@ -1166,8 +1168,7 @@ static const char *quotes_for_value(const char *value)
 struct write_data {
 	git_buf *buf;
 	git_buf buffered_comment;
-	unsigned int in_section : 1,
-		preg_replaced : 1;
+	unsigned int in_section : 1, preg_replaced : 1;
 	const char *orig_section;
 	const char *section;
 	const char *orig_name;
@@ -1180,7 +1181,7 @@ static int write_line_to(git_buf *buf, const char *line, size_t line_len)
 {
 	int result = git_buf_put(buf, line, line_len);
 
-	if (!result && line_len && line[line_len-1] != '\n')
+	if (!result && line_len && line[line_len - 1] != '\n')
 		result = git_buf_printf(buf, "\n");
 
 	return result;
@@ -1197,8 +1198,8 @@ static int write_value(struct write_data *write_data)
 	int result;
 
 	q = quotes_for_value(write_data->value);
-	result = git_buf_printf(write_data->buf,
-		"\t%s = %s%s%s\n", write_data->orig_name, q, write_data->value, q);
+	result = git_buf_printf(write_data->buf, "\t%s = %s%s%s\n",
+		write_data->orig_name, q, write_data->value, q);
 
 	/* If we are updating a single name/value, we're done.  Setting `value`
 	 * to `NULL` will prevent us from trying to write it again later (in
@@ -1210,8 +1211,7 @@ static int write_value(struct write_data *write_data)
 	return result;
 }
 
-static int write_on_section(
-	git_config_parser *reader,
+static int write_on_section(git_config_parser *reader,
 	const char *current_section,
 	const char *line,
 	size_t line_len,
@@ -1236,7 +1236,8 @@ static int write_on_section(
 	 * If there were comments just before this section, dump them as well.
 	 */
 	if (!result) {
-		result = git_buf_put(write_data->buf, write_data->buffered_comment.ptr, write_data->buffered_comment.size);
+		result = git_buf_put(write_data->buf, write_data->buffered_comment.ptr,
+			write_data->buffered_comment.size);
 		git_buf_clear(&write_data->buffered_comment);
 	}
 
@@ -1246,8 +1247,7 @@ static int write_on_section(
 	return result;
 }
 
-static int write_on_variable(
-	git_config_parser *reader,
+static int write_on_variable(git_config_parser *reader,
 	const char *current_section,
 	char *var_name,
 	char *var_value,
@@ -1265,14 +1265,14 @@ static int write_on_variable(
 	/*
 	 * If there were comments just before this variable, let's dump them as well.
 	 */
-	if ((error = git_buf_put(write_data->buf, write_data->buffered_comment.ptr, write_data->buffered_comment.size)) < 0)
+	if ((error = git_buf_put(write_data->buf, write_data->buffered_comment.ptr,
+			 write_data->buffered_comment.size)) < 0)
 		return error;
 
 	git_buf_clear(&write_data->buffered_comment);
 
 	/* See if we are to update this name/value pair; first examine name */
-	if (write_data->in_section &&
-		strcasecmp(write_data->name, var_name) == 0)
+	if (write_data->in_section && strcasecmp(write_data->name, var_name) == 0)
 		has_matched = true;
 
 	/* If we have a regex to match the value, see if it matches */
@@ -1297,7 +1297,8 @@ static int write_on_variable(
 	return write_value(write_data);
 }
 
-static int write_on_comment(git_config_parser *reader, const char *line, size_t line_len, void *data)
+static int write_on_comment(
+	git_config_parser *reader, const char *line, size_t line_len, void *data)
 {
 	struct write_data *write_data;
 
@@ -1318,7 +1319,8 @@ static int write_on_eof(
 	/*
 	 * If we've buffered comments when reaching EOF, make sure to dump them.
 	 */
-	if ((result = git_buf_put(write_data->buf, write_data->buffered_comment.ptr, write_data->buffered_comment.size)) < 0)
+	if ((result = git_buf_put(write_data->buf, write_data->buffered_comment.ptr,
+			 write_data->buffered_comment.size)) < 0)
 		return result;
 
 	/* If we are at the EOF and have not written our value (again, for a
@@ -1341,7 +1343,11 @@ static int write_on_eof(
 /*
  * This is pretty much the parsing, except we write out anything we don't have
  */
-static int config_write(diskfile_backend *cfg, const char *orig_key, const char *key, const regex_t *preg, const char* value)
+static int config_write(diskfile_backend *cfg,
+	const char *orig_key,
+	const char *key,
+	const regex_t *preg,
+	const char *value)
 {
 	int result;
 	char *orig_section, *section, *orig_name, *name, *ldot;
@@ -1357,8 +1363,8 @@ static int config_write(diskfile_backend *cfg, const char *orig_key, const char 
 		result = git_buf_puts(&contents, git_buf_cstr(&cfg->locked_content));
 	} else {
 		/* Lock the file */
-		if ((result = git_filebuf_open(
-			     &file, cfg->file.path, GIT_FILEBUF_HASH_CONTENTS, GIT_CONFIG_FILE_MODE)) < 0) {
+		if ((result = git_filebuf_open(&file, cfg->file.path,
+				 GIT_FILEBUF_HASH_CONTENTS, GIT_CONFIG_FILE_MODE)) < 0) {
 			git_buf_dispose(&contents);
 			return result;
 		}
@@ -1396,12 +1402,8 @@ static int config_write(diskfile_backend *cfg, const char *orig_key, const char 
 	write_data.preg = preg;
 	write_data.value = value;
 
-	result = git_config_parse(&reader,
-		write_on_section,
-		write_on_variable,
-		write_on_comment,
-		write_on_eof,
-		&write_data);
+	result = git_config_parse(&reader, write_on_section, write_on_variable,
+		write_on_comment, write_on_eof, &write_data);
 	git__free(section);
 	git__free(orig_section);
 	git_buf_dispose(&write_data.buffered_comment);

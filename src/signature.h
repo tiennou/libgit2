@@ -14,10 +14,16 @@
 #include "repository.h"
 #include <time.h>
 
-int git_signature__parse(git_signature *sig, const char **buffer_out, const char *buffer_end, const char *header, char ender);
-void git_signature__writebuf(git_buf *buf, const char *header, const git_signature *sig);
+int git_signature__parse(git_signature *sig,
+	const char **buffer_out,
+	const char *buffer_end,
+	const char *header,
+	char ender);
+void git_signature__writebuf(
+	git_buf *buf, const char *header, const git_signature *sig);
 bool git_signature__equal(const git_signature *one, const git_signature *two);
 
-int git_signature__pdup(git_signature **dest, const git_signature *source, git_pool *pool);
+int git_signature__pdup(
+	git_signature **dest, const git_signature *source, git_pool *pool);
 
 #endif

@@ -21,9 +21,7 @@ typedef struct {
 } git_patch_parse_ctx;
 
 extern git_patch_parse_ctx *git_patch_parse_ctx_init(
-	const char *content,
-	size_t content_len,
-	const git_patch_options *opts);
+	const char *content, size_t content_len, const git_patch_options *opts);
 
 extern void git_patch_parse_ctx_free(git_patch_parse_ctx *ctx);
 
@@ -36,15 +34,12 @@ extern void git_patch_parse_ctx_free(git_patch_parse_ctx *ctx);
  * @param opts The git_patch_options
  * @return 0 on success, <0 on failure.
  */
-extern int git_patch_from_buffer(
-	git_patch **out,
+extern int git_patch_from_buffer(git_patch **out,
 	const char *contents,
 	size_t contents_len,
 	const git_patch_options *opts);
 
-extern int git_patch_parse(
-	git_patch **out,
-	git_patch_parse_ctx *ctx);
+extern int git_patch_parse(git_patch **out, git_patch_parse_ctx *ctx);
 
 extern int git_patch_parsed_from_diff(git_patch **, git_diff *, size_t);
 

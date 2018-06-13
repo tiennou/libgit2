@@ -37,4 +37,3 @@ GIT_EXTERN(void) git_oidarray_free(git_oidarray *array);
 GIT_END_DECL
 
 #endif
-

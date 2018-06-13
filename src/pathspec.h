@@ -59,8 +59,7 @@ extern void git_pathspec__vfree(git_vector *vspec);
  * The matched pathspec is passed back into the `matched_pathspec` parameter,
  * unless it is passed as NULL by the caller.
  */
-extern bool git_pathspec__match(
-	const git_vector *vspec,
+extern bool git_pathspec__match(const git_vector *vspec,
 	const char *path,
 	bool disable_fnmatch,
 	bool casefold,

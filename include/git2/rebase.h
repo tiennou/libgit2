@@ -116,9 +116,11 @@ typedef enum {
 } git_rebase_operation_t;
 
 #define GIT_REBASE_OPTIONS_VERSION 1
-#define GIT_REBASE_OPTIONS_INIT \
-	{ GIT_REBASE_OPTIONS_VERSION, 0, 0, NULL, GIT_MERGE_OPTIONS_INIT, \
-	  GIT_CHECKOUT_OPTIONS_INIT}
+#define GIT_REBASE_OPTIONS_INIT                                         \
+	{                                                                   \
+		GIT_REBASE_OPTIONS_VERSION, 0, 0, NULL, GIT_MERGE_OPTIONS_INIT, \
+			GIT_CHECKOUT_OPTIONS_INIT                                   \
+	}
 
 /** Indicates that a rebase operation is not (yet) in progress. */
 #define GIT_REBASE_NO_OPERATION SIZE_MAX
@@ -156,9 +158,8 @@ typedef struct {
  * @param version The struct version; pass `GIT_REBASE_OPTIONS_VERSION`.
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_rebase_init_options(
-	git_rebase_options *opts,
-	unsigned int version);
+GIT_EXTERN(int)
+git_rebase_init_options(git_rebase_options *opts, unsigned int version);
 
 /**
  * Initializes a rebase operation to rebase the changes in `branch`
@@ -177,8 +178,8 @@ GIT_EXTERN(int) git_rebase_init_options(
  * @param opts Options to specify how rebase is performed, or NULL
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_rebase_init(
-	git_rebase **out,
+GIT_EXTERN(int)
+git_rebase_init(git_rebase **out,
 	git_repository *repo,
 	const git_annotated_commit *branch,
 	const git_annotated_commit *upstream,
@@ -194,10 +195,8 @@ GIT_EXTERN(int) git_rebase_init(
  * @param opts Options to specify how rebase is performed
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_rebase_open(
-	git_rebase **out,
-	git_repository *repo,
-	const git_rebase_options *opts);
+GIT_EXTERN(int)
+git_rebase_open(git_rebase **out, git_repository *repo, const git_rebase_options *opts);
 
 /**
  * Gets the count of rebase operations that are to be applied.
@@ -225,9 +224,8 @@ GIT_EXTERN(size_t) git_rebase_operation_current(git_rebase *rebase);
  * @param idx The index of the rebase operation to retrieve
  * @return The rebase operation or NULL if `idx` was out of bounds
  */
-GIT_EXTERN(git_rebase_operation *) git_rebase_operation_byindex(
-	git_rebase *rebase,
-	size_t idx);
+GIT_EXTERN(git_rebase_operation *)
+git_rebase_operation_byindex(git_rebase *rebase, size_t idx);
 
 /**
  * Performs the next rebase operation and returns the information about it.
@@ -240,9 +238,8 @@ GIT_EXTERN(git_rebase_operation *) git_rebase_operation_byindex(
  * @param rebase The rebase in progress
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_rebase_next(
-	git_rebase_operation **operation,
-	git_rebase *rebase);
+GIT_EXTERN(int)
+git_rebase_next(git_rebase_operation **operation, git_rebase *rebase);
 
 /**
  * Gets the index produced by the last operation, which is the result
@@ -255,9 +252,8 @@ GIT_EXTERN(int) git_rebase_next(
  * a working directory, the changes were applied to the repository's
  * index.
  */
-GIT_EXTERN(int) git_rebase_inmemory_index(
-	git_index **index,
-	git_rebase *rebase);
+GIT_EXTERN(int)
+git_rebase_inmemory_index(git_index **index, git_rebase *rebase);
 
 /**
  * Commits the current patch.  You must have resolved any conflicts that
@@ -281,8 +277,8 @@ GIT_EXTERN(int) git_rebase_inmemory_index(
  *        been applied to the upstream and there is nothing to commit,
  *        -1 on failure.
  */
-GIT_EXTERN(int) git_rebase_commit(
-	git_oid *id,
+GIT_EXTERN(int)
+git_rebase_commit(git_oid *id,
 	git_rebase *rebase,
 	const git_signature *author,
 	const git_signature *committer,
@@ -307,9 +303,8 @@ GIT_EXTERN(int) git_rebase_abort(git_rebase *rebase);
  * @param signature The identity that is finishing the rebase (optional)
  * @return Zero on success; -1 on error
  */
-GIT_EXTERN(int) git_rebase_finish(
-	git_rebase *rebase,
-	const git_signature *signature);
+GIT_EXTERN(int)
+git_rebase_finish(git_rebase *rebase, const git_signature *signature);
 
 /**
  * Frees the `git_rebase` object.

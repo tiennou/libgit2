@@ -15,11 +15,7 @@
 #include <wincrypt.h>
 #include <strsafe.h>
 
-enum hash_win32_prov_type {
-	INVALID = 0,
-	CRYPTOAPI,
-	CNG
-};
+enum hash_win32_prov_type { INVALID = 0, CRYPTOAPI, CNG };
 
 /*
  * CryptoAPI is available for hashing on Windows XP and newer.
@@ -36,25 +32,25 @@ struct hash_cryptoapi_prov {
  * would not exist when building in pre-Windows 2008 environments.
  */
 
-#define GIT_HASH_CNG_DLL_NAME           "bcrypt.dll"
+#define GIT_HASH_CNG_DLL_NAME "bcrypt.dll"
 
 /* BCRYPT_SHA1_ALGORITHM */
-#define GIT_HASH_CNG_HASH_TYPE          L"SHA1"
+#define GIT_HASH_CNG_HASH_TYPE L"SHA1"
 
 /* BCRYPT_OBJECT_LENGTH */
-#define GIT_HASH_CNG_HASH_OBJECT_LEN    L"ObjectLength"
+#define GIT_HASH_CNG_HASH_OBJECT_LEN L"ObjectLength"
 
 /* BCRYPT_HASH_REUSEABLE_FLAGS */
-#define GIT_HASH_CNG_HASH_REUSABLE      0x00000020
+#define GIT_HASH_CNG_HASH_REUSABLE 0x00000020
 
 /* Function declarations for CNG */
-typedef NTSTATUS (WINAPI *hash_win32_cng_open_algorithm_provider_fn)(
+typedef NTSTATUS(WINAPI *hash_win32_cng_open_algorithm_provider_fn)(
 	HANDLE /* BCRYPT_ALG_HANDLE */ *phAlgorithm,
 	LPCWSTR pszAlgId,
 	LPCWSTR pszImplementation,
 	DWORD dwFlags);
 
-typedef NTSTATUS (WINAPI *hash_win32_cng_get_property_fn)(
+typedef NTSTATUS(WINAPI *hash_win32_cng_get_property_fn)(
 	HANDLE /* BCRYPT_HANDLE */ hObject,
 	LPCWSTR pszProperty,
 	PUCHAR pbOutput,
@@ -62,32 +58,26 @@ typedef NTSTATUS (WINAPI *hash_win32_cng_get_property_fn)(
 	ULONG *pcbResult,
 	ULONG dwFlags);
 
-typedef NTSTATUS (WINAPI *hash_win32_cng_create_hash_fn)(
+typedef NTSTATUS(WINAPI *hash_win32_cng_create_hash_fn)(
 	HANDLE /* BCRYPT_ALG_HANDLE */ hAlgorithm,
 	HANDLE /* BCRYPT_HASH_HANDLE */ *phHash,
-	PUCHAR pbHashObject, ULONG cbHashObject,
+	PUCHAR pbHashObject,
+	ULONG cbHashObject,
 	PUCHAR pbSecret,
 	ULONG cbSecret,
 	ULONG dwFlags);
 
-typedef NTSTATUS (WINAPI *hash_win32_cng_finish_hash_fn)(
-	HANDLE /* BCRYPT_HASH_HANDLE */ hHash,
-	PUCHAR pbOutput,
-	ULONG cbOutput,
-	ULONG dwFlags);
+typedef NTSTATUS(WINAPI *hash_win32_cng_finish_hash_fn)(
+	HANDLE /* BCRYPT_HASH_HANDLE */ hHash, PUCHAR pbOutput, ULONG cbOutput, ULONG dwFlags);
 
-typedef NTSTATUS (WINAPI *hash_win32_cng_hash_data_fn)(
-	HANDLE /* BCRYPT_HASH_HANDLE */ hHash,
-	PUCHAR pbInput,
-	ULONG cbInput,
-	ULONG dwFlags);
+typedef NTSTATUS(WINAPI *hash_win32_cng_hash_data_fn)(
+	HANDLE /* BCRYPT_HASH_HANDLE */ hHash, PUCHAR pbInput, ULONG cbInput, ULONG dwFlags);
 
-typedef NTSTATUS (WINAPI *hash_win32_cng_destroy_hash_fn)(
+typedef NTSTATUS(WINAPI *hash_win32_cng_destroy_hash_fn)(
 	HANDLE /* BCRYPT_HASH_HANDLE */ hHash);
 
-typedef NTSTATUS (WINAPI *hash_win32_cng_close_algorithm_provider_fn)(
-	HANDLE /* BCRYPT_ALG_HANDLE */ hAlgorithm,
-	ULONG dwFlags);
+typedef NTSTATUS(WINAPI *hash_win32_cng_close_algorithm_provider_fn)(
+	HANDLE /* BCRYPT_ALG_HANDLE */ hAlgorithm, ULONG dwFlags);
 
 struct hash_cng_prov {
 	/* DLL for CNG */

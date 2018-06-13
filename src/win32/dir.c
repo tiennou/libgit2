@@ -41,10 +41,7 @@ git__DIR *git__opendir(const char *dir)
 }
 
 int git__readdir_ext(
-	git__DIR *d,
-	struct git__dirent *entry,
-	struct git__dirent **result,
-	int *is_dir)
+	git__DIR *d, struct git__dirent *entry, struct git__dirent **result, int *is_dir)
 {
 	if (!d || !entry || !result || d->h == INVALID_HANDLE_VALUE)
 		return -1;
@@ -119,4 +116,3 @@ int git__closedir(git__DIR *d)
 	git__free(d);
 	return 0;
 }
-

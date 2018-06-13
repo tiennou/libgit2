@@ -28,10 +28,7 @@ GIT_BEGIN_DECL
  * git-upload-pack or git-receive-pack on the remote end when get_refs
  * gets called.
  */
-typedef enum {
-	GIT_DIRECTION_FETCH = 0,
-	GIT_DIRECTION_PUSH  = 1
-} git_direction;
+typedef enum { GIT_DIRECTION_FETCH = 0, GIT_DIRECTION_PUSH = 1 } git_direction;
 
 /**
  * Description of a reference advertised by a remote server, given out

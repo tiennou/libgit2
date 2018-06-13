@@ -15,8 +15,7 @@
 #include "merge.h"
 #include "vector.h"
 
-git_commit_list_node *git_revwalk__commit_lookup(
-	git_revwalk *walk, const git_oid *oid)
+git_commit_list_node *git_revwalk__commit_lookup(git_revwalk *walk, const git_oid *oid)
 {
 	git_commit_list_node *commit;
 	khiter_t pos;
@@ -40,7 +39,8 @@ git_commit_list_node *git_revwalk__commit_lookup(
 	return commit;
 }
 
-static int push_commit(git_revwalk *walk, const git_oid *oid, int uninteresting, int from_glob)
+static int push_commit(
+	git_revwalk *walk, const git_oid *oid, int uninteresting, int from_glob)
 {
 	git_oid commit_id;
 	int error;
@@ -313,7 +313,8 @@ static void mark_parents_uninteresting(git_commit_list_node *commit)
 	}
 }
 
-static int add_parents_to_list(git_revwalk *walk, git_commit_list_node *commit, git_commit_list **list)
+static int add_parents_to_list(
+	git_revwalk *walk, git_commit_list_node *commit, git_commit_list **list)
 {
 	unsigned short i;
 	int error;
@@ -422,8 +423,9 @@ static int limit_list(git_commit_list **out, git_revwalk *walk, git_commit_list 
 			break;
 		}
 
-		if (!commit->uninteresting && walk->hide_cb && walk->hide_cb(&commit->oid, walk->hide_cb_payload))
-				continue;
+		if (!commit->uninteresting && walk->hide_cb &&
+			walk->hide_cb(&commit->oid, walk->hide_cb_payload))
+			continue;
 
 		time = commit->time;
 		p = &git_commit_list_insert(commit, p)->next;
@@ -434,7 +436,8 @@ static int limit_list(git_commit_list **out, git_revwalk *walk, git_commit_list 
 	return 0;
 }
 
-static int sort_in_topological_order(git_commit_list **out, git_revwalk *walk, git_commit_list *list)
+static int sort_in_topological_order(
+	git_commit_list **out, git_revwalk *walk, git_commit_list *list)
 {
 	git_commit_list *ll = NULL, *newlist, **pptr;
 	git_commit_list_node *next;
@@ -464,7 +467,7 @@ static int sort_in_topological_order(git_commit_list **out, git_revwalk *walk, g
 	 * ourselves to those commits in the original list (in-degree
 	 * of 1) avoiding setting it for any parent that was hidden.
 	 */
-	for(ll = list; ll; ll = ll->next) {
+	for (ll = list; ll; ll = ll->next) {
 		for (i = 0; i < ll->item->out_degree; ++i) {
 			git_commit_list_node *parent = ll->item->parents[i];
 			if (parent->in_degree)
@@ -476,7 +479,7 @@ static int sort_in_topological_order(git_commit_list **out, git_revwalk *walk, g
 	 * Now we find the tips i.e. those not reachable from any other node
 	 * i.e. those which still have an in-degree of 1.
 	 */
-	for(ll = list; ll; ll = ll->next) {
+	for (ll = list; ll; ll = ll->next) {
 		if (ll->item->in_degree == 1) {
 			if ((error = git_pqueue_insert(&queue, ll->item)))
 				goto cleanup;
@@ -688,14 +691,15 @@ void git_revwalk_reset(git_revwalk *walk)
 
 	assert(walk);
 
-	git_oidmap_foreach_value(walk->commits, commit, {
+	git_oidmap_foreach_value (walk->commits, commit, {
 		commit->seen = 0;
 		commit->in_degree = 0;
 		commit->topo_delay = 0;
 		commit->uninteresting = 0;
 		commit->added = 0;
 		commit->flags = 0;
-		});
+	})
+		;
 
 	git_pqueue_clear(&walk->iterator_time);
 	git_commit_list_free(&walk->iterator_topo);
@@ -707,10 +711,7 @@ void git_revwalk_reset(git_revwalk *walk)
 	walk->did_push = walk->did_hide = 0;
 }
 
-int git_revwalk_add_hide_cb(
-	git_revwalk *walk,
-	git_revwalk_hide_cb hide_cb,
-	void *payload)
+int git_revwalk_add_hide_cb(git_revwalk *walk, git_revwalk_hide_cb hide_cb, void *payload)
 {
 	assert(walk);
 
@@ -719,7 +720,8 @@ int git_revwalk_add_hide_cb(
 
 	if (walk->hide_cb) {
 		/* There is already a callback added */
-		giterr_set(GITERR_INVALID, "there is already a callback added to hide commits in revwalk");
+		giterr_set(GITERR_INVALID,
+			"there is already a callback added to hide commits in revwalk");
 		return -1;
 	}
 
@@ -728,4 +730,3 @@ int git_revwalk_add_hide_cb(
 
 	return 0;
 }
-

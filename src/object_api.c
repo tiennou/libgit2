@@ -23,7 +23,8 @@ int git_commit_lookup(git_commit **out, git_repository *repo, const git_oid *id)
 	return git_object_lookup((git_object **)out, repo, id, GIT_OBJ_COMMIT);
 }
 
-int git_commit_lookup_prefix(git_commit **out, git_repository *repo, const git_oid *id, size_t len)
+int git_commit_lookup_prefix(
+	git_commit **out, git_repository *repo, const git_oid *id, size_t len)
 {
 	return git_object_lookup_prefix((git_object **)out, repo, id, len, GIT_OBJ_COMMIT);
 }
@@ -56,7 +57,8 @@ int git_tree_lookup(git_tree **out, git_repository *repo, const git_oid *id)
 	return git_object_lookup((git_object **)out, repo, id, GIT_OBJ_TREE);
 }
 
-int git_tree_lookup_prefix(git_tree **out, git_repository *repo, const git_oid *id, size_t len)
+int git_tree_lookup_prefix(
+	git_tree **out, git_repository *repo, const git_oid *id, size_t len)
 {
 	return git_object_lookup_prefix((git_object **)out, repo, id, len, GIT_OBJ_TREE);
 }
@@ -89,7 +91,8 @@ int git_tag_lookup(git_tag **out, git_repository *repo, const git_oid *id)
 	return git_object_lookup((git_object **)out, repo, id, GIT_OBJ_TAG);
 }
 
-int git_tag_lookup_prefix(git_tag **out, git_repository *repo, const git_oid *id, size_t len)
+int git_tag_lookup_prefix(
+	git_tag **out, git_repository *repo, const git_oid *id, size_t len)
 {
 	return git_object_lookup_prefix((git_object **)out, repo, id, len, GIT_OBJ_TAG);
 }
@@ -122,7 +125,8 @@ int git_blob_lookup(git_blob **out, git_repository *repo, const git_oid *id)
 	return git_object_lookup((git_object **)out, repo, id, GIT_OBJ_BLOB);
 }
 
-int git_blob_lookup_prefix(git_blob **out, git_repository *repo, const git_oid *id, size_t len)
+int git_blob_lookup_prefix(
+	git_blob **out, git_repository *repo, const git_oid *id, size_t len)
 {
 	return git_object_lookup_prefix((git_object **)out, repo, id, len, GIT_OBJ_BLOB);
 }
