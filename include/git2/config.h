@@ -62,12 +62,12 @@ typedef enum {
  * An entry in a configuration file
  */
 typedef struct git_config_entry {
-	const char *name;                             /**< Name of the entry (normalised) */
-	const char *value;                            /**< String value of the entry */
-	unsigned int include_depth;                   /**< Depth of includes where this variable was found */
-	git_config_level_t level;                     /**< Which config file this was found in */
+	const char *name;							  /**< Name of the entry (normalised) */
+	const char *value;							  /**< String value of the entry */
+	unsigned int include_depth;					  /**< Depth of includes where this variable was found */
+	git_config_level_t level;					  /**< Which config file this was found in */
 	void (*free)(struct git_config_entry *entry); /**< Free function for this entry */
-	void *payload;                                /**< Opaque value for the free function. Do not read or write */
+	void *payload;								  /**< Opaque value for the free function. Do not read or write */
 } git_config_entry;
 
 /**
@@ -84,7 +84,7 @@ typedef struct git_config_iterator git_config_iterator;
  */
 typedef enum {
 	GIT_CVAR_FALSE = 0,
-	GIT_CVAR_TRUE = 1,
+	GIT_CVAR_TRUE  = 1,
 	GIT_CVAR_INT32,
 	GIT_CVAR_STRING
 } git_cvar_t;

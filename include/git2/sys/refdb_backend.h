@@ -170,8 +170,8 @@ struct git_refdb_backend {
 };
 
 #define GIT_REFDB_BACKEND_VERSION 1
-#define GIT_REFDB_BACKEND_INIT \
-	{ \
+#define GIT_REFDB_BACKEND_INIT    \
+	{                             \
 		GIT_REFDB_BACKEND_VERSION \
 	}
 

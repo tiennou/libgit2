@@ -79,12 +79,12 @@ static int win32_find_git_in_path(git_buf *buf, const wchar_t *gitexe, const wch
 
 	while ((env = win32_walkpath(env, root.path, MAX_PATH - 1)) && *root.path) {
 		root.len = (DWORD)wcslen(root.path);
-		lastch = root.path[root.len - 1];
+		lastch   = root.path[root.len - 1];
 
 		/* ensure trailing slash (MAX_PATH-1 to walkpath guarantees space) */
 		if (lastch != L'/' && lastch != L'\\') {
 			root.path[root.len++] = L'\\';
-			root.path[root.len] = L'\0';
+			root.path[root.len]   = L'\0';
 		}
 
 		if (root.len + gitexe_len >= MAX_PATH)
@@ -177,12 +177,12 @@ int git_win32__find_system_dirs(git_buf *out, const wchar_t *subdir)
 
 	/* directories where git is installed according to registry */
 	if (!win32_find_git_in_registry(
-						&buf, HKEY_CURRENT_USER, REG_MSYSGIT_INSTALL_LOCAL, subdir) &&
+			&buf, HKEY_CURRENT_USER, REG_MSYSGIT_INSTALL_LOCAL, subdir) &&
 		buf.size)
 		git_buf_join(out, GIT_PATH_LIST_SEPARATOR, out->ptr, buf.ptr);
 
 	if (!win32_find_git_in_registry(
-						&buf, HKEY_LOCAL_MACHINE, REG_MSYSGIT_INSTALL, subdir) &&
+			&buf, HKEY_LOCAL_MACHINE, REG_MSYSGIT_INSTALL, subdir) &&
 		buf.size)
 		git_buf_join(out, GIT_PATH_LIST_SEPARATOR, out->ptr, buf.ptr);
 

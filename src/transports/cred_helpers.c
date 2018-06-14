@@ -17,7 +17,7 @@ int git_cred_userpass(
 	void *payload)
 {
 	git_cred_userpass_payload *userpass = (git_cred_userpass_payload *)payload;
-	const char *effective_username = NULL;
+	const char *effective_username		= NULL;
 
 	GIT_UNUSED(url);
 

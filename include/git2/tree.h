@@ -425,7 +425,7 @@ typedef int (*git_treewalk_cb)(
 
 /** Tree traversal modes */
 typedef enum {
-	GIT_TREEWALK_PRE = 0,  /* Pre-order */
+	GIT_TREEWALK_PRE  = 0, /* Pre-order */
 	GIT_TREEWALK_POST = 1, /* Post-order */
 } git_treewalk_mode;
 

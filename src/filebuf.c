@@ -18,9 +18,9 @@ enum buferr_t {
 	BUFERR_MEM
 };
 
-#define ENSURE_BUF_OK(buf) \
+#define ENSURE_BUF_OK(buf)                \
 	if ((buf)->last_error != BUFERR_OK) { \
-		return -1; \
+		return -1;                        \
 	}
 
 static int verify_last_error(git_filebuf *file)
@@ -139,7 +139,7 @@ void git_filebuf_cleanup(git_filebuf *file)
 GIT_INLINE(int)
 flush_buffer(git_filebuf *file)
 {
-	int result = file->write(file, file->buffer, file->buf_pos);
+	int result	= file->write(file, file->buffer, file->buf_pos);
 	file->buf_pos = 0;
 	return result;
 }
@@ -169,13 +169,13 @@ static int write_deflate(git_filebuf *file, void *source, size_t len)
 	z_stream *zs = &file->zs;
 
 	if (len > 0 || file->flush_mode == Z_FINISH) {
-		zs->next_in = source;
+		zs->next_in  = source;
 		zs->avail_in = (uInt)len;
 
 		do {
 			size_t have;
 
-			zs->next_out = file->z_buf;
+			zs->next_out  = file->z_buf;
 			zs->avail_out = (uInt)file->buf_size;
 
 			if (deflate(zs, file->flush_mode) == Z_STREAM_ERROR) {
@@ -247,7 +247,7 @@ static int resolve_symlink(git_buf *out, const char *path)
 
 		/* readlink(2) won't NUL-terminate for us */
 		target.ptr[ret] = '\0';
-		target.size = ret;
+		target.size		= ret;
 
 		root = git_path_root(target.ptr);
 		if (root >= 0) {
@@ -299,9 +299,9 @@ int git_filebuf_open_withsize(git_filebuf *file, const char *path, int flags, mo
 	if (flags & GIT_FILEBUF_FSYNC)
 		file->do_fsync = true;
 
-	file->buf_size = size;
-	file->buf_pos = 0;
-	file->fd = -1;
+	file->buf_size   = size;
+	file->buf_pos	= 0;
+	file->fd		 = -1;
 	file->last_error = BUFERR_OK;
 
 	/* Allocate the main cache buffer */
@@ -334,7 +334,7 @@ int git_filebuf_open_withsize(git_filebuf *file, const char *path, int flags, mo
 
 		/* Never flush */
 		file->flush_mode = Z_NO_FLUSH;
-		file->write = &write_deflate;
+		file->write		 = &write_deflate;
 	} else {
 		file->write = &write_normal;
 	}
@@ -350,12 +350,12 @@ int git_filebuf_open_withsize(git_filebuf *file, const char *path, int flags, mo
 			git_buf_dispose(&tmp_path);
 			goto cleanup;
 		}
-		file->fd_is_open = true;
+		file->fd_is_open   = true;
 		file->created_lock = true;
 
 		/* No original path */
 		file->path_original = NULL;
-		file->path_lock = git_buf_detach(&tmp_path);
+		file->path_lock		= git_buf_detach(&tmp_path);
 		GITERR_CHECK_ALLOC(file->path_lock);
 	} else {
 		git_buf resolved_path = GIT_BUF_INIT;
@@ -364,7 +364,7 @@ int git_filebuf_open_withsize(git_filebuf *file, const char *path, int flags, mo
 			goto cleanup;
 
 		/* Save the original path of the file */
-		path_len = resolved_path.size;
+		path_len			= resolved_path.size;
 		file->path_original = git_buf_detach(&resolved_path);
 
 		/* create the locking path by appending ".lock" to the original */

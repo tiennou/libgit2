@@ -36,7 +36,7 @@ typedef struct {
 static int header_path_len(git_patch_parse_ctx *ctx)
 {
 	bool inquote = 0;
-	bool quoted = git_parse_ctx_contains_s(&ctx->parse_ctx, "\"");
+	bool quoted  = git_parse_ctx_contains_s(&ctx->parse_ctx, "\"");
 	size_t len;
 
 	for (len = quoted; len < ctx->parse_ctx.line_len; len++) {
@@ -79,7 +79,7 @@ done:
 static int parse_header_path(char **out, git_patch_parse_ctx *ctx)
 {
 	git_buf path = GIT_BUF_INIT;
-	int error = parse_header_path_buf(&path, ctx, header_path_len(ctx));
+	int error	= parse_header_path_buf(&path, ctx, header_path_len(ctx));
 
 	*out = git_buf_detach(&path);
 
@@ -163,7 +163,7 @@ static int parse_header_git_index(
 	char c;
 
 	if (parse_header_oid(&patch->base.delta->old_file.id,
-						&patch->base.delta->old_file.id_abbrev, ctx) < 0 ||
+			&patch->base.delta->old_file.id_abbrev, ctx) < 0 ||
 		git_parse_advance_expected_str(&ctx->parse_ctx, "..") < 0 ||
 		parse_header_oid(&patch->base.delta->new_file.id,
 			&patch->base.delta->new_file.id_abbrev, ctx) < 0)
@@ -206,8 +206,8 @@ static int parse_header_git_deletedfilemode(
 	git__free((char *)patch->base.delta->old_file.path);
 
 	patch->base.delta->old_file.path = NULL;
-	patch->base.delta->status = GIT_DELTA_DELETED;
-	patch->base.delta->nfiles = 1;
+	patch->base.delta->status		 = GIT_DELTA_DELETED;
+	patch->base.delta->nfiles		 = 1;
 
 	return parse_header_mode(&patch->base.delta->old_file.mode, ctx);
 }
@@ -219,8 +219,8 @@ static int parse_header_git_newfilemode(
 	git__free((char *)patch->base.delta->new_file.path);
 
 	patch->base.delta->new_file.path = NULL;
-	patch->base.delta->status = GIT_DELTA_ADDED;
-	patch->base.delta->nfiles = 1;
+	patch->base.delta->status		 = GIT_DELTA_ADDED;
+	patch->base.delta->nfiles		 = 1;
 
 	return parse_header_mode(&patch->base.delta->new_file.mode, ctx);
 }
@@ -401,7 +401,7 @@ static int parse_header_git(
 	git_patch_parse_ctx *ctx)
 {
 	size_t i;
-	int error = 0;
+	int error				 = 0;
 	parse_header_state state = STATE_START;
 
 	/* Parse remaining header lines */
@@ -413,7 +413,7 @@ static int parse_header_git(
 
 		for (i = 0; i < ARRAY_SIZE(transitions); i++) {
 			const parse_header_transition *transition = &transitions[i];
-			size_t op_len = strlen(transition->str);
+			size_t op_len							  = strlen(transition->str);
 
 			if (transition->expected_state != state ||
 				git__prefixcmp(ctx->parse_ctx.line, transition->str) != 0)
@@ -555,10 +555,10 @@ static int parse_hunk_body(
 	int newlines = hunk->hunk.new_lines;
 
 	for (;
-						ctx->parse_ctx.remain_len > 1 &&
-						(oldlines || newlines) &&
-						!git_parse_ctx_contains_s(&ctx->parse_ctx, "@@ -");
-						git_parse_advance_line(&ctx->parse_ctx)) {
+		 ctx->parse_ctx.remain_len > 1 &&
+		 (oldlines || newlines) &&
+		 !git_parse_ctx_contains_s(&ctx->parse_ctx, "@@ -");
+		 git_parse_advance_line(&ctx->parse_ctx)) {
 
 		char c;
 		int origin;
@@ -603,10 +603,10 @@ static int parse_hunk_body(
 
 		memset(line, 0x0, sizeof(git_diff_line));
 
-		line->content = ctx->parse_ctx.line + prefix;
-		line->content_len = ctx->parse_ctx.line_len - prefix;
+		line->content		 = ctx->parse_ctx.line + prefix;
+		line->content_len	= ctx->parse_ctx.line_len - prefix;
 		line->content_offset = ctx->parse_ctx.content_len - ctx->parse_ctx.remain_len;
-		line->origin = origin;
+		line->origin		 = origin;
 
 		hunk->line_count++;
 	}
@@ -748,7 +748,7 @@ static int parse_patch_binary_side(
 		}
 
 		if ((error = git_buf_decode_base85(
-								&decoded, ctx->parse_ctx.line, encoded_len, decoded_len)) < 0)
+				 &decoded, ctx->parse_ctx.line, encoded_len, decoded_len)) < 0)
 			goto done;
 
 		if (decoded.size - decoded_orig != decoded_len) {
@@ -764,10 +764,10 @@ static int parse_patch_binary_side(
 		}
 	}
 
-	binary->type = type;
+	binary->type		= type;
 	binary->inflatedlen = (size_t)len;
-	binary->datalen = decoded.size;
-	binary->data = git_buf_detach(&decoded);
+	binary->datalen		= decoded.size;
+	binary->data		= git_buf_detach(&decoded);
 
 done:
 	git_buf_dispose(&base85);
@@ -787,7 +787,7 @@ static int parse_patch_binary(
 
 	/* parse old->new binary diff */
 	if ((error = parse_patch_binary_side(
-							&patch->base.binary.new_file, ctx)) < 0)
+			 &patch->base.binary.new_file, ctx)) < 0)
 		return error;
 
 	if (git_parse_advance_nl(&ctx->parse_ctx) < 0)
@@ -796,7 +796,7 @@ static int parse_patch_binary(
 
 	/* parse new->old binary diff */
 	if ((error = parse_patch_binary_side(
-							&patch->base.binary.old_file, ctx)) < 0)
+			 &patch->base.binary.old_file, ctx)) < 0)
 		return error;
 
 	if (git_parse_advance_nl(&ctx->parse_ctx) < 0)
@@ -887,11 +887,11 @@ static int check_prefix(
 	git_patch_parsed *patch,
 	const char *path_start)
 {
-	const char *path = path_start;
+	const char *path  = path_start;
 	size_t prefix_len = patch->ctx->opts.prefix_len;
 	size_t remain_len = prefix_len;
 
-	*out = NULL;
+	*out	 = NULL;
 	*out_len = 0;
 
 	if (prefix_len == 0)
@@ -915,7 +915,7 @@ static int check_prefix(
 
 done:
 	*out_len = (path - path_start);
-	*out = git__strndup(path_start, *out_len);
+	*out	 = git__strndup(path_start, *out_len);
 
 	return (*out == NULL) ? -1 : 0;
 }
@@ -924,7 +924,7 @@ static int check_filenames(git_patch_parsed *patch)
 {
 	const char *prefixed_new, *prefixed_old;
 	size_t old_prefixlen = 0, new_prefixlen = 0;
-	bool added = (patch->base.delta->status == GIT_DELTA_ADDED);
+	bool added   = (patch->base.delta->status == GIT_DELTA_ADDED);
 	bool deleted = (patch->base.delta->status == GIT_DELTA_DELETED);
 
 	if (patch->old_path && !patch->new_path)
@@ -935,7 +935,7 @@ static int check_filenames(git_patch_parsed *patch)
 
 	/* Ensure (non-renamed) paths match */
 	if (check_header_names(
-						patch->header_old_path, patch->old_path, "old", added) < 0 ||
+			patch->header_old_path, patch->old_path, "old", added) < 0 ||
 		check_header_names(
 			patch->header_new_path, patch->new_path, "new", deleted) < 0)
 		return -1;
@@ -944,7 +944,7 @@ static int check_filenames(git_patch_parsed *patch)
 	prefixed_new = (!deleted && patch->new_path) ? patch->new_path : patch->header_new_path;
 
 	if (check_prefix(
-						&patch->old_prefix, &old_prefixlen, patch, prefixed_old) < 0 ||
+			&patch->old_prefix, &old_prefixlen, patch, prefixed_old) < 0 ||
 		check_prefix(
 			&patch->new_prefix, &new_prefixlen, patch, prefixed_new) < 0)
 		return -1;

@@ -47,9 +47,9 @@ struct git_hashsig {
 
 static void hashsig_heap_init(hashsig_heap *h, hashsig_cmp cmp)
 {
-	h->size = 0;
+	h->size  = 0;
 	h->asize = HASHSIG_HEAP_SIZE;
-	h->cmp = cmp;
+	h->cmp   = cmp;
 }
 
 static int hashsig_cmp_max(const void *a, const void *b, void *payload)
@@ -71,11 +71,11 @@ static void hashsig_heap_up(hashsig_heap *h, int el)
 	int parent_el = HEAP_PARENT_OF(el);
 
 	while (el > 0 && h->cmp(&h->values[parent_el], &h->values[el], NULL) > 0) {
-		hashsig_t t = h->values[el];
-		h->values[el] = h->values[parent_el];
+		hashsig_t t			 = h->values[el];
+		h->values[el]		 = h->values[parent_el];
 		h->values[parent_el] = t;
 
-		el = parent_el;
+		el		  = parent_el;
 		parent_el = HEAP_PARENT_OF(el);
 	}
 }
@@ -89,7 +89,7 @@ static void hashsig_heap_down(hashsig_heap *h, int el)
 	while (el < h->size / 2) {
 		int lel = HEAP_LCHILD_OF(el), rel = HEAP_RCHILD_OF(el), swapel;
 
-		v = h->values[el];
+		v  = h->values[el];
 		lv = h->values[lel];
 		rv = h->values[rel];
 
@@ -98,7 +98,7 @@ static void hashsig_heap_down(hashsig_heap *h, int el)
 
 		swapel = (h->cmp(&lv, &rv, NULL) < 0) ? lel : rel;
 
-		h->values[el] = h->values[swapel];
+		h->values[el]	 = h->values[swapel];
 		h->values[swapel] = v;
 
 		el = swapel;
@@ -162,7 +162,7 @@ static int hashsig_add_hashes(
 {
 	const uint8_t *scan = data, *end = data + size;
 	hashsig_state state = HASHSIG_HASH_START;
-	int use_ignores = prog->use_ignores, len;
+	int use_ignores		= prog->use_ignores, len;
 	uint8_t ch;
 
 	while (scan < end) {
@@ -272,7 +272,7 @@ int git_hashsig_create_fromfile(
 {
 	uint8_t buf[0x1000];
 	ssize_t buflen = 0;
-	int error = 0, fd;
+	int error	  = 0, fd;
 	hashsig_in_progress prog;
 	git_hashsig *sig = hashsig_alloc(opts);
 	GITERR_CHECK_ALLOC(sig);
@@ -359,6 +359,6 @@ int git_hashsig_compare(const git_hashsig *a, const git_hashsig *b)
 		return hashsig_heap_compare(&a->mins, &b->mins);
 	else
 		return (hashsig_heap_compare(&a->mins, &b->mins) +
-										hashsig_heap_compare(&a->maxs, &b->maxs)) /
+				   hashsig_heap_compare(&a->maxs, &b->maxs)) /
 			2;
 }

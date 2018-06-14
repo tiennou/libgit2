@@ -93,7 +93,7 @@ static int parse_section_header_ext(git_config_parser *reader, const char *line,
 	rpos = 0;
 
 	line = first_quote;
-	c = line[++rpos];
+	c	= line[++rpos];
 
 	/*
 	 * At the end of each iteration, whatever is stored in c will be
@@ -170,7 +170,7 @@ static int parse_section_header(git_config_parser *reader, char **section_out)
 	GITERR_CHECK_ALLOC(name);
 
 	name_length = 0;
-	pos = 0;
+	pos			= 0;
 
 	/* Make sure we were given a section header */
 	c = line[pos++];
@@ -181,7 +181,7 @@ static int parse_section_header(git_config_parser *reader, char **section_out)
 	do {
 		if (git__isspace(c)) {
 			name[name_length] = '\0';
-			result = parse_section_header_ext(reader, line, name, section_out);
+			result			  = parse_section_header_ext(reader, line, name, section_out);
 			git__free(line);
 			git__free(name);
 			return result;
@@ -204,7 +204,7 @@ static int parse_section_header(git_config_parser *reader, char **section_out)
 	git__free(line);
 
 	name[name_length] = 0;
-	*section_out = name;
+	*section_out	  = name;
 
 	return 0;
 
@@ -309,7 +309,7 @@ static int unescape_line(
 
 done:
 	*fixed = '\0';
-	*out = str;
+	*out   = str;
 
 	return 0;
 }
@@ -374,7 +374,7 @@ static int parse_name(
 {
 	const char *name_end = line, *value_start;
 
-	*name = NULL;
+	*name  = NULL;
 	*value = NULL;
 
 	while (*name_end && is_namechar(*name_end))
@@ -466,7 +466,7 @@ int git_config_parse(
 {
 	git_parse_ctx *ctx;
 	char *current_section = NULL, *var_name, *var_value;
-	int result = 0;
+	int result			  = 0;
 
 	ctx = &parser->ctx;
 
@@ -474,7 +474,7 @@ int git_config_parse(
 
 	for (; ctx->remain_len > 0; git_parse_advance_line(ctx)) {
 		const char *line_start = parser->ctx.line;
-		size_t line_len = parser->ctx.line_len;
+		size_t line_len		   = parser->ctx.line_len;
 		char c;
 
 		/*

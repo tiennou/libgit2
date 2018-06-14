@@ -37,19 +37,19 @@ extern bool git_repository__fsync_gitdir;
 
 /** Cvar cache identifiers */
 typedef enum {
-	GIT_CVAR_AUTO_CRLF = 0,    /* core.autocrlf */
-	GIT_CVAR_EOL,              /* core.eol */
-	GIT_CVAR_SYMLINKS,         /* core.symlinks */
-	GIT_CVAR_IGNORECASE,       /* core.ignorecase */
-	GIT_CVAR_FILEMODE,         /* core.filemode */
-	GIT_CVAR_IGNORESTAT,       /* core.ignorestat */
-	GIT_CVAR_TRUSTCTIME,       /* core.trustctime */
-	GIT_CVAR_ABBREV,           /* core.abbrev */
-	GIT_CVAR_PRECOMPOSE,       /* core.precomposeunicode */
-	GIT_CVAR_SAFE_CRLF,        /* core.safecrlf */
+	GIT_CVAR_AUTO_CRLF = 0,	/* core.autocrlf */
+	GIT_CVAR_EOL,			   /* core.eol */
+	GIT_CVAR_SYMLINKS,		   /* core.symlinks */
+	GIT_CVAR_IGNORECASE,	   /* core.ignorecase */
+	GIT_CVAR_FILEMODE,		   /* core.filemode */
+	GIT_CVAR_IGNORESTAT,	   /* core.ignorestat */
+	GIT_CVAR_TRUSTCTIME,	   /* core.trustctime */
+	GIT_CVAR_ABBREV,		   /* core.abbrev */
+	GIT_CVAR_PRECOMPOSE,	   /* core.precomposeunicode */
+	GIT_CVAR_SAFE_CRLF,		   /* core.safecrlf */
 	GIT_CVAR_LOGALLREFUPDATES, /* core.logallrefupdates */
-	GIT_CVAR_PROTECTHFS,       /* core.protectHFS */
-	GIT_CVAR_PROTECTNTFS,      /* core.protectNTFS */
+	GIT_CVAR_PROTECTHFS,	   /* core.protectHFS */
+	GIT_CVAR_PROTECTNTFS,	  /* core.protectNTFS */
 	GIT_CVAR_FSYNCOBJECTFILES, /* core.fsyncObjectFiles */
 	GIT_CVAR_CACHE_MAX
 } git_cvar_cached;
@@ -68,19 +68,19 @@ typedef enum {
 
 	/* core.safecrlf: false, 'fail', 'warn' */
 	GIT_SAFE_CRLF_FALSE = 0,
-	GIT_SAFE_CRLF_FAIL = 1,
-	GIT_SAFE_CRLF_WARN = 2,
+	GIT_SAFE_CRLF_FAIL  = 1,
+	GIT_SAFE_CRLF_WARN  = 2,
 
 	/* core.autocrlf: false, true, 'input; */
-	GIT_AUTO_CRLF_FALSE = 0,
-	GIT_AUTO_CRLF_TRUE = 1,
-	GIT_AUTO_CRLF_INPUT = 2,
+	GIT_AUTO_CRLF_FALSE   = 0,
+	GIT_AUTO_CRLF_TRUE	= 1,
+	GIT_AUTO_CRLF_INPUT   = 2,
 	GIT_AUTO_CRLF_DEFAULT = GIT_AUTO_CRLF_FALSE,
 
 	/* core.eol: unset, 'crlf', 'lf', 'native' */
 	GIT_EOL_UNSET = 0,
-	GIT_EOL_CRLF = 1,
-	GIT_EOL_LF = 2,
+	GIT_EOL_CRLF  = 1,
+	GIT_EOL_LF	= 2,
 #ifdef GIT_WIN32
 	GIT_EOL_NATIVE = GIT_EOL_CRLF,
 #else
@@ -105,7 +105,7 @@ typedef enum {
 	/* core.safecrlf */
 	GIT_SAFE_CRLF_DEFAULT = GIT_CVAR_FALSE,
 	/* core.logallrefupdates */
-	GIT_LOGALLREFUPDATES_UNSET = 2,
+	GIT_LOGALLREFUPDATES_UNSET   = 2,
 	GIT_LOGALLREFUPDATES_DEFAULT = GIT_LOGALLREFUPDATES_UNSET,
 	/* core.protectHFS */
 	GIT_PROTECTHFS_DEFAULT = GIT_CVAR_FALSE,
@@ -119,7 +119,7 @@ typedef enum {
 enum {
 	GIT_REPOSITORY_INIT__HAS_DOTGIT = (1u << 16),
 	GIT_REPOSITORY_INIT__NATURAL_WD = (1u << 17),
-	GIT_REPOSITORY_INIT__IS_REINIT = (1u << 18),
+	GIT_REPOSITORY_INIT__IS_REINIT  = (1u << 18),
 };
 
 /** Internal structure for repository object */

@@ -57,8 +57,8 @@ typedef struct {
 /**
  * Static initializer for git_buf from static buffer
  */
-#define GIT_BUF_INIT_CONST(STR, LEN) \
-	{ \
+#define GIT_BUF_INIT_CONST(STR, LEN)    \
+	{                                   \
 		(char *)(STR), 0, (size_t)(LEN) \
 	}
 
@@ -86,7 +86,8 @@ git_buf_dispose(git_buf *buffer);
  * This function is going to be removed in v0.30.0.
  */
 GIT_EXTERN(void)
-GIT_DEPRECATED(git_buf_free)(git_buf *buffer);
+GIT_DEPRECATED(git_buf_free)
+(git_buf *buffer);
 
 /**
  * Resize the buffer allocation to make more space.

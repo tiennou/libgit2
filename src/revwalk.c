@@ -82,7 +82,7 @@ static int push_commit(git_revwalk *walk, const git_oid *oid, int uninteresting,
 		walk->did_push = 1;
 
 	commit->uninteresting = uninteresting;
-	list = walk->user_input;
+	list				  = walk->user_input;
 	if (git_commit_list_insert(commit, &list) == NULL) {
 		giterr_set_oom();
 		return -1;
@@ -118,7 +118,7 @@ static int push_ref(git_revwalk *walk, const char *refname, int hide, int from_g
 
 static int push_glob(git_revwalk *walk, const char *glob, int hide)
 {
-	int error = 0;
+	int error   = 0;
 	git_buf buf = GIT_BUF_INIT;
 	git_reference *ref;
 	git_reference_iterator *iter;
@@ -334,7 +334,7 @@ static int add_parents_to_list(git_revwalk *walk, git_commit_list_node *commit, 
 	if (commit->uninteresting) {
 		for (i = 0; i < commit->out_degree; i++) {
 			git_commit_list_node *p = commit->parents[i];
-			p->uninteresting = 1;
+			p->uninteresting		= 1;
 
 			/* git does it gently here, but we don't like missing objects */
 			if ((error = git_commit_list_parse(walk, p)) < 0)
@@ -401,10 +401,10 @@ static int still_interesting(git_commit_list *list, int64_t time, int slop)
 static int limit_list(git_commit_list **out, git_revwalk *walk, git_commit_list *commits)
 {
 	int error, slop = SLOP;
-	int64_t time = ~0ll;
-	git_commit_list *list = commits;
+	int64_t time			 = ~0ll;
+	git_commit_list *list	= commits;
 	git_commit_list *newlist = NULL;
-	git_commit_list **p = &newlist;
+	git_commit_list **p		 = &newlist;
 
 	while (list) {
 		git_commit_list_node *commit = git_commit_list_pop(&list);
@@ -426,7 +426,7 @@ static int limit_list(git_commit_list **out, git_revwalk *walk, git_commit_list 
 			continue;
 
 		time = commit->time;
-		p = &git_commit_list_insert(commit, p)->next;
+		p	= &git_commit_list_insert(commit, p)->next;
 	}
 
 	git_commit_list_free(&list);
@@ -492,7 +492,7 @@ static int sort_in_topological_order(git_commit_list **out, git_revwalk *walk, g
 		git_pqueue_reverse(&queue);
 
 
-	pptr = &newlist;
+	pptr	= &newlist;
 	newlist = NULL;
 	while ((next = git_pqueue_pop(&queue)) != NULL) {
 		for (i = 0; i < next->out_degree; ++i) {
@@ -512,7 +512,7 @@ static int sort_in_topological_order(git_commit_list **out, git_revwalk *walk, g
 		pptr = &git_commit_list_insert(next, pptr)->next;
 	}
 
-	*out = newlist;
+	*out  = newlist;
 	error = 0;
 
 cleanup:
@@ -567,7 +567,7 @@ static int prepare_walk(git_revwalk *walk)
 			return error;
 	} else {
 		walk->iterator_rand = commits;
-		walk->get_next = revwalk_next_unsorted;
+		walk->get_next		= revwalk_next_unsorted;
 	}
 
 	if (walk->sorting & GIT_SORT_REVERSE) {
@@ -600,7 +600,7 @@ int git_revwalk_new(git_revwalk **revwalk_out, git_repository *repo)
 
 	git_pool_init(&walk->commit_pool, COMMIT_ALLOC);
 	walk->get_next = &revwalk_next_unsorted;
-	walk->enqueue = &revwalk_enqueue_unsorted;
+	walk->enqueue  = &revwalk_enqueue_unsorted;
 
 	walk->repo = repo;
 
@@ -644,10 +644,10 @@ void git_revwalk_sorting(git_revwalk *walk, unsigned int sort_mode)
 
 	if (walk->sorting & GIT_SORT_TIME) {
 		walk->get_next = &revwalk_next_timesort;
-		walk->enqueue = &revwalk_enqueue_timesort;
+		walk->enqueue  = &revwalk_enqueue_timesort;
 	} else {
 		walk->get_next = &revwalk_next_unsorted;
-		walk->enqueue = &revwalk_enqueue_unsorted;
+		walk->enqueue  = &revwalk_enqueue_unsorted;
 	}
 }
 
@@ -688,14 +688,15 @@ void git_revwalk_reset(git_revwalk *walk)
 
 	assert(walk);
 
-	git_oidmap_foreach_value(walk->commits, commit, {
-		commit->seen = 0;
-		commit->in_degree = 0;
-		commit->topo_delay = 0;
+	git_oidmap_foreach_value (walk->commits, commit, {
+		commit->seen		  = 0;
+		commit->in_degree	 = 0;
+		commit->topo_delay	= 0;
 		commit->uninteresting = 0;
-		commit->added = 0;
-		commit->flags = 0;
-	});
+		commit->added		  = 0;
+		commit->flags		  = 0;
+	})
+		;
 
 	git_pqueue_clear(&walk->iterator_time);
 	git_commit_list_free(&walk->iterator_topo);
@@ -703,7 +704,7 @@ void git_revwalk_reset(git_revwalk *walk)
 	git_commit_list_free(&walk->iterator_reverse);
 	git_commit_list_free(&walk->user_input);
 	walk->first_parent = 0;
-	walk->walking = 0;
+	walk->walking	  = 0;
 	walk->did_push = walk->did_hide = 0;
 }
 
@@ -723,7 +724,7 @@ int git_revwalk_add_hide_cb(
 		return -1;
 	}
 
-	walk->hide_cb = hide_cb;
+	walk->hide_cb		  = hide_cb;
 	walk->hide_cb_payload = payload;
 
 	return 0;

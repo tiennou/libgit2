@@ -22,7 +22,7 @@ int git_trace_set(git_trace_level_t level, git_trace_callback callback)
 #ifdef GIT_TRACE
 	assert(level == 0 || callback != NULL);
 
-	git_trace__data.level = level;
+	git_trace__data.level	= level;
 	git_trace__data.callback = callback;
 	GIT_MEMORY_BARRIER;
 

@@ -201,7 +201,7 @@ int git_reflog_drop(git_reflog *reflog, size_t idx, int rewrite_previous_entry)
 	git_reflog_entry__free(entry);
 
 	if (git_vector_remove(
-						&reflog->entries, reflog_inverse_index(idx, entrycount)) < 0)
+			&reflog->entries, reflog_inverse_index(idx, entrycount)) < 0)
 		return -1;
 
 	if (!rewrite_previous_entry)

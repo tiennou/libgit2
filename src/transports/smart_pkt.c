@@ -21,8 +21,8 @@
 #include <ctype.h>
 
 #define PKT_LEN_SIZE 4
-static const char pkt_done_str[] = "0009done\n";
-static const char pkt_flush_str[] = "0000";
+static const char pkt_done_str[]	= "0009done\n";
+static const char pkt_flush_str[]   = "0000";
 static const char pkt_have_prefix[] = "0032have ";
 static const char pkt_want_prefix[] = "0032want ";
 
@@ -34,7 +34,7 @@ static int flush_pkt(git_pkt **out)
 	GITERR_CHECK_ALLOC(pkt);
 
 	pkt->type = GIT_PKT_FLUSH;
-	*out = pkt;
+	*out	  = pkt;
 
 	return 0;
 }
@@ -81,7 +81,7 @@ static int nak_pkt(git_pkt **out)
 	GITERR_CHECK_ALLOC(pkt);
 
 	pkt->type = GIT_PKT_NAK;
-	*out = pkt;
+	*out	  = pkt;
 
 	return 0;
 }
@@ -94,7 +94,7 @@ static int pack_pkt(git_pkt **out)
 	GITERR_CHECK_ALLOC(pkt);
 
 	pkt->type = GIT_PKT_PACK;
-	*out = pkt;
+	*out	  = pkt;
 
 	return 0;
 }
@@ -133,7 +133,7 @@ static int err_pkt(git_pkt **out, const char *line, size_t len)
 	GITERR_CHECK_ALLOC(pkt);
 
 	pkt->type = GIT_PKT_ERR;
-	pkt->len = (int)len;
+	pkt->len  = (int)len;
 	memcpy(pkt->error, line, len);
 	pkt->error[len] = '\0';
 
@@ -155,7 +155,7 @@ static int data_pkt(git_pkt **out, const char *line, size_t len)
 	GITERR_CHECK_ALLOC(pkt);
 
 	pkt->type = GIT_PKT_DATA;
-	pkt->len = (int)len;
+	pkt->len  = (int)len;
 	memcpy(pkt->data, line, len);
 
 	*out = (git_pkt *)pkt;
@@ -176,7 +176,7 @@ static int sideband_progress_pkt(git_pkt **out, const char *line, size_t len)
 	GITERR_CHECK_ALLOC(pkt);
 
 	pkt->type = GIT_PKT_PROGRESS;
-	pkt->len = (int)len;
+	pkt->len  = (int)len;
 	memcpy(pkt->data, line, len);
 
 	*out = (git_pkt *)pkt;
@@ -198,7 +198,7 @@ static int sideband_error_pkt(git_pkt **out, const char *line, size_t len)
 	GITERR_CHECK_ALLOC(pkt);
 
 	pkt->type = GIT_PKT_ERR;
-	pkt->len = (int)len;
+	pkt->len  = (int)len;
 	memcpy(pkt->error, line, len);
 	pkt->error[len] = '\0';
 
@@ -296,7 +296,7 @@ static int ng_pkt(git_pkt **out, const char *line, size_t len)
 	pkt = git__malloc(sizeof(*pkt));
 	GITERR_CHECK_ALLOC(pkt);
 
-	pkt->ref = NULL;
+	pkt->ref  = NULL;
 	pkt->type = GIT_PKT_NG;
 
 	line += 3; /* skip "ng " */
@@ -510,7 +510,7 @@ int git_pkt_buffer_flush(git_buf *buf)
 
 static int buffer_want_with_caps(const git_remote_head *head, transport_smart_caps *caps, git_buf *buf)
 {
-	git_buf str = GIT_BUF_INIT;
+	git_buf str					= GIT_BUF_INIT;
 	char oid[GIT_OID_HEXSZ + 1] = {0};
 	size_t len;
 

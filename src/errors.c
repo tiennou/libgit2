@@ -22,10 +22,10 @@ static git_error g_git_oom_error = {
 static void set_error_from_buffer(int error_class)
 {
 	git_error *error = &GIT_GLOBAL->error_t;
-	git_buf *buf = &GIT_GLOBAL->error_buf;
+	git_buf *buf	 = &GIT_GLOBAL->error_buf;
 
 	error->message = buf->ptr;
-	error->klass = error_class;
+	error->klass   = error_class;
 
 	GIT_GLOBAL->last_error = error;
 }
@@ -55,7 +55,7 @@ void giterr_set(int error_class, const char *string, ...)
 	DWORD win32_error_code = (error_class == GITERR_OS) ? GetLastError() : 0;
 #endif
 	int error_code = (error_class == GITERR_OS) ? errno : 0;
-	git_buf *buf = &GIT_GLOBAL->error_buf;
+	git_buf *buf   = &GIT_GLOBAL->error_buf;
 
 	git_buf_clear(buf);
 	if (string) {
@@ -138,7 +138,7 @@ const git_error *giterr_last(void)
 
 int giterr_state_capture(git_error_state *state, int error_code)
 {
-	git_error *error = GIT_GLOBAL->last_error;
+	git_error *error   = GIT_GLOBAL->last_error;
 	git_buf *error_buf = &GIT_GLOBAL->error_buf;
 
 	memset(state, 0, sizeof(git_error_state));
@@ -147,7 +147,7 @@ int giterr_state_capture(git_error_state *state, int error_code)
 		return 0;
 
 	state->error_code = error_code;
-	state->oom = (error == &g_git_oom_error);
+	state->oom		  = (error == &g_git_oom_error);
 
 	if (error) {
 		state->error_msg.klass = error->klass;

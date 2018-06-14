@@ -81,7 +81,7 @@ static struct map_data _cvar_maps[] = {
 
 int git_config__cvar(int *out, git_config *config, git_cvar_cached cvar)
 {
-	int error = 0;
+	int error			  = 0;
 	struct map_data *data = &_cvar_maps[(int)cvar];
 	git_config_entry *entry;
 

@@ -36,7 +36,7 @@ typedef struct git_pobject {
 
 	unsigned int hash; /* name hint hash */
 
-	struct git_pobject *delta;         /* delta base object */
+	struct git_pobject *delta;		   /* delta base object */
 	struct git_pobject *delta_child;   /* deltified objects who bases me */
 	struct git_pobject *delta_sibling; /* other deltified objects
 					    * who uses the same base as
@@ -60,7 +60,7 @@ typedef struct {
 
 struct git_packbuilder {
 	git_repository *repo; /* associated repository */
-	git_odb *odb;         /* associated object database */
+	git_odb *odb;		  /* associated object database */
 
 	git_hash_ctx ctx;
 	git_zstream zstream;

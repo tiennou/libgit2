@@ -18,7 +18,7 @@ void git_oidarray_free(git_oidarray *arr)
 void git_oidarray__from_array(git_oidarray *arr, git_array_oid_t *array)
 {
 	arr->count = array->size;
-	arr->ids = array->ptr;
+	arr->ids   = array->ptr;
 }
 
 void git_oidarray__reverse(git_oidarray *arr)

@@ -139,11 +139,11 @@ typedef struct git_stash_apply_options {
 } git_stash_apply_options;
 
 #define GIT_STASH_APPLY_OPTIONS_VERSION 1
-#define GIT_STASH_APPLY_OPTIONS_INIT \
-	{ \
+#define GIT_STASH_APPLY_OPTIONS_INIT     \
+	{                                    \
 		GIT_STASH_APPLY_OPTIONS_VERSION, \
-			GIT_STASH_APPLY_DEFAULT, \
-			GIT_CHECKOUT_OPTIONS_INIT \
+			GIT_STASH_APPLY_DEFAULT,     \
+			GIT_CHECKOUT_OPTIONS_INIT    \
 	}
 
 /**

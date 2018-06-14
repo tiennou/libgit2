@@ -314,8 +314,8 @@ extern int git_path_resolve_relative(git_buf *path, size_t ceiling);
 extern int git_path_apply_relative(git_buf *target, const char *relpath);
 
 enum {
-	GIT_PATH_DIR_IGNORE_CASE = (1u << 0),
-	GIT_PATH_DIR_PRECOMPOSE_UNICODE = (1u << 1),
+	GIT_PATH_DIR_IGNORE_CASE			= (1u << 0),
+	GIT_PATH_DIR_PRECOMPOSE_UNICODE		= (1u << 1),
 	GIT_PATH_DIR_INCLUDE_DOT_AND_DOTDOT = (1u << 2),
 };
 
@@ -372,8 +372,8 @@ extern int git_path_walk_up(
 
 
 enum { GIT_PATH_NOTEQUAL = 0,
-	GIT_PATH_EQUAL = 1,
-	GIT_PATH_PREFIX = 2 };
+	GIT_PATH_EQUAL		 = 1,
+	GIT_PATH_PREFIX		 = 2 };
 
 /*
  * Determines if a path is equal to or potentially a child of another.
@@ -440,8 +440,8 @@ typedef struct {
 	git_buf buf;
 } git_path_iconv_t;
 
-#	define GIT_PATH_ICONV_INIT \
-		{ \
+#	define GIT_PATH_ICONV_INIT         \
+		{                               \
 			(iconv_t) - 1, GIT_BUF_INIT \
 		}
 
@@ -482,8 +482,8 @@ struct git_path_diriter {
 	unsigned int needs_next;
 };
 
-#	define GIT_PATH_DIRITER_INIT \
-		{ \
+#	define GIT_PATH_DIRITER_INIT                         \
+		{                                                 \
 			{0}, 0, GIT_BUF_INIT, 0, INVALID_HANDLE_VALUE \
 		}
 
@@ -503,8 +503,8 @@ struct git_path_diriter {
 };
 
 #	define GIT_PATH_DIRITER_INIT \
-		{ \
-			GIT_BUF_INIT \
+		{                         \
+			GIT_BUF_INIT          \
 		}
 
 #endif
@@ -621,12 +621,12 @@ extern int git_path_from_url_or_path(git_buf *local_path_out, const char *url_or
  */
 #ifdef GIT_WIN32
 #	define GIT_PATH_REJECT_FILESYSTEM_DEFAULTS \
-		GIT_PATH_REJECT_TRAVERSAL | \
-			GIT_PATH_REJECT_BACKSLASH | \
-			GIT_PATH_REJECT_TRAILING_DOT | \
-			GIT_PATH_REJECT_TRAILING_SPACE | \
-			GIT_PATH_REJECT_TRAILING_COLON | \
-			GIT_PATH_REJECT_DOS_PATHS | \
+		GIT_PATH_REJECT_TRAVERSAL |             \
+			GIT_PATH_REJECT_BACKSLASH |         \
+			GIT_PATH_REJECT_TRAILING_DOT |      \
+			GIT_PATH_REJECT_TRAILING_SPACE |    \
+			GIT_PATH_REJECT_TRAILING_COLON |    \
+			GIT_PATH_REJECT_DOS_PATHS |         \
 			GIT_PATH_REJECT_NT_CHARS
 #else
 #	define GIT_PATH_REJECT_FILESYSTEM_DEFAULTS \

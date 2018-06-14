@@ -80,9 +80,9 @@ int git__strntol64(int64_t *result, const char *nptr, size_t nptr_len, const cha
 	int64_t n, nn;
 	int c, ovfl, v, neg, ndig;
 
-	p = nptr;
-	neg = 0;
-	n = 0;
+	p	= nptr;
+	neg  = 0;
+	n	= 0;
 	ndig = 0;
 	ovfl = 0;
 
@@ -316,7 +316,7 @@ char *git__strtok(char **end, const char *sep)
 
 	if (*ptr) {
 		char *start = ptr;
-		*end = start + 1;
+		*end		= start + 1;
 
 		while (**end && !strchr(sep, **end))
 			++*end;
@@ -364,7 +364,7 @@ void git__hexdump(const char *buffer, size_t len)
 	const char *line;
 
 	line_count = (len / LINE_WIDTH);
-	last_line = (len % LINE_WIDTH);
+	last_line  = (len % LINE_WIDTH);
 
 	for (i = 0; i < line_count; ++i) {
 		line = buffer + (i * LINE_WIDTH);
@@ -405,8 +405,8 @@ void git__hexdump(const char *buffer, size_t len)
 uint32_t git__hash(const void *key, int len, unsigned int seed)
 {
 	const uint32_t m = 0x5bd1e995;
-	const int r = 24;
-	uint32_t h = seed ^ len;
+	const int r		 = 24;
+	uint32_t h		 = seed ^ len;
 
 	const unsigned char *data = (const unsigned char *)key;
 
@@ -451,22 +451,22 @@ uint32_t git__hash(const void *key, int len, unsigned int seed)
 uint32_t git__hash(const void *key, int len, uint32_t seed)
 {
 
-#	define MURMUR_BLOCK() \
-		{ \
-			k1 *= c1; \
-			k1 = git__rotl(k1, 11); \
-			k1 *= c2; \
-			h1 ^= k1; \
+#	define MURMUR_BLOCK()            \
+		{                             \
+			k1 *= c1;                 \
+			k1 = git__rotl(k1, 11);   \
+			k1 *= c2;                 \
+			h1 ^= k1;                 \
 			h1 = h1 * 3 + 0x52dce729; \
 			c1 = c1 * 5 + 0x7b7d159c; \
 			c2 = c2 * 5 + 0x6bce6396; \
 		}
 
 	const uint8_t *data = (const uint8_t *)key;
-	const int nblocks = len / 4;
+	const int nblocks   = len / 4;
 
 	const uint32_t *blocks = (const uint32_t *)(data + nblocks * 4);
-	const uint8_t *tail = (const uint8_t *)(data + nblocks * 4);
+	const uint8_t *tail	= (const uint8_t *)(data + nblocks * 4);
 
 	uint32_t h1 = 0x971e137b ^ seed;
 	uint32_t k1;
@@ -549,7 +549,7 @@ int git__bsearch(
 
 	for (lim = array_len; lim != 0; lim >>= 1) {
 		part = base + (lim >> 1);
-		cmp = (*compare)(key, *part);
+		cmp  = (*compare)(key, *part);
 		if (cmp == 0) {
 			base = part;
 			break;
@@ -580,7 +580,7 @@ int git__bsearch_r(
 
 	for (lim = array_len; lim != 0; lim >>= 1) {
 		part = base + (lim >> 1);
-		cmp = (*compare_r)(key, *part, payload);
+		cmp  = (*compare_r)(key, *part, payload);
 		if (cmp == 0) {
 			base = part;
 			break;
@@ -690,7 +690,7 @@ void git__insertsort_r(
 	git__sort_r_cmp cmp, void *payload)
 {
 	uint8_t *base = els;
-	uint8_t *end = base + nel * elsize;
+	uint8_t *end  = base + nel * elsize;
 	uint8_t *i, *j;
 	bool freeswap = !swapel;
 
@@ -775,7 +775,7 @@ int git__utf8_iterate(const uint8_t *str, int str_len, int32_t *dst)
 	int length;
 	int32_t uc = -1;
 
-	*dst = -1;
+	*dst   = -1;
 	length = git__utf8_charlen(str, str_len);
 	if (length < 0)
 		return -1;

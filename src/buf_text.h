@@ -12,8 +12,8 @@
 #include "buffer.h"
 
 typedef enum {
-	GIT_BOM_NONE = 0,
-	GIT_BOM_UTF8 = 1,
+	GIT_BOM_NONE	 = 0,
+	GIT_BOM_UTF8	 = 1,
 	GIT_BOM_UTF16_LE = 2,
 	GIT_BOM_UTF16_BE = 3,
 	GIT_BOM_UTF32_LE = 4,
@@ -21,8 +21,8 @@ typedef enum {
 } git_bom_t;
 
 typedef struct {
-	git_bom_t bom;                        /* BOM found at head of text */
-	unsigned int nul, cr, lf, crlf;       /* NUL, CR, LF and CRLF counts */
+	git_bom_t bom;						  /* BOM found at head of text */
+	unsigned int nul, cr, lf, crlf;		  /* NUL, CR, LF and CRLF counts */
 	unsigned int printable, nonprintable; /* These are just approximations! */
 } git_buf_text_stats;
 

@@ -51,7 +51,7 @@ static int get_passwd_home(git_buf *out, uid_t uid)
 		buflen = 1024;
 
 	do {
-		buf = git__realloc(buf, buflen);
+		buf   = git__realloc(buf, buflen);
 		error = getpwuid_r(uid, &pwd, buf, buflen, &pwdptr);
 		buflen *= 2;
 	} while (error == ERANGE && buflen <= 8192);
@@ -83,7 +83,7 @@ static int git_sysdir_guess_global_dirs(git_buf *out)
 	int error;
 	uid_t uid, euid;
 
-	uid = getuid();
+	uid  = getuid();
 	euid = geteuid();
 
 	/*
@@ -113,7 +113,7 @@ static int git_sysdir_guess_xdg_dirs(git_buf *out)
 	int error;
 	uid_t uid, euid;
 
-	uid = getuid();
+	uid  = getuid();
 	euid = geteuid();
 
 	/*
@@ -230,7 +230,7 @@ int git_sysdir_get_str(
 int git_sysdir_set(git_sysdir_t which, const char *search_path)
 {
 	const char *expand_path = NULL;
-	git_buf merge = GIT_BUF_INIT;
+	git_buf merge			= GIT_BUF_INIT;
 
 	GITERR_CHECK_ERROR(git_sysdir_check_selector(which));
 
@@ -293,7 +293,7 @@ static int git_sysdir_find_in_dirlist(
 				break;
 		}
 
-		len = (size_t)(next - scan);
+		len  = (size_t)(next - scan);
 		next = (*next ? next + 1 : NULL);
 		if (!len)
 			continue;

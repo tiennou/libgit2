@@ -24,9 +24,9 @@
 /* maximum possible header length */
 #define MAX_HEADER_LEN 64
 
-typedef struct { /* object header data */
+typedef struct {	/* object header data */
 	git_otype type; /* object type */
-	size_t size;    /* object size */
+	size_t size;	/* object size */
 } obj_hdr;
 
 typedef struct {
@@ -62,7 +62,7 @@ typedef struct {
 	size_t dir_len;
 	unsigned char short_oid[GIT_OID_HEXSZ]; /* hex formatted oid to match */
 	size_t short_oid_len;
-	int found;                            /* number of matching
+	int found;							  /* number of matching
 						 * objects already found */
 	unsigned char res_oid[GIT_OID_HEXSZ]; /* hex formatted oid of
 						 * the object found */
@@ -113,10 +113,10 @@ static int parse_header_packlike(
 	if (len == 0)
 		goto on_error;
 
-	c = data[used++];
+	c		  = data[used++];
 	out->type = (c >> 4) & 7;
 
-	size = c & 15;
+	size  = c & 15;
 	shift = 4;
 	while (c & 0x80) {
 		if (len <= used)
@@ -231,7 +231,7 @@ static int read_loose_packlike(git_rawobj *out, git_buf *obj)
 	int error;
 
 	obj_data = (unsigned char *)obj->ptr;
-	obj_len = obj->size;
+	obj_len  = obj->size;
 
 	/*
 	 * read the object header, which is an (uncompressed)
@@ -261,7 +261,7 @@ static int read_loose_packlike(git_rawobj *out, git_buf *obj)
 	if ((error = git_zstream_inflatebuf(&body, obj_data, obj_len)) < 0)
 		goto done;
 
-	out->len = hdr.size;
+	out->len  = hdr.size;
 	out->type = hdr.type;
 	out->data = git_buf_detach(&body);
 
@@ -328,7 +328,7 @@ static int read_loose_standard(git_rawobj *out, git_buf *obj)
 	body[hdr.size] = '\0';
 
 	out->data = body;
-	out->len = hdr.size;
+	out->len  = hdr.size;
 	out->type = hdr.type;
 
 done:
@@ -350,7 +350,7 @@ static int read_loose(git_rawobj *out, git_buf *loc)
 		return -1;
 
 	out->data = NULL;
-	out->len = 0;
+	out->len  = 0;
 	out->type = GIT_OBJ_BAD;
 
 	if ((error = git_futils_readbuffer(&obj, loc->ptr)) < 0)
@@ -376,7 +376,7 @@ static int read_header_loose_packlike(
 	if ((error = parse_header_packlike(&hdr, &header_len, data, len)) < 0)
 		return error;
 
-	out->len = hdr.size;
+	out->len  = hdr.size;
 	out->type = hdr.type;
 
 	return error;
@@ -397,7 +397,7 @@ static int read_header_loose_standard(
 		(error = parse_header(&hdr, &header_len, inflated, inflated_len)) < 0)
 		goto done;
 
-	out->len = hdr.size;
+	out->len  = hdr.size;
 	out->type = hdr.type;
 
 done:
@@ -465,8 +465,8 @@ static int fn_locate_object_short_oid(void *state, git_buf *pathbuf)
 		/* We are already in the directory matching the 2 first hex characters,
 		 * compare the first ncmp characters of the oids */
 		if (!memcmp(sstate->short_oid + 2,
-							(unsigned char *)pathbuf->ptr + sstate->dir_len,
-							sstate->short_oid_len - 2)) {
+				(unsigned char *)pathbuf->ptr + sstate->dir_len,
+				sstate->short_oid_len - 2)) {
 
 			if (!sstate->found) {
 				sstate->res_oid[0] = sstate->short_oid[0];
@@ -492,7 +492,7 @@ static int locate_object_short_oid(
 	size_t len)
 {
 	char *objects_dir = backend->objects_dir;
-	size_t dir_len = strlen(objects_dir), alloc_len;
+	size_t dir_len	= strlen(objects_dir), alloc_len;
 	loose_locate_object_state state;
 	int error;
 
@@ -521,9 +521,9 @@ static int locate_object_short_oid(
 		return git_odb__error_notfound("no matching loose object for prefix",
 			short_oid, len);
 
-	state.dir_len = git_buf_len(object_location);
+	state.dir_len		= git_buf_len(object_location);
 	state.short_oid_len = len;
-	state.found = 0;
+	state.found			= 0;
 
 	/* Explore directory to find a unique object matching short_oid */
 	error = git_path_direach(
@@ -576,14 +576,14 @@ static int loose_backend__read_header(size_t *len_p, git_otype *type_p, git_odb_
 
 	assert(backend && oid);
 
-	raw.len = 0;
+	raw.len  = 0;
 	raw.type = GIT_OBJ_BAD;
 
 	if (locate_object(&object_path, (loose_backend *)backend, oid) < 0) {
 		error = git_odb__error_notfound("no matching loose object",
 			oid, GIT_OID_HEXSZ);
 	} else if ((error = read_header_loose(&raw, &object_path)) == 0) {
-		*len_p = raw.len;
+		*len_p  = raw.len;
 		*type_p = raw.type;
 	}
 
@@ -605,8 +605,8 @@ static int loose_backend__read(void **buffer_p, size_t *len_p, git_otype *type_p
 			oid, GIT_OID_HEXSZ);
 	} else if ((error = read_loose(&raw, &object_path)) == 0) {
 		*buffer_p = raw.data;
-		*len_p = raw.len;
-		*type_p = raw.type;
+		*len_p	= raw.len;
+		*type_p   = raw.type;
 	}
 
 	git_buf_dispose(&object_path);
@@ -639,11 +639,11 @@ static int loose_backend__read_prefix(
 		assert(backend && short_oid);
 
 		if ((error = locate_object_short_oid(&object_path, out_oid,
-								(loose_backend *)backend, short_oid, len)) == 0 &&
+				 (loose_backend *)backend, short_oid, len)) == 0 &&
 			(error = read_loose(&raw, &object_path)) == 0) {
 			*buffer_p = raw.data;
-			*len_p = raw.len;
-			*type_p = raw.type;
+			*len_p	= raw.len;
+			*type_p   = raw.type;
 		}
 
 		git_buf_dispose(&object_path);
@@ -758,8 +758,8 @@ static int loose_backend__foreach(git_odb_backend *_backend, git_odb_foreach_cb 
 		return -1;
 
 	memset(&state, 0, sizeof(state));
-	state.cb = cb;
-	state.data = data;
+	state.cb	  = cb;
+	state.data	= data;
 	state.dir_len = git_buf_len(&buf);
 
 	error = git_path_direach(&buf, 0, foreach_cb, &state);
@@ -772,9 +772,9 @@ static int loose_backend__foreach(git_odb_backend *_backend, git_odb_foreach_cb 
 static int loose_backend__writestream_finalize(git_odb_stream *_stream, const git_oid *oid)
 {
 	loose_writestream *stream = (loose_writestream *)_stream;
-	loose_backend *backend = (loose_backend *)_stream->backend;
-	git_buf final_path = GIT_BUF_INIT;
-	int error = 0;
+	loose_backend *backend	= (loose_backend *)_stream->backend;
+	git_buf final_path		  = GIT_BUF_INIT;
+	int error				  = 0;
 
 	if (object_file_name(&final_path, backend, oid) < 0 ||
 		object_mkdir(&final_path, backend) < 0)
@@ -824,22 +824,22 @@ static int loose_backend__writestream(git_odb_stream **stream_out, git_odb_backe
 
 	assert(_backend && length >= 0);
 
-	backend = (loose_backend *)_backend;
+	backend		= (loose_backend *)_backend;
 	*stream_out = NULL;
 
 	if ((error = git_odb__format_object_header(&hdrlen,
-							hdr, sizeof(hdr), length, type)) < 0)
+			 hdr, sizeof(hdr), length, type)) < 0)
 		return error;
 
 	stream = git__calloc(1, sizeof(loose_writestream));
 	GITERR_CHECK_ALLOC(stream);
 
-	stream->stream.backend = _backend;
-	stream->stream.read = NULL; /* read only */
-	stream->stream.write = &loose_backend__writestream_write;
+	stream->stream.backend		  = _backend;
+	stream->stream.read			  = NULL; /* read only */
+	stream->stream.write		  = &loose_backend__writestream_write;
 	stream->stream.finalize_write = &loose_backend__writestream_finalize;
-	stream->stream.free = &loose_backend__writestream_free;
-	stream->stream.mode = GIT_STREAM_WRONLY;
+	stream->stream.free			  = &loose_backend__writestream_free;
+	stream->stream.mode			  = GIT_STREAM_WRONLY;
 
 	if (git_buf_joinpath(&tmp_path, backend->objects_dir, "tmp_object") < 0 ||
 		git_filebuf_open(&stream->fbuf, tmp_path.ptr, filebuf_flags(backend),
@@ -861,8 +861,8 @@ static int loose_backend__readstream_read(
 	size_t buffer_len)
 {
 	loose_readstream *stream = (loose_readstream *)_stream;
-	size_t start_remain = stream->start_len - stream->start_read;
-	int total = 0, error;
+	size_t start_remain		 = stream->start_len - stream->start_read;
+	int total				 = 0, error;
 
 	/*
 	 * if we read more than just the header in the initial read, play
@@ -908,7 +908,7 @@ static int loose_backend__readstream_packlike(
 	size_t data_len, head_len;
 	int error;
 
-	data = stream->map.data;
+	data	 = stream->map.data;
 	data_len = stream->map.len;
 
 	/*
@@ -936,7 +936,7 @@ static int loose_backend__readstream_standard(
 	int error;
 
 	if ((error = git_zstream_set_input(&stream->zstream,
-							stream->map.data, stream->map.len)) < 0)
+			 stream->map.data, stream->map.len)) < 0)
 		return error;
 
 	init = sizeof(head);
@@ -972,17 +972,17 @@ static int loose_backend__readstream(
 {
 	loose_backend *backend;
 	loose_readstream *stream = NULL;
-	git_hash_ctx *hash_ctx = NULL;
-	git_buf object_path = GIT_BUF_INIT;
+	git_hash_ctx *hash_ctx   = NULL;
+	git_buf object_path		 = GIT_BUF_INIT;
 	obj_hdr hdr;
 	int error = 0;
 
 	assert(stream_out && len_out && type_out && _backend && oid);
 
-	backend = (loose_backend *)_backend;
+	backend		= (loose_backend *)_backend;
 	*stream_out = NULL;
-	*len_out = 0;
-	*type_out = GIT_OBJ_BAD;
+	*len_out	= 0;
+	*type_out   = GIT_OBJ_BAD;
 
 	if (locate_object(&object_path, backend, oid) < 0) {
 		error = git_odb__error_notfound("no matching loose object",
@@ -1010,14 +1010,14 @@ static int loose_backend__readstream(
 	if (error < 0)
 		goto done;
 
-	stream->stream.backend = _backend;
+	stream->stream.backend  = _backend;
 	stream->stream.hash_ctx = hash_ctx;
-	stream->stream.read = &loose_backend__readstream_read;
-	stream->stream.free = &loose_backend__readstream_free;
+	stream->stream.read		= &loose_backend__readstream_read;
+	stream->stream.free		= &loose_backend__readstream_free;
 
 	*stream_out = (git_odb_stream *)stream;
-	*len_out = hdr.size;
-	*type_out = hdr.type;
+	*len_out	= hdr.size;
+	*type_out   = hdr.type;
 
 done:
 	if (error < 0) {
@@ -1034,7 +1034,7 @@ done:
 
 static int loose_backend__write(git_odb_backend *_backend, const git_oid *oid, const void *data, size_t len, git_otype type)
 {
-	int error = 0;
+	int error		   = 0;
 	git_buf final_path = GIT_BUF_INIT;
 	char header[MAX_HEADER_LEN];
 	size_t header_len;
@@ -1045,7 +1045,7 @@ static int loose_backend__write(git_odb_backend *_backend, const git_oid *oid, c
 
 	/* prepare the header for the file */
 	if ((error = git_odb__format_object_header(&header_len,
-							header, sizeof(header), len, type)) < 0)
+			 header, sizeof(header), len, type)) < 0)
 		goto cleanup;
 
 	if (git_buf_joinpath(&final_path, backend->objects_dir, "tmp_object") < 0 ||
@@ -1075,7 +1075,7 @@ static int loose_backend__freshen(
 	const git_oid *oid)
 {
 	loose_backend *backend = (loose_backend *)_backend;
-	git_buf path = GIT_BUF_INIT;
+	git_buf path		   = GIT_BUF_INIT;
 	int error;
 
 	if (object_file_name(&path, backend, oid) < 0)
@@ -1131,22 +1131,22 @@ int git_odb_backend_loose(
 	if (file_mode == 0)
 		file_mode = GIT_OBJECT_FILE_MODE;
 
-	backend->object_zlib_level = compression_level;
+	backend->object_zlib_level  = compression_level;
 	backend->fsync_object_files = do_fsync;
-	backend->object_dir_mode = dir_mode;
-	backend->object_file_mode = file_mode;
+	backend->object_dir_mode	= dir_mode;
+	backend->object_file_mode   = file_mode;
 
-	backend->parent.read = &loose_backend__read;
-	backend->parent.write = &loose_backend__write;
-	backend->parent.read_prefix = &loose_backend__read_prefix;
-	backend->parent.read_header = &loose_backend__read_header;
-	backend->parent.writestream = &loose_backend__writestream;
-	backend->parent.readstream = &loose_backend__readstream;
-	backend->parent.exists = &loose_backend__exists;
+	backend->parent.read		  = &loose_backend__read;
+	backend->parent.write		  = &loose_backend__write;
+	backend->parent.read_prefix   = &loose_backend__read_prefix;
+	backend->parent.read_header   = &loose_backend__read_header;
+	backend->parent.writestream   = &loose_backend__writestream;
+	backend->parent.readstream	= &loose_backend__readstream;
+	backend->parent.exists		  = &loose_backend__exists;
 	backend->parent.exists_prefix = &loose_backend__exists_prefix;
-	backend->parent.foreach = &loose_backend__foreach;
-	backend->parent.freshen = &loose_backend__freshen;
-	backend->parent.free = &loose_backend__free;
+	backend->parent.foreach		  = &loose_backend__foreach;
+	backend->parent.freshen		  = &loose_backend__freshen;
+	backend->parent.free		  = &loose_backend__free;
 
 	*backend_out = (git_odb_backend *)backend;
 	return 0;

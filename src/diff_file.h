@@ -40,12 +40,12 @@ typedef struct {
 } git_diff_file_content_src;
 
 #define GIT_DIFF_FILE_CONTENT_SRC__BLOB(BLOB, PATH) \
-	{ \
-		(BLOB), NULL, 0, (PATH) \
+	{                                               \
+		(BLOB), NULL, 0, (PATH)                     \
 	}
 #define GIT_DIFF_FILE_CONTENT_SRC__BUF(BUF, LEN, PATH) \
-	{ \
-		NULL, (BUF), (LEN), (PATH) \
+	{                                                  \
+		NULL, (BUF), (LEN), (PATH)                     \
 	}
 
 extern int git_diff_file_content__init_from_src(

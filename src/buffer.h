@@ -21,8 +21,8 @@ extern char git_buf__initbuf[];
 extern char git_buf__oom[];
 
 /* Use to initialize buffer structure when git_buf is on stack */
-#define GIT_BUF_INIT \
-	{ \
+#define GIT_BUF_INIT           \
+	{                          \
 		git_buf__initbuf, 0, 0 \
 	}
 

@@ -17,11 +17,11 @@
 typedef struct git_iterator git_iterator;
 
 typedef enum {
-	GIT_ITERATOR_TYPE_EMPTY = 0,
-	GIT_ITERATOR_TYPE_TREE = 1,
-	GIT_ITERATOR_TYPE_INDEX = 2,
+	GIT_ITERATOR_TYPE_EMPTY   = 0,
+	GIT_ITERATOR_TYPE_TREE	= 1,
+	GIT_ITERATOR_TYPE_INDEX   = 2,
 	GIT_ITERATOR_TYPE_WORKDIR = 3,
-	GIT_ITERATOR_TYPE_FS = 4,
+	GIT_ITERATOR_TYPE_FS	  = 4,
 } git_iterator_type_t;
 
 typedef enum {
@@ -44,9 +44,9 @@ typedef enum {
 } git_iterator_flag_t;
 
 typedef enum {
-	GIT_ITERATOR_STATUS_NORMAL = 0,
-	GIT_ITERATOR_STATUS_IGNORED = 1,
-	GIT_ITERATOR_STATUS_EMPTY = 2,
+	GIT_ITERATOR_STATUS_NORMAL   = 0,
+	GIT_ITERATOR_STATUS_IGNORED  = 1,
+	GIT_ITERATOR_STATUS_EMPTY	= 2,
 	GIT_ITERATOR_STATUS_FILTERED = 3
 } git_iterator_status_t;
 
@@ -64,8 +64,8 @@ typedef struct {
 } git_iterator_options;
 
 #define GIT_ITERATOR_OPTIONS_INIT \
-	{ \
-		0 \
+	{                             \
+		0                         \
 	}
 
 typedef struct {

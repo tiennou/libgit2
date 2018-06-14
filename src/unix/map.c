@@ -40,7 +40,7 @@ int p_mmap(git_map *out, size_t len, int prot, int flags, int fd, git_off_t offs
 	GIT_MMAP_VALIDATE(out, len, prot, flags);
 
 	out->data = NULL;
-	out->len = 0;
+	out->len  = 0;
 
 	if (prot & GIT_PROT_WRITE)
 		mprot |= PROT_WRITE;

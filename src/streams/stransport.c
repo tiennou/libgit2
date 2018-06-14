@@ -100,14 +100,14 @@ on_error:
 static int stransport_certificate(git_cert **out, git_stream *stream)
 {
 	stransport_stream *st = (stransport_stream *)stream;
-	SecTrustRef trust = NULL;
+	SecTrustRef trust	 = NULL;
 	SecCertificateRef sec_cert;
 	OSStatus ret;
 
 	if ((ret = SSLCopyPeerTrust(st->ctx, &trust)) != noErr)
 		return stransport_error(ret);
 
-	sec_cert = SecTrustGetCertificateAtIndex(trust, 0);
+	sec_cert	 = SecTrustGetCertificateAtIndex(trust, 0);
 	st->der_data = SecCertificateCopyData(sec_cert);
 	CFRelease(trust);
 
@@ -117,8 +117,8 @@ static int stransport_certificate(git_cert **out, git_stream *stream)
 	}
 
 	st->cert_info.parent.cert_type = GIT_CERT_X509;
-	st->cert_info.data = (void *)CFDataGetBytePtr(st->der_data);
-	st->cert_info.len = CFDataGetLength(st->der_data);
+	st->cert_info.data			   = (void *)CFDataGetBytePtr(st->der_data);
+	st->cert_info.len			   = CFDataGetLength(st->der_data);
 
 	*out = (git_cert *)&st->cert_info;
 	return 0;
@@ -184,7 +184,7 @@ static OSStatus read_cb(SSLConnectionRef conn, void *data, size_t *len)
 {
 	git_stream *io = (git_stream *)conn;
 	OSStatus error = noErr;
-	size_t off = 0;
+	size_t off	 = 0;
 	ssize_t ret;
 
 	do {
@@ -280,16 +280,16 @@ int git_stransport_stream_new(git_stream **out, const char *host, const char *po
 		return stransport_error(ret);
 	}
 
-	st->parent.version = GIT_STREAM_VERSION;
-	st->parent.encrypted = 1;
+	st->parent.version		 = GIT_STREAM_VERSION;
+	st->parent.encrypted	 = 1;
 	st->parent.proxy_support = git_stream_supports_proxy(st->io);
-	st->parent.connect = stransport_connect;
-	st->parent.certificate = stransport_certificate;
-	st->parent.set_proxy = stransport_set_proxy;
-	st->parent.read = stransport_read;
-	st->parent.write = stransport_write;
-	st->parent.close = stransport_close;
-	st->parent.free = stransport_free;
+	st->parent.connect		 = stransport_connect;
+	st->parent.certificate   = stransport_certificate;
+	st->parent.set_proxy	 = stransport_set_proxy;
+	st->parent.read			 = stransport_read;
+	st->parent.write		 = stransport_write;
+	st->parent.close		 = stransport_close;
+	st->parent.free			 = stransport_free;
 
 	*out = (git_stream *)st;
 	return 0;

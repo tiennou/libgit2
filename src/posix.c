@@ -47,13 +47,13 @@ int p_getaddrinfo(
 		ainfo->ai_hostent->h_addr_list[0],
 		ainfo->ai_hostent->h_length);
 
-	ainfo->ai_protocol = 0;
-	ainfo->ai_socktype = hints->ai_socktype;
-	ainfo->ai_family = ainfo->ai_hostent->h_addrtype;
+	ainfo->ai_protocol			 = 0;
+	ainfo->ai_socktype			 = hints->ai_socktype;
+	ainfo->ai_family			 = ainfo->ai_hostent->h_addrtype;
 	ainfo->ai_addr_in.sin_family = ainfo->ai_family;
-	ainfo->ai_addr_in.sin_port = ainfo->ai_port;
-	ainfo->ai_addr = (struct addrinfo *)&ainfo->ai_addr_in;
-	ainfo->ai_addrlen = sizeof(struct sockaddr_in);
+	ainfo->ai_addr_in.sin_port   = ainfo->ai_port;
+	ainfo->ai_addr				 = (struct addrinfo *)&ainfo->ai_addr_in;
+	ainfo->ai_addrlen			 = sizeof(struct sockaddr_in);
 
 	*info = ainfo;
 
@@ -74,7 +74,7 @@ int p_getaddrinfo(
 			ainfo->ai_hostent->h_addr_list[p],
 			ainfo->ai_hostent->h_length);
 		ai->ai_next->ai_addr = (struct addrinfo *)&ai->ai_next->ai_addr_in;
-		ai = ai->ai_next;
+		ai					 = ai->ai_next;
 	}
 
 	ai->ai_next = NULL;
@@ -246,7 +246,7 @@ int p_mmap(git_map *out, size_t len, int prot, int flags, int fd, git_off_t offs
 	GIT_MMAP_VALIDATE(out, len, prot, flags);
 
 	out->data = NULL;
-	out->len = 0;
+	out->len  = 0;
 
 	if ((prot & GIT_PROT_WRITE) && ((flags & GIT_MAP_TYPE) == GIT_MAP_SHARED)) {
 		giterr_set(GITERR_OS, "trying to map shared-writeable");

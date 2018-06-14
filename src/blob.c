@@ -76,11 +76,11 @@ static int write_file_stream(
 	int fd, error;
 	char buffer[FILEIO_BUFSIZE];
 	git_odb_stream *stream = NULL;
-	ssize_t read_len = -1;
-	git_off_t written = 0;
+	ssize_t read_len	   = -1;
+	git_off_t written	  = 0;
 
 	if ((error = git_odb_open_wstream(
-							&stream, odb, file_size, GIT_OBJ_BLOB)) < 0)
+			 &stream, odb, file_size, GIT_OBJ_BLOB)) < 0)
 		return error;
 
 	if ((fd = git_futils_open_ro(path)) < 0) {
@@ -175,7 +175,7 @@ int git_blob__create_from_paths(
 			return GIT_EBAREREPO;
 
 		if (git_buf_joinpath(
-							&path, git_repository_workdir(repo), hint_path) < 0)
+				&path, git_repository_workdir(repo), hint_path) < 0)
 			return -1;
 
 		content_path = path.ptr;
@@ -262,7 +262,7 @@ int git_blob_create_fromdisk(
 	}
 
 	hintpath = git_buf_cstr(&full_path);
-	workdir = git_repository_workdir(repo);
+	workdir  = git_repository_workdir(repo);
 
 	if (workdir && !git__prefixcmp(hintpath, workdir))
 		hintpath += strlen(workdir);
@@ -321,16 +321,16 @@ int git_blob_create_fromstream(git_writestream **out, git_repository *repo, cons
 		GITERR_CHECK_ALLOC(stream->hintpath);
 	}
 
-	stream->repo = repo;
+	stream->repo		 = repo;
 	stream->parent.write = blob_writestream_write;
 	stream->parent.close = blob_writestream_close;
-	stream->parent.free = blob_writestream_free;
+	stream->parent.free  = blob_writestream_free;
 
 	if ((error = git_repository_item_path(&path, repo, GIT_REPOSITORY_ITEM_OBJECTS)) < 0 || (error = git_buf_joinpath(&path, path.ptr, "streamed")) < 0)
 		goto cleanup;
 
 	if ((error = git_filebuf_open_withsize(&stream->fbuf, git_buf_cstr(&path), GIT_FILEBUF_TEMPORARY,
-							0666, 2 * 1024 * 1024)) < 0)
+			 0666, 2 * 1024 * 1024)) < 0)
 		goto cleanup;
 
 	*out = (git_writestream *)stream;
@@ -382,7 +382,7 @@ int git_blob_filtered_content(
 	const char *path,
 	int check_for_binary_data)
 {
-	int error = 0;
+	int error			= 0;
 	git_filter_list *fl = NULL;
 
 	assert(blob && path && out);
@@ -393,8 +393,8 @@ int git_blob_filtered_content(
 		return 0;
 
 	if (!(error = git_filter_list_load(
-								&fl, git_blob_owner(blob), blob, path,
-								GIT_FILTER_TO_WORKTREE, GIT_FILTER_DEFAULT))) {
+			  &fl, git_blob_owner(blob), blob, path,
+			  GIT_FILTER_TO_WORKTREE, GIT_FILTER_DEFAULT))) {
 
 		error = git_filter_list_apply_to_blob(out, fl, blob);
 

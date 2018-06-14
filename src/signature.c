@@ -89,9 +89,9 @@ int git_signature_new(git_signature **sig_out, const char *name, const char *ema
 		return signature_error("Signature cannot have an empty name or email");
 	}
 
-	p->when.time = time;
+	p->when.time   = time;
 	p->when.offset = offset;
-	p->when.sign = (offset < 0) ? '-' : '+';
+	p->when.sign   = (offset < 0) ? '-' : '+';
 
 	*sig_out = p;
 	return 0;
@@ -113,9 +113,9 @@ int git_signature_dup(git_signature **dest, const git_signature *source)
 	signature->email = git__strdup(source->email);
 	GITERR_CHECK_ALLOC(signature->email);
 
-	signature->when.time = source->when.time;
+	signature->when.time   = source->when.time;
 	signature->when.offset = source->when.offset;
-	signature->when.sign = source->when.sign;
+	signature->when.sign   = source->when.sign;
 
 	*dest = signature;
 
@@ -138,9 +138,9 @@ int git_signature__pdup(git_signature **dest, const git_signature *source, git_p
 	signature->email = git_pool_strdup(pool, source->email);
 	GITERR_CHECK_ALLOC(signature->email);
 
-	signature->when.time = source->when.time;
+	signature->when.time   = source->when.time;
 	signature->when.offset = source->when.offset;
-	signature->when.sign = source->when.sign;
+	signature->when.sign   = source->when.sign;
 
 	*dest = signature;
 
@@ -166,9 +166,9 @@ int git_signature_now(git_signature **sig_out, const char *name, const char *ema
 	 * between its return value and 'now' is our offset to UTC.
 	 */
 	time(&now);
-	utc_tm = p_gmtime_r(&now, &_utc);
+	utc_tm			 = p_gmtime_r(&now, &_utc);
 	utc_tm->tm_isdst = -1;
-	offset = (time_t)difftime(now, mktime(utc_tm));
+	offset			 = (time_t)difftime(now, mktime(utc_tm));
 	offset /= 60;
 
 	if (git_signature_new(&sig, name, email, now, (int)offset) < 0)
@@ -218,13 +218,13 @@ int git_signature__parse(git_signature *sig, const char **buffer_out,
 	}
 
 	email_start = git__memrchr(buffer, '<', buffer_end - buffer);
-	email_end = git__memrchr(buffer, '>', buffer_end - buffer);
+	email_end   = git__memrchr(buffer, '>', buffer_end - buffer);
 
 	if (!email_start || !email_end || email_end <= email_start)
 		return signature_error("malformed e-mail");
 
 	email_start += 1;
-	sig->name = extract_trimmed(buffer, email_start - buffer - 1);
+	sig->name  = extract_trimmed(buffer, email_start - buffer - 1);
 	sig->email = extract_trimmed(email_start, email_end - email_start);
 
 	/* Do we even have a time at the end of the signature? */
@@ -253,7 +253,7 @@ int git_signature__parse(git_signature *sig, const char **buffer_out,
 			}
 
 			hours = offset / 100;
-			mins = offset % 100;
+			mins  = offset % 100;
 
 			/*
 			 * only store timezone if it's not overflowing;
@@ -261,7 +261,7 @@ int git_signature__parse(git_signature *sig, const char **buffer_out,
 			 */
 			if (hours <= 14 && mins <= 59) {
 				sig->when.offset = (hours * 60) + mins;
-				sig->when.sign = tz_start[0];
+				sig->when.sign   = tz_start[0];
 				if (tz_start[0] == '-')
 					sig->when.offset = -sig->when.offset;
 			}
@@ -286,7 +286,7 @@ int git_signature_from_buffer(git_signature **out, const char *buf)
 	GITERR_CHECK_ALLOC(sig);
 
 	buf_end = buf + strlen(buf);
-	error = git_signature__parse(sig, &buf, buf_end, NULL, '\0');
+	error   = git_signature__parse(sig, &buf, buf_end, NULL, '\0');
 
 	if (error)
 		git__free(sig);
@@ -304,13 +304,13 @@ void git_signature__writebuf(git_buf *buf, const char *header, const git_signatu
 	assert(buf && sig);
 
 	offset = sig->when.offset;
-	sign = (sig->when.offset < 0 || sig->when.sign == '-') ? '-' : '+';
+	sign   = (sig->when.offset < 0 || sig->when.sign == '-') ? '-' : '+';
 
 	if (offset < 0)
 		offset = -offset;
 
 	hours = offset / 60;
-	mins = offset % 60;
+	mins  = offset % 60;
 
 	git_buf_printf(buf, "%s%s <%s> %u %c%02d%02d\n",
 		header ? header : "", sig->name, sig->email,

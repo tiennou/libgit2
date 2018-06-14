@@ -25,7 +25,7 @@
 
 static const char *ssh_prefixes[] = {"ssh://", "ssh+git://", "git+ssh://"};
 
-static const char cmd_uploadpack[] = "git-upload-pack";
+static const char cmd_uploadpack[]  = "git-upload-pack";
 static const char cmd_receivepack[] = "git-receive-pack";
 
 typedef struct {
@@ -72,7 +72,7 @@ static int gen_proto(git_buf *request, const char *cmd, const char *url)
 		const char *p = ssh_prefixes[i];
 
 		if (!git__prefixcmp(url, p)) {
-			url = url + strlen(p);
+			url  = url + strlen(p);
 			repo = strchr(url, '/');
 			if (repo && repo[1] == '~')
 				++repo;
@@ -172,8 +172,8 @@ static int ssh_stream_write(
 	size_t len)
 {
 	ssh_stream *s = (ssh_stream *)stream;
-	size_t off = 0;
-	ssize_t ret = 0;
+	size_t off	= 0;
+	ssize_t ret   = 0;
 
 	if (!s->sent_command && send_command(s) < 0)
 		return -1;
@@ -203,7 +203,7 @@ static void ssh_stream_free(git_smart_subtransport_stream *stream)
 	if (!stream)
 		return;
 
-	t = OWNING_SUBTRANSPORT(s);
+	t				  = OWNING_SUBTRANSPORT(s);
 	t->current_stream = NULL;
 
 	if (s->channel) {
@@ -242,9 +242,9 @@ static int ssh_stream_alloc(
 	GITERR_CHECK_ALLOC(s);
 
 	s->parent.subtransport = &t->parent;
-	s->parent.read = ssh_stream_read;
-	s->parent.write = ssh_stream_write;
-	s->parent.free = ssh_stream_free;
+	s->parent.read		   = ssh_stream_read;
+	s->parent.write		   = ssh_stream_write;
+	s->parent.free		   = ssh_stream_free;
 
 	s->cmd = cmd;
 
@@ -271,11 +271,11 @@ static int git_ssh_extract_url_parts(
 
 	at = strchr(url, '@');
 	if (at) {
-		start = at + 1;
+		start	 = at + 1;
 		*username = git__substrdup(url, at - url);
 		GITERR_CHECK_ALLOC(*username);
 	} else {
-		start = url;
+		start	 = url;
 		*username = NULL;
 	}
 
@@ -356,7 +356,7 @@ static int _git_ssh_authenticate_session(
 		switch (cred->credtype) {
 		case GIT_CREDTYPE_USERPASS_PLAINTEXT: {
 			git_cred_userpass_plaintext *c = (git_cred_userpass_plaintext *)cred;
-			rc = libssh2_userauth_password(session, c->username, c->password);
+			rc							   = libssh2_userauth_password(session, c->username, c->password);
 			break;
 		}
 		case GIT_CREDTYPE_SSH_KEY: {
@@ -380,7 +380,7 @@ static int _git_ssh_authenticate_session(
 			break;
 		}
 		case GIT_CREDTYPE_SSH_INTERACTIVE: {
-			void **abstract = libssh2_session_abstract(session);
+			void **abstract				= libssh2_session_abstract(session);
 			git_cred_ssh_interactive *c = (git_cred_ssh_interactive *)cred;
 
 			/* ideally, we should be able to set this by calling
@@ -519,7 +519,7 @@ static int _git_ssh_setup_conn(
 	int auth_methods, error = 0;
 	size_t i;
 	ssh_stream *s;
-	git_cred *cred = NULL;
+	git_cred *cred			 = NULL;
 	LIBSSH2_SESSION *session = NULL;
 	LIBSSH2_CHANNEL *channel = NULL;
 
@@ -529,7 +529,7 @@ static int _git_ssh_setup_conn(
 	if (ssh_stream_alloc(t, url, cmd, stream) < 0)
 		return -1;
 
-	s = (ssh_stream *)*stream;
+	s		   = (ssh_stream *)*stream;
 	s->session = NULL;
 	s->channel = NULL;
 
@@ -839,10 +839,10 @@ int git_smart_subtransport_ssh(
 	t = git__calloc(sizeof(ssh_subtransport), 1);
 	GITERR_CHECK_ALLOC(t);
 
-	t->owner = (transport_smart *)owner;
+	t->owner		 = (transport_smart *)owner;
 	t->parent.action = _ssh_action;
-	t->parent.close = _ssh_close;
-	t->parent.free = _ssh_free;
+	t->parent.close  = _ssh_close;
+	t->parent.free   = _ssh_free;
 
 	*out = (git_smart_subtransport *)t;
 	return 0;
@@ -881,7 +881,7 @@ int git_transport_ssh_with_paths(git_transport **out, git_remote *owner, void *p
 		return error;
 
 	smart = (transport_smart *)transport;
-	t = (ssh_subtransport *)smart->wrapped;
+	t	 = (ssh_subtransport *)smart->wrapped;
 
 	t->cmd_uploadpack = git__strdup(paths->strings[0]);
 	GITERR_CHECK_ALLOC(t->cmd_uploadpack);

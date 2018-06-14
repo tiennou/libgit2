@@ -152,8 +152,8 @@ typedef struct {
 	unsigned int should_write : 1;
 } git_indexwriter;
 
-#define GIT_INDEXWRITER_INIT \
-	{ \
+#define GIT_INDEXWRITER_INIT   \
+	{                          \
 		NULL, GIT_FILEBUF_INIT \
 	}
 

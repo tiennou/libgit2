@@ -286,7 +286,7 @@ _inline
 	imaxdiv_t result;
 
 	result.quot = numer / denom;
-	result.rem = numer % denom;
+	result.rem  = numer % denom;
 
 	if (numer < 0 && result.rem > 0) {
 		// did division wrong; must fix up

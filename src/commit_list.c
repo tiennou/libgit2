@@ -86,7 +86,7 @@ void git_commit_list_free(git_commit_list **list_p)
 
 	while (list) {
 		git_commit_list *temp = list;
-		list = temp->next;
+		list				  = temp->next;
 		git__free(temp);
 	}
 
@@ -95,7 +95,7 @@ void git_commit_list_free(git_commit_list **list_p)
 
 git_commit_list_node *git_commit_list_pop(git_commit_list **stack)
 {
-	git_commit_list *top = *stack;
+	git_commit_list *top	   = *stack;
 	git_commit_list_node *item = top ? top->item : NULL;
 
 	if (top) {
@@ -111,7 +111,7 @@ static int commit_quick_parse(
 	const uint8_t *buffer,
 	size_t buffer_len)
 {
-	const size_t parent_len = strlen("parent ") + GIT_OID_HEXSZ + 1;
+	const size_t parent_len   = strlen("parent ") + GIT_OID_HEXSZ + 1;
 	const uint8_t *buffer_end = buffer + buffer_len;
 	const uint8_t *parents_start, *committer_start;
 	int i, parents = 0;
@@ -174,7 +174,7 @@ static int commit_quick_parse(
 	if ((buffer == committer_start) || (git__strtol64(&commit_time, (char *)(buffer + 1), NULL, 10) < 0))
 		return commit_error(commit, "cannot parse commit time");
 
-	commit->time = commit_time;
+	commit->time   = commit_time;
 	commit->parsed = 1;
 	return 0;
 }

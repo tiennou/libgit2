@@ -14,11 +14,11 @@ int git_parse_ctx_init(git_parse_ctx *ctx, const char *content, size_t content_l
 		ctx->content = NULL;
 
 	ctx->content_len = content_len;
-	ctx->remain = ctx->content;
-	ctx->remain_len = ctx->content_len;
-	ctx->line = ctx->remain;
-	ctx->line_len = git__linenlen(ctx->line, ctx->remain_len);
-	ctx->line_num = 1;
+	ctx->remain		 = ctx->content;
+	ctx->remain_len  = ctx->content_len;
+	ctx->line		 = ctx->remain;
+	ctx->line_len	= git__linenlen(ctx->line, ctx->remain_len);
+	ctx->line_num	= 1;
 
 	return 0;
 }
@@ -100,7 +100,7 @@ int git_parse_advance_digit(int64_t *out, git_parse_ctx *ctx, int base)
 
 int git_parse_peek(char *out, git_parse_ctx *ctx, int flags)
 {
-	size_t remain = ctx->line_len;
+	size_t remain   = ctx->line_len;
 	const char *ptr = ctx->line;
 
 	while (remain) {

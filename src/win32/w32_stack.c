@@ -18,16 +18,16 @@
  */
 USHORT WINAPI RtlCaptureStackBackTrace(ULONG, ULONG, PVOID *, PULONG);
 
-static bool g_win32_stack_initialized = false;
-static HANDLE g_win32_stack_process = INVALID_HANDLE_VALUE;
-static git_win32__stack__aux_cb_alloc g_aux_cb_alloc = NULL;
+static bool g_win32_stack_initialized				   = false;
+static HANDLE g_win32_stack_process					   = INVALID_HANDLE_VALUE;
+static git_win32__stack__aux_cb_alloc g_aux_cb_alloc   = NULL;
 static git_win32__stack__aux_cb_lookup g_aux_cb_lookup = NULL;
 
 int git_win32__stack__set_aux_cb(
 	git_win32__stack__aux_cb_alloc cb_alloc,
 	git_win32__stack__aux_cb_lookup cb_lookup)
 {
-	g_aux_cb_alloc = cb_alloc;
+	g_aux_cb_alloc  = cb_alloc;
 	g_aux_cb_lookup = cb_lookup;
 
 	return 0;
@@ -47,7 +47,7 @@ void git_win32__stack_cleanup(void)
 {
 	if (g_win32_stack_initialized) {
 		SymCleanup(g_win32_stack_process);
-		g_win32_stack_process = INVALID_HANDLE_VALUE;
+		g_win32_stack_process	 = INVALID_HANDLE_VALUE;
 		g_win32_stack_initialized = false;
 	}
 }
@@ -114,7 +114,7 @@ int git_win32__stack_format(
 	memset(pbuf, 0, buf_len);
 
 	memset(&s, 0, sizeof(s));
-	s.symbol.MaxNameLen = MY_MAX_FILENAME;
+	s.symbol.MaxNameLen   = MY_MAX_FILENAME;
 	s.symbol.SizeOfStruct = sizeof(SYMBOL_INFO);
 
 	memset(&line, 0, sizeof(line));
@@ -130,7 +130,7 @@ int git_win32__stack_format(
 			const char *pfile;
 
 			pslash = strrchr(line.FileName, '\\');
-			pfile = ((pslash) ? (pslash + 1) : line.FileName);
+			pfile  = ((pslash) ? (pslash + 1) : line.FileName);
 			p_snprintf(detail, sizeof(detail), "%s%s:%d> %s%s",
 				prefix, pfile, line.LineNumber, s.symbol.Name, suffix);
 		} else {

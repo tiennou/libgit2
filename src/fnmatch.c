@@ -210,7 +210,7 @@ rangematch(const char *pattern, char test, int flags, char **newp)
 			* -- POSIX.2 2.8.3.2
 			*/
 	ok = 0;
-	c = *pattern++;
+	c  = *pattern++;
 	do {
 		if (c == '\\' && !(flags & FNM_NOESCAPE))
 			c = *pattern++;

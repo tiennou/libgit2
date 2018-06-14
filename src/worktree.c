@@ -30,14 +30,14 @@ static bool is_worktree_dir(const char *dir)
 int git_worktree_list(git_strarray *wts, git_repository *repo)
 {
 	git_vector worktrees = GIT_VECTOR_INIT;
-	git_buf path = GIT_BUF_INIT;
+	git_buf path		 = GIT_BUF_INIT;
 	char *worktree;
 	unsigned i, len;
 	int error;
 
 	assert(wts && repo);
 
-	wts->count = 0;
+	wts->count   = 0;
 	wts->strings = NULL;
 
 	if ((error = git_buf_printf(&path, "%s/worktrees/", repo->commondir)) < 0)
@@ -49,8 +49,7 @@ int git_worktree_list(git_strarray *wts, git_repository *repo)
 
 	len = path.size;
 
-	git_vector_foreach(&worktrees, i, worktree)
-	{
+	git_vector_foreach (&worktrees, i, worktree) {
 		git_buf_truncate(&path, len);
 		git_buf_puts(&path, worktree);
 
@@ -121,9 +120,9 @@ out:
 
 static int open_worktree_dir(git_worktree **out, const char *parent, const char *dir, const char *name)
 {
-	git_buf gitdir = GIT_BUF_INIT;
+	git_buf gitdir   = GIT_BUF_INIT;
 	git_worktree *wt = NULL;
-	int error = 0;
+	int error		 = 0;
 
 	if (!is_worktree_dir(dir)) {
 		error = -1;
@@ -158,7 +157,7 @@ out:
 
 int git_worktree_lookup(git_worktree **out, git_repository *repo, const char *name)
 {
-	git_buf path = GIT_BUF_INIT;
+	git_buf path	 = GIT_BUF_INIT;
 	git_worktree *wt = NULL;
 	int error;
 
@@ -186,7 +185,7 @@ int git_worktree_open_from_repository(git_worktree **out, git_repository *repo)
 	git_buf parent = GIT_BUF_INIT;
 	const char *gitdir, *commondir;
 	char *name = NULL;
-	int error = 0;
+	int error  = 0;
 
 	if (!git_repository_is_worktree(repo)) {
 		giterr_set(GITERR_WORKTREE, "cannot open worktree of a non-worktree repo");
@@ -194,7 +193,7 @@ int git_worktree_open_from_repository(git_worktree **out, git_repository *repo)
 		goto out;
 	}
 
-	gitdir = git_repository_path(repo);
+	gitdir	= git_repository_path(repo);
 	commondir = git_repository_commondir(repo);
 
 	if ((error = git_path_prettify_dir(&parent, "..", commondir)) < 0)
@@ -230,7 +229,7 @@ void git_worktree_free(git_worktree *wt)
 int git_worktree_validate(const git_worktree *wt)
 {
 	git_buf buf = GIT_BUF_INIT;
-	int err = 0;
+	int err		= 0;
 
 	assert(wt);
 
@@ -279,9 +278,9 @@ int git_worktree_add(git_worktree **out, git_repository *repo,
 {
 	git_buf gitdir = GIT_BUF_INIT, wddir = GIT_BUF_INIT, buf = GIT_BUF_INIT;
 	git_reference *ref = NULL, *head = NULL;
-	git_commit *commit = NULL;
-	git_repository *wt = NULL;
-	git_checkout_options coopts = GIT_CHECKOUT_OPTIONS_INIT;
+	git_commit *commit				= NULL;
+	git_repository *wt				= NULL;
+	git_checkout_options coopts		= GIT_CHECKOUT_OPTIONS_INIT;
 	git_worktree_add_options wtopts = GIT_WORKTREE_ADD_OPTIONS_INIT;
 	int err;
 
@@ -489,7 +488,7 @@ int git_worktree_prune_init_options(
 int git_worktree_is_prunable(git_worktree *wt,
 	git_worktree_prune_options *opts)
 {
-	git_buf reason = GIT_BUF_INIT;
+	git_buf reason					 = GIT_BUF_INIT;
 	git_worktree_prune_options popts = GIT_WORKTREE_PRUNE_OPTIONS_INIT;
 
 	GITERR_CHECK_VERSION(
@@ -522,7 +521,7 @@ int git_worktree_prune(git_worktree *wt,
 	git_worktree_prune_options *opts)
 {
 	git_worktree_prune_options popts = GIT_WORKTREE_PRUNE_OPTIONS_INIT;
-	git_buf path = GIT_BUF_INIT;
+	git_buf path					 = GIT_BUF_INIT;
 	char *wtpath;
 	int err;
 

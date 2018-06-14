@@ -102,7 +102,7 @@ static int add_to_known_names(
 	const git_oid *sha1)
 {
 	struct commit_name *e = find_commit_name(names, peeled);
-	bool found = (e != NULL);
+	bool found			  = (e != NULL);
 
 	git_tag *tag = NULL;
 	if (replace_name(&tag, repo, e, prio, sha1)) {
@@ -111,13 +111,13 @@ static int add_to_known_names(
 			GITERR_CHECK_ALLOC(e);
 
 			e->path = NULL;
-			e->tag = NULL;
+			e->tag  = NULL;
 		}
 
 		if (e->tag)
 			git_tag_free(e->tag);
-		e->tag = tag;
-		e->prio = prio;
+		e->tag			= tag;
+		e->prio			= prio;
 		e->name_checked = 0;
 		git_oid_cpy(&e->sha1, sha1);
 		git__free(e->path);
@@ -192,7 +192,7 @@ static int commit_name_dup(struct commit_name **out, struct commit_name *in)
 	GITERR_CHECK_ALLOC(name);
 
 	memcpy(name, in, sizeof(struct commit_name));
-	name->tag = NULL;
+	name->tag  = NULL;
 	name->path = NULL;
 
 	if (in->tag && git_tag_dup(&name->tag, in->tag) < 0)
@@ -213,9 +213,9 @@ static int get_name(const char *refname, void *payload)
 	unsigned int prio;
 	int error = 0;
 
-	data = (struct get_name_data *)payload;
+	data   = (struct get_name_data *)payload;
 	is_tag = !git__prefixcmp(refname, GIT_REFS_TAGS_DIR);
-	all = data->opts->describe_strategy == GIT_DESCRIBE_ALL;
+	all	= data->opts->describe_strategy == GIT_DESCRIBE_ALL;
 
 	/* Reject anything outside refs/tags/ unless --all */
 	if (!all && !is_tag)
@@ -227,7 +227,7 @@ static int get_name(const char *refname, void *payload)
 
 	/* Is it annotated? */
 	if ((error = retrieve_peeled_tag_or_object_oid(
-							&peeled, &sha1, data->repo, refname)) < 0)
+			 &peeled, &sha1, data->repo, refname)) < 0)
 		return error;
 
 	is_annotated = error;
@@ -439,7 +439,7 @@ static int describe(
 	git_commit_list_node *cmit, *gave_up_on = NULL;
 	git_vector all_matches = GIT_VECTOR_INIT;
 	unsigned int match_cnt = 0, annotated_cnt = 0, cur_match;
-	unsigned long seen_commits = 0; /* TODO: Check long */
+	unsigned long seen_commits   = 0; /* TODO: Check long */
 	unsigned int unannotated_cnt = 0;
 	int error;
 
@@ -449,7 +449,7 @@ static int describe(
 	if ((error = git_pqueue_init(&list, 0, 2, git_commit_list_time_cmp)) < 0)
 		goto cleanup;
 
-	all = data->opts->describe_strategy == GIT_DESCRIBE_ALL;
+	all  = data->opts->describe_strategy == GIT_DESCRIBE_ALL;
 	tags = data->opts->describe_strategy == GIT_DESCRIBE_TAGS;
 
 	git_oid_cpy(&data->result->commit_id, git_commit_id(commit));
@@ -507,8 +507,8 @@ static int describe(
 
 				match_cnt++;
 
-				t->name = n;
-				t->depth = seen_commits - 1;
+				t->name		   = n;
+				t->depth	   = seen_commits - 1;
 				t->flag_within = 1u << match_cnt;
 				t->found_order = match_cnt;
 				c->flags |= t->flag_within;
@@ -582,7 +582,7 @@ static int describe(
 		seen_commits--;
 	}
 	if ((error = finish_depth_computation(
-							&list, walk, best)) < 0)
+			 &list, walk, best)) < 0)
 		goto cleanup;
 
 	seen_commits += error;
@@ -622,8 +622,7 @@ static int describe(
 cleanup: {
 	size_t i;
 	struct possible_tag *match;
-	git_vector_foreach(&all_matches, i, match)
-	{
+	git_vector_foreach (&all_matches, i, match) {
 		git__free(match);
 	}
 }
@@ -686,13 +685,13 @@ int git_describe_commit(
 		goto cleanup;
 
 	if ((error = git_reference_foreach_name(
-							git_object_owner(committish),
-							get_name, &data)) < 0)
+			 git_object_owner(committish),
+			 get_name, &data)) < 0)
 		goto cleanup;
 
 	if (git_oidmap_size(data.names) == 0 && !opts->show_commit_oid_as_fallback) {
 		giterr_set(GITERR_DESCRIBE, "cannot describe - "
-																														"no reference found, cannot describe anything.");
+									"no reference found, cannot describe anything.");
 		error = -1;
 		goto cleanup;
 	}
@@ -703,11 +702,12 @@ int git_describe_commit(
 cleanup:
 	git_commit_free(commit);
 
-	git_oidmap_foreach_value(data.names, name, {
+	git_oidmap_foreach_value (data.names, name, {
 		git_tag_free(name->tag);
 		git__free(name->path);
 		git__free(name);
-	});
+	})
+		;
 
 	git_oidmap_free(data.names);
 
@@ -726,9 +726,9 @@ int git_describe_workdir(
 {
 	int error;
 	git_oid current_id;
-	git_status_list *status = NULL;
+	git_status_list *status		   = NULL;
 	git_status_options status_opts = GIT_STATUS_OPTIONS_INIT;
-	git_describe_result *result = NULL;
+	git_describe_result *result	= NULL;
 	git_object *commit;
 
 	if ((error = git_reference_name_to_id(&current_id, repo, GIT_HEAD_FILE)) < 0)
@@ -790,8 +790,8 @@ int git_describe_format(git_buf *out, const git_describe_result *result, const g
 
 	if (opts.always_use_long_format && opts.abbreviated_size == 0) {
 		giterr_set(GITERR_DESCRIBE, "cannot describe - "
-																														"'always_use_long_format' is incompatible with a zero"
-																														"'abbreviated_size'");
+									"'always_use_long_format' is incompatible with a zero"
+									"'abbreviated_size'");
 		return -1;
 	}
 
@@ -819,10 +819,10 @@ int git_describe_format(git_buf *out, const git_describe_result *result, const g
 	/* If we didn't find *any* tags, we fall back to the commit's id */
 	if (result->fallback_to_id) {
 		char hex_oid[GIT_OID_HEXSZ + 1] = {0};
-		int size = 0;
+		int size						= 0;
 
 		if ((error = find_unique_abbrev_size(
-								&size, repo, &result->commit_id, opts.abbreviated_size)) < 0)
+				 &size, repo, &result->commit_id, opts.abbreviated_size)) < 0)
 			return -1;
 
 		git_oid_fmt(hex_oid, &result->commit_id);
@@ -842,7 +842,7 @@ int git_describe_format(git_buf *out, const git_describe_result *result, const g
 
 	if (opts.abbreviated_size) {
 		if ((error = show_suffix(out, result->tag->depth, repo,
-								&result->commit_id, opts.abbreviated_size)) < 0)
+				 &result->commit_id, opts.abbreviated_size)) < 0)
 			return error;
 	}
 

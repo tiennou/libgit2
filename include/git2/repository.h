@@ -129,10 +129,10 @@ git_repository_discover(
  */
 typedef enum {
 	GIT_REPOSITORY_OPEN_NO_SEARCH = (1 << 0),
-	GIT_REPOSITORY_OPEN_CROSS_FS = (1 << 1),
-	GIT_REPOSITORY_OPEN_BARE = (1 << 2),
+	GIT_REPOSITORY_OPEN_CROSS_FS  = (1 << 1),
+	GIT_REPOSITORY_OPEN_BARE	  = (1 << 2),
 	GIT_REPOSITORY_OPEN_NO_DOTGIT = (1 << 3),
-	GIT_REPOSITORY_OPEN_FROM_ENV = (1 << 4),
+	GIT_REPOSITORY_OPEN_FROM_ENV  = (1 << 4),
 } git_repository_open_flag_t;
 
 /**
@@ -238,13 +238,13 @@ git_repository_init(
  *        specified, use relative paths for the gitdir and core.worktree.
  */
 typedef enum {
-	GIT_REPOSITORY_INIT_BARE = (1u << 0),
-	GIT_REPOSITORY_INIT_NO_REINIT = (1u << 1),
-	GIT_REPOSITORY_INIT_NO_DOTGIT_DIR = (1u << 2),
-	GIT_REPOSITORY_INIT_MKDIR = (1u << 3),
-	GIT_REPOSITORY_INIT_MKPATH = (1u << 4),
+	GIT_REPOSITORY_INIT_BARE			  = (1u << 0),
+	GIT_REPOSITORY_INIT_NO_REINIT		  = (1u << 1),
+	GIT_REPOSITORY_INIT_NO_DOTGIT_DIR	 = (1u << 2),
+	GIT_REPOSITORY_INIT_MKDIR			  = (1u << 3),
+	GIT_REPOSITORY_INIT_MKPATH			  = (1u << 4),
 	GIT_REPOSITORY_INIT_EXTERNAL_TEMPLATE = (1u << 5),
-	GIT_REPOSITORY_INIT_RELATIVE_GITLINK = (1u << 6),
+	GIT_REPOSITORY_INIT_RELATIVE_GITLINK  = (1u << 6),
 } git_repository_init_flag_t;
 
 /**
@@ -263,7 +263,7 @@ typedef enum {
 typedef enum {
 	GIT_REPOSITORY_INIT_SHARED_UMASK = 0,
 	GIT_REPOSITORY_INIT_SHARED_GROUP = 0002775,
-	GIT_REPOSITORY_INIT_SHARED_ALL = 0002777,
+	GIT_REPOSITORY_INIT_SHARED_ALL   = 0002777,
 } git_repository_init_mode_t;
 
 /**
@@ -306,8 +306,8 @@ typedef struct {
 } git_repository_init_options;
 
 #define GIT_REPOSITORY_INIT_OPTIONS_VERSION 1
-#define GIT_REPOSITORY_INIT_OPTIONS_INIT \
-	{ \
+#define GIT_REPOSITORY_INIT_OPTIONS_INIT    \
+	{                                       \
 		GIT_REPOSITORY_INIT_OPTIONS_VERSION \
 	}
 

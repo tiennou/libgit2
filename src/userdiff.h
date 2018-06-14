@@ -26,12 +26,12 @@ typedef struct {
  * These builtin driver definition macros have same signature as in core
  * git userdiff.c so that the data can be extracted verbatim
  */
-#define PATTERNS(NAME, FN_PATS, WORD_PAT) \
-	{ \
+#define PATTERNS(NAME, FN_PATS, WORD_PAT)       \
+	{                                           \
 		NAME, FN_PATS, WORD_PAT WORD_DEFAULT, 0 \
 	}
-#define IPATTERN(NAME, FN_PATS, WORD_PAT) \
-	{ \
+#define IPATTERN(NAME, FN_PATS, WORD_PAT)               \
+	{                                                   \
 		NAME, FN_PATS, WORD_PAT WORD_DEFAULT, REG_ICASE \
 	}
 
@@ -126,7 +126,7 @@ static git_diff_driver_definition builtin_defs[] = {
 		 */
 		"(:[^;#]*)?"
 		"(\\{[ \t]*)?" /* brace can come here or on the next line */
-		"(#.*)?$\n"    /* comment */
+		"(#.*)?$\n"	/* comment */
 		"^(BEGIN|END|INIT|CHECK|UNITCHECK|AUTOLOAD|DESTROY)[ \t]*"
 		"(\\{[ \t]*)?" /* brace can come here or on the next line */
 		"(#.*)?$\n"

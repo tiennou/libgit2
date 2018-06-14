@@ -46,8 +46,8 @@ typedef struct {
 } git_merge_file_input;
 
 #define GIT_MERGE_FILE_INPUT_VERSION 1
-#define GIT_MERGE_FILE_INPUT_INIT \
-	{ \
+#define GIT_MERGE_FILE_INPUT_INIT    \
+	{                                \
 		GIT_MERGE_FILE_INPUT_VERSION \
 	}
 
@@ -204,8 +204,8 @@ typedef struct {
 } git_merge_file_options;
 
 #define GIT_MERGE_FILE_OPTIONS_VERSION 1
-#define GIT_MERGE_FILE_OPTIONS_INIT \
-	{ \
+#define GIT_MERGE_FILE_OPTIONS_INIT    \
+	{                                  \
 		GIT_MERGE_FILE_OPTIONS_VERSION \
 	}
 
@@ -305,8 +305,8 @@ typedef struct {
 } git_merge_options;
 
 #define GIT_MERGE_OPTIONS_VERSION 1
-#define GIT_MERGE_OPTIONS_INIT \
-	{ \
+#define GIT_MERGE_OPTIONS_INIT                            \
+	{                                                     \
 		GIT_MERGE_OPTIONS_VERSION, GIT_MERGE_FIND_RENAMES \
 	}
 

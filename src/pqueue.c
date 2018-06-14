@@ -36,7 +36,7 @@ int git_pqueue_init(
 static void pqueue_up(git_pqueue *pq, size_t el)
 {
 	size_t parent_el = PQUEUE_PARENT_OF(el);
-	void *kid = git_vector_get(pq, el);
+	void *kid		 = git_vector_get(pq, el);
 
 	while (el > 0) {
 		void *parent = pq->contents[parent_el];
@@ -46,7 +46,7 @@ static void pqueue_up(git_pqueue *pq, size_t el)
 
 		pq->contents[el] = parent;
 
-		el = parent_el;
+		el		  = parent_el;
 		parent_el = PQUEUE_PARENT_OF(el);
 	}
 
@@ -73,7 +73,7 @@ static void pqueue_down(git_pqueue *pq, size_t el)
 			break;
 
 		pq->contents[el] = kid;
-		el = kid_el;
+		el				 = kid_el;
 	}
 
 	pq->contents[el] = parent;

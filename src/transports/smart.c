@@ -62,10 +62,10 @@ static int git_smart__set_callbacks(
 {
 	transport_smart *t = (transport_smart *)transport;
 
-	t->progress_cb = progress_cb;
-	t->error_cb = error_cb;
+	t->progress_cb			= progress_cb;
+	t->error_cb				= error_cb;
 	t->certificate_check_cb = certificate_check_cb;
-	t->message_cb_payload = message_cb_payload;
+	t->message_cb_payload   = message_cb_payload;
 
 	return 0;
 }
@@ -154,8 +154,7 @@ int git_smart__update_heads(transport_smart *t, git_vector *symrefs)
 	git_pkt *pkt;
 
 	git_vector_clear(&t->heads);
-	git_vector_foreach(&t->refs, i, pkt)
-	{
+	git_vector_foreach (&t->refs, i, pkt) {
 		git_pkt_ref *ref = (git_pkt_ref *)pkt;
 		if (pkt->type != GIT_PKT_REF)
 			continue;
@@ -166,8 +165,7 @@ int git_smart__update_heads(transport_smart *t, git_vector *symrefs)
 			size_t j;
 			int error = 0;
 
-			git_vector_foreach(symrefs, j, spec)
-			{
+			git_vector_foreach (symrefs, j, spec) {
 				git_buf_clear(&buf);
 				if (git_refspec_src_matches(spec, ref->head.name) &&
 					!(error = git_refspec_transform(&buf, spec, ref->head.name)))
@@ -192,8 +190,7 @@ static void free_symrefs(git_vector *symrefs)
 	git_refspec *spec;
 	size_t i;
 
-	git_vector_foreach(symrefs, i, spec)
-	{
+	git_vector_foreach (symrefs, i, spec) {
 		git_refspec__free(spec);
 		git__free(spec);
 	}
@@ -227,9 +224,9 @@ static int git_smart__connect(
 	if (git_proxy_options_dup(&t->proxy, proxy) < 0)
 		return -1;
 
-	t->direction = direction;
-	t->flags = flags;
-	t->cred_acquire_cb = cred_acquire_cb;
+	t->direction			= direction;
+	t->flags				= flags;
+	t->cred_acquire_cb		= cred_acquire_cb;
 	t->cred_acquire_payload = cred_acquire_payload;
 
 	if (GIT_DIRECTION_FETCH == t->direction)
@@ -309,7 +306,7 @@ static int git_smart__ls(const git_remote_head ***out, size_t *size, git_transpo
 		return -1;
 	}
 
-	*out = (const git_remote_head **)t->heads.contents;
+	*out  = (const git_remote_head **)t->heads.contents;
 	*size = t->heads.length;
 
 	return 0;
@@ -417,7 +414,7 @@ static int git_smart__close(git_transport *transport)
 
 	ret = git_smart__reset_stream(t, true);
 
-	git_vector_foreach(common, i, p)
+	git_vector_foreach (common, i, p)
 		git_pkt_free(p);
 
 	git_vector_free(common);
@@ -435,7 +432,7 @@ static int git_smart__close(git_transport *transport)
 static void git_smart__free(git_transport *transport)
 {
 	transport_smart *t = (transport_smart *)transport;
-	git_vector *refs = &t->refs;
+	git_vector *refs   = &t->refs;
 	unsigned int i;
 	git_pkt *p;
 
@@ -446,7 +443,7 @@ static void git_smart__free(git_transport *transport)
 	t->wrapped->free(t->wrapped);
 
 	git_vector_free(&t->heads);
-	git_vector_foreach(refs, i, p)
+	git_vector_foreach (refs, i, p)
 		git_pkt_free(p);
 
 	git_vector_free(refs);
@@ -495,22 +492,22 @@ int git_transport_smart(git_transport **out, git_remote *owner, void *param)
 	t = git__calloc(1, sizeof(transport_smart));
 	GITERR_CHECK_ALLOC(t);
 
-	t->parent.version = GIT_TRANSPORT_VERSION;
-	t->parent.set_callbacks = git_smart__set_callbacks;
+	t->parent.version			 = GIT_TRANSPORT_VERSION;
+	t->parent.set_callbacks		 = git_smart__set_callbacks;
 	t->parent.set_custom_headers = git_smart__set_custom_headers;
-	t->parent.connect = git_smart__connect;
-	t->parent.close = git_smart__close;
-	t->parent.free = git_smart__free;
-	t->parent.negotiate_fetch = git_smart__negotiate_fetch;
-	t->parent.download_pack = git_smart__download_pack;
-	t->parent.push = git_smart__push;
-	t->parent.ls = git_smart__ls;
-	t->parent.is_connected = git_smart__is_connected;
-	t->parent.read_flags = git_smart__read_flags;
-	t->parent.cancel = git_smart__cancel;
+	t->parent.connect			 = git_smart__connect;
+	t->parent.close				 = git_smart__close;
+	t->parent.free				 = git_smart__free;
+	t->parent.negotiate_fetch	= git_smart__negotiate_fetch;
+	t->parent.download_pack		 = git_smart__download_pack;
+	t->parent.push				 = git_smart__push;
+	t->parent.ls				 = git_smart__ls;
+	t->parent.is_connected		 = git_smart__is_connected;
+	t->parent.read_flags		 = git_smart__read_flags;
+	t->parent.cancel			 = git_smart__cancel;
 
 	t->owner = owner;
-	t->rpc = definition->rpc;
+	t->rpc   = definition->rpc;
 
 	if (git_vector_init(&t->refs, 16, ref_name_cmp) < 0) {
 		git__free(t);

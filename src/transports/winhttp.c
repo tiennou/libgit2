@@ -48,18 +48,18 @@
 #		define WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2 0x00000800
 #	endif
 
-static const char *prefix_https = "https://";
-static const char *upload_pack_service = "upload-pack";
-static const char *upload_pack_ls_service_url = "/info/refs?service=git-upload-pack";
-static const char *upload_pack_service_url = "/git-upload-pack";
-static const char *receive_pack_service = "receive-pack";
+static const char *prefix_https				   = "https://";
+static const char *upload_pack_service		   = "upload-pack";
+static const char *upload_pack_ls_service_url  = "/info/refs?service=git-upload-pack";
+static const char *upload_pack_service_url	 = "/git-upload-pack";
+static const char *receive_pack_service		   = "receive-pack";
 static const char *receive_pack_ls_service_url = "/info/refs?service=git-receive-pack";
-static const char *receive_pack_service_url = "/git-receive-pack";
-static const wchar_t *get_verb = L"GET";
-static const wchar_t *post_verb = L"POST";
-static const wchar_t *pragma_nocache = L"Pragma: no-cache";
-static const wchar_t *transfer_encoding = L"Transfer-Encoding: chunked";
-static const int no_check_cert_flags = SECURITY_FLAG_IGNORE_CERT_CN_INVALID |
+static const char *receive_pack_service_url	= "/git-receive-pack";
+static const wchar_t *get_verb				   = L"GET";
+static const wchar_t *post_verb				   = L"POST";
+static const wchar_t *pragma_nocache		   = L"Pragma: no-cache";
+static const wchar_t *transfer_encoding		   = L"Transfer-Encoding: chunked";
+static const int no_check_cert_flags		   = SECURITY_FLAG_IGNORE_CERT_CN_INVALID |
 	SECURITY_FLAG_IGNORE_CERT_DATE_INVALID |
 	SECURITY_FLAG_IGNORE_UNKNOWN_CA;
 
@@ -78,10 +78,10 @@ static const IID IID_IInternetSecurityManager_mingw =
 #	define OWNING_SUBTRANSPORT(s) ((winhttp_subtransport *)(s)->parent.subtransport)
 
 typedef enum {
-	GIT_WINHTTP_AUTH_BASIC = 1,
-	GIT_WINHTTP_AUTH_NTLM = 2,
+	GIT_WINHTTP_AUTH_BASIC	 = 1,
+	GIT_WINHTTP_AUTH_NTLM	  = 2,
 	GIT_WINHTTP_AUTH_NEGOTIATE = 4,
-	GIT_WINHTTP_AUTH_DIGEST = 8,
+	GIT_WINHTTP_AUTH_DIGEST	= 8,
 } winhttp_authmechanism_t;
 
 typedef struct {
@@ -180,7 +180,7 @@ static int apply_default_credentials(HINTERNET request, int mechanisms)
 	 * flag, we guarantee that the credentials are delivered by WinHTTP. The default
 	 * is "medium" which applies to the intranet and sounds like it would correspond
 	 * to Internet Explorer security zones, but in fact does not. */
-	DWORD data = WINHTTP_AUTOLOGON_SECURITY_LEVEL_LOW;
+	DWORD data			= WINHTTP_AUTOLOGON_SECURITY_LEVEL_LOW;
 	DWORD native_scheme = 0;
 
 	if ((mechanisms & GIT_WINHTTP_AUTH_NTLM) != 0)
@@ -231,7 +231,7 @@ static int fallback_cred_acquire_cb(
 
 			/* And if the target URI is in the My Computer, Intranet, or Trusted zones */
 			if (SUCCEEDED(CoCreateInstance(&CLSID_InternetSecurityManager, NULL,
-								CLSCTX_ALL, &IID_IInternetSecurityManager, (void **)&pISM))) {
+					CLSCTX_ALL, &IID_IInternetSecurityManager, (void **)&pISM))) {
 				DWORD dwZone;
 
 				if (SUCCEEDED(pISM->lpVtbl->MapUrlToZone(pISM, wide_url, &dwZone, 0)) &&
@@ -285,9 +285,9 @@ static int certificate_check(winhttp_stream *s, int valid)
 
 	giterr_clear();
 	cert.parent.cert_type = GIT_CERT_X509;
-	cert.data = cert_ctx->pbCertEncoded;
-	cert.len = cert_ctx->cbCertEncoded;
-	error = t->owner->certificate_check_cb((git_cert *)&cert, valid, t->connection_data.host, t->owner->message_cb_payload);
+	cert.data			  = cert_ctx->pbCertEncoded;
+	cert.len			  = cert_ctx->cbCertEncoded;
+	error				  = t->owner->certificate_check_cb((git_cert *)&cert, valid, t->connection_data.host, t->owner->message_cb_payload);
 	CertFreeCertificateContext(cert_ctx);
 
 	if (error < 0 && !giterr_last())
@@ -341,9 +341,9 @@ static int userpass_from_url(wchar_t **user, int *user_len,
 		return -1;
 	}
 
-	*user = components.lpszUserName;
+	*user	 = components.lpszUserName;
 	*user_len = components.dwUserNameLength;
-	*pass = components.lpszPassword;
+	*pass	 = components.lpszPassword;
 	*pass_len = components.dwPasswordLength;
 
 	return 0;
@@ -355,15 +355,15 @@ static int userpass_from_url(wchar_t **user, int *user_len,
 static int winhttp_stream_connect(winhttp_stream *s)
 {
 	winhttp_subtransport *t = OWNING_SUBTRANSPORT(s);
-	git_buf buf = GIT_BUF_INIT;
-	char *proxy_url = NULL;
+	git_buf buf				= GIT_BUF_INIT;
+	char *proxy_url			= NULL;
 	wchar_t ct[MAX_CONTENT_TYPE_LEN];
-	LPCWSTR types[] = {L"*/*", NULL};
-	BOOL peerdist = FALSE;
-	int error = -1;
+	LPCWSTR types[]					= {L"*/*", NULL};
+	BOOL peerdist					= FALSE;
+	int error						= -1;
 	unsigned long disable_redirects = WINHTTP_DISABLE_REDIRECTS;
-	int default_timeout = TIMEOUT_INFINITE;
-	int default_connect_timeout = DEFAULT_CONNECT_TIMEOUT;
+	int default_timeout				= TIMEOUT_INFINITE;
+	int default_connect_timeout		= DEFAULT_CONNECT_TIMEOUT;
 	size_t i;
 	const git_proxy_options *proxy_opts;
 
@@ -426,7 +426,7 @@ static int winhttp_stream_connect(winhttp_stream *s)
 		gitno_connection_data_free_ptrs(&t->proxy_connection_data);
 
 		if ((error = gitno_extract_url_parts(&t->proxy_connection_data.host, &t->proxy_connection_data.port, NULL,
-								&t->proxy_connection_data.user, &t->proxy_connection_data.pass, proxy_url, NULL)) < 0)
+				 &t->proxy_connection_data.user, &t->proxy_connection_data.pass, proxy_url, NULL)) < 0)
 			goto on_error;
 
 		if (t->proxy_connection_data.user && t->proxy_connection_data.pass) {
@@ -458,14 +458,14 @@ static int winhttp_stream_connect(winhttp_stream *s)
 		if (error < 0)
 			goto on_error;
 
-		proxy_info.dwAccessType = WINHTTP_ACCESS_TYPE_NAMED_PROXY;
-		proxy_info.lpszProxy = proxy_wide;
+		proxy_info.dwAccessType	= WINHTTP_ACCESS_TYPE_NAMED_PROXY;
+		proxy_info.lpszProxy	   = proxy_wide;
 		proxy_info.lpszProxyBypass = NULL;
 
 		if (!WinHttpSetOption(s->request,
-							WINHTTP_OPTION_PROXY,
-							&proxy_info,
-							sizeof(WINHTTP_PROXY_INFO))) {
+				WINHTTP_OPTION_PROXY,
+				&proxy_info,
+				sizeof(WINHTTP_PROXY_INFO))) {
 			giterr_set(GITERR_OS, "failed to set proxy");
 			git__free(proxy_wide);
 			goto on_error;
@@ -485,9 +485,9 @@ static int winhttp_stream_connect(winhttp_stream *s)
 	 * http://social.msdn.microsoft.com/Forums/windowsdesktop/en-US/b2ff8879-ab9f-4218-8f09-16d25dff87ae
 	 */
 	if (!WinHttpSetOption(s->request,
-						WINHTTP_OPTION_DISABLE_FEATURE,
-						&disable_redirects,
-						sizeof(disable_redirects))) {
+			WINHTTP_OPTION_DISABLE_FEATURE,
+			&disable_redirects,
+			sizeof(disable_redirects))) {
 		giterr_set(GITERR_OS, "failed to disable redirects");
 		goto on_error;
 	}
@@ -510,8 +510,8 @@ static int winhttp_stream_connect(winhttp_stream *s)
 		/* Send Content-Type and Accept headers -- only necessary on a POST */
 		git_buf_clear(&buf);
 		if (git_buf_printf(&buf,
-							"Content-Type: application/x-git-%s-request",
-							s->service) < 0)
+				"Content-Type: application/x-git-%s-request",
+				s->service) < 0)
 			goto on_error;
 
 		if (git__utf8_to_16(ct, MAX_CONTENT_TYPE_LEN, git_buf_cstr(&buf)) < 0) {
@@ -520,15 +520,15 @@ static int winhttp_stream_connect(winhttp_stream *s)
 		}
 
 		if (!WinHttpAddRequestHeaders(s->request, ct, (ULONG)-1L,
-							WINHTTP_ADDREQ_FLAG_ADD | WINHTTP_ADDREQ_FLAG_REPLACE)) {
+				WINHTTP_ADDREQ_FLAG_ADD | WINHTTP_ADDREQ_FLAG_REPLACE)) {
 			giterr_set(GITERR_OS, "failed to add a header to the request");
 			goto on_error;
 		}
 
 		git_buf_clear(&buf);
 		if (git_buf_printf(&buf,
-							"Accept: application/x-git-%s-result",
-							s->service) < 0)
+				"Accept: application/x-git-%s-result",
+				s->service) < 0)
 			goto on_error;
 
 		if (git__utf8_to_16(ct, MAX_CONTENT_TYPE_LEN, git_buf_cstr(&buf)) < 0) {
@@ -537,7 +537,7 @@ static int winhttp_stream_connect(winhttp_stream *s)
 		}
 
 		if (!WinHttpAddRequestHeaders(s->request, ct, (ULONG)-1L,
-							WINHTTP_ADDREQ_FLAG_ADD | WINHTTP_ADDREQ_FLAG_REPLACE)) {
+				WINHTTP_ADDREQ_FLAG_ADD | WINHTTP_ADDREQ_FLAG_REPLACE)) {
 			giterr_set(GITERR_OS, "failed to add a header to the request");
 			goto on_error;
 		}
@@ -553,7 +553,7 @@ static int winhttp_stream_connect(winhttp_stream *s)
 			}
 
 			if (!WinHttpAddRequestHeaders(s->request, ct, (ULONG)-1L,
-								WINHTTP_ADDREQ_FLAG_ADD | WINHTTP_ADDREQ_FLAG_REPLACE)) {
+					WINHTTP_ADDREQ_FLAG_ADD | WINHTTP_ADDREQ_FLAG_REPLACE)) {
 				giterr_set(GITERR_OS, "failed to add a header to the request");
 				goto on_error;
 			}
@@ -608,7 +608,7 @@ static int parse_unauthorized_response(
 {
 	DWORD supported, first, target;
 
-	*allowed_types = 0;
+	*allowed_types		= 0;
 	*allowed_mechanisms = 0;
 
 	/* WinHttpQueryHeaders() must be called before WinHttpQueryAuthSchemes().
@@ -655,8 +655,8 @@ static int write_chunk(HINTERNET request, const char *buffer, size_t len)
 		return -1;
 
 	if (!WinHttpWriteData(request,
-						git_buf_cstr(&buf), (DWORD)git_buf_len(&buf),
-						&bytes_written)) {
+			git_buf_cstr(&buf), (DWORD)git_buf_len(&buf),
+			&bytes_written)) {
 		git_buf_dispose(&buf);
 		giterr_set(GITERR_OS, "failed to write chunk header");
 		return -1;
@@ -666,16 +666,16 @@ static int write_chunk(HINTERNET request, const char *buffer, size_t len)
 
 	/* Chunk body */
 	if (!WinHttpWriteData(request,
-						buffer, (DWORD)len,
-						&bytes_written)) {
+			buffer, (DWORD)len,
+			&bytes_written)) {
 		giterr_set(GITERR_OS, "failed to write chunk");
 		return -1;
 	}
 
 	/* Chunk footer */
 	if (!WinHttpWriteData(request,
-						"\r\n", 2,
-						&bytes_written)) {
+			"\r\n", 2,
+			&bytes_written)) {
 		giterr_set(GITERR_OS, "failed to write chunk footer");
 		return -1;
 	}
@@ -746,16 +746,16 @@ static int winhttp_connect(
 	wchar_t *wide_host;
 	int32_t port;
 	wchar_t *wide_ua;
-	git_buf ua = GIT_BUF_INIT;
-	int error = -1;
-	int default_timeout = TIMEOUT_INFINITE;
+	git_buf ua					= GIT_BUF_INIT;
+	int error					= -1;
+	int default_timeout			= TIMEOUT_INFINITE;
 	int default_connect_timeout = DEFAULT_CONNECT_TIMEOUT;
 	DWORD protocols =
 		WINHTTP_FLAG_SECURE_PROTOCOL_TLS1 |
 		WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_1 |
 		WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2;
 
-	t->session = NULL;
+	t->session	= NULL;
 	t->connection = NULL;
 
 	/* Prepare port */
@@ -845,16 +845,16 @@ static int do_send_request(winhttp_stream *s, size_t len, int ignore_length)
 {
 	if (ignore_length) {
 		if (!WinHttpSendRequest(s->request,
-							WINHTTP_NO_ADDITIONAL_HEADERS, 0,
-							WINHTTP_NO_REQUEST_DATA, 0,
-							WINHTTP_IGNORE_REQUEST_TOTAL_LENGTH, 0)) {
+				WINHTTP_NO_ADDITIONAL_HEADERS, 0,
+				WINHTTP_NO_REQUEST_DATA, 0,
+				WINHTTP_IGNORE_REQUEST_TOTAL_LENGTH, 0)) {
 			return -1;
 		}
 	} else {
 		if (!WinHttpSendRequest(s->request,
-							WINHTTP_NO_ADDITIONAL_HEADERS, 0,
-							WINHTTP_NO_REQUEST_DATA, 0,
-							len, 0)) {
+				WINHTTP_NO_ADDITIONAL_HEADERS, 0,
+				WINHTTP_NO_REQUEST_DATA, 0,
+				len, 0)) {
 			return -1;
 		}
 	}
@@ -875,7 +875,7 @@ static int send_request(winhttp_stream *s, size_t len, int ignore_length)
 		}
 
 		request_failed = 1;
-		cert_valid = 0;
+		cert_valid	 = 0;
 	}
 
 	giterr_clear();
@@ -909,7 +909,7 @@ static int winhttp_stream_read(
 	size_t buf_size,
 	size_t *bytes_read)
 {
-	winhttp_stream *s = (winhttp_stream *)stream;
+	winhttp_stream *s		= (winhttp_stream *)stream;
 	winhttp_subtransport *t = OWNING_SUBTRANSPORT(s);
 	DWORD dw_bytes_read;
 	char replay_count = 0;
@@ -951,8 +951,8 @@ replay:
 
 			/* Write the final chunk. */
 			if (!WinHttpWriteData(s->request,
-								"0\r\n\r\n", 5,
-								&bytes_written)) {
+					"0\r\n\r\n", 5,
+					&bytes_written)) {
 				giterr_set(GITERR_OS, "failed to write final chunk");
 				return -1;
 			}
@@ -972,8 +972,8 @@ replay:
 				DWORD bytes_written;
 
 				if (!ReadFile(s->post_body, buffer,
-									min(CACHED_POST_BODY_BUF_SIZE, len),
-									&bytes_read, NULL) ||
+						min(CACHED_POST_BODY_BUF_SIZE, len),
+						&bytes_read, NULL) ||
 					!bytes_read) {
 					git__free(buffer);
 					giterr_set(GITERR_OS, "failed to read from temp file");
@@ -981,7 +981,7 @@ replay:
 				}
 
 				if (!WinHttpWriteData(s->request, buffer,
-									bytes_read, &bytes_written)) {
+						bytes_read, &bytes_written)) {
 					git__free(buffer);
 					giterr_set(GITERR_OS, "failed to write data");
 					return -1;
@@ -1007,10 +1007,10 @@ replay:
 		status_code_length = sizeof(status_code);
 
 		if (!WinHttpQueryHeaders(s->request,
-							WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
-							WINHTTP_HEADER_NAME_BY_INDEX,
-							&status_code, &status_code_length,
-							WINHTTP_NO_HEADER_INDEX)) {
+				WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
+				WINHTTP_HEADER_NAME_BY_INDEX,
+				&status_code, &status_code_length,
+				WINHTTP_NO_HEADER_INDEX)) {
 			giterr_set(GITERR_OS, "failed to retrieve status code");
 			return -1;
 		}
@@ -1035,11 +1035,11 @@ replay:
 
 			/* OK, fetch the Location header from the redirect. */
 			if (WinHttpQueryHeaders(s->request,
-								WINHTTP_QUERY_LOCATION,
-								WINHTTP_HEADER_NAME_BY_INDEX,
-								WINHTTP_NO_OUTPUT_BUFFER,
-								&location_length,
-								WINHTTP_NO_HEADER_INDEX) ||
+					WINHTTP_QUERY_LOCATION,
+					WINHTTP_HEADER_NAME_BY_INDEX,
+					WINHTTP_NO_OUTPUT_BUFFER,
+					&location_length,
+					WINHTTP_NO_HEADER_INDEX) ||
 				GetLastError() != ERROR_INSUFFICIENT_BUFFER) {
 				giterr_set(GITERR_OS, "failed to read Location header");
 				return -1;
@@ -1049,11 +1049,11 @@ replay:
 			GITERR_CHECK_ALLOC(location);
 
 			if (!WinHttpQueryHeaders(s->request,
-								WINHTTP_QUERY_LOCATION,
-								WINHTTP_HEADER_NAME_BY_INDEX,
-								location,
-								&location_length,
-								WINHTTP_NO_HEADER_INDEX)) {
+					WINHTTP_QUERY_LOCATION,
+					WINHTTP_HEADER_NAME_BY_INDEX,
+					location,
+					&location_length,
+					WINHTTP_NO_HEADER_INDEX)) {
 				giterr_set(GITERR_OS, "failed to read Location header");
 				git__free(location);
 				return -1;
@@ -1098,7 +1098,7 @@ replay:
 			/* TODO: extract the username from the url, no payload? */
 			if (t->owner->proxy.credentials) {
 				int cred_error = 1;
-				cred_error = t->owner->proxy.credentials(&t->proxy_cred, t->owner->proxy.url, NULL, allowed_types, t->owner->proxy.payload);
+				cred_error	 = t->owner->proxy.credentials(&t->proxy_cred, t->owner->proxy.url, NULL, allowed_types, t->owner->proxy.payload);
 
 				if (cred_error < 0)
 					return cred_error;
@@ -1171,10 +1171,10 @@ replay:
 		content_type_length = sizeof(content_type);
 
 		if (!WinHttpQueryHeaders(s->request,
-							WINHTTP_QUERY_CONTENT_TYPE,
-							WINHTTP_HEADER_NAME_BY_INDEX,
-							&content_type, &content_type_length,
-							WINHTTP_NO_HEADER_INDEX)) {
+				WINHTTP_QUERY_CONTENT_TYPE,
+				WINHTTP_HEADER_NAME_BY_INDEX,
+				&content_type, &content_type_length,
+				WINHTTP_NO_HEADER_INDEX)) {
 			giterr_set(GITERR_OS, "failed to retrieve response content-type");
 			return -1;
 		}
@@ -1188,9 +1188,9 @@ replay:
 	}
 
 	if (!WinHttpReadData(s->request,
-						(LPVOID)buffer,
-						(DWORD)buf_size,
-						&dw_bytes_read)) {
+			(LPVOID)buffer,
+			(DWORD)buf_size,
+			&dw_bytes_read)) {
 		giterr_set(GITERR_OS, "failed to read data");
 		return -1;
 	}
@@ -1224,9 +1224,9 @@ static int winhttp_stream_write_single(
 	s->sent_request = 1;
 
 	if (!WinHttpWriteData(s->request,
-						(LPCVOID)buffer,
-						(DWORD)len,
-						&bytes_written)) {
+			(LPCVOID)buffer,
+			(DWORD)len,
+			&bytes_written)) {
 		giterr_set(GITERR_OS, "failed to write data");
 		return -1;
 	}
@@ -1351,8 +1351,8 @@ static int winhttp_stream_write_chunked(
 	if (!s->sent_request) {
 		/* Send Transfer-Encoding: chunked header */
 		if (!WinHttpAddRequestHeaders(s->request,
-							transfer_encoding, (ULONG)-1L,
-							WINHTTP_ADDREQ_FLAG_ADD)) {
+				transfer_encoding, (ULONG)-1L,
+				WINHTTP_ADDREQ_FLAG_ADD)) {
 			giterr_set(GITERR_OS, "failed to add a header to the request");
 			return -1;
 		}
@@ -1424,9 +1424,9 @@ static int winhttp_stream_alloc(winhttp_subtransport *t, winhttp_stream **stream
 	GITERR_CHECK_ALLOC(s);
 
 	s->parent.subtransport = &t->parent;
-	s->parent.read = winhttp_stream_read;
-	s->parent.write = winhttp_stream_write_single;
-	s->parent.free = winhttp_stream_free;
+	s->parent.read		   = winhttp_stream_read;
+	s->parent.write		   = winhttp_stream_write_single;
+	s->parent.free		   = winhttp_stream_free;
 
 	*stream = s;
 
@@ -1439,9 +1439,9 @@ static int winhttp_uploadpack_ls(
 {
 	GIT_UNUSED(t);
 
-	s->service = upload_pack_service;
+	s->service	 = upload_pack_service;
 	s->service_url = upload_pack_ls_service_url;
-	s->verb = get_verb;
+	s->verb		   = get_verb;
 
 	return 0;
 }
@@ -1452,9 +1452,9 @@ static int winhttp_uploadpack(
 {
 	GIT_UNUSED(t);
 
-	s->service = upload_pack_service;
+	s->service	 = upload_pack_service;
 	s->service_url = upload_pack_service_url;
-	s->verb = post_verb;
+	s->verb		   = post_verb;
 
 	return 0;
 }
@@ -1465,9 +1465,9 @@ static int winhttp_receivepack_ls(
 {
 	GIT_UNUSED(t);
 
-	s->service = receive_pack_service;
+	s->service	 = receive_pack_service;
 	s->service_url = receive_pack_ls_service_url;
-	s->verb = get_verb;
+	s->verb		   = get_verb;
 
 	return 0;
 }
@@ -1487,9 +1487,9 @@ static int winhttp_receivepack(
 	else
 		s->parent.write = winhttp_stream_write_buffered;
 
-	s->service = receive_pack_service;
+	s->service	 = receive_pack_service;
 	s->service_url = receive_pack_service_url;
-	s->verb = post_verb;
+	s->verb		   = post_verb;
 
 	return 0;
 }
@@ -1590,10 +1590,10 @@ int git_smart_subtransport_http(git_smart_subtransport **out, git_transport *own
 	t = git__calloc(1, sizeof(winhttp_subtransport));
 	GITERR_CHECK_ALLOC(t);
 
-	t->owner = (transport_smart *)owner;
+	t->owner		 = (transport_smart *)owner;
 	t->parent.action = winhttp_action;
-	t->parent.close = winhttp_close;
-	t->parent.free = winhttp_free;
+	t->parent.close  = winhttp_close;
+	t->parent.free   = winhttp_free;
 
 	*out = (git_smart_subtransport *)t;
 	return 0;

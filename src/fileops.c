@@ -164,7 +164,7 @@ int git_futils_readbuffer_fd(git_buf *buf, git_file fd, size_t len)
 	}
 
 	buf->ptr[read_size] = '\0';
-	buf->size = read_size;
+	buf->size			= read_size;
 
 	return 0;
 }
@@ -397,7 +397,7 @@ mkdir_validate_mode(
 	struct git_futils_mkdir_options *opts)
 {
 	if (((terminal_path && (flags & GIT_MKDIR_CHMOD) != 0) ||
-						(flags & GIT_MKDIR_CHMOD_PATH) != 0) &&
+			(flags & GIT_MKDIR_CHMOD_PATH) != 0) &&
 		st->st_mode != mode) {
 
 		opts->perfdata.chmod_calls++;
@@ -460,7 +460,7 @@ int git_futils_mkdir(
 	struct git_futils_mkdir_options opts = {0};
 	struct stat st;
 	size_t depth = 0;
-	int len = 0, root_len, error;
+	int len		 = 0, root_len, error;
 
 	if ((error = git_buf_puts(&make_path, path)) < 0 ||
 		(error = mkdir_canonicalize(&make_path, flags)) < 0 ||
@@ -548,8 +548,8 @@ int git_futils_mkdir_relative(
 	struct git_futils_mkdir_options *opts)
 {
 	git_buf make_path = GIT_BUF_INIT;
-	ssize_t root = 0, min_root_len;
-	char lastch = '/', *tail;
+	ssize_t root	  = 0, min_root_len;
+	char lastch		  = '/', *tail;
 	struct stat st;
 	struct git_futils_mkdir_options empty_opts = {0};
 	int error;
@@ -593,8 +593,8 @@ int git_futils_mkdir_relative(
 			tail++;
 
 		/* truncate path at next component */
-		lastch = *tail;
-		*tail = '\0';
+		lastch	 = *tail;
+		*tail	  = '\0';
 		st.st_mode = 0;
 
 		if (opts->dir_map && git_strmap_exists(opts->dir_map, make_path.ptr))
@@ -623,13 +623,13 @@ int git_futils_mkdir_relative(
 			}
 		} else {
 			if ((error = mkdir_validate_dir(
-									make_path.ptr, &st, mode, flags, opts)) < 0)
+					 make_path.ptr, &st, mode, flags, opts)) < 0)
 				goto done;
 		}
 
 		/* chmod if requested and necessary */
 		if ((error = mkdir_validate_mode(
-								make_path.ptr, &st, (lastch == '\0'), mode, flags, opts)) < 0)
+				 make_path.ptr, &st, (lastch == '\0'), mode, flags, opts)) < 0)
 			goto done;
 
 		if (opts->dir_map && opts->pool) {
@@ -716,7 +716,7 @@ static int futils__rm_first_parent(git_buf *path, const char *ceiling)
 
 static int futils__rmdir_recurs_foreach(void *opaque, git_buf *path)
 {
-	int error = 0;
+	int error				 = 0;
 	futils__rmdir_data *data = opaque;
 	struct stat st;
 
@@ -774,7 +774,7 @@ static int futils__rmdir_recurs_foreach(void *opaque, git_buf *path)
 static int futils__rmdir_empty_parent(void *opaque, const char *path)
 {
 	futils__rmdir_data *data = opaque;
-	int error = 0;
+	int error				 = 0;
 
 	if (strlen(path) <= data->baselen)
 		error = GIT_ITEROVER;
@@ -809,9 +809,9 @@ int git_futils_rmdir_r(
 		return -1;
 
 	memset(&data, 0, sizeof(data));
-	data.base = base ? base : "";
+	data.base	= base ? base : "";
 	data.baselen = base ? strlen(base) : 0;
-	data.flags = flags;
+	data.flags   = flags;
 
 	error = futils__rmdir_recurs_foreach(&data, &fullpath);
 
@@ -833,7 +833,7 @@ int git_futils_rmdir_r(
 int git_futils_fake_symlink(const char *old, const char *new)
 {
 	int retcode = GIT_ERROR;
-	int fd = git_futils_creat_withpath(new, 0755, 0644);
+	int fd		= git_futils_creat_withpath(new, 0755, 0644);
 	if (fd >= 0) {
 		retcode = p_write(fd, old, strlen(old));
 		p_close(fd);
@@ -961,7 +961,7 @@ static int _cp_r_mkdir(cp_r_info *info, git_buf *from)
 
 static int _cp_r_callback(void *ref, git_buf *from)
 {
-	int error = 0;
+	int error		= 0;
 	cp_r_info *info = ref;
 	struct stat from_st, to_st;
 	bool exists = false;
@@ -971,7 +971,7 @@ static int _cp_r_callback(void *ref, git_buf *from)
 		return 0;
 
 	if ((error = git_buf_joinpath(
-							&info->to, info->to_root, from->ptr + info->from_prefix)) < 0)
+			 &info->to, info->to_root, from->ptr + info->from_prefix)) < 0)
 		return error;
 
 	if (!(error = git_path_lstat(info->to.ptr, &to_st)))
@@ -1061,9 +1061,9 @@ int git_futils_cp_r(
 		return -1;
 
 	memset(&info, 0, sizeof(info));
-	info.to_root = to;
-	info.flags = flags;
-	info.dirmode = dirmode;
+	info.to_root	 = to;
+	info.flags		 = flags;
+	info.dirmode	 = dirmode;
 	info.from_prefix = path.size;
 	git_buf_init(&info.to, 0);
 
@@ -1114,7 +1114,7 @@ int git_futils_filestamp_check(
 	stamp->mtime.tv_nsec = st.st_mtime_nsec;
 #endif
 	stamp->size = (git_off_t)st.st_size;
-	stamp->ino = (unsigned int)st.st_ino;
+	stamp->ino  = (unsigned int)st.st_ino;
 
 	return 1;
 }
@@ -1142,7 +1142,7 @@ void git_futils_filestamp_set_from_stat(
 		stamp->mtime.tv_nsec = 0;
 #endif
 		stamp->size = (git_off_t)st->st_size;
-		stamp->ino = (unsigned int)st->st_ino;
+		stamp->ino  = (unsigned int)st->st_ino;
 	} else {
 		memset(stamp, 0, sizeof(*stamp));
 	}

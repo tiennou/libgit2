@@ -61,7 +61,7 @@ static int annotated_commit_init_from_id(
 	const char *description)
 {
 	git_commit *commit = NULL;
-	int error = 0;
+	int error		   = 0;
 
 	assert(out && repo && id);
 

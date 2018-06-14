@@ -37,8 +37,8 @@ typedef struct {
 } git_pool;
 
 #	define GIT_POOL_INIT \
-		{ \
-			NULL, 0, 0 \
+		{                 \
+			NULL, 0, 0    \
 		}
 
 #else
@@ -64,8 +64,8 @@ typedef struct {
 	uint32_t page_size;
 } git_pool;
 
-#	define GIT_POOL_INIT \
-		{ \
+#	define GIT_POOL_INIT         \
+		{                         \
 			GIT_VECTOR_INIT, 0, 0 \
 		}
 

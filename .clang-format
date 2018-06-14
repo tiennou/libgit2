@@ -1,9 +1,9 @@
 ---
 AccessModifierOffset: 5
 AlignAfterOpenBracket: DontAlign
-AlignConsecutiveAssignments: false
+AlignConsecutiveAssignments: true
 AlignConsecutiveDeclarations: false
-AlignEscapedNewlines: DontAlign
+AlignEscapedNewlines: Right
 AlignOperands: false
 AlignTrailingComments: true
 AllowAllParametersOfDeclarationOnNextLine: true
@@ -47,28 +47,35 @@ CommentPragmas: '^ IWYU pragma:'
 CompactNamespaces: true
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 ConstructorInitializerIndentWidth: 12
-ContinuationIndentWidth: 1
+ContinuationIndentWidth: 4
 Cpp11BracedListStyle: true
 DerivePointerAlignment: false
 DisableFormat: false
 ExperimentalAutoDetectBinPacking: false
 FixNamespaceComments: false
 ForEachMacros:
-- foreach
-- Q_FOREACH
-- BOOST_FOREACH
+  - git_array_foreach
+  - git_attr_file__foreach
+  - git_offmap_foreach
+  - git_offmap_foreach_value
+  - git_oidmap_foreach_value
+  - git_strmap_foreach
+  - git_strmap_foreach_value
+  - git_vector_foreach
+  - kh_foreach
+  - kh_foreach_value
 IncludeBlocks: Merge
-IncludeCategories:
-- Priority: 2
-  Regex: ^"(llvm|llvm-c|clang|clang-c)/
-- Priority: 3
-  Regex: ^(<|"(gtest|gmock|isl|json)/)
-- Priority: 1
-  Regex: .*
+# IncludeCategories:
+# - Priority: 2
+#   Regex: ^"(llvm|llvm-c|clang|clang-c)/
+# - Priority: 3
+#   Regex: ^(<|"(gtest|gmock|isl|json)/)
+# - Priority: 1
+#   Regex: .*
 IncludeIsMainRegex: (Test)?$
 IndentCaseLabels: false
 IndentPPDirectives: AfterHash
-IndentWidth: 1
+IndentWidth: 4
 IndentWrappedFunctionNames: false
 JavaScriptQuotes: Leave
 JavaScriptWrapImports: false
@@ -108,6 +115,6 @@ SpacesInContainerLiterals: true
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
 Standard: Cpp03
-TabWidth: 1
-UseTab: ForContinuationAndIndentation
+TabWidth: 4
+UseTab: Always
 ...

@@ -51,7 +51,7 @@ int git_refdb_open(git_refdb **out, git_repository *repo)
 		return -1;
 	}
 
-	db->repo = repo;
+	db->repo	= repo;
 	db->backend = dir;
 
 	*out = db;

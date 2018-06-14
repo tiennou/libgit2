@@ -38,7 +38,7 @@ resize_vector(git_vector *v, size_t new_size)
 	GITERR_CHECK_ALLOC(new_contents);
 
 	v->_alloc_size = new_size;
-	v->contents = new_contents;
+	v->contents	= new_contents;
 
 	return 0;
 }
@@ -59,9 +59,9 @@ int git_vector_dup(git_vector *v, const git_vector *src, git_vector_cmp cmp)
 	GITERR_CHECK_ALLOC_MULTIPLY(&bytes, src->length, sizeof(void *));
 
 	v->_alloc_size = src->length;
-	v->_cmp = cmp ? cmp : src->_cmp;
-	v->length = src->length;
-	v->flags = src->flags;
+	v->_cmp		   = cmp ? cmp : src->_cmp;
+	v->length	  = src->length;
+	v->flags	   = src->flags;
 	if (cmp != src->_cmp)
 		git_vector_set_sorted(v, 0);
 	v->contents = git__malloc(bytes);
@@ -79,7 +79,7 @@ void git_vector_free(git_vector *v)
 	git__free(v->contents);
 	v->contents = NULL;
 
-	v->length = 0;
+	v->length	  = 0;
 	v->_alloc_size = 0;
 }
 
@@ -102,10 +102,10 @@ int git_vector_init(git_vector *v, size_t initial_size, git_vector_cmp cmp)
 	assert(v);
 
 	v->_alloc_size = 0;
-	v->_cmp = cmp;
-	v->length = 0;
-	v->flags = GIT_VECTOR_SORTED;
-	v->contents = NULL;
+	v->_cmp		   = cmp;
+	v->length	  = 0;
+	v->flags	   = GIT_VECTOR_SORTED;
+	v->contents	= NULL;
 
 	return resize_vector(v, max(initial_size, MIN_ALLOCSIZE));
 }
@@ -120,8 +120,8 @@ void **git_vector_detach(size_t *size, size_t *asize, git_vector *v)
 		*asize = v->_alloc_size;
 
 	v->_alloc_size = 0;
-	v->length = 0;
-	v->contents = NULL;
+	v->length	  = 0;
+	v->contents	= NULL;
 
 	return data;
 }
@@ -355,7 +355,7 @@ int git_vector_insert_null(git_vector *v, size_t idx, size_t insert_len)
 int git_vector_remove_range(git_vector *v, size_t idx, size_t remove_len)
 {
 	size_t new_length = v->length - remove_len;
-	size_t end_idx = 0;
+	size_t end_idx	= 0;
 
 	assert(remove_len > 0);
 
@@ -415,7 +415,7 @@ void git_vector_reverse(git_vector *v)
 	b = v->length - 1;
 
 	while (a < b) {
-		void *tmp = v->contents[a];
+		void *tmp	  = v->contents[a];
 		v->contents[a] = v->contents[b];
 		v->contents[b] = tmp;
 		a++;

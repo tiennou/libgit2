@@ -115,7 +115,7 @@ static int curls_connect(git_stream *stream)
 	curl_stream *s = (curl_stream *)stream;
 	git_activesocket_t sockextr;
 	long connect_last = 0;
-	int failed_cert = 0, error;
+	int failed_cert   = 0, error;
 	bool retry_connect;
 	CURLcode res;
 
@@ -126,7 +126,7 @@ static int curls_connect(git_stream *stream)
 
 	do {
 		retry_connect = 0;
-		res = curl_easy_perform(s->handle);
+		res			  = curl_easy_perform(s->handle);
 
 		curl_easy_getinfo(s->handle, CURLINFO_HTTP_CONNECTCODE, &connect_last);
 
@@ -168,7 +168,7 @@ static int curls_certificate(git_cert **out, git_stream *stream)
 	struct curl_slist *slist;
 	struct curl_certinfo *certinfo;
 	git_vector strings = GIT_VECTOR_INIT;
-	curl_stream *s = (curl_stream *)stream;
+	curl_stream *s	 = (curl_stream *)stream;
 
 	if ((res = curl_easy_getinfo(s->handle, CURLINFO_CERTINFO, &certinfo)) != CURLE_OK)
 		return seterr_curl(s);
@@ -176,8 +176,8 @@ static int curls_certificate(git_cert **out, git_stream *stream)
 	/* No information is available, can happen with SecureTransport */
 	if (certinfo->num_of_certs == 0) {
 		s->cert_info.parent.cert_type = GIT_CERT_NONE;
-		s->cert_info.data = NULL;
-		s->cert_info.len = 0;
+		s->cert_info.data			  = NULL;
+		s->cert_info.len			  = 0;
 		return 0;
 	}
 
@@ -192,11 +192,11 @@ static int curls_certificate(git_cert **out, git_stream *stream)
 
 	/* Copy the contents of the vector into a strarray so we can expose them */
 	s->cert_info_strings.strings = (char **)strings.contents;
-	s->cert_info_strings.count = strings.length;
+	s->cert_info_strings.count   = strings.length;
 
 	s->cert_info.parent.cert_type = GIT_CERT_STRARRAY;
-	s->cert_info.data = &s->cert_info_strings;
-	s->cert_info.len = strings.length;
+	s->cert_info.data			  = &s->cert_info_strings;
+	s->cert_info.len			  = strings.length;
 
 	*out = &s->cert_info.parent;
 
@@ -347,17 +347,17 @@ int git_curl_stream_new(git_stream **out, const char *host, const char *port)
 
 	/* curl_easy_setopt(handle, CURLOPT_VERBOSE, 1); */
 
-	st->parent.version = GIT_STREAM_VERSION;
-	st->parent.encrypted = 0; /* we don't encrypt ourselves */
+	st->parent.version		 = GIT_STREAM_VERSION;
+	st->parent.encrypted	 = 0; /* we don't encrypt ourselves */
 	st->parent.proxy_support = 1;
-	st->parent.connect = curls_connect;
-	st->parent.certificate = curls_certificate;
-	st->parent.set_proxy = curls_set_proxy;
-	st->parent.read = curls_read;
-	st->parent.write = curls_write;
-	st->parent.close = curls_close;
-	st->parent.free = curls_free;
-	st->handle = handle;
+	st->parent.connect		 = curls_connect;
+	st->parent.certificate   = curls_certificate;
+	st->parent.set_proxy	 = curls_set_proxy;
+	st->parent.read			 = curls_read;
+	st->parent.write		 = curls_write;
+	st->parent.close		 = curls_close;
+	st->parent.free			 = curls_free;
+	st->handle				 = handle;
 
 	*out = (git_stream *)st;
 	return 0;

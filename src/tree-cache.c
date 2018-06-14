@@ -45,7 +45,7 @@ void git_tree_cache_invalidate_path(git_tree_cache *tree, const char *path)
 			return;
 
 		tree->entry_count = -1;
-		ptr = end + 1;
+		ptr				  = end + 1;
 	}
 }
 
@@ -134,7 +134,7 @@ static int read_tree_internal(git_tree_cache **out,
 	}
 
 	*buffer_in = buffer;
-	*out = tree;
+	*out	   = tree;
 	return 0;
 
 corrupted:
@@ -183,7 +183,7 @@ static int read_tree_recursive(git_tree_cache *cache, const git_tree *tree, git_
 	}
 
 	cache->children_count = ntrees;
-	cache->children = git_pool_mallocz(pool, ntrees * sizeof(git_tree_cache *));
+	cache->children		  = git_pool_mallocz(pool, ntrees * sizeof(git_tree_cache *));
 	GITERR_CHECK_ALLOC(cache->children);
 
 	j = 0;
@@ -236,7 +236,7 @@ int git_tree_cache_new(git_tree_cache **out, const char *name, git_pool *pool)
 	git_tree_cache *tree;
 
 	name_len = strlen(name);
-	tree = git_pool_malloc(pool, sizeof(git_tree_cache) + name_len + 1);
+	tree	 = git_pool_malloc(pool, sizeof(git_tree_cache) + name_len + 1);
 	GITERR_CHECK_ALLOC(tree);
 
 	memset(tree, 0x0, sizeof(git_tree_cache));

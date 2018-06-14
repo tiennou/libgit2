@@ -35,7 +35,7 @@ struct git_diff_stats {
 
 static int digits_for_value(size_t val)
 {
-	int count = 1;
+	int count		  = 1;
 	size_t placevalue = 10;
 
 	while (val >= placevalue) {
@@ -82,12 +82,12 @@ int git_diff_file_stats__full_to_buf(
 
 	if (delta->flags & GIT_DIFF_FLAG_BINARY) {
 		if (git_buf_printf(out,
-							"Bin %" PRIuZ " -> %" PRIuZ " bytes", old_size, new_size) < 0)
+				"Bin %" PRIuZ " -> %" PRIuZ " bytes", old_size, new_size) < 0)
 			goto on_error;
 	} else {
 		if (git_buf_printf(out,
-							"%*" PRIuZ, stats->max_digits,
-							filestat->insertions + filestat->deletions) < 0)
+				"%*" PRIuZ, stats->max_digits,
+				filestat->insertions + filestat->deletions) < 0)
 			goto on_error;
 
 		if (filestat->insertions || filestat->deletions) {
@@ -100,9 +100,9 @@ int git_diff_file_stats__full_to_buf(
 					goto on_error;
 			} else {
 				size_t total = filestat->insertions + filestat->deletions;
-				size_t full = (total * width + stats->max_filestat / 2) /
+				size_t full  = (total * width + stats->max_filestat / 2) /
 					stats->max_filestat;
-				size_t plus = full * filestat->insertions / total;
+				size_t plus  = full * filestat->insertions / total;
 				size_t minus = full - plus;
 
 				if (git_buf_putcn(out, '+', max(plus, 1)) < 0 ||
@@ -128,8 +128,8 @@ int git_diff_file_stats__number_to_buf(
 
 	if (delta->flags & GIT_DIFF_FLAG_BINARY)
 		error = git_buf_printf(out, "%-8c"
-																														"%-8c"
-																														"%s\n",
+									"%-8c"
+									"%s\n",
 			'-', '-', path);
 	else
 		error = git_buf_printf(out, "%-8" PRIuZ "%-8" PRIuZ "%s\n",
@@ -165,7 +165,7 @@ int git_diff_get_stats(
 	size_t i, deltas;
 	size_t total_insertions = 0, total_deletions = 0;
 	git_diff_stats *stats = NULL;
-	int error = 0;
+	int error			  = 0;
 
 	assert(out && diff);
 
@@ -207,7 +207,7 @@ int git_diff_get_stats(
 		git_patch_free(patch);
 
 		stats->filestats[i].insertions = add;
-		stats->filestats[i].deletions = remove;
+		stats->filestats[i].deletions  = remove;
 
 		total_insertions += add;
 		total_deletions += remove;
@@ -219,9 +219,9 @@ int git_diff_get_stats(
 	}
 
 	stats->files_changed = deltas;
-	stats->insertions = total_insertions;
-	stats->deletions = total_deletions;
-	stats->max_digits = digits_for_value(stats->max_filestat + 1);
+	stats->insertions	= total_insertions;
+	stats->deletions	 = total_deletions;
+	stats->max_digits	= digits_for_value(stats->max_filestat + 1);
 
 	if (error < 0) {
 		git_diff_stats_free(stats);

@@ -29,13 +29,13 @@ typedef struct {
 	/** For merge commits, the "mainline" is treated as the parent. */
 	unsigned int mainline;
 
-	git_merge_options merge_opts;       /**< Options for the merging */
+	git_merge_options merge_opts;		/**< Options for the merging */
 	git_checkout_options checkout_opts; /**< Options for the checkout */
 } git_revert_options;
 
 #define GIT_REVERT_OPTIONS_VERSION 1
-#define GIT_REVERT_OPTIONS_INIT \
-	{ \
+#define GIT_REVERT_OPTIONS_INIT                                                          \
+	{                                                                                    \
 		GIT_REVERT_OPTIONS_VERSION, 0, GIT_MERGE_OPTIONS_INIT, GIT_CHECKOUT_OPTIONS_INIT \
 	}
 

@@ -88,26 +88,26 @@
  * Check a pointer allocation result, returning -1 if it failed.
  */
 #define GITERR_CHECK_ALLOC(ptr) \
-	if (ptr == NULL) { \
-		return -1; \
+	if (ptr == NULL) {          \
+		return -1;              \
 	}
 
 /**
  * Check a buffer allocation result, returning -1 if it failed.
  */
-#define GITERR_CHECK_ALLOC_BUF(buf) \
+#define GITERR_CHECK_ALLOC_BUF(buf)                  \
 	if ((void *)(buf) == NULL || git_buf_oom(buf)) { \
-		return -1; \
+		return -1;                                   \
 	}
 
 /**
  * Check a return value and propagate result if non-zero.
  */
 #define GITERR_CHECK_ERROR(code) \
-	do { \
-		int _err = (code); \
-		if (_err) \
-			return _err; \
+	do {                         \
+		int _err = (code);       \
+		if (_err)                \
+			return _err;         \
 	} while (0)
 
 /**
@@ -203,7 +203,7 @@ giterr__check_version(const void *structure, unsigned int expected_max, const ch
 	giterr_set(GITERR_INVALID, "invalid version %d on %s", actual, name);
 	return -1;
 }
-#define GITERR_CHECK_VERSION(S, V, N) \
+#define GITERR_CHECK_VERSION(S, V, N)       \
 	if (giterr__check_version(S, V, N) < 0) \
 	return -1
 
@@ -219,10 +219,10 @@ git__init_structure(void *structure, size_t len, unsigned int version)
 #define GIT_INIT_STRUCTURE(S, V) git__init_structure(S, sizeof(*S), V)
 
 #define GIT_INIT_STRUCTURE_FROM_TEMPLATE(PTR, VERSION, TYPE, TPL) \
-	do { \
-		TYPE _tmpl = TPL; \
-		GITERR_CHECK_VERSION(&(VERSION), _tmpl.version, #TYPE); \
-		memcpy((PTR), &_tmpl, sizeof(_tmpl)); \
+	do {                                                          \
+		TYPE _tmpl = TPL;                                         \
+		GITERR_CHECK_VERSION(&(VERSION), _tmpl.version, #TYPE);   \
+		memcpy((PTR), &_tmpl, sizeof(_tmpl));                     \
 	} while (0)
 
 
@@ -235,36 +235,36 @@ git__init_structure(void *structure, size_t len, unsigned int version)
 	(git__multiply_sizet_overflow(out, nelem, elsize) ? (giterr_set_oom(), 1) : 0)
 
 /** Check for additive overflow, failing if it would occur. */
-#define GITERR_CHECK_ALLOC_ADD(out, one, two) \
+#define GITERR_CHECK_ALLOC_ADD(out, one, two)    \
 	if (GIT_ADD_SIZET_OVERFLOW(out, one, two)) { \
-		return -1; \
+		return -1;                               \
 	}
 
 #define GITERR_CHECK_ALLOC_ADD3(out, one, two, three) \
-	if (GIT_ADD_SIZET_OVERFLOW(out, one, two) || \
+	if (GIT_ADD_SIZET_OVERFLOW(out, one, two) ||      \
 		GIT_ADD_SIZET_OVERFLOW(out, *(out), three)) { \
-		return -1; \
+		return -1;                                    \
 	}
 
 #define GITERR_CHECK_ALLOC_ADD4(out, one, two, three, four) \
-	if (GIT_ADD_SIZET_OVERFLOW(out, one, two) || \
-		GIT_ADD_SIZET_OVERFLOW(out, *(out), three) || \
-		GIT_ADD_SIZET_OVERFLOW(out, *(out), four)) { \
-		return -1; \
+	if (GIT_ADD_SIZET_OVERFLOW(out, one, two) ||            \
+		GIT_ADD_SIZET_OVERFLOW(out, *(out), three) ||       \
+		GIT_ADD_SIZET_OVERFLOW(out, *(out), four)) {        \
+		return -1;                                          \
 	}
 
 #define GITERR_CHECK_ALLOC_ADD5(out, one, two, three, four, five) \
-	if (GIT_ADD_SIZET_OVERFLOW(out, one, two) || \
-		GIT_ADD_SIZET_OVERFLOW(out, *(out), three) || \
-		GIT_ADD_SIZET_OVERFLOW(out, *(out), four) || \
-		GIT_ADD_SIZET_OVERFLOW(out, *(out), five)) { \
-		return -1; \
+	if (GIT_ADD_SIZET_OVERFLOW(out, one, two) ||                  \
+		GIT_ADD_SIZET_OVERFLOW(out, *(out), three) ||             \
+		GIT_ADD_SIZET_OVERFLOW(out, *(out), four) ||              \
+		GIT_ADD_SIZET_OVERFLOW(out, *(out), five)) {              \
+		return -1;                                                \
 	}
 
 /** Check for multiplicative overflow, failing if it would occur. */
-#define GITERR_CHECK_ALLOC_MULTIPLY(out, nelem, elsize) \
+#define GITERR_CHECK_ALLOC_MULTIPLY(out, nelem, elsize)    \
 	if (GIT_MULTIPLY_SIZET_OVERFLOW(out, nelem, elsize)) { \
-		return -1; \
+		return -1;                                         \
 	}
 
 /* NOTE: other giterr functions are in the public errors.h header file */

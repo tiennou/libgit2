@@ -91,7 +91,7 @@ void git__rewinddir(git__DIR *d)
 
 	if (d->h != INVALID_HANDLE_VALUE) {
 		FindClose(d->h);
-		d->h = INVALID_HANDLE_VALUE;
+		d->h	 = INVALID_HANDLE_VALUE;
 		d->first = 0;
 	}
 

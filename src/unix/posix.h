@@ -81,9 +81,9 @@ GIT_INLINE(int)
 p_futimes(int f, const struct p_timeval t[2])
 {
 	struct timespec s[2];
-	s[0].tv_sec = t[0].tv_sec;
+	s[0].tv_sec  = t[0].tv_sec;
 	s[0].tv_nsec = t[0].tv_usec * 1000;
-	s[1].tv_sec = t[1].tv_sec;
+	s[1].tv_sec  = t[1].tv_sec;
 	s[1].tv_nsec = t[1].tv_usec * 1000;
 	return futimens(f, s);
 }

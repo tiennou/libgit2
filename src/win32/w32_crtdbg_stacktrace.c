@@ -30,9 +30,9 @@ typedef struct {
 typedef struct {
 	git_win32__crtdbg_stacktrace__uid uid; /* must be first */
 	git_win32__stack__raw_data raw_data;
-	unsigned int count_allocs;                    /* times this alloc signature seen since init */
+	unsigned int count_allocs;					  /* times this alloc signature seen since init */
 	unsigned int count_allocs_at_last_checkpoint; /* times since last mark */
-	unsigned int transient_count_leaks;           /* sum of leaks */
+	unsigned int transient_count_leaks;			  /* sum of leaks */
 } git_win32__crtdbg_stacktrace__row;
 
 static CRITICAL_SECTION g_crtdbg_stacktrace_cs;
@@ -61,14 +61,14 @@ static CRITICAL_SECTION g_crtdbg_stacktrace_cs;
 static git_win32__crtdbg_stacktrace__row g_cs_rows[MY_ROW_LIMIT];
 static git_win32__crtdbg_stacktrace__row *g_cs_index[MY_ROW_LIMIT];
 
-static unsigned int g_cs_end = MY_ROW_LIMIT;
-static unsigned int g_cs_ins = 0;                      /* insertion point == unique allocs seen */
-static unsigned int g_count_total_allocs = 0;          /* number of allocs seen */
-static unsigned int g_transient_count_total_leaks = 0; /* number of total leaks */
-static unsigned int g_transient_count_dedup_leaks = 0; /* number of unique leaks */
-static bool g_limit_reached = false;                   /* had allocs after we filled row table */
+static unsigned int g_cs_end					  = MY_ROW_LIMIT;
+static unsigned int g_cs_ins					  = 0;	 /* insertion point == unique allocs seen */
+static unsigned int g_count_total_allocs		  = 0;	 /* number of allocs seen */
+static unsigned int g_transient_count_total_leaks = 0;	 /* number of total leaks */
+static unsigned int g_transient_count_dedup_leaks = 0;	 /* number of unique leaks */
+static bool g_limit_reached						  = false; /* had allocs after we filled row table */
 
-static unsigned int g_checkpoint_id = 0;          /* to better label leak checkpoints */
+static unsigned int g_checkpoint_id		 = 0;	 /* to better label leak checkpoints */
 static bool g_transient_leaks_since_mark = false; /* payload for hook */
 
 static void *crtdbg__malloc(size_t len, const char *file, int line)
@@ -155,15 +155,15 @@ static void crtdbg__free(void *ptr)
 
 int git_win32_crtdbg_init_allocator(git_allocator *allocator)
 {
-	allocator->gmalloc = crtdbg__malloc;
-	allocator->gcalloc = crtdbg__calloc;
-	allocator->gstrdup = crtdbg__strdup;
-	allocator->gstrndup = crtdbg__strndup;
-	allocator->gsubstrdup = crtdbg__substrdup;
-	allocator->grealloc = crtdbg__realloc;
+	allocator->gmalloc		 = crtdbg__malloc;
+	allocator->gcalloc		 = crtdbg__calloc;
+	allocator->gstrdup		 = crtdbg__strdup;
+	allocator->gstrndup		 = crtdbg__strndup;
+	allocator->gsubstrdup	= crtdbg__substrdup;
+	allocator->grealloc		 = crtdbg__realloc;
 	allocator->greallocarray = crtdbg__reallocarray;
-	allocator->gmallocarray = crtdbg__mallocarray;
-	allocator->gfree = crtdbg__free;
+	allocator->gmallocarray  = crtdbg__mallocarray;
+	allocator->gfree		 = crtdbg__free;
 	return 0;
 }
 
@@ -172,7 +172,7 @@ int git_win32_crtdbg_init_allocator(git_allocator *allocator)
  */
 static int row_cmp(const void *v1, const void *v2)
 {
-	git_win32__stack__raw_data *d1 = (git_win32__stack__raw_data *)v1;
+	git_win32__stack__raw_data *d1		  = (git_win32__stack__raw_data *)v1;
 	git_win32__crtdbg_stacktrace__row *r2 = (git_win32__crtdbg_stacktrace__row *)v2;
 
 	return (git_win32__stack_compare(d1, &r2->raw_data));
@@ -303,8 +303,8 @@ static void dump_summary(const char *label)
 			my_output(buf);
 
 			if (git_win32__stack_format(
-								buf, sizeof(buf), &g_cs_rows[k].raw_data,
-								NULL, NULL) >= 0) {
+					buf, sizeof(buf), &g_cs_rows[k].raw_data,
+					NULL, NULL) >= 0) {
 				my_output(buf);
 			}
 
@@ -344,10 +344,10 @@ int git_win32__crtdbg_stacktrace__dump(
 
 #	define IS_BIT_SET(o, b) (((o) & (b)) != 0)
 
-	bool b_set_mark = IS_BIT_SET(opt, GIT_WIN32__CRTDBG_STACKTRACE__SET_MARK);
+	bool b_set_mark			= IS_BIT_SET(opt, GIT_WIN32__CRTDBG_STACKTRACE__SET_MARK);
 	bool b_leaks_since_mark = IS_BIT_SET(opt, GIT_WIN32__CRTDBG_STACKTRACE__LEAKS_SINCE_MARK);
-	bool b_leaks_total = IS_BIT_SET(opt, GIT_WIN32__CRTDBG_STACKTRACE__LEAKS_TOTAL);
-	bool b_quiet = IS_BIT_SET(opt, GIT_WIN32__CRTDBG_STACKTRACE__QUIET);
+	bool b_leaks_total		= IS_BIT_SET(opt, GIT_WIN32__CRTDBG_STACKTRACE__LEAKS_TOTAL);
+	bool b_quiet			= IS_BIT_SET(opt, GIT_WIN32__CRTDBG_STACKTRACE__QUIET);
 
 	if (b_leaks_since_mark && b_leaks_total) {
 		giterr_set(GITERR_INVALID, "cannot combine LEAKS_SINCE_MARK and LEAKS_TOTAL.");
@@ -425,7 +425,7 @@ const char *git_win32__crtdbg_stacktrace(int skip, const char *file)
 	EnterCriticalSection(&g_crtdbg_stacktrace_cs);
 
 	if (g_cs_ins < g_cs_end) {
-		row = insert_unique(&new_data);
+		row	= insert_unique(&new_data);
 		result = row->uid.uid;
 	} else {
 		g_limit_reached = true;

@@ -69,7 +69,7 @@ git_delta(
 	git_delta_index *index;
 	int error = 0;
 
-	*out = NULL;
+	*out	 = NULL;
 	*out_len = 0;
 
 	if ((error = git_delta_index_init(&index, src_buf, src_bufsize)) < 0)

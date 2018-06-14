@@ -10,8 +10,8 @@
 uintmax_t git_decode_varint(const unsigned char *bufp, size_t *varint_len)
 {
 	const unsigned char *buf = bufp;
-	unsigned char c = *buf++;
-	uintmax_t val = c & 127;
+	unsigned char c			 = *buf++;
+	uintmax_t val			 = c & 127;
 	while (c & 128) {
 		val += 1;
 		if (!val || MSB(val, 7)) {
@@ -20,7 +20,7 @@ uintmax_t git_decode_varint(const unsigned char *bufp, size_t *varint_len)
 			*varint_len = 0;
 			return 0; /* overflow */
 		}
-		c = *buf++;
+		c   = *buf++;
 		val = (val << 7) + (c & 127);
 	}
 	*varint_len = buf - bufp;
@@ -31,7 +31,7 @@ int git_encode_varint(unsigned char *buf, size_t bufsize, uintmax_t value)
 {
 	unsigned char varint[16];
 	unsigned pos = sizeof(varint) - 1;
-	varint[pos] = value & 127;
+	varint[pos]  = value & 127;
 	while (value >>= 7)
 		varint[--pos] = 128 | (--value & 127);
 	if (buf) {

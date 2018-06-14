@@ -25,9 +25,9 @@ static int write_cherrypick_head(
 	git_repository *repo,
 	const char *commit_oidstr)
 {
-	git_filebuf file = GIT_FILEBUF_INIT;
+	git_filebuf file  = GIT_FILEBUF_INIT;
 	git_buf file_path = GIT_BUF_INIT;
-	int error = 0;
+	int error		  = 0;
 
 	if ((error = git_buf_joinpath(&file_path, repo->gitdir, GIT_CHERRYPICK_HEAD_FILE)) >= 0 &&
 		(error = git_filebuf_open(&file, file_path.ptr, GIT_FILEBUF_FORCE, GIT_CHERRYPICK_FILE_MODE)) >= 0 &&
@@ -46,9 +46,9 @@ static int write_merge_msg(
 	git_repository *repo,
 	const char *commit_msg)
 {
-	git_filebuf file = GIT_FILEBUF_INIT;
+	git_filebuf file  = GIT_FILEBUF_INIT;
 	git_buf file_path = GIT_BUF_INIT;
-	int error = 0;
+	int error		  = 0;
 
 	if ((error = git_buf_joinpath(&file_path, repo->gitdir, GIT_MERGE_MSG_FILE)) < 0 ||
 		(error = git_filebuf_open(&file, file_path.ptr, GIT_FILEBUF_FORCE, GIT_CHERRYPICK_FILE_MODE)) < 0 ||
@@ -72,7 +72,7 @@ static int cherrypick_normalize_opts(
 	const git_cherrypick_options *given,
 	const char *their_label)
 {
-	int error = 0;
+	int error							   = 0;
 	unsigned int default_checkout_strategy = GIT_CHECKOUT_SAFE |
 		GIT_CHECKOUT_ALLOW_CONFLICTS;
 
@@ -172,10 +172,10 @@ int git_cherrypick(
 	git_commit *our_commit = NULL;
 	char commit_oidstr[GIT_OID_HEXSZ + 1];
 	const char *commit_msg, *commit_summary;
-	git_buf their_label = GIT_BUF_INIT;
-	git_index *index = NULL;
+	git_buf their_label			= GIT_BUF_INIT;
+	git_index *index			= NULL;
 	git_indexwriter indexwriter = GIT_INDEXWRITER_INIT;
-	int error = 0;
+	int error					= 0;
 
 	assert(repo && commit);
 

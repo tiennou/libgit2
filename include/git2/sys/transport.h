@@ -106,8 +106,8 @@ struct git_transport {
 };
 
 #define GIT_TRANSPORT_VERSION 1
-#define GIT_TRANSPORT_INIT \
-	{ \
+#define GIT_TRANSPORT_INIT    \
+	{                         \
 		GIT_TRANSPORT_VERSION \
 	}
 
@@ -285,10 +285,10 @@ git_transport_smart_proxy_options(git_proxy_options *out, git_transport *transpo
 /* Actions that the smart transport can ask
  * a subtransport to perform */
 typedef enum {
-	GIT_SERVICE_UPLOADPACK_LS = 1,
-	GIT_SERVICE_UPLOADPACK = 2,
+	GIT_SERVICE_UPLOADPACK_LS  = 1,
+	GIT_SERVICE_UPLOADPACK	 = 2,
 	GIT_SERVICE_RECEIVEPACK_LS = 3,
-	GIT_SERVICE_RECEIVEPACK = 4,
+	GIT_SERVICE_RECEIVEPACK	= 4,
 } git_smart_service_t;
 
 typedef struct git_smart_subtransport git_smart_subtransport;

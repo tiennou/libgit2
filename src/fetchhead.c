@@ -85,7 +85,7 @@ static int fetchhead_ref_write(
 		type = "branch ";
 		name = fetchhead_ref->ref_name + strlen(GIT_REFS_HEADS_DIR);
 	} else if (git__prefixcmp(fetchhead_ref->ref_name,
-													GIT_REFS_TAGS_DIR) == 0) {
+				   GIT_REFS_TAGS_DIR) == 0) {
 		type = "tag ";
 		name = fetchhead_ref->ref_name + strlen(GIT_REFS_TAGS_DIR);
 	} else if (!git__strcmp(fetchhead_ref->ref_name, GIT_HEAD_FILE)) {
@@ -109,7 +109,7 @@ static int fetchhead_ref_write(
 int git_fetchhead_write(git_repository *repo, git_vector *fetchhead_refs)
 {
 	git_filebuf file = GIT_FILEBUF_INIT;
-	git_buf path = GIT_BUF_INIT;
+	git_buf path	 = GIT_BUF_INIT;
 	unsigned int i;
 	git_fetchhead_ref *fetchhead_ref;
 
@@ -127,7 +127,7 @@ int git_fetchhead_write(git_repository *repo, git_vector *fetchhead_refs)
 
 	git_vector_sort(fetchhead_refs);
 
-	git_vector_foreach(fetchhead_refs, i, fetchhead_ref)
+	git_vector_foreach (fetchhead_refs, i, fetchhead_ref)
 		fetchhead_ref_write(&file, fetchhead_ref);
 
 	return git_filebuf_commit(&file);
@@ -143,7 +143,7 @@ static int fetchhead_ref_parse(
 {
 	char *oid_str, *is_merge_str, *desc, *name = NULL;
 	const char *type = NULL;
-	int error = 0;
+	int error		 = 0;
 
 	*remote_url = NULL;
 
@@ -169,7 +169,7 @@ static int fetchhead_ref_parse(
 
 	if (git_oid_fromstr(oid, oid_str) < 0) {
 		const git_error *oid_err = giterr_last();
-		const char *err_msg = oid_err ? oid_err->message : "invalid object ID";
+		const char *err_msg		 = oid_err ? oid_err->message : "invalid object ID";
 
 		giterr_set(GITERR_FETCHHEAD, "%s in FETCH_HEAD line %" PRIuZ,
 			err_msg, line_num);
@@ -245,7 +245,7 @@ int git_repository_fetchhead_foreach(git_repository *repo,
 	unsigned int is_merge = 0;
 	char *buffer, *line;
 	size_t line_num = 0;
-	int error = 0;
+	int error		= 0;
 
 	assert(repo && cb);
 
@@ -261,7 +261,7 @@ int git_repository_fetchhead_foreach(git_repository *repo,
 		++line_num;
 
 		if ((error = fetchhead_ref_parse(
-								&oid, &is_merge, &name, &remote_url, line, line_num)) < 0)
+				 &oid, &is_merge, &name, &remote_url, line, line_num)) < 0)
 			goto done;
 
 		if (git_buf_len(&name) > 0)

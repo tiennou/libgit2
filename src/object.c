@@ -21,7 +21,7 @@ bool git_object__strict_input_validation = true;
 
 typedef struct {
 	const char *str; /* type name string */
-	size_t size;     /* size in bytes of the object structure */
+	size_t size;	 /* size in bytes of the object structure */
 
 	int (*parse)(void *self, git_odb_object *obj);
 	void (*free)(void *self);
@@ -84,7 +84,7 @@ int git_object__from_odb_object(
 	git_oid_cpy(&object->cached.oid, &odb_obj->cached.oid);
 	object->cached.type = odb_obj->cached.type;
 	object->cached.size = odb_obj->cached.size;
-	object->repo = repo;
+	object->repo		= repo;
 
 	/* Parse raw object data */
 	def = &git_objects_table[odb_obj->cached.type];
@@ -116,10 +116,10 @@ int git_object_lookup_prefix(
 	size_t len,
 	git_otype type)
 {
-	git_object *object = NULL;
-	git_odb *odb = NULL;
+	git_object *object		= NULL;
+	git_odb *odb			= NULL;
 	git_odb_object *odb_obj = NULL;
-	int error = 0;
+	int error				= 0;
 
 	assert(repo && object_out && id);
 
@@ -305,7 +305,7 @@ static int peel_error(int error, const git_oid *oid, git_otype type)
 	hex_oid[GIT_OID_HEXSZ] = '\0';
 
 	giterr_set(GITERR_OBJECT, "the git_object of id '%s' can not be "
-																											"successfully peeled into a %s (git_otype=%i).",
+							  "successfully peeled into a %s (git_otype=%i).",
 		hex_oid, type_name, type);
 
 	return error;
@@ -378,7 +378,7 @@ int git_object_peel(
 		}
 
 		source = deref;
-		deref = NULL;
+		deref  = NULL;
 	}
 
 	if (source != object)
@@ -405,8 +405,8 @@ int git_object_lookup_bypath(
 	const char *path,
 	git_otype type)
 {
-	int error = -1;
-	git_tree *tree = NULL;
+	int error			  = -1;
+	git_tree *tree		  = NULL;
 	git_tree_entry *entry = NULL;
 
 	assert(out && treeish && path);
@@ -435,7 +435,7 @@ cleanup:
 int git_object_short_id(git_buf *out, const git_object *obj)
 {
 	git_repository *repo;
-	int len = GIT_ABBREV_DEFAULT, error;
+	int len	= GIT_ABBREV_DEFAULT, error;
 	git_oid id = {{0}};
 	git_odb *odb;
 

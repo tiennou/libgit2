@@ -18,7 +18,7 @@
 
 #define PATH__ABSOLUTE_LEN 3
 
-#define path__is_nt_namespace(p) \
+#define path__is_nt_namespace(p)                                              \
 	(((p)[0] == '\\' && (p)[1] == '\\' && (p)[2] == '?' && (p)[3] == '\\') || \
 		((p)[0] == '/' && (p)[1] == '/' && (p)[2] == '?' && (p)[3] == '/'))
 
@@ -297,8 +297,8 @@ char *git_win32_path_8dot3_name(const char *path)
 		return NULL;
 
 	for (start = shortpath + (len - 1);
-						start > shortpath && *(start - 1) != '/' && *(start - 1) != '\\';
-						start--)
+		 start > shortpath && *(start - 1) != '/' && *(start - 1) != '\\';
+		 start--)
 		namelen++;
 
 	/* We may not have actually been given a short name.  But if we have,
@@ -325,7 +325,7 @@ int git_win32_path_readlink_w(git_win32_path dest, const git_win32_path path)
 {
 	BYTE buf[MAXIMUM_REPARSE_DATA_BUFFER_SIZE];
 	GIT_REPARSE_DATA_BUFFER *reparse_buf = (GIT_REPARSE_DATA_BUFFER *)buf;
-	HANDLE handle = NULL;
+	HANDLE handle						 = NULL;
 	DWORD ioctl_ret;
 	wchar_t *target;
 	size_t target_len;
@@ -342,7 +342,7 @@ int git_win32_path_readlink_w(git_win32_path dest, const git_win32_path path)
 	}
 
 	if (!DeviceIoControl(handle, FSCTL_GET_REPARSE_POINT, NULL, 0,
-						reparse_buf, sizeof(buf), &ioctl_ret, NULL)) {
+			reparse_buf, sizeof(buf), &ioctl_ret, NULL)) {
 		errno = EINVAL;
 		goto on_error;
 	}

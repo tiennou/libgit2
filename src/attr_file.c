@@ -44,9 +44,9 @@ int git_attr_file__new(
 
 	git_pool_init(&attrs->pool, 1);
 	GIT_REFCOUNT_INC(attrs);
-	attrs->entry = entry;
+	attrs->entry  = entry;
 	attrs->source = source;
-	*out = attrs;
+	*out		  = attrs;
 	return 0;
 }
 
@@ -60,7 +60,7 @@ int git_attr_file__clear_rules(git_attr_file *file, bool need_lock)
 		return -1;
 	}
 
-	git_vector_foreach(&file->rules, i, rule)
+	git_vector_foreach (&file->rules, i, rule)
 		git_attr_rule__free(rule);
 	git_vector_free(&file->rules);
 
@@ -104,8 +104,8 @@ int git_attr_file__load(
 	git_attr_file_source source,
 	git_attr_file_parser parser)
 {
-	int error = 0;
-	git_blob *blob = NULL;
+	int error		= 0;
+	git_blob *blob  = NULL;
 	git_buf content = GIT_BUF_INIT;
 	git_attr_file *file;
 	struct stat st;
@@ -212,7 +212,7 @@ int git_attr_file__out_of_date(
 		git_oid id;
 
 		if ((error = attr_file_oid_from_index(
-								&id, repo, file->entry->path)) < 0)
+				 &id, repo, file->entry->path)) < 0)
 			return error;
 
 		return (git_oid__cmp(&file->cache_data.oid, &id) != 0);
@@ -234,7 +234,7 @@ static bool parse_optimized_patterns(
 int git_attr_file__parse_buffer(
 	git_repository *repo, git_attr_file *attrs, const char *data)
 {
-	int error = 0;
+	int error		 = 0;
 	const char *scan = data, *context = NULL;
 	git_attr_rule *rule = NULL;
 
@@ -261,9 +261,9 @@ int git_attr_file__parse_buffer(
 
 		/* parse the next "pattern attr attr attr" line */
 		if (!(error = git_attr_fnmatch__parse(
-									&rule->match, &attrs->pool, context, &scan)) &&
+				  &rule->match, &attrs->pool, context, &scan)) &&
 			!(error = git_attr_assignment__parse(
-						repo, &attrs->pool, &rule->assigns, &scan))) {
+				  repo, &attrs->pool, &rule->assigns, &scan))) {
 			if (rule->match.flags & GIT_ATTR_FNMATCH_MACRO)
 				/* TODO: warning if macro found in file below repo root */
 				error = git_attr_cache__insert_macro(repo, rule);
@@ -309,7 +309,7 @@ int git_attr_file__lookup_one(
 
 	*value = NULL;
 
-	name.name = attr;
+	name.name	  = attr;
 	name.name_hash = git_attr_file__name_hash(attr);
 
 	git_attr_file__foreach_matching_rule(file, path, i, rule)
@@ -318,8 +318,8 @@ int git_attr_file__lookup_one(
 
 		if (!git_vector_bsearch(&pos, &rule->assigns, &name)) {
 			*value = ((git_attr_assignment *)
-														git_vector_get(&rule->assigns, pos))
-													->value;
+						  git_vector_get(&rule->assigns, pos))
+						 ->value;
 			break;
 		}
 	}
@@ -426,7 +426,7 @@ bool git_attr_fnmatch__match(
 	/* if path is a directory prefix of a negated pattern, then match */
 	if ((match->flags & GIT_ATTR_FNMATCH_NEGATIVE) && path->is_dir) {
 		size_t pathlen = strlen(relpath);
-		bool prefixed = (pathlen <= match->length) &&
+		bool prefixed  = (pathlen <= match->length) &&
 			((match->flags & GIT_ATTR_FNMATCH_ICASE) ? !strncasecmp(match->pattern, relpath, pathlen) : !strncmp(match->pattern, relpath, pathlen));
 
 		if (prefixed && git_path_at_end_of_segment(&match->pattern[pathlen]))
@@ -453,7 +453,7 @@ git_attr_assignment *git_attr_rule__lookup_assignment(
 {
 	size_t pos;
 	git_attr_name key;
-	key.name = name;
+	key.name	  = name;
 	key.name_hash = git_attr_file__name_hash(name);
 
 	if (git_vector_bsearch(&pos, &rule->assigns, &key))
@@ -515,7 +515,7 @@ int git_attr_path__init(
 void git_attr_path__free(git_attr_path *info)
 {
 	git_buf_dispose(&info->full);
-	info->path = NULL;
+	info->path	 = NULL;
 	info->basename = NULL;
 }
 
@@ -656,8 +656,8 @@ int git_attr_fnmatch__parse(
 		size_t len;
 		if (slash) {
 			/* include the slash for easier matching */
-			len = slash - context + 1;
-			spec->containing_dir = git_pool_strndup(pool, context, len);
+			len							= slash - context + 1;
+			spec->containing_dir		= git_pool_strndup(pool, context, len);
 			spec->containing_dir_length = len;
 		}
 	}
@@ -682,9 +682,9 @@ static bool parse_optimized_patterns(
 	const char *pattern)
 {
 	if (!pattern[1] && (pattern[0] == '*' || pattern[0] == '.')) {
-		spec->flags = GIT_ATTR_FNMATCH_MATCH_ALL;
+		spec->flags   = GIT_ATTR_FNMATCH_MATCH_ALL;
 		spec->pattern = git_pool_strndup(pool, pattern, 1);
-		spec->length = 1;
+		spec->length  = 1;
 
 		return true;
 	}
@@ -710,7 +710,7 @@ static void git_attr_assignment__free(git_attr_assignment *assign)
 	/* name and value are stored in a git_pool associated with the
 	 * git_attr_file, so they do not need to be freed here
 	 */
-	assign->name = NULL;
+	assign->name  = NULL;
 	assign->value = NULL;
 	git__free(assign);
 }
@@ -718,7 +718,7 @@ static void git_attr_assignment__free(git_attr_assignment *assign)
 static int merge_assignments(void **old_raw, void *new_raw)
 {
 	git_attr_assignment **old = (git_attr_assignment **)old_raw;
-	git_attr_assignment *new = (git_attr_assignment *)new_raw;
+	git_attr_assignment *new  = (git_attr_assignment *)new_raw;
 
 	GIT_REFCOUNT_DEC(*old, git_attr_assignment__free);
 	*old = new;
@@ -732,7 +732,7 @@ int git_attr_assignment__parse(
 	const char **base)
 {
 	int error;
-	const char *scan = *base;
+	const char *scan			= *base;
 	git_attr_assignment *assign = NULL;
 
 	assert(assigns && !assigns->length);
@@ -754,7 +754,7 @@ int git_attr_assignment__parse(
 		}
 
 		assign->name_hash = 5381;
-		assign->value = git_attr__true;
+		assign->value	 = git_attr__true;
 
 		/* look for magic name prefixes */
 		if (*scan == '-') {
@@ -807,8 +807,7 @@ int git_attr_assignment__parse(
 				unsigned int i;
 				git_attr_assignment *massign;
 
-				git_vector_foreach(&macro->assigns, i, massign)
-				{
+				git_vector_foreach (&macro->assigns, i, massign) {
 					GIT_REFCOUNT_INC(massign);
 
 					error = git_vector_insert_sorted(
@@ -847,14 +846,14 @@ static void git_attr_rule__clear(git_attr_rule *rule)
 		return;
 
 	if (!(rule->match.flags & GIT_ATTR_FNMATCH_IGNORE)) {
-		git_vector_foreach(&rule->assigns, i, assign)
+		git_vector_foreach (&rule->assigns, i, assign)
 			GIT_REFCOUNT_DEC(assign, git_attr_assignment__free);
 		git_vector_free(&rule->assigns);
 	}
 
 	/* match.pattern is stored in a git_pool, so no need to free */
 	rule->match.pattern = NULL;
-	rule->match.length = 0;
+	rule->match.length  = 0;
 }
 
 void git_attr_rule__free(git_attr_rule *rule)

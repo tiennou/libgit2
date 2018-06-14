@@ -83,7 +83,7 @@ static int crlf_input_action(struct crlf_attrs *ca)
 static int has_cr_in_index(const git_filter_source *src)
 {
 	git_repository *repo = git_filter_source_repo(src);
-	const char *path = git_filter_source_path(src);
+	const char *path	 = git_filter_source_path(src);
 	git_index *index;
 	const git_index_entry *entry;
 	git_blob *blob;
@@ -110,7 +110,7 @@ static int has_cr_in_index(const git_filter_source *src)
 		return false;
 
 	blobcontent = git_blob_rawcontent(blob);
-	blobsize = git_blob_rawsize(blob);
+	blobsize	= git_blob_rawsize(blob);
 	if (!git__is_sizet(blobsize))
 		blobsize = (size_t)-1;
 
@@ -286,12 +286,12 @@ static int crlf_check(
 
 	if (!attr_values) {
 		ca.crlf_action = GIT_CRLF_GUESS;
-		ca.eol = GIT_EOL_UNSET;
+		ca.eol		   = GIT_EOL_UNSET;
 	} else {
 		ca.crlf_action = check_crlf(attr_values[2]); /* text */
 		if (ca.crlf_action == GIT_CRLF_GUESS)
 			ca.crlf_action = check_crlf(attr_values[0]); /* clrf */
-		ca.eol = check_eol(attr_values[1]);           /* eol */
+		ca.eol = check_eol(attr_values[1]);				 /* eol */
 	}
 	ca.auto_crlf = GIT_AUTO_CRLF_DEFAULT;
 	ca.safe_crlf = GIT_SAFE_CRLF_DEFAULT;
@@ -307,7 +307,7 @@ static int crlf_check(
 
 	if (ca.crlf_action == GIT_CRLF_GUESS ||
 		((ca.crlf_action == GIT_CRLF_AUTO ||
-				ca.crlf_action == GIT_CRLF_TEXT) &&
+			 ca.crlf_action == GIT_CRLF_TEXT) &&
 			git_filter_source_mode(src) == GIT_FILTER_SMUDGE)) {
 
 		error = git_repository__cvar(
@@ -378,13 +378,13 @@ git_filter *git_crlf_filter_new(void)
 	if (f == NULL)
 		return NULL;
 
-	f->f.version = GIT_FILTER_VERSION;
+	f->f.version	= GIT_FILTER_VERSION;
 	f->f.attributes = "crlf eol text";
 	f->f.initialize = NULL;
-	f->f.shutdown = git_filter_free;
-	f->f.check = crlf_check;
-	f->f.apply = crlf_apply;
-	f->f.cleanup = crlf_cleanup;
+	f->f.shutdown   = git_filter_free;
+	f->f.check		= crlf_check;
+	f->f.apply		= crlf_apply;
+	f->f.cleanup	= crlf_cleanup;
 
 	return (git_filter *)f;
 }

@@ -35,13 +35,13 @@
 #define GIT_ATTR_FNMATCH_LEADINGDIR (1U << 11)
 #define GIT_ATTR_FNMATCH_NOLEADINGDIR (1U << 12)
 
-#define GIT_ATTR_FNMATCH__INCOMING \
+#define GIT_ATTR_FNMATCH__INCOMING                             \
 	(GIT_ATTR_FNMATCH_ALLOWSPACE | GIT_ATTR_FNMATCH_ALLOWNEG | \
 		GIT_ATTR_FNMATCH_ALLOWMACRO | GIT_ATTR_FNMATCH_NOLEADINGDIR)
 
 typedef enum {
-	GIT_ATTR_FILE__IN_MEMORY = 0,
-	GIT_ATTR_FILE__FROM_FILE = 1,
+	GIT_ATTR_FILE__IN_MEMORY  = 0,
+	GIT_ATTR_FILE__FROM_FILE  = 1,
 	GIT_ATTR_FILE__FROM_INDEX = 2,
 
 	GIT_ATTR_FILE_NUM_SOURCES = 3
@@ -204,8 +204,8 @@ extern git_attr_assignment *git_attr_rule__lookup_assignment(
 	git_attr_rule *rule, const char *name);
 
 typedef enum { GIT_DIR_FLAG_TRUE = 1,
-	GIT_DIR_FLAG_FALSE = 0,
-	GIT_DIR_FLAG_UNKNOWN = -1 } git_dir_flag;
+	GIT_DIR_FLAG_FALSE			 = 0,
+	GIT_DIR_FLAG_UNKNOWN		 = -1 } git_dir_flag;
 
 extern int git_attr_path__init(
 	git_attr_path *info, const char *path, const char *base, git_dir_flag is_dir);

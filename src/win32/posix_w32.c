@@ -165,20 +165,20 @@ last_error_retryable(void)
 		os_error == ERROR_ACCESS_DENIED);
 }
 
-#define do_with_retries(fn, remediation) \
-	do { \
-		int __retry, __ret; \
+#define do_with_retries(fn, remediation)                         \
+	do {                                                         \
+		int __retry, __ret;                                      \
 		for (__retry = git_win32__retries; __retry; __retry--) { \
-			if ((__ret = (fn)) != GIT_RETRY) \
-				return __ret; \
-			if (__retry > 1 && (__ret = (remediation)) != 0) { \
-				if (__ret == GIT_RETRY) \
-					continue; \
-				return __ret; \
-			} \
-			Sleep(5); \
-		} \
-		return -1; \
+			if ((__ret = (fn)) != GIT_RETRY)                     \
+				return __ret;                                    \
+			if (__retry > 1 && (__ret = (remediation)) != 0) {   \
+				if (__ret == GIT_RETRY)                          \
+					continue;                                    \
+				return __ret;                                    \
+			}                                                    \
+			Sleep(5);                                            \
+		}                                                        \
+		return -1;                                               \
 	} while (0)
 
 static int ensure_writable(wchar_t *path)
@@ -337,7 +337,7 @@ static int lstat_w(
 				break;
 
 			path[path_len] = L'\0';
-			attrs = GetFileAttributesW(path);
+			attrs		   = GetFileAttributesW(path);
 
 			if (attrs != INVALID_FILE_ATTRIBUTES) {
 				if (!(attrs & FILE_ATTRIBUTE_DIRECTORY))
@@ -453,11 +453,11 @@ open_opts_from_posix(struct open_opts *opts, int flags, mode_t mode)
 	}
 
 	opts->attributes = ((flags & O_CREAT) && !(mode & S_IWRITE)) ? FILE_ATTRIBUTE_READONLY : FILE_ATTRIBUTE_NORMAL;
-	opts->osf_flags = flags & (O_RDONLY | O_APPEND);
+	opts->osf_flags  = flags & (O_RDONLY | O_APPEND);
 
-	opts->security.nLength = sizeof(SECURITY_ATTRIBUTES);
+	opts->security.nLength				= sizeof(SECURITY_ATTRIBUTES);
 	opts->security.lpSecurityDescriptor = NULL;
-	opts->security.bInheritHandle = 0;
+	opts->security.bInheritHandle		= 0;
 }
 
 GIT_INLINE(int)
@@ -487,7 +487,7 @@ open_once(
 int p_open(const char *path, int flags, ...)
 {
 	git_win32_path wpath;
-	mode_t mode = 0;
+	mode_t mode			  = 0;
 	struct open_opts opts = {0};
 
 	if (git_win32_path_from_utf8(wpath, path) < 0)
@@ -609,7 +609,7 @@ int p_getcwd(char *buffer_out, size_t size)
 static PFGetFinalPathNameByHandleW get_fpnbyhandle(void)
 {
 	static PFGetFinalPathNameByHandleW pFunc = NULL;
-	PFGetFinalPathNameByHandleW toReturn = pFunc;
+	PFGetFinalPathNameByHandleW toReturn	 = pFunc;
 
 	if (!toReturn) {
 		HMODULE hModule = GetModuleHandleW(L"kernel32");
@@ -923,13 +923,13 @@ int p_inet_pton(int af, const char *src, void *dst)
 	struct sockaddr_storage sin;
 	void *addr;
 	int sin_len = sizeof(struct sockaddr_storage), addr_len;
-	int error = 0;
+	int error   = 0;
 
 	if (af == AF_INET) {
-		addr = &((struct sockaddr_in *)&sin)->sin_addr;
+		addr	 = &((struct sockaddr_in *)&sin)->sin_addr;
 		addr_len = sizeof(struct in_addr);
 	} else if (af == AF_INET6) {
-		addr = &((struct sockaddr_in6 *)&sin)->sin6_addr;
+		addr	 = &((struct sockaddr_in6 *)&sin)->sin6_addr;
 		addr_len = sizeof(struct in6_addr);
 	} else {
 		errno = EAFNOSUPPORT;

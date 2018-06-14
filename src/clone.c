@@ -34,9 +34,9 @@ static int create_branch(
 	const char *name,
 	const char *log_message)
 {
-	git_commit *head_obj = NULL;
+	git_commit *head_obj	  = NULL;
 	git_reference *branch_ref = NULL;
-	git_buf refname = GIT_BUF_INIT;
+	git_buf refname			  = GIT_BUF_INIT;
 	int error;
 
 	/* Find the target commit */
@@ -150,7 +150,7 @@ static int update_head_to_remote(
 	const git_remote_head *remote_head, **refs;
 	const git_oid *remote_head_id;
 	git_buf remote_master_name = GIT_BUF_INIT;
-	git_buf branch = GIT_BUF_INIT;
+	git_buf branch			   = GIT_BUF_INIT;
 
 	if ((error = git_remote_ls(&refs, &refs_len, remote)) < 0)
 		return error;
@@ -183,9 +183,9 @@ static int update_head_to_remote(
 
 	/* Determine the remote tracking reference name from the local master */
 	if ((error = git_refspec_transform(
-							&remote_master_name,
-							refspec,
-							git_buf_cstr(&branch))) < 0)
+			 &remote_master_name,
+			 refspec,
+			 git_buf_cstr(&branch))) < 0)
 		goto cleanup;
 
 	error = update_head_to_new_branch(
@@ -209,12 +209,12 @@ static int update_head_to_branch(
 {
 	int retcode;
 	git_buf remote_branch_name = GIT_BUF_INIT;
-	git_reference *remote_ref = NULL;
+	git_reference *remote_ref  = NULL;
 
 	assert(remote_name && branch);
 
 	if ((retcode = git_buf_printf(&remote_branch_name, GIT_REFS_REMOTES_DIR "%s/%s",
-							remote_name, branch)) < 0)
+			 remote_name, branch)) < 0)
 		goto cleanup;
 
 	if ((retcode = git_reference_lookup(&remote_ref, repo, git_buf_cstr(&remote_branch_name))) < 0)
@@ -262,7 +262,7 @@ static int create_and_configure_origin(
 	git_remote *origin = NULL;
 	char buf[GIT_PATH_MAX];
 	git_remote_create_cb remote_create = options->remote_cb;
-	void *payload = options->remote_cb_payload;
+	void *payload					   = options->remote_cb_payload;
 
 	/* If the path exists and is a dir, the url should be the absolute path */
 	if (git_path_root(url) < 0 && git_path_exists(url) && git_path_isdir(url)) {
@@ -274,7 +274,7 @@ static int create_and_configure_origin(
 
 	if (!remote_create) {
 		remote_create = default_remote_create;
-		payload = NULL;
+		payload		  = NULL;
 	}
 
 	if ((error = remote_create(&origin, repo, "origin", url, payload)) < 0)
@@ -341,7 +341,7 @@ static int clone_into(git_repository *repo, git_remote *_remote, const git_fetch
 
 	memcpy(&fetch_opts, opts, sizeof(git_fetch_options));
 	fetch_opts.update_fetchhead = 0;
-	fetch_opts.download_tags = GIT_REMOTE_DOWNLOAD_TAGS_ALL;
+	fetch_opts.download_tags	= GIT_REMOTE_DOWNLOAD_TAGS_ALL;
 	git_buf_printf(&reflog_message, "clone: from %s", git_remote_url(remote));
 
 	if ((error = git_remote_fetch(remote, NULL, &fetch_opts, git_buf_cstr(&reflog_message))) != 0)
@@ -358,7 +358,7 @@ cleanup:
 
 int git_clone__should_clone_local(const char *url_or_path, git_clone_local_t local)
 {
-	git_buf fromurl = GIT_BUF_INIT;
+	git_buf fromurl  = GIT_BUF_INIT;
 	const char *path = url_or_path;
 	bool is_url, is_local;
 
@@ -388,11 +388,11 @@ int git_clone(
 	const char *local_path,
 	const git_clone_options *_options)
 {
-	int error = 0;
+	int error			 = 0;
 	git_repository *repo = NULL;
 	git_remote *origin;
 	git_clone_options options = GIT_CLONE_OPTIONS_INIT;
-	uint32_t rmdir_flags = GIT_RMDIR_REMOVE_FILES;
+	uint32_t rmdir_flags	  = GIT_RMDIR_REMOVE_FILES;
 	git_repository_create_cb repository_cb;
 
 	assert(out && url && local_path);
@@ -423,7 +423,7 @@ int git_clone(
 
 	if (!(error = create_and_configure_origin(&origin, repo, url, &options))) {
 		int clone_local = git_clone__should_clone_local(url, options.local);
-		int link = options.local != GIT_CLONE_LOCAL_NO_LINKS;
+		int link		= options.local != GIT_CLONE_LOCAL_NO_LINKS;
 
 		if (clone_local == 1)
 			error = clone_local_into(

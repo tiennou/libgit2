@@ -14,7 +14,7 @@
 #include "netops.h"
 
 typedef enum {
-	GIT_AUTHTYPE_BASIC = 1,
+	GIT_AUTHTYPE_BASIC	 = 1,
 	GIT_AUTHTYPE_NEGOTIATE = 2,
 } git_http_authtype_t;
 

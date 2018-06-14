@@ -24,9 +24,9 @@ int git_reset_default(
 	const git_object *target,
 	const git_strarray *pathspecs)
 {
-	git_object *commit = NULL;
-	git_tree *tree = NULL;
-	git_diff *diff = NULL;
+	git_object *commit	= NULL;
+	git_tree *tree		  = NULL;
+	git_diff *diff		  = NULL;
 	git_diff_options opts = GIT_DIFF_OPTIONS_INIT;
 	size_t i, max_i;
 	git_index_entry entry;
@@ -53,10 +53,10 @@ int git_reset_default(
 	}
 
 	opts.pathspec = *pathspecs;
-	opts.flags = GIT_DIFF_REVERSE;
+	opts.flags	= GIT_DIFF_REVERSE;
 
 	if ((error = git_diff_tree_to_index(
-							&diff, repo, tree, index, &opts)) < 0)
+			 &diff, repo, tree, index, &opts)) < 0)
 		goto cleanup;
 
 	for (i = 0, max_i = git_diff_num_deltas(diff); i < max_i; ++i) {
@@ -106,12 +106,12 @@ static int reset(
 	git_reset_t reset_type,
 	const git_checkout_options *checkout_opts)
 {
-	git_object *commit = NULL;
-	git_index *index = NULL;
-	git_tree *tree = NULL;
-	int error = 0;
+	git_object *commit		  = NULL;
+	git_index *index		  = NULL;
+	git_tree *tree			  = NULL;
+	int error				  = 0;
 	git_checkout_options opts = GIT_CHECKOUT_OPTIONS_INIT;
-	git_buf log_message = GIT_BUF_INIT;
+	git_buf log_message		  = GIT_BUF_INIT;
 
 	assert(repo && target);
 
@@ -126,7 +126,7 @@ static int reset(
 
 	if (reset_type != GIT_RESET_SOFT &&
 		(error = git_repository__ensure_not_bare(repo,
-				reset_type == GIT_RESET_MIXED ? "reset mixed" : "reset hard")) < 0)
+			 reset_type == GIT_RESET_MIXED ? "reset mixed" : "reset hard")) < 0)
 		return error;
 
 	if ((error = git_object_peel(&commit, target, GIT_OBJ_COMMIT)) < 0 ||
@@ -155,7 +155,7 @@ static int reset(
 
 	/* move HEAD to the new target */
 	if ((error = git_reference__update_terminal(repo, GIT_HEAD_FILE,
-							git_object_id(commit), NULL, git_buf_cstr(&log_message))) < 0)
+			 git_object_id(commit), NULL, git_buf_cstr(&log_message))) < 0)
 		goto cleanup;
 
 	if (reset_type > GIT_RESET_SOFT) {

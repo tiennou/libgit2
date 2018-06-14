@@ -95,7 +95,7 @@ void git_oid_pathfmt(char *str, const git_oid *oid)
 {
 	size_t i;
 
-	str = fmt_one(str, oid->id[0]);
+	str	= fmt_one(str, oid->id[0]);
 	*str++ = '/';
 	for (i = 1; i < sizeof(oid->id); i++)
 		str = fmt_one(str, oid->id[i]);
@@ -135,7 +135,7 @@ int git_oid__parse(
 	git_oid *oid, const char **buffer_out,
 	const char *buffer_end, const char *header)
 {
-	const size_t sha_len = GIT_OID_HEXSZ;
+	const size_t sha_len	= GIT_OID_HEXSZ;
 	const size_t header_len = strlen(header);
 
 	const char *buffer = *buffer_out;
@@ -290,10 +290,10 @@ static trie_node *push_leaf(git_oid_shorten *os, node_index idx, int push_at, co
 		return NULL;
 	}
 
-	node = &os->nodes[idx];
+	node					= &os->nodes[idx];
 	node->children[push_at] = -idx_leaf;
 
-	leaf = &os->nodes[idx_leaf];
+	leaf	   = &os->nodes[idx_leaf];
 	leaf->tail = oid;
 
 	return node;
@@ -388,7 +388,7 @@ int git_oid_shorten_add(git_oid_shorten *os, const char *text_oid)
 	if (text_oid == NULL)
 		return os->min_length;
 
-	idx = 0;
+	idx		= 0;
 	is_leaf = false;
 
 	for (i = 0; i < GIT_OID_HEXSZ; ++i) {
@@ -405,7 +405,7 @@ int git_oid_shorten_add(git_oid_shorten *os, const char *text_oid)
 		if (is_leaf) {
 			const char *tail;
 
-			tail = node->tail;
+			tail	   = node->tail;
 			node->tail = NULL;
 
 			node = push_leaf(os, idx, git__fromhex(tail[0]), &tail[1]);
@@ -425,12 +425,12 @@ int git_oid_shorten_add(git_oid_shorten *os, const char *text_oid)
 			break;
 		}
 
-		idx = node->children[c];
+		idx		= node->children[c];
 		is_leaf = false;
 
 		if (idx < 0) {
 			node->children[c] = idx = -idx;
-			is_leaf = true;
+			is_leaf					= true;
 		}
 	}
 

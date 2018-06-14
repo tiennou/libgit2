@@ -85,14 +85,14 @@ extern int git_futils_mkdir_r(const char *path, const mode_t mode);
  * exists, unless GIT_MKDIR_EXCL is given.
  */
 typedef enum {
-	GIT_MKDIR_EXCL = 1,
-	GIT_MKDIR_PATH = 2,
-	GIT_MKDIR_CHMOD = 4,
-	GIT_MKDIR_CHMOD_PATH = 8,
-	GIT_MKDIR_SKIP_LAST = 16,
-	GIT_MKDIR_SKIP_LAST2 = 32,
-	GIT_MKDIR_VERIFY_DIR = 64,
-	GIT_MKDIR_REMOVE_FILES = 128,
+	GIT_MKDIR_EXCL			  = 1,
+	GIT_MKDIR_PATH			  = 2,
+	GIT_MKDIR_CHMOD			  = 4,
+	GIT_MKDIR_CHMOD_PATH	  = 8,
+	GIT_MKDIR_SKIP_LAST		  = 16,
+	GIT_MKDIR_SKIP_LAST2	  = 32,
+	GIT_MKDIR_VERIFY_DIR	  = 64,
+	GIT_MKDIR_REMOVE_FILES	= 128,
 	GIT_MKDIR_REMOVE_SYMLINKS = 256,
 } git_futils_mkdir_flags;
 
@@ -150,11 +150,11 @@ extern int git_futils_mkpath2file(const char *path, const mode_t mode);
  */
 typedef enum {
 	GIT_RMDIR_EMPTY_HIERARCHY = 0,
-	GIT_RMDIR_REMOVE_FILES = (1 << 0),
-	GIT_RMDIR_SKIP_NONEMPTY = (1 << 1),
-	GIT_RMDIR_EMPTY_PARENTS = (1 << 2),
+	GIT_RMDIR_REMOVE_FILES	= (1 << 0),
+	GIT_RMDIR_SKIP_NONEMPTY   = (1 << 1),
+	GIT_RMDIR_EMPTY_PARENTS   = (1 << 2),
 	GIT_RMDIR_REMOVE_BLOCKERS = (1 << 3),
-	GIT_RMDIR_SKIP_ROOT = (1 << 4),
+	GIT_RMDIR_SKIP_ROOT		  = (1 << 4),
 } git_futils_rmdir_flags;
 
 /**
@@ -214,12 +214,12 @@ extern int git_futils_touch(const char *path, time_t *when);
  */
 typedef enum {
 	GIT_CPDIR_CREATE_EMPTY_DIRS = (1u << 0),
-	GIT_CPDIR_COPY_SYMLINKS = (1u << 1),
-	GIT_CPDIR_COPY_DOTFILES = (1u << 2),
-	GIT_CPDIR_OVERWRITE = (1u << 3),
-	GIT_CPDIR_CHMOD_DIRS = (1u << 4),
-	GIT_CPDIR_SIMPLE_TO_MODE = (1u << 5),
-	GIT_CPDIR_LINK_FILES = (1u << 6),
+	GIT_CPDIR_COPY_SYMLINKS		= (1u << 1),
+	GIT_CPDIR_COPY_DOTFILES		= (1u << 2),
+	GIT_CPDIR_OVERWRITE			= (1u << 3),
+	GIT_CPDIR_CHMOD_DIRS		= (1u << 4),
+	GIT_CPDIR_SIMPLE_TO_MODE	= (1u << 5),
+	GIT_CPDIR_LINK_FILES		= (1u << 6),
 } git_futils_cpdir_flags;
 
 /**

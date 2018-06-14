@@ -42,7 +42,7 @@ int git_refspec__parse(git_refspec *refspec, const char *input, bool is_fetch)
 	 */
 	if (!is_fetch && rhs == lhs && rhs[1] == '\0') {
 		refspec->matching = 1;
-		refspec->string = git__strdup(input);
+		refspec->string   = git__strdup(input);
 		GITERR_CHECK_ALLOC(refspec->string);
 		refspec->src = git__strdup("");
 		GITERR_CHECK_ALLOC(refspec->src);
@@ -54,7 +54,7 @@ int git_refspec__parse(git_refspec *refspec, const char *input, bool is_fetch)
 	if (rhs) {
 		size_t rlen = strlen(++rhs);
 		if (rlen || !is_fetch) {
-			is_glob = (1 <= rlen && strchr(rhs, '*'));
+			is_glob		 = (1 <= rlen && strchr(rhs, '*'));
 			refspec->dst = git__strndup(rhs, rlen);
 		}
 	}
@@ -68,8 +68,8 @@ int git_refspec__parse(git_refspec *refspec, const char *input, bool is_fetch)
 		goto invalid;
 
 	refspec->pattern = is_glob;
-	refspec->src = git__strndup(lhs, llen);
-	flags = GIT_REF_FORMAT_ALLOW_ONELEVEL | GIT_REF_FORMAT_REFSPEC_SHORTHAND | (is_glob ? GIT_REF_FORMAT_REFSPEC_PATTERN : 0);
+	refspec->src	 = git__strndup(lhs, llen);
+	flags			 = GIT_REF_FORMAT_ALLOW_ONELEVEL | GIT_REF_FORMAT_REFSPEC_SHORTHAND | (is_glob ? GIT_REF_FORMAT_REFSPEC_PATTERN : 0);
 
 	if (is_fetch) {
 		/*
@@ -213,7 +213,7 @@ static int refspec_transform(
 	 * individually.
 	 */
 	from_star = strchr(from, '*');
-	to_star = strchr(to, '*');
+	to_star   = strchr(to, '*');
 
 	assert(from_star && to_star);
 
@@ -315,11 +315,11 @@ int git_refspec__dwim_one(git_vector *out, git_refspec *spec, git_vector *refs)
 	cur = git__calloc(1, sizeof(git_refspec));
 	GITERR_CHECK_ALLOC(cur);
 
-	cur->force = spec->force;
-	cur->push = spec->push;
-	cur->pattern = spec->pattern;
+	cur->force	= spec->force;
+	cur->push	 = spec->push;
+	cur->pattern  = spec->pattern;
 	cur->matching = spec->matching;
-	cur->string = git__strdup(spec->string);
+	cur->string   = git__strdup(spec->string);
 
 	/* shorthand on the lhs */
 	if (git__prefixcmp(spec->src, GIT_REFS_DIR)) {

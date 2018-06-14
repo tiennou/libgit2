@@ -14,15 +14,15 @@
 #include "strmap.h"
 #include "pack.h"
 
-#define DEFAULT_WINDOW_SIZE \
-	(sizeof(void *) >= 8 \
+#define DEFAULT_WINDOW_SIZE          \
+	(sizeof(void *) >= 8             \
 			? 1 * 1024 * 1024 * 1024 \
 			: 32 * 1024 * 1024)
 
 #define DEFAULT_MAPPED_LIMIT \
 	((1024 * 1024) * (sizeof(void *) >= 8 ? 8192ULL : 256UL))
 
-size_t git_mwindow__window_size = DEFAULT_WINDOW_SIZE;
+size_t git_mwindow__window_size  = DEFAULT_WINDOW_SIZE;
 size_t git_mwindow__mapped_limit = DEFAULT_MAPPED_LIMIT;
 
 /* Whenever you want to read or modify this, grab git__mwindow_mutex */
@@ -220,7 +220,7 @@ static int git_mwindow_close_lru(git_mwindow_file *mwf)
 		git_mwindow_scan_lru(mwf, &lru_w, &lru_l);
 
 	for (i = 0; i < ctl->windowfiles.length; ++i) {
-		git_mwindow *last = lru_w;
+		git_mwindow *last	 = lru_w;
 		git_mwindow_file *cur = git_vector_get(&ctl->windowfiles, i);
 		git_mwindow_scan_lru(cur, &lru_w, &lru_l);
 		if (lru_w != last)
@@ -254,7 +254,7 @@ static git_mwindow *new_window(
 	git_off_t offset)
 {
 	git_mwindow_ctl *ctl = &mem_ctl;
-	size_t walign = git_mwindow__window_size / 2;
+	size_t walign		 = git_mwindow__window_size / 2;
 	git_off_t len;
 	git_mwindow *w;
 
@@ -321,7 +321,7 @@ unsigned char *git_mwindow_open(
 	unsigned int *left)
 {
 	git_mwindow_ctl *ctl = &mem_ctl;
-	git_mwindow *w = *cursor;
+	git_mwindow *w		 = *cursor;
 
 	if (git_mutex_lock(&git__mwindow_mutex)) {
 		giterr_set(GITERR_THREAD, "unable to lock mwindow mutex");
@@ -349,7 +349,7 @@ unsigned char *git_mwindow_open(
 				git_mutex_unlock(&git__mwindow_mutex);
 				return NULL;
 			}
-			w->next = mwf->windows;
+			w->next		 = mwf->windows;
 			mwf->windows = w;
 		}
 	}
@@ -401,8 +401,7 @@ void git_mwindow_file_deregister(git_mwindow_file *mwf)
 	if (git_mutex_lock(&git__mwindow_mutex))
 		return;
 
-	git_vector_foreach(&ctl->windowfiles, i, cur)
-	{
+	git_vector_foreach (&ctl->windowfiles, i, cur) {
 		if (cur == mwf) {
 			git_vector_remove(&ctl->windowfiles, i);
 			git_mutex_unlock(&git__mwindow_mutex);

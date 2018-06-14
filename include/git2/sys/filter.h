@@ -281,8 +281,8 @@ struct git_filter {
 };
 
 #define GIT_FILTER_VERSION 1
-#define GIT_FILTER_INIT \
-	{ \
+#define GIT_FILTER_INIT    \
+	{                      \
 		GIT_FILTER_VERSION \
 	}
 

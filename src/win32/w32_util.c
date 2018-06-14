@@ -18,7 +18,7 @@
 bool git_win32__findfirstfile_filter(git_win32_path dest, const char *src)
 {
 	static const wchar_t suffix[] = L"\\*";
-	int len = git_win32_path_from_utf8(dest, src);
+	int len						  = git_win32_path_from_utf8(dest, src);
 
 	/* Ensure the path was converted */
 	if (len < 0)
@@ -130,9 +130,9 @@ size_t git_win32__path_trim_end(wchar_t *str, size_t len)
 size_t git_win32__canonicalize_path(wchar_t *str, size_t len)
 {
 	static const wchar_t dosdevices_prefix[] = L"\\\?\?\\";
-	static const wchar_t nt_prefix[] = L"\\\\?\\";
-	static const wchar_t unc_prefix[] = L"UNC\\";
-	size_t to_advance = 0;
+	static const wchar_t nt_prefix[]		 = L"\\\\?\\";
+	static const wchar_t unc_prefix[]		 = L"UNC\\";
+	size_t to_advance						 = 0;
 
 	/* "\??\" -- DOS Devices prefix */
 	if (len >= CONST_STRLEN(dosdevices_prefix) &&

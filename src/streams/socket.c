@@ -30,7 +30,7 @@
 #ifdef GIT_WIN32
 static void net_set_error(const char *str)
 {
-	int error = WSAGetLastError();
+	int error		  = WSAGetLastError();
 	char *win32_error = git_win32_get_error_message(error);
 
 	if (win32_error) {
@@ -72,7 +72,7 @@ int socket_connect(git_stream *stream)
 	struct addrinfo *info = NULL, *p;
 	struct addrinfo hints;
 	git_socket_stream *st = (git_socket_stream *)stream;
-	GIT_SOCKET s = INVALID_SOCKET;
+	GIT_SOCKET s		  = INVALID_SOCKET;
 	int ret;
 
 #ifdef GIT_WIN32
@@ -94,7 +94,7 @@ int socket_connect(git_stream *stream)
 
 	memset(&hints, 0x0, sizeof(struct addrinfo));
 	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_family = AF_UNSPEC;
+	hints.ai_family   = AF_UNSPEC;
 
 	if ((ret = p_getaddrinfo(st->host, st->port, &hints, &info)) != 0) {
 		giterr_set(GITERR_NET,
@@ -131,12 +131,12 @@ int socket_connect(git_stream *stream)
 ssize_t socket_write(git_stream *stream, const char *data, size_t len, int flags)
 {
 	ssize_t ret;
-	size_t off = 0;
+	size_t off			  = 0;
 	git_socket_stream *st = (git_socket_stream *)stream;
 
 	while (off < len) {
 		errno = 0;
-		ret = p_send(st->s, data + off, len - off, flags);
+		ret   = p_send(st->s, data + off, len - off, flags);
 		if (ret < 0) {
 			net_set_error("Error sending data");
 			return -1;
@@ -198,11 +198,11 @@ int git_socket_stream_new(git_stream **out, const char *host, const char *port)
 
 	st->parent.version = GIT_STREAM_VERSION;
 	st->parent.connect = socket_connect;
-	st->parent.write = socket_write;
-	st->parent.read = socket_read;
-	st->parent.close = socket_close;
-	st->parent.free = socket_free;
-	st->s = INVALID_SOCKET;
+	st->parent.write   = socket_write;
+	st->parent.read	= socket_read;
+	st->parent.close   = socket_close;
+	st->parent.free	= socket_free;
+	st->s			   = INVALID_SOCKET;
 
 	*out = (git_stream *)st;
 	return 0;

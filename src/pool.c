@@ -69,9 +69,9 @@ static void *pool_alloc_page(git_pool *pool, uint32_t size)
 		!(page = git__malloc(alloc_size)))
 		return NULL;
 
-	page->size = new_page_size;
+	page->size  = new_page_size;
 	page->avail = new_page_size - size;
-	page->next = pool->pages;
+	page->next  = pool->pages;
 
 	pool->pages = page;
 
@@ -81,7 +81,7 @@ static void *pool_alloc_page(git_pool *pool, uint32_t size)
 static void *pool_alloc(git_pool *pool, uint32_t size)
 {
 	git_pool_page *page = pool->pages;
-	void *ptr = NULL;
+	void *ptr			= NULL;
 
 	if (!page || page->avail < size)
 		return pool_alloc_page(pool, size);
@@ -190,7 +190,7 @@ void *git_pool_malloc(git_pool *pool, uint32_t items)
 void *git_pool_mallocz(git_pool *pool, uint32_t items)
 {
 	const uint32_t size = alloc_size(pool, items);
-	void *ptr = pool_alloc(pool, size);
+	void *ptr			= pool_alloc(pool, size);
 	if (ptr)
 		memset(ptr, 0x0, size);
 	return ptr;

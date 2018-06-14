@@ -39,7 +39,7 @@ typedef size_t size_t;
 
 /** Declare a public function exported for application use. */
 #if __GNUC__ >= 4
-#	define GIT_EXTERN(type) extern \
+#	define GIT_EXTERN(type) extern            \
 		__attribute__((visibility("default"))) \
 			type
 #elif defined(_MSC_VER)
@@ -50,7 +50,7 @@ typedef size_t size_t;
 
 /** Declare a function as deprecated. */
 #if defined(__GNUC__)
-#	define GIT_DEPRECATED(func) \
+#	define GIT_DEPRECATED(func)    \
 		__attribute__((deprecated)) \
 			func
 #elif defined(_MSC_VER)

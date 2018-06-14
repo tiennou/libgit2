@@ -34,9 +34,9 @@ static git_time_t tm_to_time_t(const struct tm *tm)
 {
 	static const int mdays[] = {
 		0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
-	int year = tm->tm_year - 70;
+	int year  = tm->tm_year - 70;
 	int month = tm->tm_mon;
-	int day = tm->tm_mday;
+	int day   = tm->tm_mday;
 
 	if (year < 0 || year > 129) /* algo only works for 1970-2099 */
 		return -1;
@@ -375,10 +375,10 @@ static int is_date(int year, int month, int day, struct tm *now_tm, time_t now, 
 {
 	if (month > 0 && month < 13 && day > 0 && day < 32) {
 		struct tm check = *tm;
-		struct tm *r = (now_tm ? &check : tm);
+		struct tm *r	= (now_tm ? &check : tm);
 		time_t specified;
 
-		r->tm_mon = month - 1;
+		r->tm_mon  = month - 1;
 		r->tm_mday = day;
 		if (year == -1) {
 			if (!now_tm)
@@ -403,7 +403,7 @@ static int is_date(int year, int month, int day, struct tm *now_tm, time_t now, 
 		 */
 		if (now + 10 * 24 * 3600 < specified)
 			return 0;
-		tm->tm_mon = r->tm_mon;
+		tm->tm_mon  = r->tm_mon;
 		tm->tm_mday = r->tm_mday;
 		if (year != -1)
 			tm->tm_year = r->tm_year;
@@ -431,8 +431,8 @@ static size_t match_multi_number(unsigned long num, char c, const char *date, ch
 			num3 = 0;
 		if (num < 25 && num2 >= 0 && num2 < 60 && num3 >= 0 && num3 <= 60) {
 			tm->tm_hour = num;
-			tm->tm_min = num2;
-			tm->tm_sec = num3;
+			tm->tm_min  = num2;
+			tm->tm_sec  = num3;
 			break;
 		}
 		return 0;
@@ -440,7 +440,7 @@ static size_t match_multi_number(unsigned long num, char c, const char *date, ch
 	case '-':
 	case '/':
 	case '.':
-		now = time(NULL);
+		now			  = time(NULL);
 		refuse_future = NULL;
 		if (p_gmtime_r(&now, &now_tm))
 			refuse_future = &now_tm;
@@ -480,11 +480,11 @@ static size_t match_multi_number(unsigned long num, char c, const char *date, ch
 static int nodate(struct tm *tm)
 {
 	return (tm->tm_year &
-									tm->tm_mon &
-									tm->tm_mday &
-									tm->tm_hour &
-									tm->tm_min &
-									tm->tm_sec) < 0;
+			   tm->tm_mon &
+			   tm->tm_mday &
+			   tm->tm_hour &
+			   tm->tm_min &
+			   tm->tm_sec) < 0;
 }
 
 /*
@@ -540,8 +540,8 @@ static size_t match_digit(const char *date, struct tm *tm, int *offset, int *tm_
 	if (n == 4) {
 		if (num <= 1400 && *offset == -1) {
 			unsigned int minutes = num % 100;
-			unsigned int hours = num / 100;
-			*offset = hours * 60 + minutes;
+			unsigned int hours   = num / 100;
+			*offset				 = hours * 60 + minutes;
 		} else if (num > 1900 && num < 2100)
 			tm->tm_year = num - 1900;
 		return n;
@@ -589,11 +589,11 @@ static size_t match_tz(const char *date, int *offp)
 	char *end;
 	int hour = strtoul(date + 1, &end, 10);
 	size_t n = end - (date + 1);
-	int min = 0;
+	int min  = 0;
 
 	if (n == 4) {
 		/* hhmm */
-		min = hour % 100;
+		min  = hour % 100;
 		hour = hour / 100;
 	} else if (n != 2) {
 		min = 99; /* random stuff */
@@ -602,7 +602,7 @@ static size_t match_tz(const char *date, int *offp)
 		min = strtoul(end + 1, &end, 10);
 		if (end - (date + 1) != 5)
 			min = 99; /* random stuff */
-	}           /* otherwise we parsed "hh" */
+	}				  /* otherwise we parsed "hh" */
 
 	/*
 	 * Don't accept any random stuff. Even though some places have
@@ -637,14 +637,14 @@ static int match_object_header_date(const char *date, git_time_t *timestamp, int
 	if (*end != ' ' || stamp == ULONG_MAX || (end[1] != '+' && end[1] != '-'))
 		return -1;
 	date = end + 2;
-	ofs = strtol(date, &end, 10);
+	ofs  = strtol(date, &end, 10);
 	if ((*end != '\0' && (*end != '\n')) || end != date + 4)
 		return -1;
 	ofs = (ofs / 100) * 60 + (ofs % 100);
 	if (date[-1] == '-')
 		ofs = -ofs;
 	*timestamp = stamp;
-	*offset = ofs;
+	*offset	= ofs;
 	return 0;
 }
 
@@ -663,21 +663,21 @@ static int parse_date_basic(const char *date, git_time_t *timestamp, int *offset
 		offset = &dummy_offset;
 
 	memset(&tm, 0, sizeof(tm));
-	tm.tm_year = -1;
-	tm.tm_mon = -1;
-	tm.tm_mday = -1;
+	tm.tm_year  = -1;
+	tm.tm_mon   = -1;
+	tm.tm_mday  = -1;
 	tm.tm_isdst = -1;
-	tm.tm_hour = -1;
-	tm.tm_min = -1;
-	tm.tm_sec = -1;
-	*offset = -1;
-	tm_gmt = 0;
+	tm.tm_hour  = -1;
+	tm.tm_min   = -1;
+	tm.tm_sec   = -1;
+	*offset		= -1;
+	tm_gmt		= 0;
 
 	if (*date == '@' &&
 		!match_object_header_date(date + 1, timestamp, offset))
 		return 0; /* success */
 	for (;;) {
-		size_t match = 0;
+		size_t match	= 0;
 		unsigned char c = *date;
 
 		/* Stop at end of string or newline */
@@ -753,8 +753,8 @@ static void date_time(struct tm *tm, struct tm *now, int hour)
 	if (tm->tm_hour < hour)
 		date_yesterday(tm, now, NULL);
 	tm->tm_hour = hour;
-	tm->tm_min = 0;
-	tm->tm_sec = 0;
+	tm->tm_min  = 0;
+	tm->tm_sec  = 0;
 }
 
 static void date_midnight(struct tm *tm, struct tm *now, int *num)
@@ -783,7 +783,7 @@ static void date_pm(struct tm *tm, struct tm *now, int *num)
 
 	hour = tm->tm_hour;
 	if (n) {
-		hour = n;
+		hour	   = n;
 		tm->tm_min = 0;
 		tm->tm_sec = 0;
 	}
@@ -798,7 +798,7 @@ static void date_am(struct tm *tm, struct tm *now, int *num)
 
 	hour = tm->tm_hour;
 	if (n) {
-		hour = n;
+		hour	   = n;
 		tm->tm_min = 0;
 		tm->tm_sec = 0;
 	}
@@ -866,7 +866,7 @@ static const char *approxidate_alpha(const char *date, struct tm *tm, struct tm 
 		size_t match = match_string(date, month_names[i]);
 		if (match >= 3) {
 			tm->tm_mon = i;
-			*touched = 1;
+			*touched   = 1;
 			return end;
 		}
 	}
@@ -884,13 +884,13 @@ static const char *approxidate_alpha(const char *date, struct tm *tm, struct tm 
 		for (i = 1; i < 11; i++) {
 			size_t len = strlen(number_name[i]);
 			if (match_string(date, number_name[i]) == len) {
-				*num = i;
+				*num	 = i;
 				*touched = 1;
 				return end;
 			}
 		}
 		if (match_string(date, "last") == 4) {
-			*num = 1;
+			*num	 = 1;
 			*touched = 1;
 		}
 		return end;
@@ -901,7 +901,7 @@ static const char *approxidate_alpha(const char *date, struct tm *tm, struct tm 
 		size_t len = strlen(tl->type);
 		if (match_string(date, tl->type) >= len - 1) {
 			update_tm(tm, now, tl->length * *num);
-			*num = 0;
+			*num	 = 0;
 			*touched = 1;
 			return end;
 		}
@@ -928,21 +928,21 @@ static const char *approxidate_alpha(const char *date, struct tm *tm, struct tm 
 	if (match_string(date, "months") >= 5) {
 		int n;
 		update_tm(tm, now, 0); /* fill in date fields if needed */
-		n = tm->tm_mon - *num;
+		n	= tm->tm_mon - *num;
 		*num = 0;
 		while (n < 0) {
 			n += 12;
 			tm->tm_year--;
 		}
 		tm->tm_mon = n;
-		*touched = 1;
+		*touched   = 1;
 		return end;
 	}
 
 	if (match_string(date, "years") >= 4) {
 		update_tm(tm, now, 0); /* fill in date fields if needed */
 		tm->tm_year -= *num;
-		*num = 0;
+		*num	 = 0;
 		*touched = 1;
 		return end;
 	}
@@ -1004,15 +1004,15 @@ static git_time_t approxidate_str(const char *date,
 	time_t time_sec,
 	int *error_ret)
 {
-	int number = 0;
-	int touched = 0;
+	int number   = 0;
+	int touched  = 0;
 	struct tm tm = {0}, now;
 
 	p_localtime_r(&time_sec, &tm);
 	now = tm;
 
 	tm.tm_year = -1;
-	tm.tm_mon = -1;
+	tm.tm_mon  = -1;
 	tm.tm_mday = -1;
 
 	for (;;) {
@@ -1022,7 +1022,7 @@ static git_time_t approxidate_str(const char *date,
 		date++;
 		if (isdigit(c)) {
 			pending_number(&tm, &number);
-			date = approxidate_digit(date - 1, &tm, &number);
+			date	= approxidate_digit(date - 1, &tm, &number);
 			touched = 1;
 			continue;
 		}

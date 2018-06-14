@@ -27,10 +27,10 @@ void gitno_buffer_setup_callback(
 	int (*recv)(gitno_buffer *buf), void *cb_data)
 {
 	memset(data, 0x0, len);
-	buf->data = data;
-	buf->len = len;
-	buf->offset = 0;
-	buf->recv = recv;
+	buf->data	= data;
+	buf->len	 = len;
+	buf->offset  = 0;
+	buf->recv	= recv;
 	buf->cb_data = cb_data;
 }
 
@@ -50,10 +50,10 @@ static int recv_stream(gitno_buffer *buf)
 void gitno_buffer_setup_fromstream(git_stream *st, gitno_buffer *buf, char *data, size_t len)
 {
 	memset(data, 0x0, len);
-	buf->data = data;
-	buf->len = len;
-	buf->offset = 0;
-	buf->recv = recv_stream;
+	buf->data	= data;
+	buf->len	 = len;
+	buf->offset  = 0;
+	buf->recv	= recv_stream;
 	buf->cb_data = st;
 }
 
@@ -119,7 +119,7 @@ int gitno__match_host(const char *pattern, const char *host)
 	return -1;
 }
 
-static const char *prefix_http = "http://";
+static const char *prefix_http  = "http://";
 static const char *prefix_https = "https://";
 
 int gitno_connection_data_from_url(
@@ -127,7 +127,7 @@ int gitno_connection_data_from_url(
 	const char *url,
 	const char *service_suffix)
 {
-	int error = -1;
+	int error				 = -1;
 	const char *default_port = NULL, *path_search_start = NULL;
 	char *original_host = NULL;
 
@@ -136,12 +136,12 @@ int gitno_connection_data_from_url(
 
 	/* Save these for comparison later */
 	original_host = data->host;
-	data->host = NULL;
+	data->host	= NULL;
 	gitno_connection_data_free_ptrs(data);
 
 	if (!git__prefixcmp(url, prefix_http)) {
 		path_search_start = url + strlen(prefix_http);
-		default_port = "80";
+		default_port	  = "80";
 
 		if (data->use_ssl) {
 			giterr_set(GITERR_NET, "redirect from HTTPS to HTTP is not allowed");
@@ -149,8 +149,8 @@ int gitno_connection_data_from_url(
 		}
 	} else if (!git__prefixcmp(url, prefix_https)) {
 		path_search_start = url + strlen(prefix_https);
-		default_port = "443";
-		data->use_ssl = true;
+		default_port	  = "443";
+		data->use_ssl	 = true;
 	} else if (url[0] == '/')
 		default_port = data->use_ssl ? "443" : "80";
 
@@ -167,13 +167,13 @@ int gitno_connection_data_from_url(
 		/* Relative redirect; reuse original host name and port */
 		path_search_start = url;
 		git__free(data->host);
-		data->host = original_host;
+		data->host	= original_host;
 		original_host = NULL;
 	}
 
 	if (!error) {
 		const char *path = strchr(path_search_start, '/');
-		size_t pathlen = strlen(path);
+		size_t pathlen   = strlen(path);
 		size_t suffixlen = service_suffix ? strlen(service_suffix) : 0;
 
 		if (suffixlen &&
@@ -223,12 +223,12 @@ int gitno_extract_url_parts(
 {
 	struct http_parser_url u = {0};
 	bool has_host, has_port, has_path, has_userinfo;
-	git_buf host = GIT_BUF_INIT,
-									port = GIT_BUF_INIT,
-									path = GIT_BUF_INIT,
-									username = GIT_BUF_INIT,
-									password = GIT_BUF_INIT;
-	int error = 0;
+	git_buf host	 = GIT_BUF_INIT,
+			port	 = GIT_BUF_INIT,
+			path	 = GIT_BUF_INIT,
+			username = GIT_BUF_INIT,
+			password = GIT_BUF_INIT;
+	int error		 = 0;
 
 	if (http_parser_parse_url(url, strlen(url), false, &u)) {
 		giterr_set(GITERR_NET, "malformed URL '%s'", url);
@@ -236,20 +236,20 @@ int gitno_extract_url_parts(
 		goto done;
 	}
 
-	has_host = !!(u.field_set & (1 << UF_HOST));
-	has_port = !!(u.field_set & (1 << UF_PORT));
-	has_path = !!(u.field_set & (1 << UF_PATH));
+	has_host	 = !!(u.field_set & (1 << UF_HOST));
+	has_port	 = !!(u.field_set & (1 << UF_PORT));
+	has_path	 = !!(u.field_set & (1 << UF_PATH));
 	has_userinfo = !!(u.field_set & (1 << UF_USERINFO));
 
 	if (has_host) {
 		const char *url_host = url + u.field_data[UF_HOST].off;
-		size_t url_host_len = u.field_data[UF_HOST].len;
+		size_t url_host_len  = u.field_data[UF_HOST].len;
 		git_buf_decode_percent(&host, url_host, url_host_len);
 	}
 
 	if (has_port) {
 		const char *url_port = url + u.field_data[UF_PORT].off;
-		size_t url_port_len = u.field_data[UF_PORT].len;
+		size_t url_port_len  = u.field_data[UF_PORT].len;
 		git_buf_put(&port, url_port, url_port_len);
 	} else {
 		git_buf_puts(&port, default_port);
@@ -257,7 +257,7 @@ int gitno_extract_url_parts(
 
 	if (has_path && path_out) {
 		const char *url_path = url + u.field_data[UF_PATH].off;
-		size_t url_path_len = u.field_data[UF_PATH].len;
+		size_t url_path_len  = u.field_data[UF_PATH].len;
 		git_buf_decode_percent(&path, url_path, url_path_len);
 	} else if (path_out) {
 		giterr_set(GITERR_NET, "invalid url, missing path");
@@ -267,14 +267,14 @@ int gitno_extract_url_parts(
 
 	if (has_userinfo) {
 		const char *url_userinfo = url + u.field_data[UF_USERINFO].off;
-		size_t url_userinfo_len = u.field_data[UF_USERINFO].len;
-		const char *colon = memchr(url_userinfo, ':', url_userinfo_len);
+		size_t url_userinfo_len  = u.field_data[UF_USERINFO].len;
+		const char *colon		 = memchr(url_userinfo, ':', url_userinfo_len);
 
 		if (colon) {
 			const char *url_username = url_userinfo;
-			size_t url_username_len = colon - url_userinfo;
+			size_t url_username_len  = colon - url_userinfo;
 			const char *url_password = colon + 1;
-			size_t url_password_len = url_userinfo_len - (url_username_len + 1);
+			size_t url_password_len  = url_userinfo_len - (url_username_len + 1);
 
 			git_buf_decode_percent(&username, url_username, url_username_len);
 			git_buf_decode_percent(&password, url_password, url_password_len);

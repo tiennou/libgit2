@@ -30,7 +30,7 @@ git_bitvec_init(git_bitvec *bv, size_t capacity)
 	memset(bv, 0x0, sizeof(*bv));
 
 	if (capacity >= 64) {
-		bv->length = (capacity / 64) + 1;
+		bv->length  = (capacity / 64) + 1;
 		bv->u.words = git__calloc(bv->length, sizeof(uint64_t));
 		if (!bv->u.words)
 			return -1;
@@ -46,7 +46,7 @@ GIT_INLINE(void)
 git_bitvec_set(git_bitvec *bv, size_t bit, bool on)
 {
 	uint64_t *word = GIT_BITVEC_WORD(bv, bit);
-	uint64_t mask = GIT_BITVEC_MASK(bit);
+	uint64_t mask  = GIT_BITVEC_MASK(bit);
 
 	if (on)
 		*word |= mask;

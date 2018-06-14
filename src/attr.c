@@ -15,7 +15,7 @@
 #include "git2/oid.h"
 #include <ctype.h>
 
-const char *git_attr__true = "[internal]__TRUE__";
+const char *git_attr__true  = "[internal]__TRUE__";
 const char *git_attr__false = "[internal]__FALSE__";
 const char *git_attr__unset = "[internal]__UNSET__";
 
@@ -72,11 +72,10 @@ int git_attr_get(
 		goto cleanup;
 
 	memset(&attr, 0, sizeof(attr));
-	attr.name = name;
+	attr.name	  = name;
 	attr.name_hash = git_attr_file__name_hash(name);
 
-	git_vector_foreach(&files, i, file)
-	{
+	git_vector_foreach (&files, i, file) {
 
 		git_attr_file__foreach_matching_rule(file, &path, j, rule)
 		{
@@ -84,8 +83,8 @@ int git_attr_get(
 
 			if (!git_vector_bsearch(&pos, &rule->assigns, &attr)) {
 				*value = ((git_attr_assignment *)git_vector_get(
-															&rule->assigns, pos))
-														->value;
+							  &rule->assigns, pos))
+							 ->value;
 				goto cleanup;
 			}
 		}
@@ -120,8 +119,8 @@ int git_attr_get_many_with_session(
 	git_attr_file *file;
 	git_attr_rule *rule;
 	attr_get_many_info *info = NULL;
-	size_t num_found = 0;
-	git_dir_flag dir_flag = GIT_DIR_FLAG_UNKNOWN;
+	size_t num_found		 = 0;
+	git_dir_flag dir_flag	= GIT_DIR_FLAG_UNKNOWN;
 
 	if (!num_attr)
 		return 0;
@@ -140,8 +139,7 @@ int git_attr_get_many_with_session(
 	info = git__calloc(num_attr, sizeof(attr_get_many_info));
 	GITERR_CHECK_ALLOC(info);
 
-	git_vector_foreach(&files, i, file)
-	{
+	git_vector_foreach (&files, i, file) {
 
 		git_attr_file__foreach_matching_rule(file, &path, j, rule)
 		{
@@ -153,7 +151,7 @@ int git_attr_get_many_with_session(
 					continue;
 
 				if (!info[k].name.name) {
-					info[k].name.name = names[k];
+					info[k].name.name	  = names[k];
 					info[k].name.name_hash = git_attr_file__name_hash(names[k]);
 				}
 
@@ -208,7 +206,7 @@ int git_attr_foreach(
 	git_attr_file *file;
 	git_attr_rule *rule;
 	git_attr_assignment *assign;
-	git_strmap *seen = NULL;
+	git_strmap *seen	  = NULL;
 	git_dir_flag dir_flag = GIT_DIR_FLAG_UNKNOWN;
 
 	assert(repo && callback);
@@ -223,14 +221,12 @@ int git_attr_foreach(
 		(error = git_strmap_alloc(&seen)) < 0)
 		goto cleanup;
 
-	git_vector_foreach(&files, i, file)
-	{
+	git_vector_foreach (&files, i, file) {
 
 		git_attr_file__foreach_matching_rule(file, &path, j, rule)
 		{
 
-			git_vector_foreach(&rule->assigns, k, assign)
-			{
+			git_vector_foreach (&rule->assigns, k, assign) {
 				/* skip if higher priority assignment was already seen */
 				if (git_strmap_exists(seen, assign->name))
 					continue;
@@ -269,7 +265,7 @@ static int preload_attr_file(
 	if (!file)
 		return 0;
 	if (!(error = git_attr_cache__get(
-								&preload, repo, attr_session, source, base, file, git_attr_file__parse_buffer)))
+			  &preload, repo, attr_session, source, base, file, git_attr_file__parse_buffer)))
 		git_attr_file__free(preload);
 
 	return error;
@@ -315,10 +311,10 @@ static int system_attr_file(
 
 static int attr_setup(git_repository *repo, git_attr_session *attr_session)
 {
-	int error = 0;
+	int error			= 0;
 	const char *workdir = git_repository_workdir(repo);
-	git_index *idx = NULL;
-	git_buf path = GIT_BUF_INIT;
+	git_index *idx		= NULL;
+	git_buf path		= GIT_BUF_INIT;
 
 	if (attr_session && attr_session->init_setup)
 		return 0;
@@ -340,27 +336,27 @@ static int attr_setup(git_repository *repo, git_attr_session *attr_session)
 		goto out;
 
 	if ((error = preload_attr_file(
-							repo, attr_session, GIT_ATTR_FILE__FROM_FILE,
-							NULL, git_repository_attr_cache(repo)->cfg_attr_file)) < 0)
+			 repo, attr_session, GIT_ATTR_FILE__FROM_FILE,
+			 NULL, git_repository_attr_cache(repo)->cfg_attr_file)) < 0)
 		goto out;
 
 	if ((error = git_repository_item_path(&path,
-							repo, GIT_REPOSITORY_ITEM_INFO)) < 0)
+			 repo, GIT_REPOSITORY_ITEM_INFO)) < 0)
 		goto out;
 
 	if ((error = preload_attr_file(
-							repo, attr_session, GIT_ATTR_FILE__FROM_FILE,
-							path.ptr, GIT_ATTR_FILE_INREPO)) < 0)
+			 repo, attr_session, GIT_ATTR_FILE__FROM_FILE,
+			 path.ptr, GIT_ATTR_FILE_INREPO)) < 0)
 		goto out;
 
 	if (workdir != NULL &&
 		(error = preload_attr_file(
-				repo, attr_session, GIT_ATTR_FILE__FROM_FILE, workdir, GIT_ATTR_FILE)) < 0)
+			 repo, attr_session, GIT_ATTR_FILE__FROM_FILE, workdir, GIT_ATTR_FILE)) < 0)
 		goto out;
 
 	if ((error = git_repository_index__weakptr(&idx, repo)) < 0 ||
 		(error = preload_attr_file(
-				repo, attr_session, GIT_ATTR_FILE__FROM_INDEX, NULL, GIT_ATTR_FILE)) < 0)
+			 repo, attr_session, GIT_ATTR_FILE__FROM_INDEX, NULL, GIT_ATTR_FILE)) < 0)
 		goto out;
 
 	if (attr_session)
@@ -393,7 +389,7 @@ int git_attr_add_macro(
 	GITERR_CHECK_ALLOC(macro->match.pattern);
 
 	macro->match.length = strlen(macro->match.pattern);
-	macro->match.flags = GIT_ATTR_FNMATCH_MACRO;
+	macro->match.flags  = GIT_ATTR_FNMATCH_MACRO;
 
 	error = git_attr_assignment__parse(repo, pool, &macro->assigns, &values);
 
@@ -450,7 +446,7 @@ static int push_attr_file(
 	const char *base,
 	const char *filename)
 {
-	int error = 0;
+	int error			= 0;
 	git_attr_file *file = NULL;
 
 	error = git_attr_cache__get(&file, repo, attr_session,
@@ -469,7 +465,7 @@ static int push_attr_file(
 
 static int push_one_attr(void *ref, const char *path)
 {
-	int error = 0, n_src, i;
+	int error				= 0, n_src, i;
 	attr_walk_up_info *info = (attr_walk_up_info *)ref;
 	git_attr_file_source src[2];
 
@@ -488,8 +484,7 @@ static void release_attr_files(git_vector *files)
 	size_t i;
 	git_attr_file *file;
 
-	git_vector_foreach(files, i, file)
-	{
+	git_vector_foreach (files, i, file) {
 		git_attr_file__free(file);
 		files->contents[i] = NULL;
 	}
@@ -503,9 +498,9 @@ static int collect_attr_files(
 	const char *path,
 	git_vector *files)
 {
-	int error = 0;
+	int error   = 0;
 	git_buf dir = GIT_BUF_INIT, attrfile = GIT_BUF_INIT;
-	const char *workdir = git_repository_workdir(repo);
+	const char *workdir	= git_repository_workdir(repo);
 	attr_walk_up_info info = {NULL};
 
 	if ((error = attr_setup(repo, attr_session)) < 0)
@@ -536,10 +531,10 @@ static int collect_attr_files(
 	if (error < 0)
 		goto cleanup;
 
-	info.repo = repo;
+	info.repo		  = repo;
 	info.attr_session = attr_session;
-	info.flags = flags;
-	info.workdir = workdir;
+	info.flags		  = flags;
+	info.workdir	  = workdir;
 	if (git_repository_index__weakptr(&info.index, repo) < 0)
 		giterr_clear(); /* no error even if there is no index */
 	info.files = files;

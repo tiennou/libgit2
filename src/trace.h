@@ -27,7 +27,7 @@ git_trace__write_fmt(
 	const char *fmt, ...)
 {
 	git_trace_callback callback = git_trace__data.callback;
-	git_buf message = GIT_BUF_INIT;
+	git_buf message				= GIT_BUF_INIT;
 	va_list ap;
 
 	va_start(ap, fmt);
@@ -40,12 +40,12 @@ git_trace__write_fmt(
 }
 
 #	define git_trace_level() (git_trace__data.level)
-#	define git_trace(l, ...) \
-		{ \
-			if (git_trace__data.level >= l && \
-				git_trace__data.callback != NULL) { \
+#	define git_trace(l, ...)                         \
+		{                                             \
+			if (git_trace__data.level >= l &&         \
+				git_trace__data.callback != NULL) {   \
 				git_trace__write_fmt(l, __VA_ARGS__); \
-			} \
+			}                                         \
 		}
 
 #else

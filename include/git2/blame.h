@@ -84,8 +84,8 @@ typedef struct git_blame_options {
 } git_blame_options;
 
 #define GIT_BLAME_OPTIONS_VERSION 1
-#define GIT_BLAME_OPTIONS_INIT \
-	{ \
+#define GIT_BLAME_OPTIONS_INIT    \
+	{                             \
 		GIT_BLAME_OPTIONS_VERSION \
 	}
 

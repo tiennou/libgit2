@@ -78,7 +78,7 @@ int git_path_basename_r(git_buf *buffer, const char *path)
 	/* Empty or NULL string gets treated as "." */
 	if (path == NULL || *path == '\0') {
 		startp = ".";
-		len = 1;
+		len	= 1;
 		goto Exit;
 	}
 
@@ -90,7 +90,7 @@ int git_path_basename_r(git_buf *buffer, const char *path)
 	/* All slashes becomes "/" */
 	if (endp == path && *endp == '/') {
 		startp = "/";
-		len = 1;
+		len	= 1;
 		goto Exit;
 	}
 
@@ -151,7 +151,7 @@ int git_path_dirname_r(git_buf *buffer, const char *path)
 	/* Empty or NULL string gets treated as "." */
 	if (path == NULL || *path == '\0') {
 		path = ".";
-		len = 1;
+		len  = 1;
 		goto Exit;
 	}
 
@@ -172,7 +172,7 @@ int git_path_dirname_r(git_buf *buffer, const char *path)
 	/* Either the dir is "/" or there are no slashes */
 	if (endp == path) {
 		path = (*endp == '/') ? "/" : ".";
-		len = 1;
+		len  = 1;
 		goto Exit;
 	}
 
@@ -393,7 +393,7 @@ void git_path_string_to_dir(char *path, size_t size)
 	size_t end = strlen(path);
 
 	if (end && path[end - 1] != '/' && end < size) {
-		path[end] = '/';
+		path[end]	 = '/';
 		path[end + 1] = '\0';
 	}
 }
@@ -484,7 +484,7 @@ int git_path_walk_up(
 	int error = 0;
 	git_buf iter;
 	ssize_t stop = 0, scan;
-	char oldc = '\0';
+	char oldc	= '\0';
 
 	assert(path && cb);
 
@@ -504,12 +504,12 @@ int git_path_walk_up(
 		return error;
 	}
 
-	iter.ptr = path->ptr;
-	iter.size = git_buf_len(path);
+	iter.ptr   = path->ptr;
+	iter.size  = git_buf_len(path);
 	iter.asize = path->asize;
 
 	while (scan >= stop) {
-		error = cb(data, iter.ptr);
+		error		   = cb(data, iter.ptr);
 		iter.ptr[scan] = oldc;
 
 		if (error) {
@@ -520,8 +520,8 @@ int git_path_walk_up(
 		scan = git_buf_rfind_next(&iter, '/');
 		if (scan >= 0) {
 			scan++;
-			oldc = iter.ptr[scan];
-			iter.size = scan;
+			oldc		   = iter.ptr[scan];
+			iter.size	  = scan;
 			iter.ptr[scan] = '\0';
 		}
 	}
@@ -964,7 +964,7 @@ void git_path_iconv_clear(git_path_iconv_t *ic)
 
 int git_path_iconv(git_path_iconv_t *ic, const char **in, size_t *inlen)
 {
-	char *nfd = (char *)*in, *nfc;
+	char *nfd	 = (char *)*in, *nfc;
 	size_t nfdlen = *inlen, nfclen, wantlen = nfdlen, alloclen, rv;
 	int retry = 1;
 
@@ -979,7 +979,7 @@ int git_path_iconv(git_path_iconv_t *ic, const char **in, size_t *inlen)
 		if (git_buf_grow(&ic->buf, alloclen) < 0)
 			return -1;
 
-		nfc = ic->buf.ptr + ic->buf.size;
+		nfc	= ic->buf.ptr + ic->buf.size;
 		nfclen = ic->buf.asize - ic->buf.size;
 
 		rv = iconv(ic->map, &nfd, &nfdlen, &nfc, &nfclen);
@@ -1006,7 +1006,7 @@ int git_path_iconv(git_path_iconv_t *ic, const char **in, size_t *inlen)
 
 	ic->buf.ptr[ic->buf.size] = '\0';
 
-	*in = ic->buf.ptr;
+	*in	= ic->buf.ptr;
 	*inlen = ic->buf.size;
 
 	return 0;
@@ -1119,7 +1119,7 @@ int git_path_direach(
 
 	while ((de = readdir(dir)) != NULL) {
 		const char *de_path = de->d_name;
-		size_t de_len = strlen(de_path);
+		size_t de_len		= strlen(de_path);
 
 		if (git_path_is_dot_or_dotdot(de_path))
 			continue;
@@ -1210,7 +1210,7 @@ int git_path_diriter_init(
 	}
 
 	diriter->parent_utf8_len = diriter->path_utf8.size;
-	diriter->flags = flags;
+	diriter->flags			 = flags;
 	return 0;
 }
 
@@ -1279,7 +1279,7 @@ int git_path_diriter_filename(
 
 	assert(diriter->path_utf8.size > diriter->parent_utf8_len);
 
-	*out = &diriter->path_utf8.ptr[diriter->parent_utf8_len + 1];
+	*out	 = &diriter->path_utf8.ptr[diriter->parent_utf8_len + 1];
 	*out_len = diriter->path_utf8.size - diriter->parent_utf8_len - 1;
 	return 0;
 }
@@ -1291,7 +1291,7 @@ int git_path_diriter_fullpath(
 {
 	assert(out && out_len && diriter);
 
-	*out = diriter->path_utf8.ptr;
+	*out	 = diriter->path_utf8.ptr;
 	*out_len = diriter->path_utf8.size;
 	return 0;
 }
@@ -1592,9 +1592,9 @@ static bool verify_dotgit_hfs(const char *path, size_t len)
 GIT_INLINE(bool)
 verify_dotgit_ntfs(git_repository *repo, const char *path, size_t len)
 {
-	git_buf *reserved = git_repository__reserved_names_win32;
+	git_buf *reserved   = git_repository__reserved_names_win32;
 	size_t reserved_len = git_repository__reserved_names_win32_len;
-	size_t start = 0, i;
+	size_t start		= 0, i;
 
 	if (repo)
 		git_repository__reserved_names(&reserved, &reserved_len, repo, true);
@@ -1900,9 +1900,9 @@ extern int git_path_is_gitfile(const char *path, size_t pathlen, git_path_gitfil
 		return -1;
 	}
 
-	file = gitfiles[gitfile].file;
+	file	= gitfiles[gitfile].file;
 	filelen = gitfiles[gitfile].filelen;
-	hash = gitfiles[gitfile].hash;
+	hash	= gitfiles[gitfile].hash;
 
 	switch (fs) {
 	case GIT_PATH_FS_GENERIC:

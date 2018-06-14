@@ -12,7 +12,7 @@
 typedef int (*git_vector_cmp)(const void *, const void *);
 
 enum {
-	GIT_VECTOR_SORTED = (1u << 0),
+	GIT_VECTOR_SORTED   = (1u << 0),
 	GIT_VECTOR_FLAG_MAX = (1u << 1),
 };
 
@@ -25,8 +25,8 @@ typedef struct git_vector {
 } git_vector;
 
 #define GIT_VECTOR_INIT \
-	{ \
-		0 \
+	{                   \
+		0               \
 	}
 
 int git_vector_init(git_vector *v, size_t initial_size, git_vector_cmp cmp);
@@ -109,8 +109,8 @@ int git_vector_set(void **old, git_vector *v, size_t position, void *value);
 #define git_vector_is_sorted(V) (((V)->flags & GIT_VECTOR_SORTED) != 0)
 
 /** Directly set sorted state of vector */
-#define git_vector_set_sorted(V, S) \
-	do { \
+#define git_vector_set_sorted(V, S)                                                              \
+	do {                                                                                         \
 		(V)->flags = (S) ? ((V)->flags | GIT_VECTOR_SORTED) : ((V)->flags & ~GIT_VECTOR_SORTED); \
 	} while (0)
 

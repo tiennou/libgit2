@@ -62,8 +62,8 @@ typedef struct {
 } git_patch_options;
 
 #define GIT_PATCH_OPTIONS_INIT \
-	{ \
-		1 \
+	{                          \
+		1                      \
 	}
 
 extern void git_patch_free(git_patch *patch);

@@ -34,13 +34,13 @@ static void patch_line_init(
 	size_t in_len,
 	size_t in_offset)
 {
-	out->content = in;
-	out->content_len = in_len;
+	out->content		= in;
+	out->content_len	= in_len;
 	out->content_offset = in_offset;
 }
 
-#define PATCH_IMAGE_INIT \
-	{ \
+#define PATCH_IMAGE_INIT               \
+	{                                  \
 		GIT_POOL_INIT, GIT_VECTOR_INIT \
 	}
 
@@ -102,7 +102,7 @@ static bool match_hunk(
 	/* Check exact match. */
 	for (i = 0; i < git_vector_length(&preimage->lines); i++) {
 		git_diff_line *preimage_line = git_vector_get(&preimage->lines, i);
-		git_diff_line *image_line = git_vector_get(&image->lines, linenum + i);
+		git_diff_line *image_line	= git_vector_get(&image->lines, linenum + i);
 
 		if (preimage_line->content_len != image_line->content_len ||
 			memcmp(preimage_line->content, image_line->content, image_line->content_len) != 0) {
@@ -139,7 +139,7 @@ static int update_hunk(
 	patch_image *postimage)
 {
 	size_t postlen = git_vector_length(&postimage->lines);
-	size_t prelen = git_vector_length(&preimage->lines);
+	size_t prelen  = git_vector_length(&preimage->lines);
 	size_t i;
 	int error = 0;
 
@@ -173,7 +173,7 @@ static int apply_hunk(
 	int error = 0;
 
 	for (i = 0; i < hunk->line_count; i++) {
-		size_t linenum = hunk->line_start + i;
+		size_t linenum		= hunk->line_start + i;
 		git_diff_line *line = git_array_get(patch->lines, linenum);
 
 		if (!line) {
@@ -226,13 +226,12 @@ static int apply_hunks(
 	if ((error = patch_image_init_fromstr(&image, source, source_len)) < 0)
 		goto done;
 
-	git_array_foreach(patch->hunks, i, hunk)
-	{
+	git_array_foreach (patch->hunks, i, hunk) {
 		if ((error = apply_hunk(&image, patch, hunk)) < 0)
 			goto done;
 	}
 
-	git_vector_foreach(&image.lines, i, line)
+	git_vector_foreach (&image.lines, i, line)
 		git_buf_put(out, line->content, line->content_len);
 
 done:
@@ -248,7 +247,7 @@ static int apply_binary_delta(
 	git_diff_binary_file *binary_file)
 {
 	git_buf inflated = GIT_BUF_INIT;
-	int error = 0;
+	int error		 = 0;
 
 	/* no diff means identical contents */
 	if (binary_file->datalen == 0)
@@ -272,8 +271,8 @@ static int apply_binary_delta(
 		error = git_delta_apply(&data, &data_len, (void *)source, source_len,
 			(void *)inflated.ptr, inflated.size);
 
-		out->ptr = data;
-		out->size = data_len;
+		out->ptr   = data;
+		out->size  = data_len;
 		out->asize = data_len;
 	} else if (binary_file->type == GIT_DIFF_BINARY_LITERAL) {
 		git_buf_swap(out, &inflated);
@@ -294,7 +293,7 @@ static int apply_binary(
 	git_patch *patch)
 {
 	git_buf reverse = GIT_BUF_INIT;
-	int error = 0;
+	int error		= 0;
 
 	if (!patch->binary.contains_data) {
 		error = apply_err("patch does not contain binary data");
@@ -306,12 +305,12 @@ static int apply_binary(
 
 	/* first, apply the new_file delta to the given source */
 	if ((error = apply_binary_delta(out, source, source_len,
-							&patch->binary.new_file)) < 0)
+			 &patch->binary.new_file)) < 0)
 		goto done;
 
 	/* second, apply the old_file delta to sanity check the result */
 	if ((error = apply_binary_delta(&reverse, out->ptr, out->size,
-							&patch->binary.old_file)) < 0)
+			 &patch->binary.old_file)) < 0)
 		goto done;
 
 	if (source_len != reverse.size ||
@@ -336,20 +335,20 @@ int git_apply__patch(
 	size_t source_len,
 	git_patch *patch)
 {
-	char *filename = NULL;
+	char *filename	= NULL;
 	unsigned int mode = 0;
-	int error = 0;
+	int error		  = 0;
 
 	assert(contents_out && filename_out && mode_out && (source || !source_len) && patch);
 
 	*filename_out = NULL;
-	*mode_out = 0;
+	*mode_out	 = 0;
 
 	if (patch->delta->status != GIT_DELTA_DELETED) {
 		const git_diff_file *newfile = &patch->delta->new_file;
 
 		filename = git__strdup(newfile->path);
-		mode = newfile->mode ? newfile->mode : GIT_FILEMODE_BLOB;
+		mode	 = newfile->mode ? newfile->mode : GIT_FILEMODE_BLOB;
 	}
 
 	if (patch->delta->flags & GIT_DIFF_FLAG_BINARY)
@@ -369,7 +368,7 @@ int git_apply__patch(
 	}
 
 	*filename_out = filename;
-	*mode_out = mode;
+	*mode_out	 = mode;
 
 done:
 	if (error < 0)

@@ -55,8 +55,8 @@ struct git_filebuf {
 };
 
 #define GIT_FILEBUF_INIT \
-	{ \
-		0 \
+	{                    \
+		0                \
 	}
 
 /*

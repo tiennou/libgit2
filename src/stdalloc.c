@@ -110,14 +110,14 @@ static void stdalloc__free(void *ptr)
 
 int git_stdalloc_init_allocator(git_allocator *allocator)
 {
-	allocator->gmalloc = stdalloc__malloc;
-	allocator->gcalloc = stdalloc__calloc;
-	allocator->gstrdup = stdalloc__strdup;
-	allocator->gstrndup = stdalloc__strndup;
-	allocator->gsubstrdup = stdalloc__substrdup;
-	allocator->grealloc = stdalloc__realloc;
+	allocator->gmalloc		 = stdalloc__malloc;
+	allocator->gcalloc		 = stdalloc__calloc;
+	allocator->gstrdup		 = stdalloc__strdup;
+	allocator->gstrndup		 = stdalloc__strndup;
+	allocator->gsubstrdup	= stdalloc__substrdup;
+	allocator->grealloc		 = stdalloc__realloc;
 	allocator->greallocarray = stdalloc__reallocarray;
-	allocator->gmallocarray = stdalloc__mallocarray;
-	allocator->gfree = stdalloc__free;
+	allocator->gmallocarray  = stdalloc__mallocarray;
+	allocator->gfree		 = stdalloc__free;
 	return 0;
 }

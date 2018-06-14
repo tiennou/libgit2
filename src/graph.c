@@ -111,8 +111,8 @@ static int ahead_behind(git_commit_list_node *one, git_commit_list_node *two,
 	git_commit_list_node *commit;
 	git_pqueue pq;
 	int error = 0, i;
-	*ahead = 0;
-	*behind = 0;
+	*ahead	= 0;
+	*behind   = 0;
 
 	if (git_pqueue_init(&pq, 0, 2, git_commit_list_time_cmp) < 0)
 		return -1;

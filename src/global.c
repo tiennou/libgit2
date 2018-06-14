@@ -83,8 +83,8 @@ static void shutdown_common(void)
 
 	/* Shutdown subsystems that have registered */
 	for (pos = git_atomic_get(&git__n_shutdown_callbacks);
-						pos > 0;
-						pos = git_atomic_dec(&git__n_shutdown_callbacks)) {
+		 pos > 0;
+		 pos = git_atomic_dec(&git__n_shutdown_callbacks)) {
 
 		git_global_shutdown_fn cb = git__swap(
 			git__shutdown_callbacks[pos - 1], NULL);
@@ -259,8 +259,8 @@ BOOL WINAPI DllMain(HINSTANCE hInstDll, DWORD fdwReason, LPVOID lpvReserved)
 
 static pthread_key_t _tls_key;
 static pthread_mutex_t _init_mutex = PTHREAD_MUTEX_INITIALIZER;
-static pthread_once_t _once_init = PTHREAD_ONCE_INIT;
-int init_error = 0;
+static pthread_once_t _once_init   = PTHREAD_ONCE_INIT;
+int init_error					   = 0;
 
 static void cb__free_status(void *st)
 {
@@ -297,7 +297,7 @@ int git_libgit2_init(void)
 
 int git_libgit2_shutdown(void)
 {
-	void *ptr = NULL;
+	void *ptr				= NULL;
 	pthread_once_t new_once = PTHREAD_ONCE_INIT;
 	int error, ret;
 

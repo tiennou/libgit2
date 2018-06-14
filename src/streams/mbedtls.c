@@ -64,15 +64,15 @@ int git_mbedtls__set_cert_location(const char *path, int is_dir);
 
 int git_mbedtls_stream_global_init(void)
 {
-	int loaded = 0;
+	int loaded	= 0;
 	char *crtpath = GIT_DEFAULT_CERT_LOCATION;
 	struct stat statbuf;
 	mbedtls_ctr_drbg_context *ctr_drbg = NULL;
 
-	int *ciphers_list = NULL;
-	int ciphers_known = 0;
-	char *cipher_name = NULL;
-	char *cipher_string = NULL;
+	int *ciphers_list		= NULL;
+	int ciphers_known		= 0;
+	char *cipher_name		= NULL;
+	char *cipher_string		= NULL;
 	char *cipher_string_tmp = NULL;
 
 	mbedtls_x509_crt *cacert = NULL;
@@ -80,9 +80,9 @@ int git_mbedtls_stream_global_init(void)
 	git__ssl_conf = git__malloc(sizeof(mbedtls_ssl_config));
 	mbedtls_ssl_config_init(git__ssl_conf);
 	if (mbedtls_ssl_config_defaults(git__ssl_conf,
-						MBEDTLS_SSL_IS_CLIENT,
-						MBEDTLS_SSL_TRANSPORT_STREAM,
-						MBEDTLS_SSL_PRESET_DEFAULT) != 0) {
+			MBEDTLS_SSL_IS_CLIENT,
+			MBEDTLS_SSL_TRANSPORT_STREAM,
+			MBEDTLS_SSL_PRESET_DEFAULT) != 0) {
 		giterr_set(GITERR_SSL, "failed to initialize mbedTLS");
 		goto cleanup;
 	}
@@ -96,7 +96,7 @@ int git_mbedtls_stream_global_init(void)
 	mbedtls_ssl_conf_authmode(git__ssl_conf, MBEDTLS_SSL_VERIFY_OPTIONAL);
 
 	/* set the list of allowed ciphersuites */
-	ciphers_list = calloc(GIT_SSL_DEFAULT_CIPHERS_COUNT, sizeof(int));
+	ciphers_list  = calloc(GIT_SSL_DEFAULT_CIPHERS_COUNT, sizeof(int));
 	ciphers_known = 0;
 	cipher_string = cipher_string_tmp = git__strdup(GIT_SSL_DEFAULT_CIPHERS);
 	while ((cipher_name = git__strtok(&cipher_string_tmp, ":")) != NULL) {
@@ -121,8 +121,8 @@ int git_mbedtls_stream_global_init(void)
 	ctr_drbg = git__malloc(sizeof(mbedtls_ctr_drbg_context));
 	mbedtls_ctr_drbg_init(ctr_drbg);
 	if (mbedtls_ctr_drbg_seed(ctr_drbg,
-						mbedtls_entropy_func,
-						mbedtls_entropy, NULL, 0) != 0) {
+			mbedtls_entropy_func,
+			mbedtls_entropy, NULL, 0) != 0) {
 		giterr_set(GITERR_SSL, "failed to initialize mbedTLS entropy pool");
 		goto cleanup;
 	}
@@ -273,8 +273,8 @@ int mbedtls_certificate(git_cert **out, git_stream *stream)
 	memcpy(encoded_cert, cert->raw.p, cert->raw.len);
 
 	st->cert_info.parent.cert_type = GIT_CERT_X509;
-	st->cert_info.data = encoded_cert;
-	st->cert_info.len = cert->raw.len;
+	st->cert_info.data			   = encoded_cert;
+	st->cert_info.len			   = cert->raw.len;
 
 	*out = &st->cert_info.parent;
 
@@ -290,7 +290,7 @@ static int mbedtls_set_proxy(git_stream *stream, const git_proxy_options *proxy_
 
 ssize_t mbedtls_stream_write(git_stream *stream, const char *data, size_t len, int flags)
 {
-	size_t read = 0;
+	size_t read		   = 0;
 	mbedtls_stream *st = (mbedtls_stream *)stream;
 
 	GIT_UNUSED(flags);
@@ -320,7 +320,7 @@ ssize_t mbedtls_stream_read(git_stream *stream, void *data, size_t len)
 int mbedtls_stream_close(git_stream *stream)
 {
 	mbedtls_stream *st = (mbedtls_stream *)stream;
-	int ret = 0;
+	int ret			   = 0;
 
 	if (st->connected && (ret = ssl_teardown(st->ssl)) != 0)
 		return -1;
@@ -370,16 +370,16 @@ int git_mbedtls_stream_new(git_stream **out, const char *host, const char *port)
 	st->host = git__strdup(host);
 	GITERR_CHECK_ALLOC(st->host);
 
-	st->parent.version = GIT_STREAM_VERSION;
-	st->parent.encrypted = 1;
+	st->parent.version		 = GIT_STREAM_VERSION;
+	st->parent.encrypted	 = 1;
 	st->parent.proxy_support = git_stream_supports_proxy(st->io);
-	st->parent.connect = mbedtls_connect;
-	st->parent.certificate = mbedtls_certificate;
-	st->parent.set_proxy = mbedtls_set_proxy;
-	st->parent.read = mbedtls_stream_read;
-	st->parent.write = mbedtls_stream_write;
-	st->parent.close = mbedtls_stream_close;
-	st->parent.free = mbedtls_stream_free;
+	st->parent.connect		 = mbedtls_connect;
+	st->parent.certificate   = mbedtls_certificate;
+	st->parent.set_proxy	 = mbedtls_set_proxy;
+	st->parent.read			 = mbedtls_stream_read;
+	st->parent.write		 = mbedtls_stream_write;
+	st->parent.close		 = mbedtls_stream_close;
+	st->parent.free			 = mbedtls_stream_free;
 
 	*out = (git_stream *)st;
 	return 0;

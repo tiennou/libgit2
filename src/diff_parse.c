@@ -17,7 +17,7 @@ static void diff_parsed_free(git_diff *d)
 	git_patch *patch;
 	size_t i;
 
-	git_vector_foreach(&diff->patches, i, patch)
+	git_vector_foreach (&diff->patches, i, patch)
 		git_patch_free(patch);
 
 	git_vector_free(&diff->patches);
@@ -37,13 +37,13 @@ static git_diff_parsed *diff_parsed_alloc(void)
 		return NULL;
 
 	GIT_REFCOUNT_INC(&diff->base);
-	diff->base.type = GIT_DIFF_TYPE_PARSED;
-	diff->base.strcomp = git__strcmp;
-	diff->base.strncomp = git__strncmp;
-	diff->base.pfxcomp = git__prefixcmp;
+	diff->base.type		 = GIT_DIFF_TYPE_PARSED;
+	diff->base.strcomp   = git__strcmp;
+	diff->base.strncomp  = git__strncmp;
+	diff->base.pfxcomp   = git__prefixcmp;
 	diff->base.entrycomp = git_diff__entry_cmp;
-	diff->base.patch_fn = git_patch_parsed_from_diff;
-	diff->base.free_fn = diff_parsed_free;
+	diff->base.patch_fn  = git_patch_parsed_from_diff;
+	diff->base.free_fn   = diff_parsed_free;
 
 	if (git_diff_init_options(&diff->base.opts, GIT_DIFF_OPTIONS_VERSION) < 0) {
 		git__free(diff);
@@ -73,7 +73,7 @@ int git_diff_from_buffer(
 	git_diff_parsed *diff;
 	git_patch *patch;
 	git_patch_parse_ctx *ctx = NULL;
-	int error = 0;
+	int error				 = 0;
 
 	*out = NULL;
 

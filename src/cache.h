@@ -17,8 +17,8 @@
 #include "oidmap.h"
 
 enum {
-	GIT_CACHE_STORE_ANY = 0,
-	GIT_CACHE_STORE_RAW = 1,
+	GIT_CACHE_STORE_ANY	= 0,
+	GIT_CACHE_STORE_RAW	= 1,
 	GIT_CACHE_STORE_PARSED = 2
 };
 

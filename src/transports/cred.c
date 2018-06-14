@@ -86,8 +86,8 @@ int git_cred_userpass_plaintext_new(
 	GITERR_CHECK_ALLOC(c);
 
 	c->parent.credtype = GIT_CREDTYPE_USERPASS_PLAINTEXT;
-	c->parent.free = plaintext_free;
-	c->username = git__strdup(username);
+	c->parent.free	 = plaintext_free;
+	c->username		   = git__strdup(username);
 
 	if (!c->username) {
 		git__free(c);
@@ -234,7 +234,7 @@ static int git_cred_ssh_key_type_new(
 	GITERR_CHECK_ALLOC(c);
 
 	c->parent.credtype = credtype;
-	c->parent.free = ssh_key_free;
+	c->parent.free	 = ssh_key_free;
 
 	c->username = git__strdup(username);
 	GITERR_CHECK_ALLOC(c->username);
@@ -270,13 +270,13 @@ int git_cred_ssh_interactive_new(
 	GITERR_CHECK_ALLOC(c);
 
 	c->parent.credtype = GIT_CREDTYPE_SSH_INTERACTIVE;
-	c->parent.free = ssh_interactive_free;
+	c->parent.free	 = ssh_interactive_free;
 
 	c->username = git__strdup(username);
 	GITERR_CHECK_ALLOC(c->username);
 
 	c->prompt_callback = prompt_callback;
-	c->payload = payload;
+	c->payload		   = payload;
 
 	*out = &c->parent;
 	return 0;
@@ -292,7 +292,7 @@ int git_cred_ssh_key_from_agent(git_cred **cred, const char *username)
 	GITERR_CHECK_ALLOC(c);
 
 	c->parent.credtype = GIT_CREDTYPE_SSH_KEY;
-	c->parent.free = ssh_key_free;
+	c->parent.free	 = ssh_key_free;
 
 	c->username = git__strdup(username);
 	GITERR_CHECK_ALLOC(c->username);
@@ -319,7 +319,7 @@ int git_cred_ssh_custom_new(
 	GITERR_CHECK_ALLOC(c);
 
 	c->parent.credtype = GIT_CREDTYPE_SSH_CUSTOM;
-	c->parent.free = ssh_custom_free;
+	c->parent.free	 = ssh_custom_free;
 
 	c->username = git__strdup(username);
 	GITERR_CHECK_ALLOC(c->username);
@@ -333,7 +333,7 @@ int git_cred_ssh_custom_new(
 
 	c->publickey_len = publickey_len;
 	c->sign_callback = sign_callback;
-	c->payload = payload;
+	c->payload		 = payload;
 
 	*cred = &c->parent;
 	return 0;
@@ -349,7 +349,7 @@ int git_cred_default_new(git_cred **cred)
 	GITERR_CHECK_ALLOC(c);
 
 	c->credtype = GIT_CREDTYPE_DEFAULT;
-	c->free = default_free;
+	c->free		= default_free;
 
 	*cred = c;
 	return 0;
@@ -370,7 +370,7 @@ int git_cred_username_new(git_cred **cred, const char *username)
 	GITERR_CHECK_ALLOC(c);
 
 	c->parent.credtype = GIT_CREDTYPE_USERNAME;
-	c->parent.free = username_free;
+	c->parent.free	 = username_free;
 	memcpy(c->username, username, len + 1);
 
 	*cred = (git_cred *)c;

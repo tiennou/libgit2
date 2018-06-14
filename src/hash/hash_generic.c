@@ -55,11 +55,11 @@
 #if defined(__i386__) || defined(__x86_64__)
 #	define setW(x, val) (*(volatile unsigned int *)&W(x) = (val))
 #elif defined(__GNUC__) && defined(__arm__)
-#	define setW(x, val) \
-		do { \
-			W(x) = (val); \
-			__asm__("" :: \
-												: "memory"); \
+#	define setW(x, val)             \
+		do {                         \
+			W(x) = (val);            \
+			__asm__("" ::            \
+						: "memory"); \
 		} while (0)
 #else
 #	define setW(x, val) (W(x) = (val))
@@ -72,32 +72,32 @@
  * and is faster on architectures with memory alignment issues.
  */
 
-#if defined(__i386__) || defined(__x86_64__) || \
-	defined(_M_IX86) || defined(_M_X64) || \
-	defined(__ppc__) || defined(__ppc64__) || \
+#if defined(__i386__) || defined(__x86_64__) ||       \
+	defined(_M_IX86) || defined(_M_X64) ||            \
+	defined(__ppc__) || defined(__ppc64__) ||         \
 	defined(__powerpc__) || defined(__powerpc64__) || \
 	defined(__s390__) || defined(__s390x__)
 
 #	define get_be32(p) ntohl(*(const unsigned int *)(p))
-#	define put_be32(p, v) \
-		do { \
+#	define put_be32(p, v)                   \
+		do {                                 \
 			*(unsigned int *)(p) = htonl(v); \
 		} while (0)
 
 #else
 
-#	define get_be32(p) ( \
+#	define get_be32(p) (                           \
 		(*((const unsigned char *)(p) + 0) << 24) | \
 		(*((const unsigned char *)(p) + 1) << 16) | \
-		(*((const unsigned char *)(p) + 2) << 8) | \
+		(*((const unsigned char *)(p) + 2) << 8) |  \
 		(*((const unsigned char *)(p) + 3) << 0))
-#	define put_be32(p, v) \
-		do { \
-			unsigned int __v = (v); \
+#	define put_be32(p, v)                           \
+		do {                                         \
+			unsigned int __v			= (v);       \
 			*((unsigned char *)(p) + 0) = __v >> 24; \
 			*((unsigned char *)(p) + 1) = __v >> 16; \
-			*((unsigned char *)(p) + 2) = __v >> 8; \
-			*((unsigned char *)(p) + 3) = __v >> 0; \
+			*((unsigned char *)(p) + 2) = __v >> 8;  \
+			*((unsigned char *)(p) + 3) = __v >> 0;  \
 		} while (0)
 
 #endif
@@ -113,11 +113,11 @@
 #define SHA_MIX(t) SHA_ROL(W(t + 13) ^ W(t + 8) ^ W(t + 2) ^ W(t), 1)
 
 #define SHA_ROUND(t, input, fn, constant, A, B, C, D, E) \
-	do { \
-		unsigned int TEMP = input(t); \
-		setW(t, TEMP); \
-		E += TEMP + SHA_ROL(A, 5) + (fn) + (constant); \
-		B = SHA_ROR(B, 2); \
+	do {                                                 \
+		unsigned int TEMP = input(t);                    \
+		setW(t, TEMP);                                   \
+		E += TEMP + SHA_ROL(A, 5) + (fn) + (constant);   \
+		B = SHA_ROR(B, 2);                               \
 	} while (0)
 
 #define T_0_15(t, A, B, C, D, E) SHA_ROUND(t, SHA_SRC, (((C ^ D) & B) ^ D), 0x5a827999, A, B, C, D, E)

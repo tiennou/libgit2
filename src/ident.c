@@ -23,7 +23,7 @@ static int ident_find_id(
 			return GIT_ENOTFOUND;
 
 		start = found + 1;
-		len = remaining;
+		len   = remaining;
 
 		if (start[0] == 'I' && start[1] == 'd')
 			break;
@@ -121,10 +121,10 @@ git_filter *git_ident_filter_new(void)
 	if (f == NULL)
 		return NULL;
 
-	f->version = GIT_FILTER_VERSION;
+	f->version	= GIT_FILTER_VERSION;
 	f->attributes = "+ident"; /* apply to files with ident attribute set */
-	f->shutdown = git_filter_free;
-	f->apply = ident_apply;
+	f->shutdown   = git_filter_free;
+	f->apply	  = ident_apply;
 
 	return f;
 }

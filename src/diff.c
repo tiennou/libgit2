@@ -94,8 +94,7 @@ size_t git_diff_num_deltas_of_type(const git_diff *diff, git_delta_t type)
 
 	assert(diff);
 
-	git_vector_foreach(&diff->deltas, i, delta)
-	{
+	git_vector_foreach (&diff->deltas, i, delta) {
 		count += (delta->status == type);
 	}
 
@@ -117,7 +116,7 @@ int git_diff_get_perfdata(git_diff_perfdata *out, const git_diff *diff)
 {
 	assert(out);
 	GITERR_CHECK_VERSION(out, GIT_DIFF_PERFDATA_VERSION, "git_diff_perfdata");
-	out->stat_calls = diff->perf.stat_calls;
+	out->stat_calls		  = diff->perf.stat_calls;
 	out->oid_calculations = diff->perf.oid_calculations;
 	return 0;
 }
@@ -136,8 +135,7 @@ int git_diff_foreach(
 
 	assert(diff);
 
-	git_vector_foreach(&diff->deltas, idx, delta)
-	{
+	git_vector_foreach (&diff->deltas, idx, delta) {
 		git_patch *patch;
 
 		/* check flags against patch status */
@@ -176,7 +174,7 @@ int git_diff_format_email__append_header_tobuf(
 	idstr[GIT_OID_HEXSZ] = '\0';
 
 	if ((error = git__date_rfc2822_fmt(date_str, sizeof(date_str),
-							&author->when)) < 0)
+			 &author->when)) < 0)
 		return error;
 
 	error = git_buf_printf(out,
@@ -259,7 +257,7 @@ int git_diff_format_email(
 		"git_format_email_options");
 
 	ignore_marker = (opts->flags &
-																		GIT_DIFF_FORMAT_EMAIL_EXCLUDE_SUBJECT_PATCH_MARKER) != 0;
+						GIT_DIFF_FORMAT_EMAIL_EXCLUDE_SUBJECT_PATCH_MARKER) != 0;
 
 	if (!ignore_marker) {
 		if (opts->patch_no > opts->total_patches) {
@@ -336,13 +334,13 @@ int git_diff_commit_as_email(
 
 	assert(out && repo && commit);
 
-	opts.flags = flags;
-	opts.patch_no = patch_no;
+	opts.flags		   = flags;
+	opts.patch_no	  = patch_no;
 	opts.total_patches = total_patches;
-	opts.id = git_commit_id(commit);
-	opts.summary = git_commit_summary(commit);
-	opts.body = git_commit_body(commit);
-	opts.author = git_commit_author(commit);
+	opts.id			   = git_commit_id(commit);
+	opts.summary	   = git_commit_summary(commit);
+	opts.body		   = git_commit_body(commit);
+	opts.author		   = git_commit_author(commit);
 
 	if ((error = git_diff__commit(&diff, repo, commit, diff_opts)) < 0)
 		return error;
@@ -418,7 +416,7 @@ static int file_cb(
 	void *payload)
 {
 	struct patch_id_args *args = (struct patch_id_args *)payload;
-	git_buf buf = GIT_BUF_INIT;
+	git_buf buf				   = GIT_BUF_INIT;
 	int error;
 
 	GIT_UNUSED(progress);
@@ -429,11 +427,11 @@ static int file_cb(
 	args->first_file = 0;
 
 	if ((error = git_buf_printf(&buf,
-							"diff--gita/%sb/%s---a/%s+++b/%s",
-							delta->old_file.path,
-							delta->new_file.path,
-							delta->old_file.path,
-							delta->new_file.path)) < 0)
+			 "diff--gita/%sb/%s---a/%s+++b/%s",
+			 delta->old_file.path,
+			 delta->new_file.path,
+			 delta->old_file.path,
+			 delta->new_file.path)) < 0)
 		goto out;
 
 	strip_spaces(&buf);
@@ -453,7 +451,7 @@ static int line_cb(
 	void *payload)
 {
 	struct patch_id_args *args = (struct patch_id_args *)payload;
-	git_buf buf = GIT_BUF_INIT;
+	git_buf buf				   = GIT_BUF_INIT;
 	int error;
 
 	GIT_UNUSED(delta);

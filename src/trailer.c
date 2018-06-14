@@ -105,10 +105,10 @@ static int find_separator(const char *line, const char *separators)
  */
 static int ignore_non_trailer(const char *buf, size_t len)
 {
-	int boc = 0;
-	size_t bol = 0;
+	int boc					   = 0;
+	size_t bol				   = 0;
 	int in_old_conflicts_block = 0;
-	size_t cutoff = len;
+	size_t cutoff			   = len;
 
 	while (bol < cutoff) {
 		const char *next_line = memchr(buf + bol, '\n', len - bol);
@@ -131,7 +131,7 @@ static int ignore_non_trailer(const char *buf, size_t len)
 			; /* a pathname in the conflicts block */
 		} else if (boc) {
 			/* the previous was not trailing comment */
-			boc = 0;
+			boc					   = 0;
 			in_old_conflicts_block = 0;
 		}
 		bol = next_line - buf;
@@ -189,8 +189,8 @@ static int find_trailer_start(const char *buf, size_t len)
 	 * consists of at least 25% trailers.
 	 */
 	for (l = last_line(buf, len);
-						l >= end_of_title;
-						l = last_line(buf, l)) {
+		 l >= end_of_title;
+		 l = last_line(buf, l)) {
 		const char *bol = buf + l;
 		const char *const *p;
 		int separator_pos;
@@ -217,7 +217,7 @@ static int find_trailer_start(const char *buf, size_t len)
 			if (git__prefixcmp(bol, *p) == 0) {
 				trailer_lines++;
 				possible_continuation_lines = 0;
-				recognized_prefix = 1;
+				recognized_prefix			= 1;
 				goto continue_outer_loop;
 			}
 		}
@@ -249,8 +249,8 @@ static int find_trailer_end(const char *buf, size_t len)
 
 static char *extract_trailer_block(const char *message, size_t *len)
 {
-	size_t patch_start = find_patch_start(message);
-	size_t trailer_end = find_trailer_end(message, patch_start);
+	size_t patch_start   = find_patch_start(message);
+	size_t trailer_end   = find_trailer_end(message, patch_start);
 	size_t trailer_start = find_trailer_start(message, trailer_end);
 
 	size_t trailer_len = trailer_end - trailer_start;
@@ -265,26 +265,26 @@ static char *extract_trailer_block(const char *message, size_t *len)
 }
 
 enum trailer_state {
-	S_START = 0,
-	S_KEY = 1,
-	S_KEY_WS = 2,
-	S_SEP_WS = 3,
-	S_VALUE = 4,
-	S_VALUE_NL = 5,
+	S_START		= 0,
+	S_KEY		= 1,
+	S_KEY_WS	= 2,
+	S_SEP_WS	= 3,
+	S_VALUE		= 4,
+	S_VALUE_NL  = 5,
 	S_VALUE_END = 6,
-	S_IGNORE = 7,
+	S_IGNORE	= 7,
 };
 
-#define NEXT(st) \
-	{ \
+#define NEXT(st)      \
+	{                 \
 		state = (st); \
-		ptr++; \
-		continue; \
+		ptr++;        \
+		continue;     \
 	}
-#define GOTO(st) \
-	{ \
+#define GOTO(st)      \
+	{                 \
 		state = (st); \
-		continue; \
+		continue;     \
 	}
 
 typedef git_array_t(git_message_trailer) git_array_trailer_t;
@@ -292,10 +292,10 @@ typedef git_array_t(git_message_trailer) git_array_trailer_t;
 int git_message_trailers(git_message_trailer_array *trailer_arr, const char *message)
 {
 	enum trailer_state state = S_START;
-	int rc = 0;
+	int rc					 = 0;
 	char *ptr;
-	char *key = NULL;
-	char *value = NULL;
+	char *key				= NULL;
+	char *value				= NULL;
 	git_array_trailer_t arr = GIT_ARRAY_INIT;
 
 	size_t trailer_len;
@@ -386,10 +386,10 @@ int git_message_trailers(git_message_trailer_array *trailer_arr, const char *mes
 		case S_VALUE_END: {
 			git_message_trailer *t = git_array_alloc(arr);
 
-			t->key = key;
+			t->key   = key;
 			t->value = value;
 
-			key = NULL;
+			key   = NULL;
 			value = NULL;
 
 			GOTO(S_START);
@@ -410,8 +410,8 @@ int git_message_trailers(git_message_trailer_array *trailer_arr, const char *mes
 
 ret:
 	trailer_arr->_trailer_block = trailer;
-	trailer_arr->trailers = arr.ptr;
-	trailer_arr->count = arr.size;
+	trailer_arr->trailers		= arr.ptr;
+	trailer_arr->count			= arr.size;
 
 	return rc;
 }

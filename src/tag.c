@@ -160,8 +160,8 @@ static int tag_parse(git_tag *tag, const char *buffer, const char *buffer_end)
 
 int git_tag__parse(void *_tag, git_odb_object *odb_obj)
 {
-	git_tag *tag = _tag;
-	const char *buffer = git_odb_object_data(odb_obj);
+	git_tag *tag		   = _tag;
+	const char *buffer	 = git_odb_object_data(odb_obj);
 	const char *buffer_end = buffer + git_odb_object_size(odb_obj);
 
 	return tag_parse(tag, buffer, buffer_end);
@@ -248,7 +248,7 @@ static int git_tag_create__internal(
 	int create_tag_annotation)
 {
 	git_reference *new_ref = NULL;
-	git_buf ref_name = GIT_BUF_INIT;
+	git_buf ref_name	   = GIT_BUF_INIT;
 
 	int error;
 
@@ -330,7 +330,7 @@ int git_tag_create_frombuffer(git_oid *oid, git_repository *repo, const char *bu
 	git_odb_object *target_obj;
 
 	git_reference *new_ref = NULL;
-	git_buf ref_name = GIT_BUF_INIT;
+	git_buf ref_name	   = GIT_BUF_INIT;
 
 	assert(oid && buffer);
 
@@ -371,7 +371,7 @@ int git_tag_create_frombuffer(git_oid *oid, git_repository *repo, const char *bu
 
 	/* write the buffer */
 	if ((error = git_odb_open_wstream(
-							&stream, odb, strlen(buffer), GIT_OBJ_TAG)) < 0)
+			 &stream, odb, strlen(buffer), GIT_OBJ_TAG)) < 0)
 		return error;
 
 	if (!(error = git_odb_stream_write(stream, buffer, strlen(buffer))))
@@ -449,9 +449,9 @@ int git_tag_foreach(git_repository *repo, git_tag_foreach_cb cb, void *cb_data)
 
 	assert(repo && cb);
 
-	data.cb = cb;
+	data.cb		 = cb;
 	data.cb_data = cb_data;
-	data.repo = repo;
+	data.repo	= repo;
 
 	return git_reference_foreach_name(repo, &tags_cb, &data);
 }

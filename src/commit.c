@@ -132,10 +132,10 @@ static int git_commit__create_internal(
 {
 	int error;
 	git_odb *odb;
-	git_reference *ref = NULL;
-	git_buf buf = GIT_BUF_INIT;
+	git_reference *ref		  = NULL;
+	git_buf buf				  = GIT_BUF_INIT;
 	const git_oid *current_id = NULL;
-	git_array_oid_t parents = GIT_ARRAY_INIT;
+	git_array_oid_t parents   = GIT_ARRAY_INIT;
 
 	if (update_ref) {
 		error = git_reference_lookup_resolved(&ref, repo, update_ref, 10);
@@ -384,9 +384,9 @@ int git_commit_amend(
 
 int git_commit__parse(void *_commit, git_odb_object *odb_obj)
 {
-	git_commit *commit = _commit;
+	git_commit *commit		 = _commit;
 	const char *buffer_start = git_odb_object_data(odb_obj), *buffer;
-	const char *buffer_end = buffer_start + git_odb_object_size(odb_obj);
+	const char *buffer_end   = buffer_start + git_odb_object_size(odb_obj);
 	git_oid parent_id;
 	size_t header_len;
 	git_signature dummy_sig;
@@ -455,7 +455,7 @@ int git_commit__parse(void *_commit, git_odb_object *odb_obj)
 		buffer = eoln;
 	}
 
-	header_len = buffer - buffer_start;
+	header_len		   = buffer - buffer_start;
 	commit->raw_header = git__strndup(buffer_start, header_len);
 	GITERR_CHECK_ALLOC(commit->raw_header);
 
@@ -476,11 +476,11 @@ bad_buffer:
 	return -1;
 }
 
-#define GIT_COMMIT_GETTER(_rvalue, _name, _return) \
+#define GIT_COMMIT_GETTER(_rvalue, _name, _return)       \
 	_rvalue git_commit_##_name(const git_commit *commit) \
-	{ \
-		assert(commit); \
-		return _return; \
+	{                                                    \
+		assert(commit);                                  \
+		return _return;                                  \
 	}
 
 GIT_COMMIT_GETTER(const git_signature *, author, commit->author)
@@ -525,7 +525,7 @@ const char *git_commit_summary(git_commit *commit)
 			/* record the beginning of contiguous whitespace runs */
 			else if (git__isspace(next_character)) {
 				if (space == NULL) {
-					space = msg;
+					space				   = msg;
 					space_contains_newline = false;
 				}
 				space_contains_newline |= next_character == '\n';
@@ -759,7 +759,7 @@ int git_commit_extract_signature(git_buf *signature, git_buf *signed_data, git_r
 		/* If the next line starts with SP, it's multi-line, we must continue */
 		while (eol[1] == ' ') {
 			git_buf_putc(signature, '\n');
-			h = eol + 2;
+			h   = eol + 2;
 			eol = strchr(h, '\n');
 			if (!eol)
 				goto malformed;
@@ -806,7 +806,7 @@ int git_commit_create_buffer(git_buf *out,
 	const git_commit *parents[])
 {
 	int error;
-	commit_parent_data data = {parent_count, parents, repo};
+	commit_parent_data data		= {parent_count, parents, repo};
 	git_array_oid_t parents_arr = GIT_ARRAY_INIT;
 	const git_oid *tree_id;
 

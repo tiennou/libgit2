@@ -63,8 +63,8 @@ int git_thread_create(
 	void *GIT_RESTRICT arg)
 {
 	thread->result = NULL;
-	thread->param = arg;
-	thread->proc = start_routine;
+	thread->param  = arg;
+	thread->proc   = start_routine;
 	thread->thread = CreateThread(
 		NULL, 0, git_win32__threadproc, thread, 0, NULL);
 

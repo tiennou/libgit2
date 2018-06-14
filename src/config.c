@@ -159,8 +159,7 @@ int git_config_snapshot(git_config **out, git_config *in)
 	if (git_config_new(&config) < 0)
 		return -1;
 
-	git_vector_foreach(&in->files, i, internal)
-	{
+	git_vector_foreach (&in->files, i, internal) {
 		git_config_backend *b;
 
 		if ((error = internal->file->snapshot(&b, internal->file)) < 0)
@@ -197,8 +196,7 @@ static int find_internal_file_by_level(
 	if (level == GIT_CONFIG_HIGHEST_LEVEL) {
 		pos = 0;
 	} else {
-		git_vector_foreach(&cfg->files, i, internal)
-		{
+		git_vector_foreach (&cfg->files, i, internal) {
 			if (internal->level == level)
 				pos = (int)i;
 		}
@@ -233,8 +231,7 @@ static void try_remove_existing_file_internal(
 	file_internal *internal;
 	size_t i;
 
-	git_vector_foreach(&cfg->files, i, internal)
-	{
+	git_vector_foreach (&cfg->files, i, internal) {
 		if (internal->level == level)
 			pos = (int)i;
 	}
@@ -263,7 +260,7 @@ static int git_config__add_internal(
 		try_remove_existing_file_internal(cfg, level);
 
 	if ((result = git_vector_insert_sorted(&cfg->files,
-							internal, &duplicate_level)) < 0)
+			 internal, &duplicate_level)) < 0)
 		return result;
 
 	git_vector_sort(&cfg->files);
@@ -329,7 +326,7 @@ int git_config_add_backend(
 
 	memset(internal, 0x0, sizeof(file_internal));
 
-	internal->file = file;
+	internal->file  = file;
 	internal->level = level;
 
 	if ((result = git_config__add_internal(cfg, internal, level, force)) < 0) {
@@ -389,14 +386,14 @@ static int all_iter_next(git_config_entry **entry, git_config_iterator *_iter)
 			return GIT_ITEROVER;
 
 		internal = git_vector_get(&iter->cfg->files, i - 1);
-		backend = internal->file;
-		iter->i = i - 1;
+		backend  = internal->file;
+		iter->i  = i - 1;
 
 		if (iter->current)
 			iter->current->free(iter->current);
 
 		iter->current = NULL;
-		error = backend->iterator(&iter->current, backend);
+		error		  = backend->iterator(&iter->current, backend);
 		if (error == GIT_ENOTFOUND)
 			continue;
 
@@ -464,7 +461,7 @@ int git_config_iterator_new(git_config_iterator **out, const git_config *cfg)
 	iter->parent.free = all_iter_free;
 	iter->parent.next = all_iter_next;
 
-	iter->i = cfg->files.length;
+	iter->i   = cfg->files.length;
 	iter->cfg = cfg;
 
 	*out = (git_config_iterator *)iter;
@@ -491,8 +488,8 @@ int git_config_iterator_glob_new(git_config_iterator **out, const git_config *cf
 
 	iter->parent.next = all_iter_glob_next;
 	iter->parent.free = all_iter_glob_free;
-	iter->i = cfg->files.length;
-	iter->cfg = cfg;
+	iter->i			  = cfg->files.length;
+	iter->cfg		  = cfg;
 
 	*out = (git_config_iterator *)iter;
 
@@ -605,8 +602,7 @@ static int get_backend_for_use(git_config_backend **out,
 		return GIT_ENOTFOUND;
 	}
 
-	git_vector_foreach(&cfg->files, i, f)
-	{
+	git_vector_foreach (&cfg->files, i, f) {
 		if (!f->file->readonly) {
 			*out = f->file;
 			return 0;
@@ -674,7 +670,7 @@ int git_config__update_entry(
 	bool overwrite_existing,
 	bool only_if_existing)
 {
-	int error = 0;
+	int error			 = 0;
 	git_config_entry *ce = NULL;
 
 	if ((error = git_config__lookup_entry(&ce, config, key, false)) < 0)
@@ -711,7 +707,7 @@ static int config_error_notfound(const char *name)
 enum {
 	GET_ALL_ERRORS = 0,
 	GET_NO_MISSING = 1,
-	GET_NO_ERRORS = 2
+	GET_NO_ERRORS  = 2
 };
 
 static int get_entry(
@@ -721,8 +717,8 @@ static int get_entry(
 	bool normalize_name,
 	int want_errors)
 {
-	int res = GIT_ENOTFOUND;
-	const char *key = name;
+	int res			 = GIT_ENOTFOUND;
+	const char *key  = name;
 	char *normalized = NULL;
 	size_t i;
 	file_internal *internal;
@@ -736,8 +732,7 @@ static int get_entry(
 	}
 
 	res = GIT_ENOTFOUND;
-	git_vector_foreach(&cfg->files, i, internal)
-	{
+	git_vector_foreach (&cfg->files, i, internal) {
 		if (!internal || !internal->file)
 			continue;
 
@@ -841,8 +836,7 @@ static int is_readonly(const git_config *cfg)
 	size_t i;
 	file_internal *internal;
 
-	git_vector_foreach(&cfg->files, i, internal)
-	{
+	git_vector_foreach (&cfg->files, i, internal) {
 		if (!internal || !internal->file)
 			continue;
 
@@ -878,7 +872,7 @@ int git_config_get_string(
 		return -1;
 	}
 
-	ret = get_entry(&entry, cfg, name, true, GET_ALL_ERRORS);
+	ret  = get_entry(&entry, cfg, name, true, GET_ALL_ERRORS);
 	*out = !ret ? (entry->value ? entry->value : "") : NULL;
 
 	git_config_entry_free(entry);
@@ -991,7 +985,7 @@ typedef struct {
 static int multivar_iter_next(git_config_entry **entry, git_config_iterator *_iter)
 {
 	multivar_iter *iter = (multivar_iter *)_iter;
-	int error = 0;
+	int error			= 0;
 
 	while ((error = iter->iter->next(entry, iter->iter)) == 0) {
 		if (git__strcmp(iter->name, (*entry)->name))
@@ -1021,7 +1015,7 @@ void multivar_iter_free(git_config_iterator *_iter)
 
 int git_config_multivar_iterator_new(git_config_iterator **out, const git_config *cfg, const char *name, const char *regexp)
 {
-	multivar_iter *iter = NULL;
+	multivar_iter *iter		   = NULL;
 	git_config_iterator *inner = NULL;
 	int error;
 
@@ -1046,7 +1040,7 @@ int git_config_multivar_iterator_new(git_config_iterator **out, const git_config
 		iter->have_regex = 1;
 	}
 
-	iter->iter = inner;
+	iter->iter		  = inner;
 	iter->parent.free = multivar_iter_free;
 	iter->parent.next = multivar_iter_next;
 
@@ -1147,7 +1141,7 @@ int git_config_open_default(git_config **out)
 {
 	int error;
 	git_config *cfg = NULL;
-	git_buf buf = GIT_BUF_INIT;
+	git_buf buf		= GIT_BUF_INIT;
 
 	if ((error = git_config_new(&cfg)) < 0)
 		return error;
@@ -1278,7 +1272,7 @@ int git_config_lookup_map_enum(git_cvar_t *type_out, const char **str_out,
 			continue;
 
 		*type_out = m->cvar_type;
-		*str_out = m->str_match;
+		*str_out  = m->str_match;
 		return 0;
 	}
 
@@ -1426,9 +1420,9 @@ static int rename_config_entries_cb(
 	const git_config_entry *entry,
 	void *payload)
 {
-	int error = 0;
+	int error				 = 0;
 	struct rename_data *data = (struct rename_data *)payload;
-	size_t base_len = git_buf_len(data->name);
+	size_t base_len			 = git_buf_len(data->name);
 
 	if (base_len > 0 &&
 		!(error = git_buf_puts(data->name, entry->name + data->old_len))) {
@@ -1462,8 +1456,8 @@ int git_config_rename_section(
 	if ((error = git_repository_config__weakptr(&config, repo)) < 0)
 		goto cleanup;
 
-	data.config = config;
-	data.name = &replace;
+	data.config  = config;
+	data.name	= &replace;
 	data.old_len = strlen(old_section_name) + 1;
 
 	if ((error = git_buf_join(&replace, '.', new_section_name, "")) < 0)
@@ -1471,7 +1465,7 @@ int git_config_rename_section(
 
 	if (new_section_name != NULL &&
 		(error = git_config_file_normalize_section(
-				replace.ptr, strchr(replace.ptr, '.'))) < 0) {
+			 replace.ptr, strchr(replace.ptr, '.'))) < 0) {
 		giterr_set(
 			GITERR_CONFIG, "invalid config section '%s'", new_section_name);
 		goto cleanup;

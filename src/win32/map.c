@@ -52,20 +52,20 @@ int git__mmap_alignment(size_t *page_size)
 
 int p_mmap(git_map *out, size_t len, int prot, int flags, int fd, git_off_t offset)
 {
-	HANDLE fh = (HANDLE)_get_osfhandle(fd);
+	HANDLE fh		= (HANDLE)_get_osfhandle(fd);
 	DWORD alignment = get_allocation_granularity();
 	DWORD fmap_prot = 0;
 	DWORD view_prot = 0;
-	DWORD off_low = 0;
-	DWORD off_hi = 0;
+	DWORD off_low   = 0;
+	DWORD off_hi	= 0;
 	git_off_t page_start;
 	git_off_t page_offset;
 
 	GIT_MMAP_VALIDATE(out, len, prot, flags);
 
 	out->data = NULL;
-	out->len = 0;
-	out->fmh = NULL;
+	out->len  = 0;
+	out->fmh  = NULL;
 
 	if (fh == INVALID_HANDLE_VALUE) {
 		errno = EBADF;
@@ -83,7 +83,7 @@ int p_mmap(git_map *out, size_t len, int prot, int flags, int fd, git_off_t offs
 	if (prot & GIT_PROT_READ)
 		view_prot |= FILE_MAP_READ;
 
-	page_start = (offset / alignment) * alignment;
+	page_start  = (offset / alignment) * alignment;
 	page_offset = offset - page_start;
 
 	if (page_offset != 0) { /* offset must be multiple of the allocation granularity */
@@ -101,8 +101,8 @@ int p_mmap(git_map *out, size_t len, int prot, int flags, int fd, git_off_t offs
 
 	assert(sizeof(git_off_t) == 8);
 
-	off_low = (DWORD)(page_start);
-	off_hi = (DWORD)(page_start >> 32);
+	off_low   = (DWORD)(page_start);
+	off_hi	= (DWORD)(page_start >> 32);
 	out->data = MapViewOfFile(out->fmh, view_prot, off_hi, off_low, len);
 	if (!out->data) {
 		giterr_set(GITERR_OS, "failed to mmap. No data written");

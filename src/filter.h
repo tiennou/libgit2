@@ -17,7 +17,7 @@
 
 /* Possible CRLF values */
 typedef enum {
-	GIT_CRLF_GUESS = -1,
+	GIT_CRLF_GUESS  = -1,
 	GIT_CRLF_BINARY = 0,
 	GIT_CRLF_TEXT,
 	GIT_CRLF_INPUT,
@@ -32,8 +32,8 @@ typedef struct {
 } git_filter_options;
 
 #define GIT_FILTER_OPTIONS_INIT \
-	{ \
-		0 \
+	{                           \
+		0                       \
 	}
 
 extern int git_filter_global_init(void);

@@ -85,16 +85,16 @@ typedef struct git_index_entry {
  */
 typedef enum {
 	GIT_IDXENTRY_EXTENDED = (0x4000),
-	GIT_IDXENTRY_VALID = (0x8000),
+	GIT_IDXENTRY_VALID	= (0x8000),
 } git_indxentry_flag_t;
 
 #define GIT_IDXENTRY_STAGE(E) \
 	(((E)->flags & GIT_IDXENTRY_STAGEMASK) >> GIT_IDXENTRY_STAGESHIFT)
 
-#define GIT_IDXENTRY_STAGE_SET(E, S) \
-	do { \
+#define GIT_IDXENTRY_STAGE_SET(E, S)                          \
+	do {                                                      \
 		(E)->flags = ((E)->flags & ~GIT_IDXENTRY_STAGEMASK) | \
-			(((S)&0x03) << GIT_IDXENTRY_STAGESHIFT); \
+			(((S)&0x03) << GIT_IDXENTRY_STAGESHIFT);          \
 	} while (0)
 
 /**
@@ -122,17 +122,17 @@ typedef enum {
 	GIT_IDXENTRY_EXTENDED2 = (1 << 15),
 
 	GIT_IDXENTRY_EXTENDED_FLAGS = (GIT_IDXENTRY_INTENT_TO_ADD | GIT_IDXENTRY_SKIP_WORKTREE),
-	GIT_IDXENTRY_UPDATE = (1 << 0),
-	GIT_IDXENTRY_REMOVE = (1 << 1),
-	GIT_IDXENTRY_UPTODATE = (1 << 2),
-	GIT_IDXENTRY_ADDED = (1 << 3),
+	GIT_IDXENTRY_UPDATE			= (1 << 0),
+	GIT_IDXENTRY_REMOVE			= (1 << 1),
+	GIT_IDXENTRY_UPTODATE		= (1 << 2),
+	GIT_IDXENTRY_ADDED			= (1 << 3),
 
-	GIT_IDXENTRY_HASHED = (1 << 4),
-	GIT_IDXENTRY_UNHASHED = (1 << 5),
-	GIT_IDXENTRY_WT_REMOVE = (1 << 6), /**< remove in work directory */
+	GIT_IDXENTRY_HASHED		= (1 << 4),
+	GIT_IDXENTRY_UNHASHED   = (1 << 5),
+	GIT_IDXENTRY_WT_REMOVE  = (1 << 6), /**< remove in work directory */
 	GIT_IDXENTRY_CONFLICTED = (1 << 7),
 
-	GIT_IDXENTRY_UNPACKED = (1 << 8),
+	GIT_IDXENTRY_UNPACKED		   = (1 << 8),
 	GIT_IDXENTRY_NEW_SKIP_WORKTREE = (1 << 9),
 } git_idxentry_extended_flag_t;
 
@@ -141,7 +141,7 @@ typedef enum {
 	GIT_INDEXCAP_IGNORE_CASE = 1,
 	GIT_INDEXCAP_NO_FILEMODE = 2,
 	GIT_INDEXCAP_NO_SYMLINKS = 4,
-	GIT_INDEXCAP_FROM_OWNER = -1,
+	GIT_INDEXCAP_FROM_OWNER  = -1,
 } git_indexcap_t;
 
 /** Callback for APIs that add/remove/update files matching pathspec */
@@ -150,10 +150,10 @@ typedef int (*git_index_matched_path_cb)(
 
 /** Flags for APIs that add files matching pathspec */
 typedef enum {
-	GIT_INDEX_ADD_DEFAULT = 0,
-	GIT_INDEX_ADD_FORCE = (1u << 0),
+	GIT_INDEX_ADD_DEFAULT				 = 0,
+	GIT_INDEX_ADD_FORCE					 = (1u << 0),
 	GIT_INDEX_ADD_DISABLE_PATHSPEC_MATCH = (1u << 1),
-	GIT_INDEX_ADD_CHECK_PATHSPEC = (1u << 2),
+	GIT_INDEX_ADD_CHECK_PATHSPEC		 = (1u << 2),
 } git_index_add_option_t;
 
 typedef enum {

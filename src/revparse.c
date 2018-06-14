@@ -168,7 +168,7 @@ static int retrieve_previously_checked_out_branch_or_revision(git_object **out, 
 
 	for (i = 0; i < numentries; i++) {
 		entry = git_reflog_entry_byindex(reflog, i);
-		msg = git_reflog_entry_message(entry);
+		msg   = git_reflog_entry_message(entry);
 		if (!msg)
 			continue;
 
@@ -226,7 +226,7 @@ static int retrieve_oid_from_reflog(git_oid *oid, git_reference *ref, size_t ide
 		git_time commit_time;
 
 		for (i = 0; i < numentries; i++) {
-			entry = git_reflog_entry_byindex(reflog, i);
+			entry		= git_reflog_entry_byindex(reflog, i);
 			commit_time = git_reflog_entry_committer(entry)->when;
 
 			if (commit_time.time > (git_time_t)identifier)
@@ -263,7 +263,7 @@ static int retrieve_revobject_from_reflog(git_object **out, git_reference **base
 		if ((error = git_reference_dwim(&ref, repo, identifier)) < 0)
 			return error;
 	} else {
-		ref = *base_ref;
+		ref		  = *base_ref;
 		*base_ref = NULL;
 	}
 
@@ -291,7 +291,7 @@ static int retrieve_remote_tracking_reference(git_reference **base_ref, const ch
 		if ((error = git_reference_dwim(&ref, repo, identifier)) < 0)
 			return error;
 	} else {
-		ref = *base_ref;
+		ref		  = *base_ref;
 		*base_ref = NULL;
 	}
 
@@ -418,7 +418,7 @@ static int handle_colon_syntax(
 	const char *path)
 {
 	git_object *tree;
-	int error = -1;
+	int error			  = -1;
 	git_tree_entry *entry = NULL;
 
 	if ((error = git_object_peel(&tree, obj, GIT_OBJ_TREE)) < 0)
@@ -665,17 +665,17 @@ int revparse__ext(
 	const char *spec)
 {
 	size_t pos = 0, identifier_len = 0;
-	int error = -1, n;
+	int error   = -1, n;
 	git_buf buf = GIT_BUF_INIT;
 
 	git_reference *reference = NULL;
-	git_object *base_rev = NULL;
+	git_object *base_rev	 = NULL;
 
 	bool should_return_reference = true;
 
 	assert(object_out && reference_out && repo && spec);
 
-	*object_out = NULL;
+	*object_out	= NULL;
 	*reference_out = NULL;
 
 	while (spec[pos]) {
@@ -801,10 +801,10 @@ int revparse__ext(
 		reference = NULL;
 	}
 
-	*object_out = base_rev;
-	*reference_out = reference;
+	*object_out			= base_rev;
+	*reference_out		= reference;
 	*identifier_len_out = identifier_len;
-	error = 0;
+	error				= 0;
 
 cleanup:
 	if (error) {
@@ -828,13 +828,13 @@ int git_revparse_ext(
 {
 	int error;
 	size_t identifier_len;
-	git_object *obj = NULL;
+	git_object *obj	= NULL;
 	git_reference *ref = NULL;
 
 	if ((error = revparse__ext(&obj, &ref, &identifier_len, repo, spec)) < 0)
 		goto cleanup;
 
-	*object_out = obj;
+	*object_out	= obj;
 	*reference_out = ref;
 	GIT_UNUSED(identifier_len);
 
@@ -849,7 +849,7 @@ cleanup:
 int git_revparse_single(git_object **out, git_repository *repo, const char *spec)
 {
 	int error;
-	git_object *obj = NULL;
+	git_object *obj	= NULL;
 	git_reference *ref = NULL;
 
 	*out = NULL;
@@ -919,7 +919,7 @@ int git_revparse(
 		git__free((void *)lstr);
 	} else {
 		revspec->flags = GIT_REVPARSE_SINGLE;
-		error = git_revparse_single(&revspec->from, repo, spec);
+		error		   = git_revparse_single(&revspec->from, repo, spec);
 	}
 
 	return error;

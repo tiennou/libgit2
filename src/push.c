@@ -38,9 +38,9 @@ int git_push_new(git_push **out, git_remote *remote)
 	p = git__calloc(1, sizeof(*p));
 	GITERR_CHECK_ALLOC(p);
 
-	p->repo = remote->repo;
-	p->remote = remote;
-	p->report_status = 1;
+	p->repo			  = remote->repo;
+	p->remote		  = remote;
+	p->report_status  = 1;
 	p->pb_parallelism = 1;
 
 	if (git_vector_init(&p->specs, 0, push_spec_rref_cmp) < 0) {
@@ -166,8 +166,7 @@ int git_push_update_tips(git_push *push, const git_remote_callbacks *callbacks)
 	push_status *status;
 	int error = 0;
 
-	git_vector_foreach(&push->status, i, status)
-	{
+	git_vector_foreach (&push->status, i, status) {
 		int fire_callback = 1;
 
 		/* Skip unsuccessful updates which have non-empty messages */
@@ -186,8 +185,7 @@ int git_push_update_tips(git_push *push, const git_remote_callbacks *callbacks)
 			goto on_error;
 
 		/* Find matching  push ref spec */
-		git_vector_foreach(&push->specs, j, push_spec)
-		{
+		git_vector_foreach (&push->specs, j, push_spec) {
 			if (!strcmp(push_spec->refspec.dst, status->ref))
 				break;
 		}
@@ -278,8 +276,7 @@ static int queue_objects(git_push *push)
 
 	git_revwalk_sorting(rw, GIT_SORT_TIME);
 
-	git_vector_foreach(&push->specs, i, spec)
-	{
+	git_vector_foreach (&push->specs, i, spec) {
 		git_otype type;
 		size_t size;
 
@@ -309,7 +306,7 @@ static int queue_objects(git_push *push)
 				}
 			} else {
 				if (git_packbuilder_insert(
-									push->pb, git_object_id(target), NULL) < 0) {
+						push->pb, git_object_id(target), NULL) < 0) {
 					git_object_free(target);
 					goto on_error;
 				}
@@ -347,8 +344,7 @@ static int queue_objects(git_push *push)
 		}
 	}
 
-	git_vector_foreach(&push->remote->refs, i, head)
-	{
+	git_vector_foreach (&push->remote->refs, i, head) {
 		if (git_oid_iszero(&head->oid))
 			continue;
 
@@ -388,20 +384,18 @@ static int calculate_work(git_push *push)
 
 	/* Update local and remote oids*/
 
-	git_vector_foreach(&push->specs, i, spec)
-	{
+	git_vector_foreach (&push->specs, i, spec) {
 		if (spec->refspec.src && spec->refspec.src[0] != '\0') {
 			/* This is a create or update.  Local ref must exist. */
 			if (git_reference_name_to_id(
-								&spec->loid, push->repo, spec->refspec.src) < 0) {
+					&spec->loid, push->repo, spec->refspec.src) < 0) {
 				giterr_set(GITERR_REFERENCE, "no such reference '%s'", spec->refspec.src);
 				return -1;
 			}
 		}
 
 		/* Remote ref may or may not (e.g. during create) already exist. */
-		git_vector_foreach(&push->remote->refs, j, head)
-		{
+		git_vector_foreach (&push->remote->refs, j, head) {
 			if (!strcmp(spec->refspec.dst, head->name)) {
 				git_oid_cpy(&spec->roid, &head->oid);
 				break;
@@ -417,7 +411,7 @@ static int calculate_work(git_push *push)
 
 static int do_push(git_push *push, const git_remote_callbacks *callbacks)
 {
-	int error = 0;
+	int error				 = 0;
 	git_transport *transport = push->remote->transport;
 
 	if (!transport->push) {
@@ -446,7 +440,7 @@ static int do_push(git_push *push, const git_remote_callbacks *callbacks)
 
 	if (callbacks && callbacks->push_negotiation &&
 		(error = callbacks->push_negotiation((const git_push_update **)push->updates.contents,
-				push->updates.length, callbacks->payload)) < 0)
+			 push->updates.length, callbacks->payload)) < 0)
 		goto on_error;
 
 	if ((error = queue_objects(push)) < 0 ||
@@ -503,8 +497,7 @@ int git_push_status_foreach(git_push *push,
 	push_status *status;
 	unsigned int i;
 
-	git_vector_foreach(&push->status, i, status)
-	{
+	git_vector_foreach (&push->status, i, status) {
 		int error = cb(status->ref, status->msg, data);
 		if (error)
 			return giterr_set_after_callback(error);
@@ -533,20 +526,17 @@ void git_push_free(git_push *push)
 	if (push == NULL)
 		return;
 
-	git_vector_foreach(&push->specs, i, spec)
-	{
+	git_vector_foreach (&push->specs, i, spec) {
 		free_refspec(spec);
 	}
 	git_vector_free(&push->specs);
 
-	git_vector_foreach(&push->status, i, status)
-	{
+	git_vector_foreach (&push->status, i, status) {
 		git_push_status_free(status);
 	}
 	git_vector_free(&push->status);
 
-	git_vector_foreach(&push->updates, i, update)
-	{
+	git_vector_foreach (&push->updates, i, update) {
 		git__free(update->src_refname);
 		git__free(update->dst_refname);
 		git__free(update);

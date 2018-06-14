@@ -64,9 +64,9 @@ typedef struct git_describe_options {
 #define GIT_DESCRIBE_DEFAULT_ABBREVIATED_SIZE 7
 
 #define GIT_DESCRIBE_OPTIONS_VERSION 1
-#define GIT_DESCRIBE_OPTIONS_INIT \
-	{ \
-		GIT_DESCRIBE_OPTIONS_VERSION, \
+#define GIT_DESCRIBE_OPTIONS_INIT                     \
+	{                                                 \
+		GIT_DESCRIBE_OPTIONS_VERSION,                 \
 			GIT_DESCRIBE_DEFAULT_MAX_CANDIDATES_TAGS, \
 	}
 
@@ -113,9 +113,9 @@ typedef struct {
 } git_describe_format_options;
 
 #define GIT_DESCRIBE_FORMAT_OPTIONS_VERSION 1
-#define GIT_DESCRIBE_FORMAT_OPTIONS_INIT \
-	{ \
-		GIT_DESCRIBE_FORMAT_OPTIONS_VERSION, \
+#define GIT_DESCRIBE_FORMAT_OPTIONS_INIT           \
+	{                                              \
+		GIT_DESCRIBE_FORMAT_OPTIONS_VERSION,       \
 			GIT_DESCRIBE_DEFAULT_ABBREVIATED_SIZE, \
 	}
 

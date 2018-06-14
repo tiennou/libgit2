@@ -23,7 +23,7 @@ static int git_xdiff_scan_int(const char **str, int *value)
 	/* parse next number */
 	for (; git__isdigit(*scan); scan++, digits++)
 		v = (v * 10) + (*scan - '0');
-	*str = scan;
+	*str   = scan;
 	*value = v;
 	return (digits > 0) ? 0 : -1;
 }
@@ -77,7 +77,7 @@ static int diff_update_lines(
 		if (*scan == '\n')
 			++line->num_lines;
 
-	line->content = content;
+	line->content	 = content;
 	line->content_len = content_len;
 
 	/* expect " "/"-"/"+", then data */
@@ -112,9 +112,9 @@ static int diff_update_lines(
 
 static int git_xdiff_cb(void *priv, mmbuffer_t *bufs, int len)
 {
-	git_xdiff_info *info = priv;
-	git_patch_generated *patch = info->patch;
-	const git_diff_delta *delta = patch->base.delta;
+	git_xdiff_info *info			   = priv;
+	git_patch_generated *patch		   = info->patch;
+	const git_diff_delta *delta		   = patch->base.delta;
 	git_patch_generated_output *output = &info->xo->output;
 	git_diff_line line;
 	size_t buffer_len;
@@ -142,7 +142,7 @@ static int git_xdiff_cb(void *priv, mmbuffer_t *bufs, int len)
 
 		if (output->hunk_cb != NULL &&
 			(output->error = output->hunk_cb(
-					delta, &info->hunk, output->payload)))
+				 delta, &info->hunk, output->payload)))
 			return output->error;
 
 		info->old_lineno = info->hunk.old_start;
@@ -199,7 +199,7 @@ static int git_xdiff(git_patch_generated_output *output, git_patch_generated *pa
 
 	memset(&info, 0, sizeof(info));
 	info.patch = patch;
-	info.xo = xo;
+	info.xo	= xo;
 
 	xo->callback.priv = &info;
 
@@ -239,7 +239,7 @@ void git_xdiff_init(git_xdiff_output *xo, const git_diff_options *opts)
 
 	xo->output.diff_cb = git_xdiff;
 
-	xo->config.ctxlen = opts ? opts->context_lines : 3;
+	xo->config.ctxlen		   = opts ? opts->context_lines : 3;
 	xo->config.interhunkctxlen = opts ? opts->interhunk_lines : 0;
 
 	if (flags & GIT_DIFF_IGNORE_WHITESPACE)

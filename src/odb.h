@@ -26,8 +26,8 @@ extern bool git_odb__strict_hash_verification;
 
 /* DO NOT EXPORT */
 typedef struct {
-	void *data;     /**< Raw, decompressed object data. */
-	size_t len;     /**< Total number of bytes in data. */
+	void *data;		/**< Raw, decompressed object data. */
+	size_t len;		/**< Total number of bytes in data. */
 	git_otype type; /**< Type of this object. */
 } git_rawobj;
 

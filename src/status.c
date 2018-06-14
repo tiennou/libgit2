@@ -176,8 +176,8 @@ static int status_collect(
 	status_entry = git__malloc(sizeof(git_status_entry));
 	GITERR_CHECK_ALLOC(status_entry);
 
-	status_entry->status = status_compute(status, head2idx, idx2wd);
-	status_entry->head_to_index = head2idx;
+	status_entry->status		   = status_compute(status, head2idx, idx2wd);
+	status_entry->head_to_index	= head2idx;
 	status_entry->index_to_workdir = idx2wd;
 
 	return git_vector_insert(&status->paired, status_entry);
@@ -249,7 +249,7 @@ static int status_validate_options(const git_status_options *opts)
 	if ((opts->flags & GIT_STATUS_OPT_NO_REFRESH) != 0 &&
 		(opts->flags & GIT_STATUS_OPT_UPDATE_INDEX) != 0) {
 		giterr_set(GITERR_INVALID, "updating index from status "
-																													"is not allowed when index refresh is disabled");
+								   "is not allowed when index refresh is disabled");
 		return -1;
 	}
 
@@ -261,14 +261,14 @@ int git_status_list_new(
 	git_repository *repo,
 	const git_status_options *opts)
 {
-	git_index *index = NULL;
-	git_status_list *status = NULL;
-	git_diff_options diffopt = GIT_DIFF_OPTIONS_INIT;
+	git_index *index			  = NULL;
+	git_status_list *status		  = NULL;
+	git_diff_options diffopt	  = GIT_DIFF_OPTIONS_INIT;
 	git_diff_find_options findopt = GIT_DIFF_FIND_OPTIONS_INIT;
-	git_tree *head = NULL;
+	git_tree *head				  = NULL;
 	git_status_show_t show =
 		opts ? opts->show : GIT_STATUS_SHOW_INDEX_AND_WORKDIR;
-	int error = 0;
+	int error		   = 0;
 	unsigned int flags = opts ? opts->flags : GIT_STATUS_OPT_DEFAULTS;
 
 	*out = NULL;
@@ -336,7 +336,7 @@ int git_status_list_new(
 
 	if (show != GIT_STATUS_SHOW_WORKDIR_ONLY) {
 		if ((error = git_diff_tree_to_index(
-								&status->head2idx, repo, head, index, &diffopt)) < 0)
+				 &status->head2idx, repo, head, index, &diffopt)) < 0)
 			goto done;
 
 		if ((flags & GIT_STATUS_OPT_RENAMES_HEAD_TO_INDEX) != 0 &&
@@ -346,7 +346,7 @@ int git_status_list_new(
 
 	if (show != GIT_STATUS_SHOW_INDEX_ONLY) {
 		if ((error = git_diff_index_to_workdir(
-								&status->idx2wd, repo, index, &diffopt)) < 0) {
+				 &status->idx2wd, repo, index, &diffopt)) < 0) {
 			goto done;
 		}
 
@@ -366,10 +366,10 @@ int git_status_list_new(
 		git_vector_set_cmp(&status->paired, status_entry_icmp);
 
 	if ((flags &
-						(GIT_STATUS_OPT_RENAMES_HEAD_TO_INDEX |
-							GIT_STATUS_OPT_RENAMES_INDEX_TO_WORKDIR |
-							GIT_STATUS_OPT_SORT_CASE_SENSITIVELY |
-							GIT_STATUS_OPT_SORT_CASE_INSENSITIVELY)) != 0)
+			(GIT_STATUS_OPT_RENAMES_HEAD_TO_INDEX |
+				GIT_STATUS_OPT_RENAMES_INDEX_TO_WORKDIR |
+				GIT_STATUS_OPT_SORT_CASE_SENSITIVELY |
+				GIT_STATUS_OPT_SORT_CASE_INSENSITIVELY)) != 0)
 		git_vector_sort(&status->paired);
 
 done:
@@ -430,8 +430,7 @@ int git_status_foreach_ext(
 		return error;
 	}
 
-	git_vector_foreach(&status->paired, i, status_entry)
-	{
+	git_vector_foreach (&status->paired, i, status_entry) {
 		const char *path = status_entry->head_to_index ? status_entry->head_to_index->old_file.path : status_entry->index_to_workdir->old_file.path;
 
 		if ((error = cb(path, status_entry->status, payload)) != 0) {
@@ -484,7 +483,7 @@ int git_status_file(
 	const char *path)
 {
 	int error;
-	git_status_options opts = GIT_STATUS_OPTIONS_INIT;
+	git_status_options opts		= GIT_STATUS_OPTIONS_INIT;
 	struct status_file_info sfi = {0};
 	git_index *index;
 
@@ -498,14 +497,14 @@ int git_status_file(
 	if (index->ignore_case)
 		sfi.fnm_flags = FNM_CASEFOLD;
 
-	opts.show = GIT_STATUS_SHOW_INDEX_AND_WORKDIR;
+	opts.show  = GIT_STATUS_SHOW_INDEX_AND_WORKDIR;
 	opts.flags = GIT_STATUS_OPT_INCLUDE_IGNORED |
 		GIT_STATUS_OPT_RECURSE_IGNORED_DIRS |
 		GIT_STATUS_OPT_INCLUDE_UNTRACKED |
 		GIT_STATUS_OPT_RECURSE_UNTRACKED_DIRS |
 		GIT_STATUS_OPT_INCLUDE_UNMODIFIED |
 		GIT_STATUS_OPT_DISABLE_PATHSPEC_MATCH;
-	opts.pathspec.count = 1;
+	opts.pathspec.count   = 1;
 	opts.pathspec.strings = &sfi.expected;
 
 	error = git_status_foreach_ext(repo, &opts, get_one_status, &sfi);
@@ -550,7 +549,7 @@ int git_status_list_get_perfdata(
 	assert(out);
 	GITERR_CHECK_VERSION(out, GIT_DIFF_PERFDATA_VERSION, "git_diff_perfdata");
 
-	out->stat_calls = 0;
+	out->stat_calls		  = 0;
 	out->oid_calculations = 0;
 
 	if (status->head2idx) {

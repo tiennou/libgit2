@@ -60,16 +60,16 @@ void git_zstream_reset(git_zstream *zstream)
 		inflateReset(&zstream->z);
 	else
 		deflateReset(&zstream->z);
-	zstream->in = NULL;
+	zstream->in		= NULL;
 	zstream->in_len = 0;
-	zstream->zerr = Z_STREAM_END;
+	zstream->zerr   = Z_STREAM_END;
 }
 
 int git_zstream_set_input(git_zstream *zstream, const void *in, size_t in_len)
 {
-	zstream->in = in;
+	zstream->in		= in;
 	zstream->in_len = in_len;
-	zstream->zerr = Z_OK;
+	zstream->zerr   = Z_OK;
 	return 0;
 }
 
@@ -99,15 +99,15 @@ int git_zstream_get_output_chunk(
 	/* feed as much data to zlib as it can consume, at most UINT_MAX */
 	if (zstream->in_len > UINT_MAX) {
 		zstream->z.avail_in = UINT_MAX;
-		zstream->flush = Z_NO_FLUSH;
+		zstream->flush		= Z_NO_FLUSH;
 	} else {
 		zstream->z.avail_in = (uInt)zstream->in_len;
-		zstream->flush = Z_FINISH;
+		zstream->flush		= Z_FINISH;
 	}
 	in_queued = (size_t)zstream->z.avail_in;
 
 	/* set up output data */
-	zstream->z.next_out = out;
+	zstream->z.next_out  = out;
 	zstream->z.avail_out = (uInt)*out_len;
 
 	if ((size_t)zstream->z.avail_out != *out_len)
@@ -163,7 +163,7 @@ int git_zstream_get_output(void *out, size_t *out_len, git_zstream *zstream)
 static int zstream_buf(git_buf *out, const void *in, size_t in_len, git_zstream_t type)
 {
 	git_zstream zs = GIT_ZSTREAM_INIT;
-	int error = 0;
+	int error	  = 0;
 
 	if ((error = git_zstream_init(&zs, type)) < 0)
 		return error;
@@ -180,7 +180,7 @@ static int zstream_buf(git_buf *out, const void *in, size_t in_len, git_zstream_
 		written = out->asize - out->size;
 
 		if ((error = git_zstream_get_output(
-								out->ptr + out->size, &written, &zs)) < 0)
+				 out->ptr + out->size, &written, &zs)) < 0)
 			goto done;
 
 		out->size += written;

@@ -84,8 +84,8 @@ struct git_config_backend {
 	void (*free)(struct git_config_backend *);
 };
 #define GIT_CONFIG_BACKEND_VERSION 1
-#define GIT_CONFIG_BACKEND_INIT \
-	{ \
+#define GIT_CONFIG_BACKEND_INIT    \
+	{                              \
 		GIT_CONFIG_BACKEND_VERSION \
 	}
 

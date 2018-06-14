@@ -176,14 +176,14 @@ int git_delta_index_init(
 		return -1;
 
 	index = mem;
-	mem = index->hash;
-	hash = mem;
-	mem = hash + hsize;
+	mem   = index->hash;
+	hash  = mem;
+	mem   = hash + hsize;
 	entry = mem;
 
-	index->memsize = memsize;
-	index->src_buf = buf;
-	index->src_size = bufsize;
+	index->memsize   = memsize;
+	index->src_buf   = buf;
+	index->src_size  = bufsize;
 	index->hash_mask = hmask;
 	memset(hash, 0, hsize * sizeof(*hash));
 
@@ -197,8 +197,8 @@ int git_delta_index_init(
 	/* then populate the index */
 	prev_val = ~0;
 	for (data = buffer + entries * RABIN_WINDOW - RABIN_WINDOW;
-						data >= buffer;
-						data -= RABIN_WINDOW) {
+		 data >= buffer;
+		 data -= RABIN_WINDOW) {
 		unsigned int val = 0;
 		for (i = 1; i <= RABIN_WINDOW; i++)
 			val = ((val << 8) | data[i]) ^ T[val >> RABIN_SHIFT];
@@ -206,12 +206,12 @@ int git_delta_index_init(
 			/* keep the lowest of consecutive identical blocks */
 			entry[-1].ptr = data + RABIN_WINDOW;
 		} else {
-			prev_val = val;
-			i = val & hmask;
-			entry->ptr = data + RABIN_WINDOW;
-			entry->val = val;
+			prev_val	= val;
+			i			= val & hmask;
+			entry->ptr  = data + RABIN_WINDOW;
+			entry->val  = val;
 			entry->next = hash[i];
-			hash[i] = entry++;
+			hash[i]		= entry++;
 			hash_count[i]++;
 		}
 	}
@@ -235,7 +235,7 @@ int git_delta_index_init(
 		entry = hash[i];
 		do {
 			struct index_entry *keep = entry;
-			int skip = hash_count[i] / HASH_LIMIT / 2;
+			int skip				 = hash_count[i] / HASH_LIMIT / 2;
 			do {
 				entry = entry->next;
 			} while (--skip && entry);
@@ -279,13 +279,13 @@ int git_delta_create_from_index(
 	const unsigned char *ref_data, *ref_top, *data, *top;
 	unsigned char *buf;
 
-	*out = NULL;
+	*out	 = NULL;
 	*out_len = 0;
 
 	if (!trg_buf || !trg_size)
 		return 0;
 
-	bufpos = 0;
+	bufpos  = 0;
 	bufsize = 8192;
 	if (max_size && bufsize >= max_size)
 		bufsize = (unsigned int)(max_size + MAX_OP_SIZE + 1);
@@ -309,30 +309,30 @@ int git_delta_create_from_index(
 	buf[bufpos++] = i;
 
 	ref_data = index->src_buf;
-	ref_top = ref_data + index->src_size;
-	data = trg_buf;
-	top = (const unsigned char *)trg_buf + trg_size;
+	ref_top  = ref_data + index->src_size;
+	data	 = trg_buf;
+	top		 = (const unsigned char *)trg_buf + trg_size;
 
 	bufpos++;
 	val = 0;
 	for (i = 0; i < RABIN_WINDOW && data < top; i++, data++) {
 		buf[bufpos++] = *data;
-		val = ((val << 8) | *data) ^ T[val >> RABIN_SHIFT];
+		val			  = ((val << 8) | *data) ^ T[val >> RABIN_SHIFT];
 	}
 	inscnt = i;
 
-	moff = 0;
+	moff  = 0;
 	msize = 0;
 	while (data < top) {
 		if (msize < 4096) {
 			struct index_entry *entry;
 			val ^= U[data[-RABIN_WINDOW]];
 			val = ((val << 8) | *data) ^ T[val >> RABIN_SHIFT];
-			i = val & index->hash_mask;
+			i   = val & index->hash_mask;
 			for (entry = index->hash[i]; entry; entry = entry->next) {
 				const unsigned char *ref = entry->ptr;
 				const unsigned char *src = data;
-				unsigned int ref_size = (unsigned int)(ref_top - ref);
+				unsigned int ref_size	= (unsigned int)(ref_top - ref);
 				if (entry->val != val)
 					continue;
 				if (ref_size > (unsigned int)(top - src))
@@ -344,7 +344,7 @@ int git_delta_create_from_index(
 				if (msize < (unsigned int)(ref - entry->ptr)) {
 					/* this is our best match so far */
 					msize = (unsigned int)(ref - entry->ptr);
-					moff = (unsigned int)(entry->ptr - ref_data);
+					moff  = (unsigned int)(entry->ptr - ref_data);
 					if (msize >= 4096) /* good enough */
 						break;
 				}
@@ -358,7 +358,7 @@ int git_delta_create_from_index(
 			inscnt++;
 			if (inscnt == 0x7f) {
 				buf[bufpos - inscnt - 1] = inscnt;
-				inscnt = 0;
+				inscnt					 = 0;
 			}
 			msize = 0;
 		} else {
@@ -379,7 +379,7 @@ int git_delta_create_from_index(
 					break;
 				}
 				buf[bufpos - inscnt - 1] = inscnt;
-				inscnt = 0;
+				inscnt					 = 0;
 			}
 
 			/* A copy op is currently limited to 64KB (pack v2) */
@@ -387,7 +387,7 @@ int git_delta_create_from_index(
 			msize -= left;
 
 			op = buf + bufpos++;
-			i = 0x80;
+			i  = 0x80;
 
 			if (moff & 0x000000ff)
 				buf[bufpos++] = moff >> 0, i |= 0x01;
@@ -419,7 +419,7 @@ int git_delta_create_from_index(
 
 		if (bufpos >= bufsize - MAX_OP_SIZE) {
 			void *tmp = buf;
-			bufsize = bufsize * 3 / 2;
+			bufsize   = bufsize * 3 / 2;
 			if (max_size && bufsize >= max_size)
 				bufsize = max_size + MAX_OP_SIZE + 1;
 			if (max_size && bufpos > max_size)
@@ -442,7 +442,7 @@ int git_delta_create_from_index(
 	}
 
 	*out_len = bufpos;
-	*out = buf;
+	*out	 = buf;
 	return 0;
 }
 
@@ -459,7 +459,7 @@ static int hdr_sz(
 	const unsigned char *end)
 {
 	const unsigned char *d = *delta;
-	size_t r = 0;
+	size_t r			   = 0;
 	unsigned int c, shift = 0;
 
 	do {
@@ -473,7 +473,7 @@ static int hdr_sz(
 		shift += 7;
 	} while (c & 0x80);
 	*delta = d;
-	*size = r;
+	*size  = r;
 	return 0;
 }
 
@@ -513,7 +513,7 @@ int git_delta_read_header_fromstream(
 		len += read;
 	}
 
-	delta = buffer;
+	delta	 = buffer;
 	delta_end = delta + len;
 	if ((hdr_sz(base_sz, &delta, delta_end) < 0) ||
 		(hdr_sz(res_sz, &delta, delta_end) < 0))
@@ -534,7 +534,7 @@ int git_delta_apply(
 	size_t base_sz, res_sz, alloc_sz;
 	unsigned char *res_dp;
 
-	*out = NULL;
+	*out	 = NULL;
 	*out_len = 0;
 
 	/* Check that the base size matches the data we were given;
@@ -556,8 +556,8 @@ int git_delta_apply(
 	GITERR_CHECK_ALLOC(res_dp);
 
 	res_dp[res_sz] = '\0';
-	*out = res_dp;
-	*out_len = res_sz;
+	*out		   = res_dp;
+	*out_len	   = res_sz;
 
 	while (delta < delta_end) {
 		unsigned char cmd = *delta++;
@@ -615,7 +615,7 @@ int git_delta_apply(
 fail:
 	git__free(*out);
 
-	*out = NULL;
+	*out	 = NULL;
 	*out_len = 0;
 
 	giterr_set(GITERR_INVALID, "failed to apply delta");

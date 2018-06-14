@@ -63,8 +63,8 @@ int git_transaction_config_new(git_transaction **out, git_config *cfg)
 	GITERR_CHECK_ALLOC(tx);
 
 	tx->type = TRANSACTION_CONFIG;
-	tx->cfg = cfg;
-	*out = tx;
+	tx->cfg  = cfg;
+	*out	 = tx;
 	return 0;
 }
 
@@ -95,7 +95,7 @@ int git_transaction_new(git_transaction **out, git_repository *repo)
 	tx->type = TRANSACTION_REFS;
 	memcpy(&tx->pool, &pool, sizeof(git_pool));
 	tx->repo = repo;
-	*out = tx;
+	*out	 = tx;
 	return 0;
 
 on_error:
@@ -222,7 +222,7 @@ int git_transaction_remove(git_transaction *tx, const char *refname)
 	if ((error = find_locked(&node, tx, refname)) < 0)
 		return error;
 
-	node->remove = true;
+	node->remove   = true;
 	node->ref_type = GIT_REF_OID; /* the id will be ignored */
 
 	return 0;
@@ -240,8 +240,8 @@ static int dup_reflog(git_reflog **out, const git_reflog *in, git_pool *pool)
 	reflog->ref_name = git_pool_strdup(pool, in->ref_name);
 	GITERR_CHECK_ALLOC(reflog->ref_name);
 
-	len = in->entries.length;
-	reflog->entries.length = len;
+	len						 = in->entries.length;
+	reflog->entries.length   = len;
 	reflog->entries.contents = git_pool_mallocz(pool, len * sizeof(void *));
 	GITERR_CHECK_ALLOC(reflog->entries.contents);
 
@@ -252,7 +252,7 @@ static int dup_reflog(git_reflog **out, const git_reflog *in, git_pool *pool)
 		const git_reflog_entry *src;
 		git_reflog_entry *tgt;
 
-		tgt = &entries[i];
+		tgt							= &entries[i];
 		reflog->entries.contents[i] = tgt;
 
 		src = git_vector_get(&in->entries, i);
@@ -327,13 +327,13 @@ int git_transaction_commit(git_transaction *tx)
 	assert(tx);
 
 	if (tx->type == TRANSACTION_CONFIG) {
-		error = git_config_unlock(tx->cfg, true);
+		error   = git_config_unlock(tx->cfg, true);
 		tx->cfg = NULL;
 
 		return error;
 	}
 
-	git_strmap_foreach_value(tx->locks, node, {
+	git_strmap_foreach_value (tx->locks, node, {
 		if (node->reflog) {
 			if ((error = tx->db->backend->reflog_write(tx->db->backend, node->reflog)) < 0)
 				return error;
@@ -343,7 +343,8 @@ int git_transaction_commit(git_transaction *tx)
 			if ((error = update_target(tx->db, node)) < 0)
 				return error;
 		}
-	});
+	})
+		;
 
 	return 0;
 }
@@ -366,12 +367,13 @@ void git_transaction_free(git_transaction *tx)
 	}
 
 	/* start by unlocking the ones we've left hanging, if any */
-	git_strmap_foreach_value(tx->locks, node, {
+	git_strmap_foreach_value (tx->locks, node, {
 		if (node->committed)
 			continue;
 
 		git_refdb_unlock(tx->db, node->payload, false, false, NULL, NULL, NULL);
-	});
+	})
+		;
 
 	git_refdb_free(tx->db);
 	git_strmap_free(tx->locks);

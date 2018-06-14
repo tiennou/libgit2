@@ -110,7 +110,7 @@ static int tree_write(
 
 	if (object_oid) {
 		if ((error = git_treebuilder_insert(
-								&entry, tb, treeentry_name, object_oid, attributes)) < 0)
+				 &entry, tb, treeentry_name, object_oid, attributes)) < 0)
 			goto cleanup;
 	} else {
 		if ((error = git_treebuilder_remove(tb, treeentry_name)) < 0)
@@ -289,9 +289,9 @@ static int note_write(
 		goto cleanup;
 
 	if ((error = manipulate_note_in_tree_r(
-							&tree, repo, commit_tree, &oid, target, 0,
-							allow_note_overwrite ? insert_note_in_tree_enotfound_cb : insert_note_in_tree_eexists_cb,
-							insert_note_in_tree_enotfound_cb)) < 0)
+			 &tree, repo, commit_tree, &oid, target, 0,
+			 allow_note_overwrite ? insert_note_in_tree_enotfound_cb : insert_note_in_tree_eexists_cb,
+			 insert_note_in_tree_enotfound_cb)) < 0)
 		goto cleanup;
 
 	if (notes_blob_out)
@@ -343,8 +343,8 @@ static int note_lookup(
 {
 	int error, fanout = 0;
 	git_oid oid;
-	git_blob *blob = NULL;
-	git_note *note = NULL;
+	git_blob *blob	= NULL;
+	git_note *note	= NULL;
 	git_tree *subtree = NULL;
 
 	if ((error = find_subtree_r(&subtree, tree, repo, target, &fanout)) < 0)
@@ -379,8 +379,8 @@ static int note_remove(
 	git_oid oid;
 
 	if ((error = manipulate_note_in_tree_r(
-							&tree_after_removal, repo, tree, NULL, target, 0,
-							remove_note_in_tree_eexists_cb, remove_note_in_tree_enotfound_cb)) < 0)
+			 &tree_after_removal, repo, tree, NULL, target, 0,
+			 remove_note_in_tree_eexists_cb, remove_note_in_tree_enotfound_cb)) < 0)
 		goto cleanup;
 
 	error = git_commit_create(&oid, repo, notes_ref, author, committer,
@@ -468,7 +468,7 @@ int git_note_read(git_note **out, git_repository *repo,
 	const char *notes_ref_in, const git_oid *oid)
 {
 	int error;
-	char *notes_ref = NULL;
+	char *notes_ref	= NULL;
 	git_commit *commit = NULL;
 
 	error = retrieve_note_commit(&commit, &notes_ref, repo, notes_ref_in);
@@ -526,9 +526,9 @@ int git_note_create(
 	int allow_note_overwrite)
 {
 	int error;
-	char *notes_ref = NULL;
+	char *notes_ref					  = NULL;
 	git_commit *existing_notes_commit = NULL;
-	git_reference *ref = NULL;
+	git_reference *ref				  = NULL;
 	git_oid notes_blob_oid, notes_commit_oid;
 
 	error = retrieve_note_commit(&existing_notes_commit, &notes_ref,
@@ -588,7 +588,7 @@ int git_note_remove(git_repository *repo, const char *notes_ref_in,
 	const git_oid *oid)
 {
 	int error;
-	char *notes_ref_target = NULL;
+	char *notes_ref_target			  = NULL;
 	git_commit *existing_notes_commit = NULL;
 	git_oid new_notes_commit;
 	git_reference *notes_ref = NULL;
@@ -697,7 +697,7 @@ static int process_entry_path(
 	}
 
 	buf.ptr[j] = '\0';
-	buf.size = j;
+	buf.size   = j;
 
 	if (j != GIT_OID_HEXSZ) {
 		/* This is not a note entry */

@@ -28,10 +28,10 @@ typedef struct {
 } git_zstream;
 
 #define GIT_ZSTREAM_INIT \
-	{ \
-		{ \
-			0 \
-		} \
+	{                    \
+		{                \
+			0            \
+		}                \
 	}
 
 int git_zstream_init(git_zstream *zstream, git_zstream_t type);

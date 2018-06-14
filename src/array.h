@@ -23,34 +23,34 @@
  *
  *     typedef git_array_t(my_struct) my_struct_array_t;
  */
-#define git_array_t(type) \
-	struct { \
-		type *ptr; \
+#define git_array_t(type)   \
+	struct {                \
+		type *ptr;          \
 		size_t size, asize; \
 	}
 
 #define GIT_ARRAY_INIT \
-	{ \
-		NULL, 0, 0 \
+	{                  \
+		NULL, 0, 0     \
 	}
 
-#define git_array_init(a) \
-	do { \
-		(a).size = (a).asize = 0; \
-		(a).ptr = NULL; \
+#define git_array_init(a)            \
+	do {                             \
+		(a).size = (a).asize = 0;    \
+		(a).ptr				 = NULL; \
 	} while (0)
 
-#define git_array_init_to_size(a, desired) \
-	do { \
-		(a).size = 0; \
-		(a).asize = desired; \
-		(a).ptr = git__calloc(desired, sizeof(*(a).ptr)); \
+#define git_array_init_to_size(a, desired)                  \
+	do {                                                    \
+		(a).size  = 0;                                      \
+		(a).asize = desired;                                \
+		(a).ptr   = git__calloc(desired, sizeof(*(a).ptr)); \
 	} while (0)
 
-#define git_array_clear(a) \
-	do { \
+#define git_array_clear(a)  \
+	do {                    \
 		git__free((a).ptr); \
-		git_array_init(a); \
+		git_array_init(a);  \
 	} while (0)
 
 #define GITERR_CHECK_ARRAY(a) GITERR_CHECK_ALLOC((a).ptr)
@@ -77,7 +77,7 @@ git_array_grow(void *_a, size_t item_size)
 	if ((new_array = git__reallocarray(a->ptr, new_size, item_size)) == NULL)
 		goto on_oom;
 
-	a->ptr = new_array;
+	a->ptr   = new_array;
 	a->asize = new_size;
 	a->size++;
 	return a->ptr + (a->size - 1) * item_size;
@@ -118,7 +118,7 @@ git_array__search(
 
 	for (lim = array_len; lim != 0; lim >>= 1) {
 		part = base + (lim >> 1) * item_size;
-		cmp = (*compare)(key, part);
+		cmp  = (*compare)(key, part);
 
 		if (cmp == 0) {
 			base = part;
@@ -136,7 +136,7 @@ git_array__search(
 	return (cmp == 0) ? 0 : GIT_ENOTFOUND;
 }
 
-#define git_array_search(out, a, cmp, key) \
+#define git_array_search(out, a, cmp, key)                      \
 	git_array__search(out, (a).ptr, sizeof(*(a).ptr), (a).size, \
 		(cmp), (key))
 

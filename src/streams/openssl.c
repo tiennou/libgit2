@@ -178,7 +178,7 @@ static void shutdown_ssl_locking(void)
 	git__free(openssl_locks);
 }
 #		endif /* GIT_THREADS */
-#	endif  /* OPENSSL_LEGACY_API */
+#	endif	 /* OPENSSL_LEGACY_API */
 
 static BIO_METHOD *git_stream_bio_method;
 static int init_bio_method(void);
@@ -202,7 +202,7 @@ static void shutdown_ssl(void)
 
 int git_openssl_stream_global_init(void)
 {
-	long ssl_opts = SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3;
+	long ssl_opts		= SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3;
 	const char *ciphers = git_libgit2__ssl_ciphers();
 
 	/* Older OpenSSL and MacOS OpenSSL doesn't have this */
@@ -264,7 +264,7 @@ int git_openssl_set_locking(void)
 
 	CRYPTO_THREADID_set_callback(threadid_cb);
 
-	num_locks = CRYPTO_num_locks();
+	num_locks	 = CRYPTO_num_locks();
 	openssl_locks = git__calloc(num_locks, sizeof(git_mutex));
 	GITERR_CHECK_ALLOC(openssl_locks);
 
@@ -478,8 +478,8 @@ static int verify_server_cert(SSL *ssl, const char *host)
 		num = sk_GENERAL_NAME_num(alts);
 		for (i = 0; i < num && matched != 1; i++) {
 			const GENERAL_NAME *gn = sk_GENERAL_NAME_value(alts, i);
-			const char *name = (char *)ASN1_STRING_get0_data(gn->d.ia5);
-			size_t namelen = (size_t)ASN1_STRING_length(gn->d.ia5);
+			const char *name	   = (char *)ASN1_STRING_get0_data(gn->d.ia5);
+			size_t namelen		   = (size_t)ASN1_STRING_length(gn->d.ia5);
 
 			/* Skip any names of a type we're not looking for */
 			if (gn->type != type)
@@ -632,8 +632,8 @@ int openssl_certificate(git_cert **out, git_stream *stream)
 	}
 
 	st->cert_info.parent.cert_type = GIT_CERT_X509;
-	st->cert_info.data = encoded_cert;
-	st->cert_info.len = len;
+	st->cert_info.data			   = encoded_cert;
+	st->cert_info.len			   = len;
 
 	*out = &st->cert_info.parent;
 
@@ -724,16 +724,16 @@ int git_openssl_stream_new(git_stream **out, const char *host, const char *port)
 	st->host = git__strdup(host);
 	GITERR_CHECK_ALLOC(st->host);
 
-	st->parent.version = GIT_STREAM_VERSION;
-	st->parent.encrypted = 1;
+	st->parent.version		 = GIT_STREAM_VERSION;
+	st->parent.encrypted	 = 1;
 	st->parent.proxy_support = git_stream_supports_proxy(st->io);
-	st->parent.connect = openssl_connect;
-	st->parent.certificate = openssl_certificate;
-	st->parent.set_proxy = openssl_set_proxy;
-	st->parent.read = openssl_read;
-	st->parent.write = openssl_write;
-	st->parent.close = openssl_close;
-	st->parent.free = openssl_free;
+	st->parent.connect		 = openssl_connect;
+	st->parent.certificate   = openssl_certificate;
+	st->parent.set_proxy	 = openssl_set_proxy;
+	st->parent.read			 = openssl_read;
+	st->parent.write		 = openssl_write;
+	st->parent.close		 = openssl_close;
+	st->parent.free			 = openssl_free;
 
 	*out = (git_stream *)st;
 	return 0;

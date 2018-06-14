@@ -172,23 +172,23 @@ typedef struct {
 
 typedef void (*git_refcount_freeptr)(void *r);
 
-#define GIT_REFCOUNT_INC(r) \
-	{ \
+#define GIT_REFCOUNT_INC(r)                \
+	{                                      \
 		git_atomic_inc(&(r)->rc.refcount); \
 	}
 
-#define GIT_REFCOUNT_DEC(_r, do_free) \
-	{ \
-		git_refcount *r = &(_r)->rc; \
-		int val = git_atomic_dec(&r->refcount); \
-		if (val <= 0 && r->owner == NULL) { \
-			do_free(_r); \
-		} \
+#define GIT_REFCOUNT_DEC(_r, do_free)                   \
+	{                                                   \
+		git_refcount *r = &(_r)->rc;                    \
+		int val			= git_atomic_dec(&r->refcount); \
+		if (val <= 0 && r->owner == NULL) {             \
+			do_free(_r);                                \
+		}                                               \
 	}
 
 #define GIT_REFCOUNT_OWN(r, o) \
-	{ \
-		(r)->rc.owner = o; \
+	{                          \
+		(r)->rc.owner = o;     \
 	}
 
 #define GIT_REFCOUNT_OWNER(r) ((r)->rc.owner)
@@ -200,7 +200,7 @@ static signed char from_hex[] = {
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* 00 */
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* 10 */
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* 20 */
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, -1, -1, -1, -1, -1, -1,           /* 30 */
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, -1, -1, -1, -1, -1, -1,			/* 30 */
 	-1, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* 40 */
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* 50 */
 	-1, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1, /* 60 */

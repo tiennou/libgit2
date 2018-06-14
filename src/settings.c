@@ -31,7 +31,7 @@ void git_libgit2_version(int *major, int *minor, int *rev)
 {
 	*major = LIBGIT2_VER_MAJOR;
 	*minor = LIBGIT2_VER_MINOR;
-	*rev = LIBGIT2_VER_REVISION;
+	*rev   = LIBGIT2_VER_REVISION;
 }
 
 int git_libgit2_features(void)
@@ -138,8 +138,8 @@ int git_libgit2_opts(int key, ...)
 
 	case GIT_OPT_SET_CACHE_OBJECT_LIMIT: {
 		git_otype type = (git_otype)va_arg(ap, int);
-		size_t size = va_arg(ap, size_t);
-		error = git_cache_set_max_object_size(type, size);
+		size_t size	= va_arg(ap, size_t);
+		error		   = git_cache_set_max_object_size(type, size);
 		break;
 	}
 
@@ -176,7 +176,7 @@ int git_libgit2_opts(int key, ...)
 	{
 		const char *file = va_arg(ap, const char *);
 		const char *path = va_arg(ap, const char *);
-		error = git_openssl__set_cert_location(file, path);
+		error			 = git_openssl__set_cert_location(file, path);
 	}
 #elif defined(GIT_MBEDTLS)
 	{

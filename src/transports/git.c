@@ -16,8 +16,8 @@
 
 #define OWNING_SUBTRANSPORT(s) ((git_subtransport *)(s)->parent.subtransport)
 
-static const char prefix_git[] = "git://";
-static const char cmd_uploadpack[] = "git-upload-pack";
+static const char prefix_git[]		= "git://";
+static const char cmd_uploadpack[]  = "git-upload-pack";
 static const char cmd_receivepack[] = "git-receive-pack";
 
 typedef struct {
@@ -166,9 +166,9 @@ static int git_proto_stream_alloc(
 	GITERR_CHECK_ALLOC(s);
 
 	s->parent.subtransport = &t->parent;
-	s->parent.read = git_proto_stream_read;
-	s->parent.write = git_proto_stream_write;
-	s->parent.free = git_proto_stream_free;
+	s->parent.read		   = git_proto_stream_read;
+	s->parent.write		   = git_proto_stream_write;
+	s->parent.free		   = git_proto_stream_free;
 
 	s->cmd = cmd;
 	s->url = git__strdup(url);
@@ -360,10 +360,10 @@ int git_smart_subtransport_git(git_smart_subtransport **out, git_transport *owne
 	t = git__calloc(1, sizeof(git_subtransport));
 	GITERR_CHECK_ALLOC(t);
 
-	t->owner = owner;
+	t->owner		 = owner;
 	t->parent.action = _git_action;
-	t->parent.close = _git_close;
-	t->parent.free = _git_free;
+	t->parent.close  = _git_close;
+	t->parent.free   = _git_free;
 
 	*out = (git_smart_subtransport *)t;
 	return 0;

@@ -203,12 +203,12 @@ typedef enum {
  * being modified.
  */
 typedef enum {
-	GIT_CHECKOUT_NOTIFY_NONE = 0,
-	GIT_CHECKOUT_NOTIFY_CONFLICT = (1u << 0),
-	GIT_CHECKOUT_NOTIFY_DIRTY = (1u << 1),
-	GIT_CHECKOUT_NOTIFY_UPDATED = (1u << 2),
+	GIT_CHECKOUT_NOTIFY_NONE	  = 0,
+	GIT_CHECKOUT_NOTIFY_CONFLICT  = (1u << 0),
+	GIT_CHECKOUT_NOTIFY_DIRTY	 = (1u << 1),
+	GIT_CHECKOUT_NOTIFY_UPDATED   = (1u << 2),
 	GIT_CHECKOUT_NOTIFY_UNTRACKED = (1u << 3),
-	GIT_CHECKOUT_NOTIFY_IGNORED = (1u << 4),
+	GIT_CHECKOUT_NOTIFY_IGNORED   = (1u << 4),
 
 	GIT_CHECKOUT_NOTIFY_ALL = 0x0FFFFu
 } git_checkout_notify_t;
@@ -252,10 +252,10 @@ typedef struct git_checkout_options {
 
 	unsigned int checkout_strategy; /**< default will be a safe checkout */
 
-	int disable_filters;    /**< don't apply filters like CRLF conversion */
+	int disable_filters;	/**< don't apply filters like CRLF conversion */
 	unsigned int dir_mode;  /**< default is 0755 */
 	unsigned int file_mode; /**< default is 0644 or 0755 as dictated by blob */
-	int file_open_flags;    /**< default is O_CREAT | O_TRUNC | O_WRONLY */
+	int file_open_flags;	/**< default is O_CREAT | O_TRUNC | O_WRONLY */
 
 	unsigned int notify_flags; /**< see `git_checkout_notify_t` above */
 	git_checkout_notify_cb notify_cb;
@@ -285,8 +285,8 @@ typedef struct git_checkout_options {
 	const char *target_directory; /**< alternative checkout path to workdir */
 
 	const char *ancestor_label; /**< the name of the common ancestor side of conflicts */
-	const char *our_label;      /**< the name of the "our" side of conflicts */
-	const char *their_label;    /**< the name of the "their" side of conflicts */
+	const char *our_label;		/**< the name of the "our" side of conflicts */
+	const char *their_label;	/**< the name of the "their" side of conflicts */
 
 	/** Optional callback to notify the consumer of performance data. */
 	git_checkout_perfdata_cb perfdata_cb;
@@ -294,8 +294,8 @@ typedef struct git_checkout_options {
 } git_checkout_options;
 
 #define GIT_CHECKOUT_OPTIONS_VERSION 1
-#define GIT_CHECKOUT_OPTIONS_INIT \
-	{ \
+#define GIT_CHECKOUT_OPTIONS_INIT                       \
+	{                                                   \
 		GIT_CHECKOUT_OPTIONS_VERSION, GIT_CHECKOUT_SAFE \
 	}
 

@@ -21,7 +21,7 @@ typedef struct transport_definition {
 } transport_definition;
 
 static git_smart_subtransport_definition http_subtransport_definition = {git_smart_subtransport_http, 1, NULL};
-static git_smart_subtransport_definition git_subtransport_definition = {git_smart_subtransport_git, 0, NULL};
+static git_smart_subtransport_definition git_subtransport_definition  = {git_smart_subtransport_git, 0, NULL};
 #ifdef GIT_SSH
 static git_smart_subtransport_definition ssh_subtransport_definition = {git_smart_subtransport_ssh, 0, NULL};
 #endif
@@ -50,8 +50,7 @@ static transport_definition *transport_find_by_url(const char *url)
 	transport_definition *d;
 
 	/* Find a user transport who wants to deal with this URI */
-	git_vector_foreach(&custom_transports, i, d)
-	{
+	git_vector_foreach (&custom_transports, i, d) {
 		if (strncasecmp(url, d->prefix, strlen(d->prefix)) == 0) {
 			return d;
 		}
@@ -105,7 +104,7 @@ static int transport_find_fn(
 	if (!definition)
 		return GIT_ENOTFOUND;
 
-	*out = definition->fn;
+	*out   = definition->fn;
 	*param = definition->param;
 
 	return 0;
@@ -154,8 +153,7 @@ int git_transport_register(
 	if ((error = git_buf_printf(&prefix, "%s://", scheme)) < 0)
 		goto on_error;
 
-	git_vector_foreach(&custom_transports, i, d)
-	{
+	git_vector_foreach (&custom_transports, i, d) {
 		if (strcasecmp(d->prefix, prefix.ptr) == 0) {
 			error = GIT_EEXISTS;
 			goto on_error;
@@ -166,8 +164,8 @@ int git_transport_register(
 	GITERR_CHECK_ALLOC(definition);
 
 	definition->prefix = git_buf_detach(&prefix);
-	definition->fn = cb;
-	definition->param = param;
+	definition->fn	 = cb;
+	definition->param  = param;
 
 	if (git_vector_insert(&custom_transports, definition) < 0)
 		goto on_error;
@@ -192,8 +190,7 @@ int git_transport_unregister(const char *scheme)
 	if ((error = git_buf_printf(&prefix, "%s://", scheme)) < 0)
 		goto done;
 
-	git_vector_foreach(&custom_transports, i, d)
-	{
+	git_vector_foreach (&custom_transports, i, d) {
 		if (strcasecmp(d->prefix, prefix.ptr) == 0) {
 			if ((error = git_vector_remove(&custom_transports, i)) < 0)
 				goto done;

@@ -63,9 +63,9 @@ void git_buf_text_unescape(git_buf *buf)
 
 int git_buf_text_crlf_to_lf(git_buf *tgt, const git_buf *src)
 {
-	const char *scan = src->ptr;
+	const char *scan	 = src->ptr;
 	const char *scan_end = src->ptr + src->size;
-	const char *next = memchr(scan, '\r', src->size);
+	const char *next	 = memchr(scan, '\r', src->size);
 	size_t new_size;
 	char *out;
 
@@ -79,7 +79,7 @@ int git_buf_text_crlf_to_lf(git_buf *tgt, const git_buf *src)
 	if (git_buf_grow(tgt, new_size) < 0)
 		return -1;
 
-	out = tgt->ptr;
+	out		  = tgt->ptr;
 	tgt->size = 0;
 
 	/* Find the next \r and copy whole chunk up to there to tgt */
@@ -102,7 +102,7 @@ int git_buf_text_crlf_to_lf(git_buf *tgt, const git_buf *src)
 		out += remaining;
 	}
 
-	tgt->size = (size_t)(out - tgt->ptr);
+	tgt->size			= (size_t)(out - tgt->ptr);
 	tgt->ptr[tgt->size] = '\0';
 
 	return 0;
@@ -111,9 +111,9 @@ int git_buf_text_crlf_to_lf(git_buf *tgt, const git_buf *src)
 int git_buf_text_lf_to_crlf(git_buf *tgt, const git_buf *src)
 {
 	const char *start = src->ptr;
-	const char *end = start + src->size;
-	const char *scan = start;
-	const char *next = memchr(scan, '\n', src->size);
+	const char *end   = start + src->size;
+	const char *scan  = start;
+	const char *next  = memchr(scan, '\n', src->size);
 	size_t alloclen;
 
 	assert(tgt != src);
@@ -170,7 +170,7 @@ int git_buf_text_common_prefix(git_buf *buf, const git_strarray *strings)
 	for (i = 1; i < strings->count; ++i) {
 
 		for (str = strings->strings[i], pfx = buf->ptr;
-							*str && *str == *pfx; str++, pfx++)
+			 *str && *str == *pfx; str++, pfx++)
 			/* scanning */;
 
 		git_buf_truncate(buf, pfx - buf->ptr);

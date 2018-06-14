@@ -17,9 +17,9 @@
 #include "repository.h"
 
 typedef enum {
-	DIFF_DRIVER_AUTO = 0,
-	DIFF_DRIVER_BINARY = 1,
-	DIFF_DRIVER_TEXT = 2,
+	DIFF_DRIVER_AUTO		= 0,
+	DIFF_DRIVER_BINARY		= 1,
+	DIFF_DRIVER_TEXT		= 2,
 	DIFF_DRIVER_PATTERNLIST = 3,
 } git_diff_driver_t;
 
@@ -82,7 +82,8 @@ void git_diff_driver_registry_free(git_diff_driver_registry *reg)
 	if (!reg)
 		return;
 
-	git_strmap_foreach_value(reg->drivers, drv, git_diff_driver_free(drv));
+	git_strmap_foreach_value (reg->drivers, drv, git_diff_driver_free(drv))
+		;
 	git_strmap_free(reg->drivers);
 	git__free(reg);
 }
@@ -93,7 +94,7 @@ static int diff_driver_add_patterns(
 	int error = 0;
 	const char *scan, *end;
 	git_diff_driver_pattern *pat = NULL;
-	git_buf buf = GIT_BUF_INIT;
+	git_buf buf					 = GIT_BUF_INIT;
 
 	for (scan = regex_str; scan; scan = end) {
 		/* get pattern to fill in */
@@ -146,7 +147,7 @@ static git_diff_driver_registry *git_repository_driver_registry(
 {
 	if (!repo->diff_drivers) {
 		git_diff_driver_registry *reg = git_diff_driver_registry_new();
-		reg = git__compare_and_swap(&repo->diff_drivers, NULL, reg);
+		reg							  = git__compare_and_swap(&repo->diff_drivers, NULL, reg);
 
 		if (reg != NULL) /* if we race, free losing allocation */
 			git_diff_driver_registry_free(reg);
@@ -163,8 +164,8 @@ static int diff_driver_alloc(
 {
 	git_diff_driver *driver;
 	size_t driverlen = sizeof(git_diff_driver),
-								namelen = strlen(name),
-								alloclen;
+		   namelen   = strlen(name),
+		   alloclen;
 
 	GITERR_CHECK_ALLOC_ADD(&alloclen, driverlen, namelen);
 	GITERR_CHECK_ALLOC_ADD(&alloclen, alloclen, 1);
@@ -187,9 +188,9 @@ static int git_diff_driver_builtin(
 	git_diff_driver_registry *reg,
 	const char *driver_name)
 {
-	int error = 0;
+	int error						 = 0;
 	git_diff_driver_definition *ddef = NULL;
-	git_diff_driver *drv = NULL;
+	git_diff_driver *drv			 = NULL;
 	size_t idx;
 
 	for (idx = 0; idx < ARRAY_SIZE(builtin_defs); ++idx) {
@@ -208,12 +209,12 @@ static int git_diff_driver_builtin(
 
 	if (ddef->fns &&
 		(error = diff_driver_add_patterns(
-				drv, ddef->fns, ddef->flags | REG_EXTENDED)) < 0)
+			 drv, ddef->fns, ddef->flags | REG_EXTENDED)) < 0)
 		goto done;
 
 	if (ddef->words &&
 		(error = p_regcomp(
-				&drv->word_pattern, ddef->words, ddef->flags | REG_EXTENDED))) {
+			 &drv->word_pattern, ddef->words, ddef->flags | REG_EXTENDED))) {
 		error = giterr_set_regex(&drv->word_pattern, error);
 		goto done;
 	}
@@ -239,10 +240,10 @@ static int git_diff_driver_load(
 	git_diff_driver *drv = NULL;
 	size_t namelen;
 	khiter_t pos;
-	git_config *cfg = NULL;
-	git_buf name = GIT_BUF_INIT;
+	git_config *cfg		 = NULL;
+	git_buf name		 = GIT_BUF_INIT;
 	git_config_entry *ce = NULL;
-	bool found_driver = false;
+	bool found_driver	= false;
 
 	if ((reg = git_repository_driver_registry(repo)) == NULL)
 		return -1;
@@ -276,7 +277,7 @@ static int git_diff_driver_load(
 		/* if diff.<driver>.binary is false, force binary checks off */
 		/* but still may have custom function context patterns, etc. */
 		drv->binary_flags = GIT_DIFF_FORCE_TEXT;
-		found_driver = true;
+		found_driver	  = true;
 		break;
 	default:
 		/* diff.<driver>.binary unspecified or "auto", so just continue */
@@ -288,7 +289,7 @@ static int git_diff_driver_load(
 	git_buf_truncate(&name, namelen + strlen("diff.."));
 	git_buf_put(&name, "xfuncname", strlen("xfuncname"));
 	if ((error = git_config_get_multivar_foreach(
-							cfg, name.ptr, NULL, diff_driver_xfuncname, drv)) < 0) {
+			 cfg, name.ptr, NULL, diff_driver_xfuncname, drv)) < 0) {
 		if (error != GIT_ENOTFOUND)
 			goto done;
 		giterr_clear(); /* no diff.<driver>.xfuncname, so just continue */
@@ -297,7 +298,7 @@ static int git_diff_driver_load(
 	git_buf_truncate(&name, namelen + strlen("diff.."));
 	git_buf_put(&name, "funcname", strlen("funcname"));
 	if ((error = git_config_get_multivar_foreach(
-							cfg, name.ptr, NULL, diff_driver_funcname, drv)) < 0) {
+			 cfg, name.ptr, NULL, diff_driver_funcname, drv)) < 0) {
 		if (error != GIT_ENOTFOUND)
 			goto done;
 		giterr_clear(); /* no diff.<driver>.funcname, so just continue */
@@ -305,7 +306,7 @@ static int git_diff_driver_load(
 
 	/* if we found any patterns, set driver type to use correct callback */
 	if (git_array_size(drv->fn_patterns) > 0) {
-		drv->type = DIFF_DRIVER_PATTERNLIST;
+		drv->type	= DIFF_DRIVER_PATTERNLIST;
 		found_driver = true;
 	}
 
@@ -369,7 +370,7 @@ int git_diff_driver_lookup(
 	if (!repo || !path || !strlen(path))
 		/* just use the auto value */;
 	else if ((error = git_attr_get_many_with_session(values, repo,
-												attrsession, 0, path, 1, attrs)) < 0)
+				  attrsession, 0, path, 1, attrs)) < 0)
 		/* return error below */;
 
 	else if (GIT_ATTR_UNSPECIFIED(values[0]))
@@ -509,7 +510,7 @@ void git_diff_find_context_init(
 
 	memset(payload_out, 0, sizeof(*payload_out));
 	if (driver) {
-		payload_out->driver = driver;
+		payload_out->driver		= driver;
 		payload_out->match_line = (driver->type == DIFF_DRIVER_PATTERNLIST) ? diff_context_line__pattern_match : diff_context_line__simple;
 		git_buf_init(&payload_out->line, 0);
 	}
