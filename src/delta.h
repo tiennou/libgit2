@@ -59,7 +59,8 @@ extern int git_delta_create_from_index(
  * pointer to the buffer with the delta data is returned and *delta_size is
  * updated with its size.  The returned buffer must be freed by the caller.
  */
-GIT_INLINE(int) git_delta(
+GIT_INLINE(int)
+git_delta(
 	void **out, size_t *out_len,
 	const void *src_buf, size_t src_bufsize,
 	const void *trg_buf, size_t trg_bufsize,
@@ -85,7 +86,7 @@ GIT_INLINE(int) git_delta(
 }
 
 /* the smallest possible delta size is 4 bytes */
-#define GIT_DELTA_SIZE_MIN	4
+#define GIT_DELTA_SIZE_MIN 4
 
 /**
 * Apply a git binary delta to recover the original content.

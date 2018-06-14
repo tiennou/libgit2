@@ -9,9 +9,9 @@
 
 #include "util.h"
 
-#define PQUEUE_LCHILD_OF(I) (((I)<<1)+1)
-#define PQUEUE_RCHILD_OF(I) (((I)<<1)+2)
-#define PQUEUE_PARENT_OF(I) (((I)-1)>>1)
+#define PQUEUE_LCHILD_OF(I) (((I) << 1) + 1)
+#define PQUEUE_RCHILD_OF(I) (((I) << 1) + 2)
+#define PQUEUE_PARENT_OF(I) (((I)-1) >> 1)
 
 int git_pqueue_init(
 	git_pqueue *pq,
@@ -65,7 +65,7 @@ static void pqueue_down(git_pqueue *pq, size_t el)
 
 		if ((rkid = git_vector_get(pq, kid_el + 1)) != NULL &&
 			pq->_cmp(kid, rkid) > 0) {
-			kid    = rkid;
+			kid = rkid;
 			kid_el += 1;
 		}
 
@@ -85,8 +85,7 @@ int git_pqueue_insert(git_pqueue *pq, void *item)
 
 	/* if heap is full, pop the top element if new one should replace it */
 	if ((pq->flags & GIT_PQUEUE_FIXED_SIZE) != 0 &&
-		pq->length >= pq->_alloc_size)
-	{
+		pq->length >= pq->_alloc_size) {
 		/* skip this item if below min item in heap or if
 		 * we do not have a comparison function */
 		if (!pq->_cmp || pq->_cmp(item, git_vector_get(pq, 0)) <= 0)

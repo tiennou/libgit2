@@ -13,9 +13,9 @@
 #include "vector.h"
 #include "attr_file.h"
 
-#define GIT_IGNORE_FILE			".gitignore"
-#define GIT_IGNORE_FILE_INREPO	"exclude"
-#define GIT_IGNORE_FILE_XDG		"ignore"
+#define GIT_IGNORE_FILE ".gitignore"
+#define GIT_IGNORE_FILE_INREPO "exclude"
+#define GIT_IGNORE_FILE_XDG "ignore"
 
 /* The git_ignores structure maintains three sets of ignores:
  * - internal ignores

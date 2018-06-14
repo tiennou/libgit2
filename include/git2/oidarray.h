@@ -31,10 +31,10 @@ typedef struct git_oidarray {
  *
  * @param array git_oidarray from which to free oid data
  */
-GIT_EXTERN(void) git_oidarray_free(git_oidarray *array);
+GIT_EXTERN(void)
+git_oidarray_free(git_oidarray *array);
 
 /** @} */
 GIT_END_DECL
 
 #endif
-

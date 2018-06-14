@@ -19,7 +19,8 @@ struct patch_id_args {
 	int first_file;
 };
 
-GIT_INLINE(const char *) diff_delta__path(const git_diff_delta *delta)
+GIT_INLINE(const char *)
+diff_delta__path(const git_diff_delta *delta)
 {
 	const char *str = delta->old_file.path;
 
@@ -93,7 +94,8 @@ size_t git_diff_num_deltas_of_type(const git_diff *diff, git_delta_t type)
 
 	assert(diff);
 
-	git_vector_foreach(&diff->deltas, i, delta) {
+	git_vector_foreach(&diff->deltas, i, delta)
+	{
 		count += (delta->status == type);
 	}
 
@@ -134,7 +136,8 @@ int git_diff_foreach(
 
 	assert(diff);
 
-	git_vector_foreach(&diff->deltas, idx, delta) {
+	git_vector_foreach(&diff->deltas, idx, delta)
+	{
 		git_patch *patch;
 
 		/* check flags against patch status */
@@ -145,7 +148,7 @@ int git_diff_foreach(
 			break;
 
 		error = git_patch__invoke_callbacks(patch, file_cb, binary_cb,
-						    hunk_cb, data_cb, payload);
+			hunk_cb, data_cb, payload);
 		git_patch_free(patch);
 
 		if (error)
@@ -173,17 +176,17 @@ int git_diff_format_email__append_header_tobuf(
 	idstr[GIT_OID_HEXSZ] = '\0';
 
 	if ((error = git__date_rfc2822_fmt(date_str, sizeof(date_str),
-		&author->when)) < 0)
+							&author->when)) < 0)
 		return error;
 
 	error = git_buf_printf(out,
-				"From %s Mon Sep 17 00:00:00 2001\n" \
-				"From: %s <%s>\n" \
-				"Date: %s\n" \
-				"Subject: ",
-				idstr,
-				author->name, author->email,
-				date_str);
+		"From %s Mon Sep 17 00:00:00 2001\n"
+		"From: %s <%s>\n"
+		"Date: %s\n"
+		"Subject: ",
+		idstr,
+		author->name, author->email,
+		date_str);
 
 	if (error < 0)
 		return error;
@@ -192,7 +195,7 @@ int git_diff_format_email__append_header_tobuf(
 		if (total_patches == 1) {
 			error = git_buf_puts(out, "[PATCH] ");
 		} else {
-			error = git_buf_printf(out, "[PATCH %"PRIuZ"/%"PRIuZ"] ",
+			error = git_buf_printf(out, "[PATCH %" PRIuZ "/%" PRIuZ "] ",
 				patch_no, total_patches);
 		}
 
@@ -256,19 +259,19 @@ int git_diff_format_email(
 		"git_format_email_options");
 
 	ignore_marker = (opts->flags &
-		GIT_DIFF_FORMAT_EMAIL_EXCLUDE_SUBJECT_PATCH_MARKER) != 0;
+																		GIT_DIFF_FORMAT_EMAIL_EXCLUDE_SUBJECT_PATCH_MARKER) != 0;
 
 	if (!ignore_marker) {
 		if (opts->patch_no > opts->total_patches) {
 			giterr_set(GITERR_INVALID,
-				"patch %"PRIuZ" out of range. max %"PRIuZ,
+				"patch %" PRIuZ " out of range. max %" PRIuZ,
 				opts->patch_no, opts->total_patches);
 			return -1;
 		}
 
 		if (opts->patch_no == 0) {
 			giterr_set(GITERR_INVALID,
-				"invalid patch no %"PRIuZ". should be >0", opts->patch_no);
+				"invalid patch no %" PRIuZ ". should be >0", opts->patch_no);
 			return -1;
 		}
 	}
@@ -306,7 +309,7 @@ int git_diff_format_email(
 		(error = git_diff_stats_to_buf(out, stats, format_flags, 0)) < 0 ||
 		(error = git_buf_putc(out, '\n')) < 0 ||
 		(error = git_diff_format_email__append_patches_tobuf(out, diff)) < 0)
-			goto on_error;
+		goto on_error;
 
 	error = git_buf_puts(out, "--\nlibgit2 " LIBGIT2_VERSION "\n\n");
 
@@ -331,7 +334,7 @@ int git_diff_commit_as_email(
 		GIT_DIFF_FORMAT_EMAIL_OPTIONS_INIT;
 	int error;
 
-	assert (out && repo && commit);
+	assert(out && repo && commit);
 
 	opts.flags = flags;
 	opts.patch_no = patch_no;
@@ -381,7 +384,7 @@ static int flush_hunk(git_oid *result, git_hash_ctx *ctx)
 	int error, i;
 
 	if ((error = git_hash_final(&hash, ctx)) < 0 ||
-	    (error = git_hash_init(ctx)) < 0)
+		(error = git_hash_init(ctx)) < 0)
 		return error;
 
 	for (i = 0; i < GIT_OID_RAWSZ; i++) {
@@ -414,23 +417,23 @@ static int file_cb(
 	float progress,
 	void *payload)
 {
-	struct patch_id_args *args = (struct patch_id_args *) payload;
+	struct patch_id_args *args = (struct patch_id_args *)payload;
 	git_buf buf = GIT_BUF_INIT;
 	int error;
 
 	GIT_UNUSED(progress);
 
 	if (!args->first_file &&
-	    (error = flush_hunk(&args->result, &args->ctx)) < 0)
+		(error = flush_hunk(&args->result, &args->ctx)) < 0)
 		goto out;
 	args->first_file = 0;
 
 	if ((error = git_buf_printf(&buf,
-				    "diff--gita/%sb/%s---a/%s+++b/%s",
-				    delta->old_file.path,
-				    delta->new_file.path,
-				    delta->old_file.path,
-				    delta->new_file.path)) < 0)
+							"diff--gita/%sb/%s---a/%s+++b/%s",
+							delta->old_file.path,
+							delta->new_file.path,
+							delta->old_file.path,
+							delta->new_file.path)) < 0)
 		goto out;
 
 	strip_spaces(&buf);
@@ -449,7 +452,7 @@ static int line_cb(
 	const git_diff_line *line,
 	void *payload)
 {
-	struct patch_id_args *args = (struct patch_id_args *) payload;
+	struct patch_id_args *args = (struct patch_id_args *)payload;
 	git_buf buf = GIT_BUF_INIT;
 	int error;
 
@@ -457,15 +460,15 @@ static int line_cb(
 	GIT_UNUSED(hunk);
 
 	switch (line->origin) {
-	    case GIT_DIFF_LINE_ADDITION:
+	case GIT_DIFF_LINE_ADDITION:
 		git_buf_putc(&buf, '+');
 		break;
-	    case GIT_DIFF_LINE_DELETION:
+	case GIT_DIFF_LINE_DELETION:
 		git_buf_putc(&buf, '-');
 		break;
-	    case GIT_DIFF_LINE_CONTEXT:
+	case GIT_DIFF_LINE_CONTEXT:
 		break;
-	    default:
+	default:
 		giterr_set(GITERR_PATCH, "invalid line origin for patch");
 		return -1;
 	}

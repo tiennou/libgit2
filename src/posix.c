@@ -15,7 +15,7 @@ size_t p_fsync__cnt = 0;
 
 #ifndef GIT_WIN32
 
-#ifdef NO_ADDRINFO
+#	ifdef NO_ADDRINFO
 
 int p_getaddrinfo(
 	const char *host,
@@ -44,8 +44,8 @@ int p_getaddrinfo(
 		ainfo->ai_port = htons(atol(port));
 
 	memcpy(&ainfo->ai_addr_in.sin_addr,
-			ainfo->ai_hostent->h_addr_list[0],
-			ainfo->ai_hostent->h_length);
+		ainfo->ai_hostent->h_addr_list[0],
+		ainfo->ai_hostent->h_length);
 
 	ainfo->ai_protocol = 0;
 	ainfo->ai_socktype = hints->ai_socktype;
@@ -87,7 +87,7 @@ void p_freeaddrinfo(struct addrinfo *info)
 
 	p = info;
 
-	while(p != NULL) {
+	while (p != NULL) {
 		next = p->ai_next;
 		free(p);
 		p = next;
@@ -96,14 +96,20 @@ void p_freeaddrinfo(struct addrinfo *info)
 
 const char *p_gai_strerror(int ret)
 {
-	switch(ret) {
-	case -1: return "Out of memory"; break;
-	case -2: return "Address lookup failed"; break;
-	default: return "Unknown error"; break;
+	switch (ret) {
+	case -1:
+		return "Out of memory";
+		break;
+	case -2:
+		return "Address lookup failed";
+		break;
+	default:
+		return "Unknown error";
+		break;
 	}
 }
 
-#endif /* NO_ADDRINFO */
+#	endif /* NO_ADDRINFO */
 
 int p_open(const char *path, volatile int flags, ...)
 {
@@ -218,7 +224,7 @@ int p_write(git_file fd, const void *buf, size_t cnt)
 
 #ifdef NO_MMAP
 
-#include "map.h"
+#	include "map.h"
 
 int git__page_size(size_t *page_size)
 {

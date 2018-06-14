@@ -69,8 +69,7 @@ int git_refspec__parse(git_refspec *refspec, const char *input, bool is_fetch)
 
 	refspec->pattern = is_glob;
 	refspec->src = git__strndup(lhs, llen);
-	flags = GIT_REF_FORMAT_ALLOW_ONELEVEL | GIT_REF_FORMAT_REFSPEC_SHORTHAND
-		| (is_glob ? GIT_REF_FORMAT_REFSPEC_PATTERN : 0);
+	flags = GIT_REF_FORMAT_ALLOW_ONELEVEL | GIT_REF_FORMAT_REFSPEC_SHORTHAND | (is_glob ? GIT_REF_FORMAT_REFSPEC_PATTERN : 0);
 
 	if (is_fetch) {
 		/*
@@ -107,8 +106,7 @@ int git_refspec__parse(git_refspec *refspec, const char *input, bool is_fetch)
 		else if (is_glob) {
 			if (!git_reference__is_valid_name(refspec->src, flags))
 				goto invalid;
-		}
-		else {
+		} else {
 			; /* anything goes, for now */
 		}
 		/*
@@ -140,11 +138,11 @@ int git_refspec__parse(git_refspec *refspec, const char *input, bool is_fetch)
 
 	return 0;
 
- invalid:
-        giterr_set(
-                GITERR_INVALID,
-                "'%s' is not a valid refspec.", input);
-        git_refspec__free(refspec);
+invalid:
+	giterr_set(
+		GITERR_INVALID,
+		"'%s' is not a valid refspec.", input);
+	git_refspec__free(refspec);
 	return -1;
 }
 
@@ -306,12 +304,11 @@ int git_refspec__dwim_one(git_vector *out, git_refspec *spec, git_vector *refs)
 	git_remote_head key;
 	git_refspec *cur;
 
-	const char* formatters[] = {
+	const char *formatters[] = {
 		GIT_REFS_DIR "%s",
 		GIT_REFS_TAGS_DIR "%s",
 		GIT_REFS_HEADS_DIR "%s",
-		NULL
-	};
+		NULL};
 
 	assert(out && spec && refs);
 
@@ -331,7 +328,7 @@ int git_refspec__dwim_one(git_vector *out, git_refspec *spec, git_vector *refs)
 			git_buf_printf(&buf, formatters[j], spec->src);
 			GITERR_CHECK_ALLOC_BUF(&buf);
 
-			key.name = (char *) git_buf_cstr(&buf);
+			key.name = (char *)git_buf_cstr(&buf);
 			if (!git_vector_search(&pos, refs, &key)) {
 				/* we found something to match the shorthand, set src to that */
 				cur->src = git_buf_detach(&buf);

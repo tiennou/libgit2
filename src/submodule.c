@@ -124,9 +124,7 @@ static void submodule_set_lookup_error(int error, const char *name)
 	if (!error)
 		return;
 
-	giterr_set(GITERR_SUBMODULE, (error == GIT_ENOTFOUND) ?
-		"no submodule named '%s'" :
-		"submodule '%s' has not been added yet", name);
+	giterr_set(GITERR_SUBMODULE, (error == GIT_ENOTFOUND) ? "no submodule named '%s'" : "submodule '%s' has not been added yet", name);
 }
 
 typedef struct {
@@ -242,7 +240,7 @@ static int load_submodule_names(git_strmap **out, git_repository *repo, git_conf
 
 		if (git_strmap_exists(names, entry->value)) {
 			giterr_set(GITERR_SUBMODULE,
-				   "duplicated submodule path '%s'", entry->value);
+				"duplicated submodule path '%s'", entry->value);
 			error = -1;
 			goto out;
 		}
@@ -279,7 +277,7 @@ out:
 int git_submodule_lookup(
 	git_submodule **out, /* NULL if user only wants to test existence */
 	git_repository *repo,
-	const char *name)    /* trailing slash is allowed */
+	const char *name) /* trailing slash is allowed */
 {
 	int error;
 	unsigned int location;
@@ -321,10 +319,10 @@ int git_submodule_lookup(
 		git_config_backend *mods;
 		const char *pattern = "submodule\\..*\\.path";
 		git_buf path = GIT_BUF_INIT;
-		fbp_data data = { NULL, NULL };
+		fbp_data data = {NULL, NULL};
 
 		git_buf_puts(&path, name);
-		while (path.ptr[path.size-1] == '/') {
+		while (path.ptr[path.size - 1] == '/') {
 			path.ptr[--path.size] = '\0';
 		}
 		data.path = path.ptr;
@@ -371,7 +369,7 @@ int git_submodule_lookup(
 		if (git_repository_workdir(repo)) {
 			git_buf path = GIT_BUF_INIT;
 			if (git_buf_join3(&path,
-					  '/', git_repository_workdir(repo), name, DOT_GIT) < 0)
+								'/', git_repository_workdir(repo), name, DOT_GIT) < 0)
 				return -1;
 
 			if (git_path_exists(path.ptr))
@@ -408,7 +406,7 @@ int git_submodule_name_is_valid(git_repository *repo, const char *name, int flag
 		git_buf_attach_notowned(&buf, name, strlen(name));
 	}
 
-	isvalid =  git_path_isvalid(repo, buf.ptr, 0, flags);
+	isvalid = git_path_isvalid(repo, buf.ptr, 0, flags);
 	git_buf_dispose(&buf);
 
 	return isvalid;
@@ -587,7 +585,7 @@ int git_submodule__map(git_repository *repo, git_strmap *map)
 
 	/* add submodule information from .gitmodules */
 	if (wd) {
-		lfc_data data = { 0 };
+		lfc_data data = {0};
 		data.map = map;
 		data.repo = repo;
 
@@ -599,7 +597,7 @@ int git_submodule__map(git_repository *repo, git_strmap *map)
 
 		data.mods = mods;
 		if ((error = git_config_foreach(
-			    mods, submodule_load_each, &data)) < 0)
+								mods, submodule_load_each, &data)) < 0)
 			goto cleanup;
 	}
 	/* add back submodule information from index */
@@ -615,8 +613,8 @@ int git_submodule__map(git_repository *repo, git_strmap *map)
 	/* shallow scan submodules in work tree as needed */
 	if (wd) {
 		git_strmap_foreach_value(map, sm, {
-				submodule_load_from_wd_lite(sm);
-			});
+			submodule_load_from_wd_lite(sm);
+		});
 	}
 
 cleanup:
@@ -651,7 +649,7 @@ int git_submodule_foreach(
 		goto done;
 
 	if (!(error = git_vector_init(
-			&snapshot, git_strmap_num_entries(submodules), submodule_cmp))) {
+								&snapshot, git_strmap_num_entries(submodules), submodule_cmp))) {
 
 		git_strmap_foreach_value(submodules, sm, {
 			if ((error = git_vector_insert(&snapshot, sm)) < 0)
@@ -665,7 +663,8 @@ int git_submodule_foreach(
 
 	git_vector_uniq(&snapshot, submodule_free_dup);
 
-	git_vector_foreach(&snapshot, i, sm) {
+	git_vector_foreach(&snapshot, i, sm)
+	{
 		if ((error = callback(sm, sm->name, payload)) != 0) {
 			giterr_set_after_callback(error);
 			break;
@@ -711,7 +710,7 @@ static int submodule_repo_init(
 	 *
 	 * Old style: sub-repo goes directly into repo/<name>/.git/
 	 */
-	 if (use_gitlink) {
+	if (use_gitlink) {
 		error = git_repository_item_path(&repodir, parent_repo, GIT_REPOSITORY_ITEM_MODULES);
 		if (error < 0)
 			goto cleanup;
@@ -810,13 +809,13 @@ int git_submodule_add_setup(
 	 * Otherwise, just add the existing repo.
 	 */
 	if (!(git_path_exists(name.ptr) &&
-		git_path_contains(&name, DOT_GIT))) {
+						git_path_contains(&name, DOT_GIT))) {
 
 		/* resolve the actual URL to use */
 		if ((error = git_submodule_resolve_url(&real_url, repo, url)) < 0)
 			goto cleanup;
 
-		 if ((error = submodule_repo_init(&subrepo, repo, path, real_url.ptr, use_gitlink)) < 0)
+		if ((error = submodule_repo_init(&subrepo, repo, path, real_url.ptr, use_gitlink)) < 0)
 			goto cleanup;
 	}
 
@@ -900,7 +899,7 @@ int git_submodule_add_to_index(git_submodule *sm, int write_index)
 
 	if ((error = git_repository_index__weakptr(&index, sm->repo)) < 0 ||
 		(error = git_buf_joinpath(
-			&path, git_repository_workdir(sm->repo), sm->path)) < 0 ||
+				&path, git_repository_workdir(sm->repo), sm->path)) < 0 ||
 		(error = git_submodule_open(&sm_repo, sm)) < 0)
 		goto cleanup;
 
@@ -1124,8 +1123,7 @@ const git_oid *git_submodule_wd_id(git_submodule *submodule)
 git_submodule_ignore_t git_submodule_ignore(git_submodule *submodule)
 {
 	assert(submodule);
-	return (submodule->ignore < GIT_SUBMODULE_IGNORE_NONE) ?
-		GIT_SUBMODULE_IGNORE_NONE : submodule->ignore;
+	return (submodule->ignore < GIT_SUBMODULE_IGNORE_NONE) ? GIT_SUBMODULE_IGNORE_NONE : submodule->ignore;
 }
 
 int git_submodule_set_ignore(git_repository *repo, const char *name, git_submodule_ignore_t ignore)
@@ -1138,8 +1136,7 @@ int git_submodule_set_ignore(git_repository *repo, const char *name, git_submodu
 git_submodule_update_t git_submodule_update_strategy(git_submodule *submodule)
 {
 	assert(submodule);
-	return (submodule->update < GIT_SUBMODULE_UPDATE_CHECKOUT) ?
-		GIT_SUBMODULE_UPDATE_CHECKOUT : submodule->update;
+	return (submodule->update < GIT_SUBMODULE_UPDATE_CHECKOUT) ? GIT_SUBMODULE_UPDATE_CHECKOUT : submodule->update;
 }
 
 int git_submodule_set_update(git_repository *repo, const char *name, git_submodule_update_t update)
@@ -1350,8 +1347,8 @@ int git_submodule_update(git_submodule *sm, int init, git_submodule_update_optio
 		/* Invalidate the wd flags as the workdir has been updated. */
 		sm->flags = sm->flags &
 			~(GIT_SUBMODULE_STATUS_IN_WD |
-		  	GIT_SUBMODULE_STATUS__WD_OID_VALID |
-		  	GIT_SUBMODULE_STATUS__WD_SCANNED);
+				GIT_SUBMODULE_STATUS__WD_OID_VALID |
+				GIT_SUBMODULE_STATUS__WD_SCANNED);
 	}
 
 done:
@@ -1385,17 +1382,16 @@ int git_submodule_init(git_submodule *sm, int overwrite)
 	if ((error = git_submodule_resolve_url(&effective_submodule_url, sm->repo, sm->url)) < 0 ||
 		(error = git_buf_printf(&key, "submodule.%s.url", sm->name)) < 0 ||
 		(error = git_config__update_entry(
-			cfg, key.ptr, effective_submodule_url.ptr, overwrite != 0, false)) < 0)
+				cfg, key.ptr, effective_submodule_url.ptr, overwrite != 0, false)) < 0)
 		goto cleanup;
 
 	/* write "submodule.NAME.update" if not default */
 
-	val = (sm->update == GIT_SUBMODULE_UPDATE_CHECKOUT) ?
-		NULL : git_submodule_update_to_str(sm->update);
+	val = (sm->update == GIT_SUBMODULE_UPDATE_CHECKOUT) ? NULL : git_submodule_update_to_str(sm->update);
 
 	if ((error = git_buf_printf(&key, "submodule.%s.update", sm->name)) < 0 ||
 		(error = git_config__update_entry(
-			cfg, key.ptr, val, overwrite != 0, false)) < 0)
+				cfg, key.ptr, val, overwrite != 0, false)) < 0)
 		goto cleanup;
 
 	/* success */
@@ -1431,8 +1427,7 @@ int git_submodule_sync(git_submodule *sm)
 
 	if (!error &&
 		(sm->flags & GIT_SUBMODULE_STATUS_IN_WD) != 0 &&
-		!(error = git_submodule_open(&smrepo, sm)))
-	{
+		!(error = git_submodule_open(&smrepo, sm))) {
 		git_buf remote_name = GIT_BUF_INIT;
 
 		if ((error = git_repository_config__weakptr(&cfg, smrepo)) < 0)
@@ -1468,7 +1463,7 @@ static int git_submodule__open(
 	assert(sm && subrepo);
 
 	if (git_repository__ensure_not_bare(
-			sm->repo, "open submodule repository") < 0)
+						sm->repo, "open submodule repository") < 0)
 		return GIT_EBAREREPO;
 
 	wd = git_repository_workdir(sm->repo);
@@ -1479,8 +1474,8 @@ static int git_submodule__open(
 
 	sm->flags = sm->flags &
 		~(GIT_SUBMODULE_STATUS_IN_WD |
-		  GIT_SUBMODULE_STATUS__WD_OID_VALID |
-		  GIT_SUBMODULE_STATUS__WD_SCANNED);
+			GIT_SUBMODULE_STATUS__WD_OID_VALID |
+			GIT_SUBMODULE_STATUS__WD_SCANNED);
 
 	if (bare)
 		flags |= GIT_REPOSITORY_OPEN_BARE;
@@ -1550,7 +1545,7 @@ static int submodule_update_index(git_submodule *sm)
 
 	sm->flags = sm->flags &
 		~(GIT_SUBMODULE_STATUS_IN_INDEX |
-		  GIT_SUBMODULE_STATUS__INDEX_OID_VALID);
+			GIT_SUBMODULE_STATUS__INDEX_OID_VALID);
 
 	if (!(ie = git_index_get_bypath(index, sm->path, 0)))
 		return 0;
@@ -1580,7 +1575,7 @@ static int submodule_update_head(git_submodule *submodule)
 
 	submodule->flags = submodule->flags &
 		~(GIT_SUBMODULE_STATUS_IN_HEAD |
-		  GIT_SUBMODULE_STATUS__HEAD_OID_VALID);
+			GIT_SUBMODULE_STATUS__HEAD_OID_VALID);
 
 	/* if we can't look up file in current head, then done */
 	if (git_repository_head_tree(&head, submodule->repo) < 0 ||
@@ -1624,8 +1619,8 @@ int git_submodule_reload(git_submodule *sm, int force)
 		/* refresh wd data */
 		sm->flags &=
 			~(GIT_SUBMODULE_STATUS_IN_WD |
-			  GIT_SUBMODULE_STATUS__WD_OID_VALID |
-			  GIT_SUBMODULE_STATUS__WD_FLAGS);
+				GIT_SUBMODULE_STATUS__WD_OID_VALID |
+				GIT_SUBMODULE_STATUS__WD_FLAGS);
 
 		error = submodule_load_from_wd_lite(sm);
 	}
@@ -1768,7 +1763,7 @@ static int submodule_alloc(
 	sm->ignore = sm->ignore_default = GIT_SUBMODULE_IGNORE_NONE;
 	sm->update = sm->update_default = GIT_SUBMODULE_UPDATE_CHECKOUT;
 	sm->fetch_recurse = sm->fetch_recurse_default = GIT_SUBMODULE_RECURSE_NO;
-	sm->repo   = repo;
+	sm->repo = repo;
 	sm->branch = NULL;
 
 	*out = sm;
@@ -1812,7 +1807,7 @@ int git_submodule_parse_ignore(git_submodule_ignore_t *out, const char *value)
 	int val;
 
 	if (git_config_lookup_map_value(
-			&val, _sm_ignore_map, ARRAY_SIZE(_sm_ignore_map), value) < 0) {
+						&val, _sm_ignore_map, ARRAY_SIZE(_sm_ignore_map), value) < 0) {
 		*out = GIT_SUBMODULE_IGNORE_NONE;
 		return submodule_config_error("ignore", value);
 	}
@@ -1826,7 +1821,7 @@ int git_submodule_parse_update(git_submodule_update_t *out, const char *value)
 	int val;
 
 	if (git_config_lookup_map_value(
-			&val, _sm_update_map, ARRAY_SIZE(_sm_update_map), value) < 0) {
+						&val, _sm_update_map, ARRAY_SIZE(_sm_update_map), value) < 0) {
 		*out = GIT_SUBMODULE_UPDATE_CHECKOUT;
 		return submodule_config_error("update", value);
 	}
@@ -1840,7 +1835,7 @@ int git_submodule_parse_recurse(git_submodule_recurse_t *out, const char *value)
 	int val;
 
 	if (git_config_lookup_map_value(
-			&val, _sm_recurse_map, ARRAY_SIZE(_sm_recurse_map), value) < 0) {
+						&val, _sm_recurse_map, ARRAY_SIZE(_sm_recurse_map), value) < 0) {
 		*out = GIT_SUBMODULE_RECURSE_YES;
 		return submodule_config_error("recurse", value);
 	}
@@ -1856,7 +1851,7 @@ static int get_value(const char **out, git_config *cfg, git_buf *buf, const char
 	git_buf_clear(buf);
 
 	if ((error = git_buf_printf(buf, "submodule.%s.%s", name, field)) < 0 ||
-	    (error = git_config_get_string(out, cfg, buf->ptr)) < 0)
+		(error = git_config_get_string(out, cfg, buf->ptr)) < 0)
 		return error;
 
 	return error;
@@ -1875,7 +1870,7 @@ static int submodule_read_config(git_submodule *sm, git_config *cfg)
 
 	if ((error = get_value(&value, cfg, &key, sm->name, "path")) == 0) {
 		in_config = 1;
-	/*
+		/*
 	 * TODO: if case insensitive filesystem, then the following strcmp
 	 * should be strcasecmp
 	 */
@@ -1956,14 +1951,14 @@ static int submodule_load_each(const git_config_entry *entry, void *payload)
 		return 0;
 
 	namestart = entry->name + strlen("submodule.");
-	property  = strrchr(namestart, '.');
+	property = strrchr(namestart, '.');
 
 	if (!property || (property == namestart))
 		return 0;
 
 	property++;
 
-	if ((error = git_buf_set(&name, namestart, property - namestart -1)) < 0)
+	if ((error = git_buf_set(&name, namestart, property - namestart - 1)) < 0)
 		return error;
 
 	isvalid = git_submodule_name_is_valid(data->repo, name.ptr, 0);
@@ -2110,9 +2105,9 @@ static int lookup_head_remote_key(git_buf *remote_name, git_repository *repo)
 
 	/* lookup remote tracking branch of HEAD */
 	if ((error = git_branch_upstream_name(
-		&upstream_name,
-		repo,
-		git_reference_name(head))) < 0)
+							&upstream_name,
+							repo,
+							git_reference_name(head))) < 0)
 		goto done;
 
 	/* lookup remote of remote tracking branch */
@@ -2190,7 +2185,7 @@ out:
 
 static void submodule_get_index_status(unsigned int *status, git_submodule *sm)
 {
-	const git_oid *head_oid  = git_submodule_head_id(sm);
+	const git_oid *head_oid = git_submodule_head_id(sm);
 	const git_oid *index_oid = git_submodule_index_id(sm);
 
 	*status = *status & ~GIT_SUBMODULE_STATUS__INDEX_FLAGS;
@@ -2198,8 +2193,7 @@ static void submodule_get_index_status(unsigned int *status, git_submodule *sm)
 	if (!head_oid) {
 		if (index_oid)
 			*status |= GIT_SUBMODULE_STATUS_INDEX_ADDED;
-	}
-	else if (!index_oid)
+	} else if (!index_oid)
 		*status |= GIT_SUBMODULE_STATUS_INDEX_DELETED;
 	else if (!git_oid_equal(head_oid, index_oid))
 		*status |= GIT_SUBMODULE_STATUS_INDEX_MODIFIED;
@@ -2225,15 +2219,13 @@ static void submodule_get_wd_status(
 	if (!index_oid) {
 		if (wd_oid)
 			*status |= GIT_SUBMODULE_STATUS_WD_ADDED;
-	}
-	else if (!wd_oid) {
+	} else if (!wd_oid) {
 		if ((sm->flags & GIT_SUBMODULE_STATUS__WD_SCANNED) != 0 &&
 			(sm->flags & GIT_SUBMODULE_STATUS_IN_WD) == 0)
 			*status |= GIT_SUBMODULE_STATUS_WD_UNINITIALIZED;
 		else
 			*status |= GIT_SUBMODULE_STATUS_WD_DELETED;
-	}
-	else if (!git_oid_equal(index_oid, wd_oid))
+	} else if (!git_oid_equal(index_oid, wd_oid))
 		*status |= GIT_SUBMODULE_STATUS_WD_MODIFIED;
 
 	/* if we have no repo, then we're done */

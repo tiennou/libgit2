@@ -13,8 +13,8 @@
 
 int git_commit_list_time_cmp(const void *a, const void *b)
 {
-	int64_t time_a = ((git_commit_list_node *) a)->time;
-	int64_t time_b = ((git_commit_list_node *) b)->time;
+	int64_t time_a = ((git_commit_list_node *)a)->time;
+	int64_t time_b = ((git_commit_list_node *)b)->time;
 
 	if (time_a < time_b)
 		return 1;
@@ -202,4 +202,3 @@ int git_commit_list_parse(git_revwalk *walk, git_commit_list_node *commit)
 	git_odb_object_free(obj);
 	return error;
 }
-

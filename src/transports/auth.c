@@ -49,8 +49,7 @@ static git_http_auth_context basic_context = {
 	GIT_CREDTYPE_USERPASS_PLAINTEXT,
 	NULL,
 	basic_next_token,
-	NULL
-};
+	NULL};
 
 int git_http_auth_basic(
 	git_http_auth_context **out, const gitno_connection_data *connection_data)
@@ -69,4 +68,3 @@ int git_http_auth_dummy(
 	*out = NULL;
 	return 0;
 }
-

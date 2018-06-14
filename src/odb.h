@@ -26,9 +26,9 @@ extern bool git_odb__strict_hash_verification;
 
 /* DO NOT EXPORT */
 typedef struct {
-	void *data;			/**< Raw, decompressed object data. */
-	size_t len;			/**< Total number of bytes in data. */
-	git_otype type;		/**< Type of this object. */
+	void *data;     /**< Raw, decompressed object data. */
+	size_t len;     /**< Total number of bytes in data. */
+	git_otype type; /**< Type of this object. */
 } git_rawobj;
 
 /* EXPORT */
@@ -42,7 +42,7 @@ struct git_odb {
 	git_refcount rc;
 	git_vector backends;
 	git_cache own_cache;
-	unsigned int do_fsync :1;
+	unsigned int do_fsync : 1;
 };
 
 typedef enum {

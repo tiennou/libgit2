@@ -23,7 +23,8 @@ GIT_BEGIN_DECL
  *
  * @return the number of initializations of the library, or an error code.
  */
-GIT_EXTERN(int) git_libgit2_init(void);
+GIT_EXTERN(int)
+git_libgit2_init(void);
 
 /**
  * Shutdown the global state
@@ -36,9 +37,9 @@ GIT_EXTERN(int) git_libgit2_init(void);
  * @return the number of remaining initializations of the library, or an
  * error code.
  */
-GIT_EXTERN(int) git_libgit2_shutdown(void);
+GIT_EXTERN(int)
+git_libgit2_shutdown(void);
 
 /** @} */
 GIT_END_DECL
 #endif
-

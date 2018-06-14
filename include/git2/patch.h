@@ -48,7 +48,8 @@ typedef struct git_patch git_patch;
  * @param idx Index into diff list
  * @return 0 on success, other value < 0 on error
  */
-GIT_EXTERN(int) git_patch_from_diff(
+GIT_EXTERN(int)
+git_patch_from_diff(
 	git_patch **out, git_diff *diff, size_t idx);
 
 /**
@@ -67,7 +68,8 @@ GIT_EXTERN(int) git_patch_from_diff(
  * @param opts Options for diff, or NULL for default options
  * @return 0 on success or error code < 0
  */
-GIT_EXTERN(int) git_patch_from_blobs(
+GIT_EXTERN(int)
+git_patch_from_blobs(
 	git_patch **out,
 	const git_blob *old_blob,
 	const char *old_as_path,
@@ -92,7 +94,8 @@ GIT_EXTERN(int) git_patch_from_blobs(
  * @param opts Options for diff, or NULL for default options
  * @return 0 on success or error code < 0
  */
-GIT_EXTERN(int) git_patch_from_blob_and_buffer(
+GIT_EXTERN(int)
+git_patch_from_blob_and_buffer(
 	git_patch **out,
 	const git_blob *old_blob,
 	const char *old_as_path,
@@ -119,7 +122,8 @@ GIT_EXTERN(int) git_patch_from_blob_and_buffer(
  * @param opts Options for diff, or NULL for default options
  * @return 0 on success or error code < 0
  */
-GIT_EXTERN(int) git_patch_from_buffers(
+GIT_EXTERN(int)
+git_patch_from_buffers(
 	git_patch **out,
 	const void *old_buffer,
 	size_t old_len,
@@ -132,18 +136,21 @@ GIT_EXTERN(int) git_patch_from_buffers(
 /**
  * Free a git_patch object.
  */
-GIT_EXTERN(void) git_patch_free(git_patch *patch);
+GIT_EXTERN(void)
+git_patch_free(git_patch *patch);
 
 /**
  * Get the delta associated with a patch.  This delta points to internal
  * data and you do not have to release it when you are done with it.
  */
-GIT_EXTERN(const git_diff_delta *) git_patch_get_delta(const git_patch *patch);
+GIT_EXTERN(const git_diff_delta *)
+git_patch_get_delta(const git_patch *patch);
 
 /**
  * Get the number of hunks in a patch
  */
-GIT_EXTERN(size_t) git_patch_num_hunks(const git_patch *patch);
+GIT_EXTERN(size_t)
+git_patch_num_hunks(const git_patch *patch);
 
 /**
  * Get line counts of each type in a patch.
@@ -161,7 +168,8 @@ GIT_EXTERN(size_t) git_patch_num_hunks(const git_patch *patch);
  * @param patch The git_patch object
  * @return 0 on success, <0 on error
  */
-GIT_EXTERN(int) git_patch_line_stats(
+GIT_EXTERN(int)
+git_patch_line_stats(
 	size_t *total_context,
 	size_t *total_additions,
 	size_t *total_deletions,
@@ -180,7 +188,8 @@ GIT_EXTERN(int) git_patch_line_stats(
  * @param hunk_idx Input index of hunk to get information about
  * @return 0 on success, GIT_ENOTFOUND if hunk_idx out of range, <0 on error
  */
-GIT_EXTERN(int) git_patch_get_hunk(
+GIT_EXTERN(int)
+git_patch_get_hunk(
 	const git_diff_hunk **out,
 	size_t *lines_in_hunk,
 	git_patch *patch,
@@ -193,7 +202,8 @@ GIT_EXTERN(int) git_patch_get_hunk(
  * @param hunk_idx Index of the hunk
  * @return Number of lines in hunk or GIT_ENOTFOUND if invalid hunk index
  */
-GIT_EXTERN(int) git_patch_num_lines_in_hunk(
+GIT_EXTERN(int)
+git_patch_num_lines_in_hunk(
 	const git_patch *patch,
 	size_t hunk_idx);
 
@@ -211,7 +221,8 @@ GIT_EXTERN(int) git_patch_num_lines_in_hunk(
  * @param line_of_hunk The index of the line in the hunk
  * @return 0 on success, <0 on failure
  */
-GIT_EXTERN(int) git_patch_get_line_in_hunk(
+GIT_EXTERN(int)
+git_patch_get_line_in_hunk(
 	const git_diff_line **out,
 	git_patch *patch,
 	size_t hunk_idx,
@@ -233,7 +244,8 @@ GIT_EXTERN(int) git_patch_get_line_in_hunk(
  * @param include_file_headers Include file header lines if non-zero
  * @return The number of bytes of data
  */
-GIT_EXTERN(size_t) git_patch_size(
+GIT_EXTERN(size_t)
+git_patch_size(
 	git_patch *patch,
 	int include_context,
 	int include_hunk_headers,
@@ -251,7 +263,8 @@ GIT_EXTERN(size_t) git_patch_size(
  * @param payload Reference pointer that will be passed to your callbacks.
  * @return 0 on success, non-zero callback return value, or error code
  */
-GIT_EXTERN(int) git_patch_print(
+GIT_EXTERN(int)
+git_patch_print(
 	git_patch *patch,
 	git_diff_line_cb print_cb,
 	void *payload);
@@ -263,7 +276,8 @@ GIT_EXTERN(int) git_patch_print(
  * @param patch A git_patch representing changes to one file
  * @return 0 on success, <0 on failure.
  */
-GIT_EXTERN(int) git_patch_to_buf(
+GIT_EXTERN(int)
+git_patch_to_buf(
 	git_buf *out,
 	git_patch *patch);
 

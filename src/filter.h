@@ -31,7 +31,10 @@ typedef struct {
 	uint32_t flags;
 } git_filter_options;
 
-#define GIT_FILTER_OPTIONS_INIT {0}
+#define GIT_FILTER_OPTIONS_INIT \
+	{ \
+		0 \
+	}
 
 extern int git_filter_global_init(void);
 

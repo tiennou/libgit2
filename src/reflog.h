@@ -16,7 +16,7 @@
 #define GIT_REFLOG_DIR_MODE 0777
 #define GIT_REFLOG_FILE_MODE 0666
 
-#define GIT_REFLOG_SIZE_MIN (2*GIT_OID_HEXSZ+2+17)
+#define GIT_REFLOG_SIZE_MIN (2 * GIT_OID_HEXSZ + 2 + 17)
 
 struct git_reflog_entry {
 	git_oid oid_old;
@@ -33,7 +33,8 @@ struct git_reflog {
 	git_vector entries;
 };
 
-GIT_INLINE(size_t) reflog_inverse_index(size_t idx, size_t total)
+GIT_INLINE(size_t)
+reflog_inverse_index(size_t idx, size_t total)
 {
 	return (total - 1) - idx;
 }

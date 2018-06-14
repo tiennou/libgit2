@@ -40,8 +40,8 @@ typedef struct {
 	const char *message;
 	git_signature *sig;
 
-	unsigned int committed :1,
-		remove :1;
+	unsigned int committed : 1,
+		remove : 1;
 } transaction_node;
 
 struct git_transaction {
@@ -120,7 +120,7 @@ int git_transaction_lock_ref(git_transaction *tx, const char *refname)
 		return error;
 
 	git_strmap_insert(tx->locks, node->name, node, &error);
-	if (error < 0) 
+	if (error < 0)
 		goto cleanup;
 
 	return 0;
@@ -304,7 +304,7 @@ static int update_target(git_refdb *db, transaction_node *node)
 	update_reflog = node->reflog == NULL;
 
 	if (node->remove) {
-		error =  git_refdb_unlock(db, node->payload, 2, false, ref, NULL, NULL);
+		error = git_refdb_unlock(db, node->payload, 2, false, ref, NULL, NULL);
 	} else if (node->ref_type == GIT_REF_OID) {
 		error = git_refdb_unlock(db, node->payload, true, update_reflog, ref, node->sig, node->message);
 	} else if (node->ref_type == GIT_REF_SYMBOLIC) {

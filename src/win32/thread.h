@@ -10,7 +10,7 @@
 
 #include "common.h"
 
-#if defined (_MSC_VER)
+#if defined(_MSC_VER)
 #	define GIT_RESTRICT __restrict
 #else
 #	define GIT_RESTRICT __restrict__
@@ -26,7 +26,9 @@ typedef struct {
 typedef CRITICAL_SECTION git_mutex;
 typedef HANDLE git_cond;
 
-typedef struct { void *Ptr; } GIT_SRWLOCK;
+typedef struct {
+	void *Ptr;
+} GIT_SRWLOCK;
 
 typedef struct {
 	union {
@@ -38,7 +40,7 @@ typedef struct {
 int git_threads_init(void);
 
 int git_thread_create(git_thread *GIT_RESTRICT,
-	void *(*) (void *),
+	void *(*)(void *),
 	void *GIT_RESTRICT);
 int git_thread_join(git_thread *, void **);
 size_t git_thread_currentid(void);

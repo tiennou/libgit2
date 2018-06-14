@@ -60,7 +60,8 @@ typedef void (*git_trace_callback)(git_trace_level_t level, const char *msg);
  * @param cb Function to call with trace data
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_trace_set(git_trace_level_t level, git_trace_callback cb);
+GIT_EXTERN(int)
+git_trace_set(git_trace_level_t level, git_trace_callback cb);
 
 /** @} */
 GIT_END_DECL

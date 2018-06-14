@@ -38,7 +38,7 @@ typedef struct git_mwindow_ctl {
 } git_mwindow_ctl;
 
 int git_mwindow_contains(git_mwindow *win, git_off_t offset);
-void git_mwindow_free_all(git_mwindow_file *mwf); /* locks */
+void git_mwindow_free_all(git_mwindow_file *mwf);        /* locks */
 void git_mwindow_free_all_locked(git_mwindow_file *mwf); /* run under lock */
 unsigned char *git_mwindow_open(git_mwindow_file *mwf, git_mwindow **cursor, git_off_t offset, size_t extra, unsigned int *left);
 int git_mwindow_file_register(git_mwindow_file *mwf);

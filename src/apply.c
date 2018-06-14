@@ -18,7 +18,7 @@
 #include "zstream.h"
 
 #define apply_err(...) \
-	( giterr_set(GITERR_PATCH, __VA_ARGS__), -1 )
+	(giterr_set(GITERR_PATCH, __VA_ARGS__), -1)
 
 typedef struct {
 	/* The lines that we allocate ourself are allocated out of the pool.
@@ -39,7 +39,10 @@ static void patch_line_init(
 	out->content_offset = in_offset;
 }
 
-#define PATCH_IMAGE_INIT { GIT_POOL_INIT, GIT_VECTOR_INIT }
+#define PATCH_IMAGE_INIT \
+	{ \
+		GIT_POOL_INIT, GIT_VECTOR_INIT \
+	}
 
 static int patch_image_init_fromstr(
 	patch_image *out, const char *in, size_t in_len)
@@ -174,7 +177,7 @@ static int apply_hunk(
 		git_diff_line *line = git_array_get(patch->lines, linenum);
 
 		if (!line) {
-			error = apply_err("preimage does not contain line %"PRIuZ, linenum);
+			error = apply_err("preimage does not contain line %" PRIuZ, linenum);
 			goto done;
 		}
 
@@ -223,7 +226,8 @@ static int apply_hunks(
 	if ((error = patch_image_init_fromstr(&image, source, source_len)) < 0)
 		goto done;
 
-	git_array_foreach(patch->hunks, i, hunk) {
+	git_array_foreach(patch->hunks, i, hunk)
+	{
 		if ((error = apply_hunk(&image, patch, hunk)) < 0)
 			goto done;
 	}
@@ -271,11 +275,9 @@ static int apply_binary_delta(
 		out->ptr = data;
 		out->size = data_len;
 		out->asize = data_len;
-	}
-	else if (binary_file->type == GIT_DIFF_BINARY_LITERAL) {
+	} else if (binary_file->type == GIT_DIFF_BINARY_LITERAL) {
 		git_buf_swap(out, &inflated);
-	}
-	else {
+	} else {
 		error = apply_err("unknown binary delta type");
 		goto done;
 	}
@@ -304,12 +306,12 @@ static int apply_binary(
 
 	/* first, apply the new_file delta to the given source */
 	if ((error = apply_binary_delta(out, source, source_len,
-			&patch->binary.new_file)) < 0)
+							&patch->binary.new_file)) < 0)
 		goto done;
 
 	/* second, apply the old_file delta to sanity check the result */
 	if ((error = apply_binary_delta(&reverse, out->ptr, out->size,
-			&patch->binary.old_file)) < 0)
+							&patch->binary.old_file)) < 0)
 		goto done;
 
 	if (source_len != reverse.size ||
@@ -347,8 +349,7 @@ int git_apply__patch(
 		const git_diff_file *newfile = &patch->delta->new_file;
 
 		filename = git__strdup(newfile->path);
-		mode = newfile->mode ?
-			newfile->mode : GIT_FILEMODE_BLOB;
+		mode = newfile->mode ? newfile->mode : GIT_FILEMODE_BLOB;
 	}
 
 	if (patch->delta->flags & GIT_DIFF_FLAG_BINARY)

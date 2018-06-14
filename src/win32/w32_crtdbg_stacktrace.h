@@ -11,11 +11,11 @@
 
 #if defined(GIT_MSVC_CRTDBG)
 
-#include <stdlib.h>
-#include <crtdbg.h>
+#	include <stdlib.h>
+#	include <crtdbg.h>
 
-#include "git2/errors.h"
-#include "strnlen.h"
+#	include "git2/errors.h"
+#	include "strnlen.h"
 
 /* MSVC CRTDBG memory leak reporting.
  *
@@ -75,7 +75,7 @@ typedef enum git_win32__crtdbg_stacktrace_options {
 	/**
 	 * Set checkpoint marker.
 	 */
-	GIT_WIN32__CRTDBG_STACKTRACE__SET_MARK         = (1 << 0),
+	GIT_WIN32__CRTDBG_STACKTRACE__SET_MARK = (1 << 0),
 
 	/**
 	 * Dump leaks since last checkpoint marker.
@@ -93,13 +93,13 @@ typedef enum git_win32__crtdbg_stacktrace_options {
 	 * Dump leaks since init.  May not be combined
 	 * with __LEAKS_SINCE_MARK.
 	 */
-	GIT_WIN32__CRTDBG_STACKTRACE__LEAKS_TOTAL      = (1 << 2),
+	GIT_WIN32__CRTDBG_STACKTRACE__LEAKS_TOTAL = (1 << 2),
 
 	/**
 	 * Suppress printing during dumps.
 	 * Just return leak count.
 	 */
-	GIT_WIN32__CRTDBG_STACKTRACE__QUIET            = (1 << 3),
+	GIT_WIN32__CRTDBG_STACKTRACE__QUIET = (1 << 3),
 
 } git_win32__crtdbg_stacktrace_options;
 
@@ -110,7 +110,8 @@ typedef enum git_win32__crtdbg_stacktrace_options {
  * @return number of unique leaks (relative to requested starting
  * point) or error.
  */
-GIT_EXTERN(int) git_win32__crtdbg_stacktrace__dump(
+GIT_EXTERN(int)
+git_win32__crtdbg_stacktrace__dump(
 	git_win32__crtdbg_stacktrace_options opt,
 	const char *label);
 

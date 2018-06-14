@@ -34,7 +34,8 @@ GIT_BEGIN_DECL
  * @param offset timezone offset in minutes for the time
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_signature_new(git_signature **out, const char *name, const char *email, git_time_t time, int offset);
+GIT_EXTERN(int)
+git_signature_new(git_signature **out, const char *name, const char *email, git_time_t time, int offset);
 
 /**
  * Create a new action signature with a timestamp of 'now'.
@@ -46,7 +47,8 @@ GIT_EXTERN(int) git_signature_new(git_signature **out, const char *name, const c
  * @param email email of the person
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_signature_now(git_signature **out, const char *name, const char *email);
+GIT_EXTERN(int)
+git_signature_now(git_signature **out, const char *name, const char *email);
 
 /**
  * Create a new action signature with default user and now timestamp.
@@ -60,7 +62,8 @@ GIT_EXTERN(int) git_signature_now(git_signature **out, const char *name, const c
  * @param repo repository pointer
  * @return 0 on success, GIT_ENOTFOUND if config is missing, or error code
  */
-GIT_EXTERN(int) git_signature_default(git_signature **out, git_repository *repo);
+GIT_EXTERN(int)
+git_signature_default(git_signature **out, git_repository *repo);
 
 /**
  * Create a new signature by parsing the given buffer, which is
@@ -73,7 +76,8 @@ GIT_EXTERN(int) git_signature_default(git_signature **out, git_repository *repo)
  * @param buf signature string
  * @return 0 on success, or an error code
  */
-GIT_EXTERN(int) git_signature_from_buffer(git_signature **out, const char *buf);
+GIT_EXTERN(int)
+git_signature_from_buffer(git_signature **out, const char *buf);
 
 /**
  * Create a copy of an existing signature.  All internal strings are also
@@ -85,7 +89,8 @@ GIT_EXTERN(int) git_signature_from_buffer(git_signature **out, const char *buf);
  * @param sig signature to duplicate
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_signature_dup(git_signature **dest, const git_signature *sig);
+GIT_EXTERN(int)
+git_signature_dup(git_signature **dest, const git_signature *sig);
 
 /**
  * Free an existing signature.
@@ -96,7 +101,8 @@ GIT_EXTERN(int) git_signature_dup(git_signature **dest, const git_signature *sig
  *
  * @param sig signature to free
  */
-GIT_EXTERN(void) git_signature_free(git_signature *sig);
+GIT_EXTERN(void)
+git_signature_free(git_signature *sig);
 
 /** @} */
 GIT_END_DECL

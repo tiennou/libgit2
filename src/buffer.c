@@ -18,7 +18,7 @@ char git_buf__initbuf[1];
 char git_buf__oom[1];
 
 #define ENSURE_SIZE(b, d) \
-	if ((d) > (b)->asize && git_buf_grow((b), (d)) < 0)\
+	if ((d) > (b)->asize && git_buf_grow((b), (d)) < 0) \
 		return -1;
 
 
@@ -89,7 +89,7 @@ int git_buf_try_grow(
 	}
 
 	buf->asize = new_size;
-	buf->ptr   = new_ptr;
+	buf->ptr = new_ptr;
 
 	/* truncate the existing buffer size if necessary */
 	if (buf->size >= buf->asize)
@@ -118,7 +118,8 @@ int git_buf_grow_by(git_buf *buffer, size_t additional_size)
 
 void git_buf_dispose(git_buf *buf)
 {
-	if (!buf) return;
+	if (!buf)
+		return;
 
 	if (buf->asize > 0 && buf->ptr != NULL && buf->ptr != git_buf__oom)
 		git__free(buf->ptr);
@@ -169,7 +170,6 @@ int git_buf_set(git_buf *buf, const void *data, size_t len)
 		buf->size = len;
 		if (buf->asize > buf->size)
 			buf->ptr[buf->size] = '\0';
-
 	}
 	return 0;
 }
@@ -284,8 +284,8 @@ static const int8_t base64_decode[] = {
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
-	52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1,  0, -1, -1,
-	-1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+	52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1, 0, -1, -1,
+	-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
 	15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
 	-1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
 	41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1,
@@ -296,8 +296,7 @@ static const int8_t base64_decode[] = {
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
-};
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 
 int git_buf_decode_base64(git_buf *buf, const char *base64, size_t len)
 {
@@ -317,9 +316,9 @@ int git_buf_decode_base64(git_buf *buf, const char *base64, size_t len)
 
 	for (i = 0; i < len; i += 4) {
 		if ((a = base64_decode[(unsigned char)base64[i]]) < 0 ||
-			(b = base64_decode[(unsigned char)base64[i+1]]) < 0 ||
-			(c = base64_decode[(unsigned char)base64[i+2]]) < 0 ||
-			(d = base64_decode[(unsigned char)base64[i+3]]) < 0) {
+			(b = base64_decode[(unsigned char)base64[i + 1]]) < 0 ||
+			(c = base64_decode[(unsigned char)base64[i + 2]]) < 0 ||
+			(d = base64_decode[(unsigned char)base64[i + 3]]) < 0) {
 			buf->size = orig_size;
 			buf->ptr[buf->size] = '\0';
 
@@ -383,7 +382,7 @@ static const int8_t base85_decode[] = {
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	-1, 63, -1, 64, 65, 66, 67, -1, 68, 69, 70, 71, -1, 72, -1, -1,
-	 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, -1, 73, 74, 75, 76, 77,
+	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, -1, 73, 74, 75, 76, 77,
 	78, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
 	26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, -1, -1, -1, 79, 80,
 	81, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
@@ -395,8 +394,7 @@ static const int8_t base85_decode[] = {
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
-};
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 
 int git_buf_decode_base85(
 	git_buf *buf,
@@ -506,8 +504,7 @@ int git_buf_vprintf(git_buf *buf, const char *format, va_list ap)
 		len = p_vsnprintf(
 			buf->ptr + buf->size,
 			buf->asize - buf->size,
-			format, args
-		);
+			format, args);
 
 		va_end(args);
 
@@ -658,7 +655,7 @@ int git_buf_join_n(git_buf *buf, char separator, int nbuf, ...)
 
 	va_start(ap, nbuf);
 	for (i = 0; i < nbuf; ++i) {
-		const char* segment;
+		const char *segment;
 		size_t segment_len;
 
 		segment = va_arg(ap, const char *);
@@ -690,7 +687,7 @@ int git_buf_join_n(git_buf *buf, char separator, int nbuf, ...)
 
 	va_start(ap, nbuf);
 	for (i = 0; i < nbuf; ++i) {
-		const char* segment;
+		const char *segment;
 		size_t segment_len;
 
 		segment = va_arg(ap, const char *);
@@ -749,7 +746,10 @@ int git_buf_join(
 
 	/* figure out if we need to insert a separator */
 	if (separator && strlen_a) {
-		while (*str_b == separator) { str_b++; strlen_b--; }
+		while (*str_b == separator) {
+			str_b++;
+			strlen_b--;
+		}
 		if (str_a[strlen_a - 1] != separator)
 			need_sep = 1;
 	}
@@ -788,9 +788,9 @@ int git_buf_join3(
 	const char *str_c)
 {
 	size_t len_a = strlen(str_a),
-		len_b = strlen(str_b),
-		len_c = strlen(str_c),
-		len_total;
+								len_b = strlen(str_b),
+								len_c = strlen(str_c),
+								len_total;
 	int sep_a = 0, sep_b = 0;
 	char *tgt;
 
@@ -801,11 +801,17 @@ int git_buf_join3(
 
 	if (separator) {
 		if (len_a > 0) {
-			while (*str_b == separator) { str_b++; len_b--; }
+			while (*str_b == separator) {
+				str_b++;
+				len_b--;
+			}
 			sep_a = (str_a[len_a - 1] != separator);
 		}
 		if (len_a > 0 || len_b > 0)
-			while (*str_c == separator) { str_c++; len_c--; }
+			while (*str_c == separator) {
+				str_c++;
+				len_c--;
+			}
 		if (len_b > 0)
 			sep_b = (str_b[len_b - 1] != separator);
 	}
@@ -856,8 +862,7 @@ void git_buf_rtrim(git_buf *buf)
 int git_buf_cmp(const git_buf *a, const git_buf *b)
 {
 	int result = memcmp(a->ptr, b->ptr, min(a->size, b->size));
-	return (result != 0) ? result :
-		(a->size < b->size) ? -1 : (a->size > b->size) ? 1 : 0;
+	return (result != 0) ? result : (a->size < b->size) ? -1 : (a->size > b->size) ? 1 : 0;
 }
 
 int git_buf_splice(
@@ -895,7 +900,7 @@ int git_buf_splice(
 /* Quote per http://marc.info/?l=git&m=112927316408690&w=2 */
 int git_buf_quote(git_buf *buf)
 {
-	const char whitespace[] = { 'a', 'b', 't', 'n', 'v', 'f', 'r' };
+	const char whitespace[] = {'a', 'b', 't', 'n', 'v', 'f', 'r'};
 	git_buf quoted = GIT_BUF_INIT;
 	size_t i = 0;
 	bool quote = false;
@@ -934,7 +939,7 @@ int git_buf_quote(git_buf *buf)
 
 		/* escape anything unprintable as octal */
 		else if (buf->ptr[i] != ' ' &&
-				(buf->ptr[i] < '!' || buf->ptr[i] > '~')) {
+			(buf->ptr[i] < '!' || buf->ptr[i] > '~')) {
 			git_buf_printf(&quoted, "\\%03o", (unsigned char)buf->ptr[i]);
 		}
 
@@ -966,51 +971,69 @@ int git_buf_unquote(git_buf *buf)
 
 	git_buf_rtrim(buf);
 
-	if (buf->size < 2 || buf->ptr[0] != '"' || buf->ptr[buf->size-1] != '"')
+	if (buf->size < 2 || buf->ptr[0] != '"' || buf->ptr[buf->size - 1] != '"')
 		goto invalid;
 
-	for (i = 0, j = 1; j < buf->size-1; i++, j++) {
+	for (i = 0, j = 1; j < buf->size - 1; i++, j++) {
 		ch = buf->ptr[j];
 
 		if (ch == '\\') {
-			if (j == buf->size-2)
+			if (j == buf->size - 2)
 				goto invalid;
 
 			ch = buf->ptr[++j];
 
 			switch (ch) {
 			/* \" or \\ simply copy the char in */
-			case '"': case '\\':
+			case '"':
+			case '\\':
 				break;
 
 			/* add the appropriate escaped char */
-			case 'a': ch = '\a'; break;
-			case 'b': ch = '\b'; break;
-			case 'f': ch = '\f'; break;
-			case 'n': ch = '\n'; break;
-			case 'r': ch = '\r'; break;
-			case 't': ch = '\t'; break;
-			case 'v': ch = '\v'; break;
+			case 'a':
+				ch = '\a';
+				break;
+			case 'b':
+				ch = '\b';
+				break;
+			case 'f':
+				ch = '\f';
+				break;
+			case 'n':
+				ch = '\n';
+				break;
+			case 'r':
+				ch = '\r';
+				break;
+			case 't':
+				ch = '\t';
+				break;
+			case 'v':
+				ch = '\v';
+				break;
 
 			/* \xyz digits convert to the char*/
-			case '0': case '1': case '2': case '3':
-				if (j == buf->size-3) {
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+				if (j == buf->size - 3) {
 					giterr_set(GITERR_INVALID,
 						"truncated quoted character \\%c", ch);
 					return -1;
 				}
 
-				if (buf->ptr[j+1] < '0' || buf->ptr[j+1] > '7' ||
-					buf->ptr[j+2] < '0' || buf->ptr[j+2] > '7') {
+				if (buf->ptr[j + 1] < '0' || buf->ptr[j + 1] > '7' ||
+					buf->ptr[j + 2] < '0' || buf->ptr[j + 2] > '7') {
 					giterr_set(GITERR_INVALID,
 						"truncated quoted character \\%c%c%c",
-						buf->ptr[j], buf->ptr[j+1], buf->ptr[j+2]);
+						buf->ptr[j], buf->ptr[j + 1], buf->ptr[j + 2]);
 					return -1;
 				}
 
 				ch = ((buf->ptr[j] - '0') << 6) |
-					((buf->ptr[j+1] - '0') << 3) |
-					(buf->ptr[j+2] - '0');
+					((buf->ptr[j + 1] - '0') << 3) |
+					(buf->ptr[j + 2] - '0');
 				j += 2;
 				break;
 

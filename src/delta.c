@@ -56,8 +56,7 @@ static const unsigned int T[256] = {
 	0x6475a501, 0xcf2c11d0, 0x34f9ab36, 0x9fa01fe7, 0x624ac294, 0xc9137645,
 	0x26459ddd, 0x8d1c290c, 0x70f6f47f, 0xdbaf40ae, 0x207afa48, 0x8b234e99,
 	0x76c993ea, 0xdd90273b, 0x2a3b52f7, 0x8162e626, 0x7c883b55, 0xd7d18f84,
-	0x2c043562, 0x875d81b3, 0x7ab75cc0, 0xd1eee811
-};
+	0x2c043562, 0x875d81b3, 0x7ab75cc0, 0xd1eee811};
 
 static const unsigned int U[256] = {
 	0x00000000, 0x7eb5200d, 0x5633f4cb, 0x2886d4c6, 0x073e5d47, 0x798b7d4a,
@@ -102,8 +101,7 @@ static const unsigned int U[256] = {
 	0x5eca6c3c, 0x207f4c31, 0x0fc7c5b0, 0x7172e5bd, 0x59f4317b, 0x27411176,
 	0x1a7c5765, 0x64c97768, 0x4c4fa3ae, 0x32fa83a3, 0x1d420a22, 0x63f72a2f,
 	0x4b71fee9, 0x35c4dee4, 0x1400edeb, 0x6ab5cde6, 0x42331920, 0x3c86392d,
-	0x133eb0ac, 0x6d8b90a1, 0x450d4467, 0x3bb8646a
-};
+	0x133eb0ac, 0x6d8b90a1, 0x450d4467, 0x3bb8646a};
 
 struct index_entry {
 	const unsigned char *ptr;
@@ -169,7 +167,8 @@ int git_delta_index_init(
 		entries = 0xfffffffeU / RABIN_WINDOW;
 	}
 	hsize = entries / 4;
-	for (i = 4; i < 31 && (1u << i) < hsize; i++);
+	for (i = 4; i < 31 && (1u << i) < hsize; i++)
+		;
 	hsize = 1 << i;
 	hmask = hsize - 1;
 
@@ -198,8 +197,8 @@ int git_delta_index_init(
 	/* then populate the index */
 	prev_val = ~0;
 	for (data = buffer + entries * RABIN_WINDOW - RABIN_WINDOW;
-	     data >= buffer;
-	     data -= RABIN_WINDOW) {
+						data >= buffer;
+						data -= RABIN_WINDOW) {
 		unsigned int val = 0;
 		for (i = 1; i <= RABIN_WINDOW; i++)
 			val = ((val << 8) | data[i]) ^ T[val >> RABIN_SHIFT];
@@ -239,7 +238,7 @@ int git_delta_index_init(
 			int skip = hash_count[i] / HASH_LIMIT / 2;
 			do {
 				entry = entry->next;
-			} while(--skip && entry);
+			} while (--skip && entry);
 			keep->next = entry;
 		} while (entry);
 	}
@@ -265,7 +264,7 @@ size_t git_delta_index_size(git_delta_index *index)
  * The maximum size for any opcode sequence, including the initial header
  * plus rabin window plus biggest copy.
  */
-#define MAX_OP_SIZE	(5 + 5 + 1 + RABIN_WINDOW + 7)
+#define MAX_OP_SIZE (5 + 5 + 1 + RABIN_WINDOW + 7)
 
 int git_delta_create_from_index(
 	void **out,
@@ -312,7 +311,7 @@ int git_delta_create_from_index(
 	ref_data = index->src_buf;
 	ref_top = ref_data + index->src_size;
 	data = trg_buf;
-	top = (const unsigned char *) trg_buf + trg_size;
+	top = (const unsigned char *)trg_buf + trg_size;
 
 	bufpos++;
 	val = 0;
@@ -367,7 +366,7 @@ int git_delta_create_from_index(
 			unsigned char *op;
 
 			if (inscnt) {
-				while (moff && ref_data[moff-1] == data[-1]) {
+				while (moff && ref_data[moff - 1] == data[-1]) {
 					/* we can match one byte back */
 					msize++;
 					moff--;
@@ -375,8 +374,8 @@ int git_delta_create_from_index(
 					bufpos--;
 					if (--inscnt)
 						continue;
-					bufpos--;  /* remove count slot */
-					inscnt--;  /* make it -1 */
+					bufpos--; /* remove count slot */
+					inscnt--; /* make it -1 */
 					break;
 				}
 				buf[bufpos - inscnt - 1] = inscnt;
@@ -391,9 +390,9 @@ int git_delta_create_from_index(
 			i = 0x80;
 
 			if (moff & 0x000000ff)
-				buf[bufpos++] = moff >> 0,  i |= 0x01;
+				buf[bufpos++] = moff >> 0, i |= 0x01;
 			if (moff & 0x0000ff00)
-				buf[bufpos++] = moff >> 8,  i |= 0x02;
+				buf[bufpos++] = moff >> 8, i |= 0x02;
 			if (moff & 0x00ff0000)
 				buf[bufpos++] = moff >> 16, i |= 0x04;
 			if (moff & 0xff000000)
@@ -414,8 +413,7 @@ int git_delta_create_from_index(
 				int j;
 				val = 0;
 				for (j = -RABIN_WINDOW; j < 0; j++)
-					val = ((val << 8) | data[j])
-					      ^ T[val >> RABIN_SHIFT];
+					val = ((val << 8) | data[j]) ^ T[val >> RABIN_SHIFT];
 			}
 		}
 
@@ -568,15 +566,23 @@ int git_delta_apply(
 			*/
 			size_t off = 0, len = 0;
 
-			if (cmd & 0x01) off = *delta++;
-			if (cmd & 0x02) off |= *delta++ << 8UL;
-			if (cmd & 0x04) off |= *delta++ << 16UL;
-			if (cmd & 0x08) off |= *delta++ << 24UL;
+			if (cmd & 0x01)
+				off = *delta++;
+			if (cmd & 0x02)
+				off |= *delta++ << 8UL;
+			if (cmd & 0x04)
+				off |= *delta++ << 16UL;
+			if (cmd & 0x08)
+				off |= *delta++ << 24UL;
 
-			if (cmd & 0x10) len = *delta++;
-			if (cmd & 0x20) len |= *delta++ << 8UL;
-			if (cmd & 0x40) len |= *delta++ << 16UL;
-			if (!len)		len = 0x10000;
+			if (cmd & 0x10)
+				len = *delta++;
+			if (cmd & 0x20)
+				len |= *delta++ << 8UL;
+			if (cmd & 0x40)
+				len |= *delta++ << 16UL;
+			if (!len)
+				len = 0x10000;
 
 			if (base_len < off + len || res_sz < len)
 				goto fail;
@@ -584,8 +590,7 @@ int git_delta_apply(
 			res_dp += len;
 			res_sz -= len;
 
-		}
-		else if (cmd) {
+		} else if (cmd) {
 			/* cmd is a literal insert instruction; copy from
 			* the delta stream itself.
 			*/
@@ -596,8 +601,7 @@ int git_delta_apply(
 			res_dp += cmd;
 			res_sz -= cmd;
 
-		}
-		else {
+		} else {
 			/* cmd == 0 is reserved for future encodings.
 			*/
 			goto fail;

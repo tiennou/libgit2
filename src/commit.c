@@ -79,8 +79,8 @@ on_error:
 }
 
 static int validate_tree_and_parents(git_array_oid_t *parents, git_repository *repo, const git_oid *tree,
-				     git_commit_parent_callback parent_cb, void *parent_payload,
-				     const git_oid *current_id, bool validate)
+	git_commit_parent_callback parent_cb, void *parent_payload,
+	const git_oid *current_id, bool validate)
 {
 	size_t i;
 	int error;
@@ -151,8 +151,8 @@ static int git_commit__create_internal(
 		goto cleanup;
 
 	error = git_commit__create_buffer_internal(&buf, author, committer,
-						   message_encoding, message, tree,
-						   &parents);
+		message_encoding, message, tree,
+		&parents);
 
 	if (error < 0)
 		goto cleanup;
@@ -264,7 +264,7 @@ int git_commit_create_from_ids(
 	size_t parent_count,
 	const git_oid *parents[])
 {
-	commit_parent_oids data = { parent_count, parents };
+	commit_parent_oids data = {parent_count, parents};
 
 	return git_commit__create_internal(
 		id, repo, update_ref, author, committer,
@@ -302,7 +302,7 @@ int git_commit_create(
 	size_t parent_count,
 	const git_commit *parents[])
 {
-	commit_parent_data data = { parent_count, parents, repo };
+	commit_parent_data data = {parent_count, parents, repo};
 
 	assert(tree && git_tree_owner(tree) == repo);
 
@@ -350,7 +350,7 @@ int git_commit_amend(
 
 	if (!tree) {
 		git_tree *old_tree;
-		GITERR_CHECK_ERROR( git_commit_tree(&old_tree, commit_to_amend) );
+		GITERR_CHECK_ERROR(git_commit_tree(&old_tree, commit_to_amend));
 		git_oid_cpy(&tree_id, git_tree_id(old_tree));
 		git_tree_free(old_tree);
 	} else {
@@ -478,7 +478,7 @@ bad_buffer:
 
 #define GIT_COMMIT_GETTER(_rvalue, _name, _return) \
 	_rvalue git_commit_##_name(const git_commit *commit) \
-	{\
+	{ \
 		assert(commit); \
 		return _return; \
 	}
@@ -524,7 +524,7 @@ const char *git_commit_summary(git_commit *commit)
 				break;
 			/* record the beginning of contiguous whitespace runs */
 			else if (git__isspace(next_character)) {
-				if(space == NULL) {
+				if (space == NULL) {
 					space = msg;
 					space_contains_newline = false;
 				}
@@ -534,7 +534,7 @@ const char *git_commit_summary(git_commit *commit)
 			else {
 				/* process any recorded whitespace */
 				if (space) {
-					if(space_contains_newline)
+					if (space_contains_newline)
 						git_buf_putc(&summary, ' '); /* if the space contains a newline, collapse to ' ' */
 					else
 						git_buf_put(&summary, space, (msg - space)); /* otherwise copy it */
@@ -574,7 +574,7 @@ const char *git_commit_body(git_commit *commit)
 				break;
 
 		if (*msg)
-			    commit->body = git__strndup(msg, end - msg + 1);
+			commit->body = git__strndup(msg, end - msg + 1);
 	}
 
 	return commit->body;
@@ -770,7 +770,7 @@ int git_commit_extract_signature(git_buf *signature, git_buf *signed_data, git_r
 		if (git_buf_oom(signature))
 			goto oom;
 
-		error = git_buf_puts(signed_data, eol+1);
+		error = git_buf_puts(signed_data, eol + 1);
 		git_odb_object_free(obj);
 		return error;
 	}
@@ -806,7 +806,7 @@ int git_commit_create_buffer(git_buf *out,
 	const git_commit *parents[])
 {
 	int error;
-	commit_parent_data data = { parent_count, parents, repo };
+	commit_parent_data data = {parent_count, parents, repo};
 	git_array_oid_t parents_arr = GIT_ARRAY_INIT;
 	const git_oid *tree_id;
 

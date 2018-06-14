@@ -36,7 +36,7 @@ static bool contains_angle_brackets(const char *input)
 
 static bool is_crud(unsigned char c)
 {
-	return  c <= 32  ||
+	return c <= 32 ||
 		c == '.' ||
 		c == ',' ||
 		c == ':' ||
@@ -51,7 +51,8 @@ static bool is_crud(unsigned char c)
 static char *extract_trimmed(const char *ptr, size_t len)
 {
 	while (len && is_crud((unsigned char)ptr[0])) {
-		ptr++; len--;
+		ptr++;
+		len--;
 	}
 
 	while (len && is_crud((unsigned char)ptr[len - 1])) {
@@ -196,7 +197,7 @@ int git_signature_default(git_signature **out, git_repository *repo)
 }
 
 int git_signature__parse(git_signature *sig, const char **buffer_out,
-		const char *buffer_end, const char *header, char ender)
+	const char *buffer_end, const char *header, char ender)
 {
 	const char *buffer = *buffer_out;
 	const char *email_start, *email_end;
@@ -312,19 +313,17 @@ void git_signature__writebuf(git_buf *buf, const char *header, const git_signatu
 	mins = offset % 60;
 
 	git_buf_printf(buf, "%s%s <%s> %u %c%02d%02d\n",
-			header ? header : "", sig->name, sig->email,
-			(unsigned)sig->when.time, sign, hours, mins);
+		header ? header : "", sig->name, sig->email,
+		(unsigned)sig->when.time, sign, hours, mins);
 }
 
 bool git_signature__equal(const git_signature *one, const git_signature *two)
 {
 	assert(one && two);
 
-	return
-		git__strcmp(one->name, two->name) == 0 &&
+	return git__strcmp(one->name, two->name) == 0 &&
 		git__strcmp(one->email, two->email) == 0 &&
 		one->when.time == two->when.time &&
 		one->when.offset == two->when.offset &&
 		one->when.sign == two->when.sign;
 }
-

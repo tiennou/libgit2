@@ -30,7 +30,7 @@ extern int git_futils_readbuffer_fd(git_buf *obj, git_file fd, size_t len);
  * support these internally and they will be removed before the `open` call.
  */
 #ifndef O_FSYNC
-# define O_FSYNC (1 << 31)
+#	define O_FSYNC (1 << 31)
 #endif
 
 extern int git_futils_writebuffer(
@@ -96,15 +96,13 @@ typedef enum {
 	GIT_MKDIR_REMOVE_SYMLINKS = 256,
 } git_futils_mkdir_flags;
 
-struct git_futils_mkdir_perfdata
-{
+struct git_futils_mkdir_perfdata {
 	size_t stat_calls;
 	size_t mkdir_calls;
 	size_t chmod_calls;
 };
 
-struct git_futils_mkdir_options
-{
+struct git_futils_mkdir_options {
 	git_strmap *dir_map;
 	git_pool *pool;
 	struct git_futils_mkdir_perfdata perfdata;
@@ -152,11 +150,11 @@ extern int git_futils_mkpath2file(const char *path, const mode_t mode);
  */
 typedef enum {
 	GIT_RMDIR_EMPTY_HIERARCHY = 0,
-	GIT_RMDIR_REMOVE_FILES    = (1 << 0),
-	GIT_RMDIR_SKIP_NONEMPTY   = (1 << 1),
-	GIT_RMDIR_EMPTY_PARENTS   = (1 << 2),
+	GIT_RMDIR_REMOVE_FILES = (1 << 0),
+	GIT_RMDIR_SKIP_NONEMPTY = (1 << 1),
+	GIT_RMDIR_EMPTY_PARENTS = (1 << 2),
 	GIT_RMDIR_REMOVE_BLOCKERS = (1 << 3),
-	GIT_RMDIR_SKIP_ROOT       = (1 << 4),
+	GIT_RMDIR_SKIP_ROOT = (1 << 4),
 } git_futils_rmdir_flags;
 
 /**
@@ -216,12 +214,12 @@ extern int git_futils_touch(const char *path, time_t *when);
  */
 typedef enum {
 	GIT_CPDIR_CREATE_EMPTY_DIRS = (1u << 0),
-	GIT_CPDIR_COPY_SYMLINKS     = (1u << 1),
-	GIT_CPDIR_COPY_DOTFILES     = (1u << 2),
-	GIT_CPDIR_OVERWRITE         = (1u << 3),
-	GIT_CPDIR_CHMOD_DIRS        = (1u << 4),
-	GIT_CPDIR_SIMPLE_TO_MODE    = (1u << 5),
-	GIT_CPDIR_LINK_FILES        = (1u << 6),
+	GIT_CPDIR_COPY_SYMLINKS = (1u << 1),
+	GIT_CPDIR_COPY_DOTFILES = (1u << 2),
+	GIT_CPDIR_OVERWRITE = (1u << 3),
+	GIT_CPDIR_CHMOD_DIRS = (1u << 4),
+	GIT_CPDIR_SIMPLE_TO_MODE = (1u << 5),
+	GIT_CPDIR_LINK_FILES = (1u << 6),
 } git_futils_cpdir_flags;
 
 /**
@@ -257,14 +255,14 @@ extern int git_futils_truncate(const char *path, int mode);
  */
 extern git_off_t git_futils_filesize(git_file fd);
 
-#define GIT_PERMS_IS_EXEC(MODE)		(((MODE) & 0111) != 0)
-#define GIT_PERMS_CANONICAL(MODE)	(GIT_PERMS_IS_EXEC(MODE) ? 0755 : 0644)
-#define GIT_PERMS_FOR_WRITE(MODE)   (GIT_PERMS_IS_EXEC(MODE) ? 0777 : 0666)
+#define GIT_PERMS_IS_EXEC(MODE) (((MODE)&0111) != 0)
+#define GIT_PERMS_CANONICAL(MODE) (GIT_PERMS_IS_EXEC(MODE) ? 0755 : 0644)
+#define GIT_PERMS_FOR_WRITE(MODE) (GIT_PERMS_IS_EXEC(MODE) ? 0777 : 0666)
 
-#define GIT_MODE_PERMS_MASK			0777
-#define GIT_MODE_TYPE_MASK			0170000
-#define GIT_MODE_TYPE(MODE)			((MODE) & GIT_MODE_TYPE_MASK)
-#define GIT_MODE_ISBLOB(MODE)		(GIT_MODE_TYPE(MODE) == GIT_MODE_TYPE(GIT_FILEMODE_BLOB))
+#define GIT_MODE_PERMS_MASK 0777
+#define GIT_MODE_TYPE_MASK 0170000
+#define GIT_MODE_TYPE(MODE) ((MODE)&GIT_MODE_TYPE_MASK)
+#define GIT_MODE_ISBLOB(MODE) (GIT_MODE_TYPE(MODE) == GIT_MODE_TYPE(GIT_FILEMODE_BLOB))
 
 /**
  * Convert a mode_t from the OS to a legal git mode_t value.
@@ -330,7 +328,7 @@ extern int git_futils_fake_symlink(const char *new, const char *old);
  */
 typedef struct {
 	struct timespec mtime;
-	git_off_t  size;
+	git_off_t size;
 	unsigned int ino;
 } git_futils_filestamp;
 

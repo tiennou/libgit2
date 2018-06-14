@@ -31,7 +31,8 @@ GIT_BEGIN_DECL
  *
  * @see git_commit_create
  */
-GIT_EXTERN(int) git_commit_create_from_ids(
+GIT_EXTERN(int)
+git_commit_create_from_ids(
 	git_oid *id,
 	git_repository *repo,
 	const char *update_ref,
@@ -63,7 +64,8 @@ typedef const git_oid *(*git_commit_parent_callback)(size_t idx, void *payload);
  *
  * @see git_commit_create
  */
-GIT_EXTERN(int) git_commit_create_from_callback(
+GIT_EXTERN(int)
+git_commit_create_from_callback(
 	git_oid *id,
 	git_repository *repo,
 	const char *update_ref,

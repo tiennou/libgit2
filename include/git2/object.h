@@ -39,11 +39,12 @@ GIT_BEGIN_DECL
  * @param type the type of the object
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_object_lookup(
-		git_object **object,
-		git_repository *repo,
-		const git_oid *id,
-		git_otype type);
+GIT_EXTERN(int)
+git_object_lookup(
+	git_object **object,
+	git_repository *repo,
+	const git_oid *id,
+	git_otype type);
 
 /**
  * Lookup a reference to one of the objects in a repository,
@@ -72,12 +73,13 @@ GIT_EXTERN(int) git_object_lookup(
  * @param type the type of the object
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_object_lookup_prefix(
-		git_object **object_out,
-		git_repository *repo,
-		const git_oid *id,
-		size_t len,
-		git_otype type);
+GIT_EXTERN(int)
+git_object_lookup_prefix(
+	git_object **object_out,
+	git_repository *repo,
+	const git_oid *id,
+	size_t len,
+	git_otype type);
 
 
 /**
@@ -90,11 +92,12 @@ GIT_EXTERN(int) git_object_lookup_prefix(
  * @param type type of object desired
  * @return 0 on success, or an error code
  */
-GIT_EXTERN(int) git_object_lookup_bypath(
-		git_object **out,
-		const git_object *treeish,
-		const char *path,
-		git_otype type);
+GIT_EXTERN(int)
+git_object_lookup_bypath(
+	git_object **out,
+	const git_object *treeish,
+	const char *path,
+	git_otype type);
 
 /**
  * Get the id (SHA1) of a repository object
@@ -102,7 +105,8 @@ GIT_EXTERN(int) git_object_lookup_bypath(
  * @param obj the repository object
  * @return the SHA1 id
  */
-GIT_EXTERN(const git_oid *) git_object_id(const git_object *obj);
+GIT_EXTERN(const git_oid *)
+git_object_id(const git_object *obj);
 
 /**
  * Get a short abbreviated OID string for the object
@@ -116,7 +120,8 @@ GIT_EXTERN(const git_oid *) git_object_id(const git_object *obj);
  * @param obj The object to get an ID for
  * @return 0 on success, <0 for error
  */
-GIT_EXTERN(int) git_object_short_id(git_buf *out, const git_object *obj);
+GIT_EXTERN(int)
+git_object_short_id(git_buf *out, const git_object *obj);
 
 /**
  * Get the object type of an object
@@ -124,7 +129,8 @@ GIT_EXTERN(int) git_object_short_id(git_buf *out, const git_object *obj);
  * @param obj the repository object
  * @return the object's type
  */
-GIT_EXTERN(git_otype) git_object_type(const git_object *obj);
+GIT_EXTERN(git_otype)
+git_object_type(const git_object *obj);
 
 /**
  * Get the repository that owns this object
@@ -138,7 +144,8 @@ GIT_EXTERN(git_otype) git_object_type(const git_object *obj);
  * @param obj the object
  * @return the repository who owns this object
  */
-GIT_EXTERN(git_repository *) git_object_owner(const git_object *obj);
+GIT_EXTERN(git_repository *)
+git_object_owner(const git_object *obj);
 
 /**
  * Close an open object
@@ -155,7 +162,8 @@ GIT_EXTERN(git_repository *) git_object_owner(const git_object *obj);
  *
  * @param object the object to close
  */
-GIT_EXTERN(void) git_object_free(git_object *object);
+GIT_EXTERN(void)
+git_object_free(git_object *object);
 
 /**
  * Convert an object type to its string representation.
@@ -166,7 +174,8 @@ GIT_EXTERN(void) git_object_free(git_object *object);
  * @param type object type to convert.
  * @return the corresponding string representation.
  */
-GIT_EXTERN(const char *) git_object_type2string(git_otype type);
+GIT_EXTERN(const char *)
+git_object_type2string(git_otype type);
 
 /**
  * Convert a string object type representation to it's git_otype.
@@ -174,7 +183,8 @@ GIT_EXTERN(const char *) git_object_type2string(git_otype type);
  * @param str the string to convert.
  * @return the corresponding git_otype.
  */
-GIT_EXTERN(git_otype) git_object_string2type(const char *str);
+GIT_EXTERN(git_otype)
+git_object_string2type(const char *str);
 
 /**
  * Determine if the given git_otype is a valid loose object type.
@@ -183,7 +193,8 @@ GIT_EXTERN(git_otype) git_object_string2type(const char *str);
  * @return true if the type represents a valid loose object type,
  * false otherwise.
  */
-GIT_EXTERN(int) git_object_typeisloose(git_otype type);
+GIT_EXTERN(int)
+git_object_typeisloose(git_otype type);
 
 /**
  * Get the size in bytes for the structure which
@@ -197,7 +208,8 @@ GIT_EXTERN(int) git_object_typeisloose(git_otype type);
  * @param type object type to get its size
  * @return size in bytes of the object
  */
-GIT_EXTERN(size_t) git_object__size(git_otype type);
+GIT_EXTERN(size_t)
+git_object__size(git_otype type);
 
 /**
  * Recursively peel an object until an object of the specified type is met.
@@ -222,7 +234,8 @@ GIT_EXTERN(size_t) git_object__size(git_otype type);
  * @param target_type The type of the requested object (a GIT_OBJ_ value)
  * @return 0 on success, GIT_EINVALIDSPEC, GIT_EPEEL, or an error code
  */
-GIT_EXTERN(int) git_object_peel(
+GIT_EXTERN(int)
+git_object_peel(
 	git_object **peeled,
 	const git_object *object,
 	git_otype target_type);
@@ -234,7 +247,8 @@ GIT_EXTERN(int) git_object_peel(
  * @param dest Pointer to store the copy of the object
  * @param source Original object to copy
  */
-GIT_EXTERN(int) git_object_dup(git_object **dest, git_object *source);
+GIT_EXTERN(int)
+git_object_dup(git_object **dest, git_object *source);
 
 /** @} */
 GIT_END_DECL

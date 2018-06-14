@@ -20,7 +20,8 @@ struct git_hash_ctx {
 #define git_hash_ctx_init(ctx) git_hash_init(ctx)
 #define git_hash_ctx_cleanup(ctx)
 
-GIT_INLINE(int) git_hash_init(git_hash_ctx *ctx)
+GIT_INLINE(int)
+git_hash_init(git_hash_ctx *ctx)
 {
 	assert(ctx);
 
@@ -32,7 +33,8 @@ GIT_INLINE(int) git_hash_init(git_hash_ctx *ctx)
 	return 0;
 }
 
-GIT_INLINE(int) git_hash_update(git_hash_ctx *ctx, const void *data, size_t len)
+GIT_INLINE(int)
+git_hash_update(git_hash_ctx *ctx, const void *data, size_t len)
 {
 	assert(ctx);
 
@@ -44,7 +46,8 @@ GIT_INLINE(int) git_hash_update(git_hash_ctx *ctx, const void *data, size_t len)
 	return 0;
 }
 
-GIT_INLINE(int) git_hash_final(git_oid *out, git_hash_ctx *ctx)
+GIT_INLINE(int)
+git_hash_final(git_oid *out, git_hash_ctx *ctx)
 {
 	assert(ctx);
 

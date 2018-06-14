@@ -107,7 +107,7 @@ int git_parse_peek(char *out, git_parse_ctx *ctx, int flags)
 		char c = *ptr;
 
 		if ((flags & GIT_PARSE_PEEK_SKIP_WHITESPACE) &&
-		    git__isspace(c)) {
+			git__isspace(c)) {
 			remain--;
 			ptr++;
 			continue;

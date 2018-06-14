@@ -35,11 +35,12 @@ GIT_BEGIN_DECL
  * @param url the remote's url
  * @return 0, GIT_EINVALIDSPEC, GIT_EEXISTS or an error code
  */
-GIT_EXTERN(int) git_remote_create(
-		git_remote **out,
-		git_repository *repo,
-		const char *name,
-		const char *url);
+GIT_EXTERN(int)
+git_remote_create(
+	git_remote **out,
+	git_repository *repo,
+	const char *name,
+	const char *url);
 
 /**
  * Add a remote with the provided fetch refspec (or default if NULL) to the repository's
@@ -52,12 +53,13 @@ GIT_EXTERN(int) git_remote_create(
  * @param fetch the remote fetch value
  * @return 0, GIT_EINVALIDSPEC, GIT_EEXISTS or an error code
  */
-GIT_EXTERN(int) git_remote_create_with_fetchspec(
-		git_remote **out,
-		git_repository *repo,
-		const char *name,
-		const char *url,
-		const char *fetch);
+GIT_EXTERN(int)
+git_remote_create_with_fetchspec(
+	git_remote **out,
+	git_repository *repo,
+	const char *name,
+	const char *url,
+	const char *fetch);
 
 /**
  * Create an anonymous remote
@@ -70,10 +72,11 @@ GIT_EXTERN(int) git_remote_create_with_fetchspec(
  * @param url the remote repository's URL
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_remote_create_anonymous(
-		git_remote **out,
-		git_repository *repo,
-		const char *url);
+GIT_EXTERN(int)
+git_remote_create_anonymous(
+	git_remote **out,
+	git_repository *repo,
+	const char *url);
 
 /**
  * Create a remote without a connected local repo
@@ -89,9 +92,10 @@ GIT_EXTERN(int) git_remote_create_anonymous(
  * @param url the remote repository's URL
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_remote_create_detached(
-		git_remote **out,
-		const char *url);
+GIT_EXTERN(int)
+git_remote_create_detached(
+	git_remote **out,
+	const char *url);
 
 /**
  * Get the information for a particular remote
@@ -104,7 +108,8 @@ GIT_EXTERN(int) git_remote_create_detached(
  * @param name the remote's name
  * @return 0, GIT_ENOTFOUND, GIT_EINVALIDSPEC or an error code
  */
-GIT_EXTERN(int) git_remote_lookup(git_remote **out, git_repository *repo, const char *name);
+GIT_EXTERN(int)
+git_remote_lookup(git_remote **out, git_repository *repo, const char *name);
 
 /**
  * Create a copy of an existing remote.  All internal strings are also
@@ -116,7 +121,8 @@ GIT_EXTERN(int) git_remote_lookup(git_remote **out, git_repository *repo, const 
  * @param source object to copy
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_remote_dup(git_remote **dest, git_remote *source);
+GIT_EXTERN(int)
+git_remote_dup(git_remote **dest, git_remote *source);
 
 /**
  * Get the remote's repository
@@ -124,7 +130,8 @@ GIT_EXTERN(int) git_remote_dup(git_remote **dest, git_remote *source);
  * @param remote the remote
  * @return a pointer to the repository
  */
-GIT_EXTERN(git_repository *) git_remote_owner(const git_remote *remote);
+GIT_EXTERN(git_repository *)
+git_remote_owner(const git_remote *remote);
 
 /**
  * Get the remote's name
@@ -132,7 +139,8 @@ GIT_EXTERN(git_repository *) git_remote_owner(const git_remote *remote);
  * @param remote the remote
  * @return a pointer to the name or NULL for in-memory remotes
  */
-GIT_EXTERN(const char *) git_remote_name(const git_remote *remote);
+GIT_EXTERN(const char *)
+git_remote_name(const git_remote *remote);
 
 /**
  * Get the remote's url
@@ -143,7 +151,8 @@ GIT_EXTERN(const char *) git_remote_name(const git_remote *remote);
  * @param remote the remote
  * @return a pointer to the url
  */
-GIT_EXTERN(const char *) git_remote_url(const git_remote *remote);
+GIT_EXTERN(const char *)
+git_remote_url(const git_remote *remote);
 
 /**
  * Get the remote's url for pushing
@@ -154,7 +163,8 @@ GIT_EXTERN(const char *) git_remote_url(const git_remote *remote);
  * @param remote the remote
  * @return a pointer to the url or NULL if no special url for pushing is set
  */
-GIT_EXTERN(const char *) git_remote_pushurl(const git_remote *remote);
+GIT_EXTERN(const char *)
+git_remote_pushurl(const git_remote *remote);
 
 /**
  * Set the remote's url in the configuration
@@ -167,7 +177,8 @@ GIT_EXTERN(const char *) git_remote_pushurl(const git_remote *remote);
  * @param url the url to set
  * @return 0 or an error value
  */
-GIT_EXTERN(int) git_remote_set_url(git_repository *repo, const char *remote, const char* url);
+GIT_EXTERN(int)
+git_remote_set_url(git_repository *repo, const char *remote, const char *url);
 
 /**
  * Set the remote's url for pushing in the configuration.
@@ -180,7 +191,8 @@ GIT_EXTERN(int) git_remote_set_url(git_repository *repo, const char *remote, con
  * @param remote the remote's name
  * @param url the url to set
  */
-GIT_EXTERN(int) git_remote_set_pushurl(git_repository *repo, const char *remote, const char* url);
+GIT_EXTERN(int)
+git_remote_set_pushurl(git_repository *repo, const char *remote, const char *url);
 
 /**
  * Add a fetch refspec to the remote's configuration
@@ -193,7 +205,8 @@ GIT_EXTERN(int) git_remote_set_pushurl(git_repository *repo, const char *remote,
  * @param refspec the new fetch refspec
  * @return 0, GIT_EINVALIDSPEC if refspec is invalid or an error value
  */
-GIT_EXTERN(int) git_remote_add_fetch(git_repository *repo, const char *remote, const char *refspec);
+GIT_EXTERN(int)
+git_remote_add_fetch(git_repository *repo, const char *remote, const char *refspec);
 
 /**
  * Get the remote's list of fetch refspecs
@@ -204,7 +217,8 @@ GIT_EXTERN(int) git_remote_add_fetch(git_repository *repo, const char *remote, c
  * @param array pointer to the array in which to store the strings
  * @param remote the remote to query
  */
-GIT_EXTERN(int) git_remote_get_fetch_refspecs(git_strarray *array, const git_remote *remote);
+GIT_EXTERN(int)
+git_remote_get_fetch_refspecs(git_strarray *array, const git_remote *remote);
 
 /**
  * Add a push refspec to the remote's configuration
@@ -217,7 +231,8 @@ GIT_EXTERN(int) git_remote_get_fetch_refspecs(git_strarray *array, const git_rem
  * @param refspec the new push refspec
  * @return 0, GIT_EINVALIDSPEC if refspec is invalid or an error value
  */
-GIT_EXTERN(int) git_remote_add_push(git_repository *repo, const char *remote, const char *refspec);
+GIT_EXTERN(int)
+git_remote_add_push(git_repository *repo, const char *remote, const char *refspec);
 
 /**
  * Get the remote's list of push refspecs
@@ -228,7 +243,8 @@ GIT_EXTERN(int) git_remote_add_push(git_repository *repo, const char *remote, co
  * @param array pointer to the array in which to store the strings
  * @param remote the remote to query
  */
-GIT_EXTERN(int) git_remote_get_push_refspecs(git_strarray *array, const git_remote *remote);
+GIT_EXTERN(int)
+git_remote_get_push_refspecs(git_strarray *array, const git_remote *remote);
 
 /**
  * Get the number of refspecs for a remote
@@ -236,7 +252,8 @@ GIT_EXTERN(int) git_remote_get_push_refspecs(git_strarray *array, const git_remo
  * @param remote the remote
  * @return the amount of refspecs configured in this remote
  */
-GIT_EXTERN(size_t) git_remote_refspec_count(const git_remote *remote);
+GIT_EXTERN(size_t)
+git_remote_refspec_count(const git_remote *remote);
 
 /**
  * Get a refspec from the remote
@@ -245,7 +262,8 @@ GIT_EXTERN(size_t) git_remote_refspec_count(const git_remote *remote);
  * @param n the refspec to get
  * @return the nth refspec
  */
-GIT_EXTERN(const git_refspec *)git_remote_get_refspec(const git_remote *remote, size_t n);
+GIT_EXTERN(const git_refspec *)
+git_remote_get_refspec(const git_remote *remote, size_t n);
 
 /**
  * Open a connection to a remote
@@ -262,7 +280,8 @@ GIT_EXTERN(const git_refspec *)git_remote_get_refspec(const git_remote *remote, 
  * @param custom_headers extra HTTP headers to use in this connection
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_remote_connect(git_remote *remote, git_direction direction, const git_remote_callbacks *callbacks, const git_proxy_options *proxy_opts, const git_strarray *custom_headers);
+GIT_EXTERN(int)
+git_remote_connect(git_remote *remote, git_direction direction, const git_remote_callbacks *callbacks, const git_proxy_options *proxy_opts, const git_strarray *custom_headers);
 
 /**
  * Get the remote repository's reference advertisement list
@@ -284,7 +303,8 @@ GIT_EXTERN(int) git_remote_connect(git_remote *remote, git_direction direction, 
  * @param remote the remote
  * @return 0 on success, or an error code
  */
-GIT_EXTERN(int) git_remote_ls(const git_remote_head ***out,  size_t *size, git_remote *remote);
+GIT_EXTERN(int)
+git_remote_ls(const git_remote_head ***out, size_t *size, git_remote *remote);
 
 /**
  * Check whether the remote is connected
@@ -295,7 +315,8 @@ GIT_EXTERN(int) git_remote_ls(const git_remote_head ***out,  size_t *size, git_r
  * @param remote the remote
  * @return 1 if it's connected, 0 otherwise.
  */
-GIT_EXTERN(int) git_remote_connected(const git_remote *remote);
+GIT_EXTERN(int)
+git_remote_connected(const git_remote *remote);
 
 /**
  * Cancel the operation
@@ -305,7 +326,8 @@ GIT_EXTERN(int) git_remote_connected(const git_remote *remote);
  *
  * @param remote the remote
  */
-GIT_EXTERN(void) git_remote_stop(git_remote *remote);
+GIT_EXTERN(void)
+git_remote_stop(git_remote *remote);
 
 /**
  * Disconnect from the remote
@@ -314,7 +336,8 @@ GIT_EXTERN(void) git_remote_stop(git_remote *remote);
  *
  * @param remote the remote to disconnect from
  */
-GIT_EXTERN(void) git_remote_disconnect(git_remote *remote);
+GIT_EXTERN(void)
+git_remote_disconnect(git_remote *remote);
 
 /**
  * Free the memory associated with a remote
@@ -324,7 +347,8 @@ GIT_EXTERN(void) git_remote_disconnect(git_remote *remote);
  *
  * @param remote the remote to free
  */
-GIT_EXTERN(void) git_remote_free(git_remote *remote);
+GIT_EXTERN(void)
+git_remote_free(git_remote *remote);
 
 /**
  * Get a list of the configured remotes for a repo
@@ -335,7 +359,8 @@ GIT_EXTERN(void) git_remote_free(git_remote *remote);
  * @param repo the repository to query
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_remote_list(git_strarray *out, git_repository *repo);
+GIT_EXTERN(int)
+git_remote_list(git_strarray *out, git_repository *repo);
 
 /**
  * Argument to the completion callback which tells it which operation
@@ -352,7 +377,7 @@ typedef int (*git_push_transfer_progress)(
 	unsigned int current,
 	unsigned int total,
 	size_t bytes,
-	void* payload);
+	void *payload);
 /**
  * Represents an update which will be performed on the remote during push
  */
@@ -490,7 +515,10 @@ struct git_remote_callbacks {
 };
 
 #define GIT_REMOTE_CALLBACKS_VERSION 1
-#define GIT_REMOTE_CALLBACKS_INIT {GIT_REMOTE_CALLBACKS_VERSION}
+#define GIT_REMOTE_CALLBACKS_INIT \
+	{ \
+		GIT_REMOTE_CALLBACKS_VERSION \
+	}
 
 /**
  * Initializes a `git_remote_callbacks` with default values. Equivalent to
@@ -500,7 +528,8 @@ struct git_remote_callbacks {
  * @param version Version of struct; pass `GIT_REMOTE_CALLBACKS_VERSION`
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_remote_init_callbacks(
+GIT_EXTERN(int)
+git_remote_init_callbacks(
 	git_remote_callbacks *opts,
 	unsigned int version);
 
@@ -592,8 +621,11 @@ typedef struct {
 } git_fetch_options;
 
 #define GIT_FETCH_OPTIONS_VERSION 1
-#define GIT_FETCH_OPTIONS_INIT { GIT_FETCH_OPTIONS_VERSION, GIT_REMOTE_CALLBACKS_INIT, GIT_FETCH_PRUNE_UNSPECIFIED, 1, \
-				 GIT_REMOTE_DOWNLOAD_TAGS_UNSPECIFIED, GIT_PROXY_OPTIONS_INIT }
+#define GIT_FETCH_OPTIONS_INIT \
+	{ \
+		GIT_FETCH_OPTIONS_VERSION, GIT_REMOTE_CALLBACKS_INIT, GIT_FETCH_PRUNE_UNSPECIFIED, 1, \
+			GIT_REMOTE_DOWNLOAD_TAGS_UNSPECIFIED, GIT_PROXY_OPTIONS_INIT \
+	}
 
 /**
  * Initialize git_fetch_options structure
@@ -605,7 +637,8 @@ typedef struct {
  * @param version The struct version; pass `GIT_FETCH_OPTIONS_VERSION`.
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_fetch_init_options(
+GIT_EXTERN(int)
+git_fetch_init_options(
 	git_fetch_options *opts,
 	unsigned int version);
 
@@ -643,7 +676,10 @@ typedef struct {
 } git_push_options;
 
 #define GIT_PUSH_OPTIONS_VERSION 1
-#define GIT_PUSH_OPTIONS_INIT { GIT_PUSH_OPTIONS_VERSION, 0, GIT_REMOTE_CALLBACKS_INIT, GIT_PROXY_OPTIONS_INIT }
+#define GIT_PUSH_OPTIONS_INIT \
+	{ \
+		GIT_PUSH_OPTIONS_VERSION, 0, GIT_REMOTE_CALLBACKS_INIT, GIT_PROXY_OPTIONS_INIT \
+	}
 
 /**
  * Initialize git_push_options structure
@@ -655,7 +691,8 @@ typedef struct {
  * @param version The struct version; pass `GIT_PUSH_OPTIONS_VERSION`.
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_push_init_options(
+GIT_EXTERN(int)
+git_push_init_options(
 	git_push_options *opts,
 	unsigned int version);
 
@@ -675,7 +712,8 @@ GIT_EXTERN(int) git_push_init_options(
  * @param opts the options to use for this fetch
  * @return 0 or an error code
  */
- GIT_EXTERN(int) git_remote_download(git_remote *remote, const git_strarray *refspecs, const git_fetch_options *opts);
+GIT_EXTERN(int)
+git_remote_download(git_remote *remote, const git_strarray *refspecs, const git_fetch_options *opts);
 
 /**
  * Create a packfile and send it to the server
@@ -689,7 +727,8 @@ GIT_EXTERN(int) git_push_init_options(
  * @param opts the options to use for this push
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_remote_upload(git_remote *remote, const git_strarray *refspecs, const git_push_options *opts);
+GIT_EXTERN(int)
+git_remote_upload(git_remote *remote, const git_strarray *refspecs, const git_push_options *opts);
 
 /**
  * Update the tips to the new state
@@ -705,12 +744,13 @@ GIT_EXTERN(int) git_remote_upload(git_remote *remote, const git_strarray *refspe
  * ignored for push. This must be the same value passed to `git_remote_download()`.
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_remote_update_tips(
-		git_remote *remote,
-		const git_remote_callbacks *callbacks,
-		int update_fetchhead,
-		git_remote_autotag_option_t download_tags,
-		const char *reflog_message);
+GIT_EXTERN(int)
+git_remote_update_tips(
+	git_remote *remote,
+	const git_remote_callbacks *callbacks,
+	int update_fetchhead,
+	git_remote_autotag_option_t download_tags,
+	const char *reflog_message);
 
 /**
  * Download new data and update tips
@@ -726,11 +766,12 @@ GIT_EXTERN(int) git_remote_update_tips(
  *								 default is "fetch"
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_remote_fetch(
-		git_remote *remote,
-		const git_strarray *refspecs,
-		const git_fetch_options *opts,
-		const char *reflog_message);
+GIT_EXTERN(int)
+git_remote_fetch(
+	git_remote *remote,
+	const git_strarray *refspecs,
+	const git_fetch_options *opts,
+	const char *reflog_message);
 
 /**
  * Prune tracking refs that are no longer present on remote
@@ -739,7 +780,8 @@ GIT_EXTERN(int) git_remote_fetch(
  * @param callbacks callbacks to use for this prune
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_remote_prune(git_remote *remote, const git_remote_callbacks *callbacks);
+GIT_EXTERN(int)
+git_remote_prune(git_remote *remote, const git_remote_callbacks *callbacks);
 
 /**
  * Perform a push
@@ -751,14 +793,16 @@ GIT_EXTERN(int) git_remote_prune(git_remote *remote, const git_remote_callbacks 
  *                 array, the configured refspecs will be used
  * @param opts options to use for this push
  */
-GIT_EXTERN(int) git_remote_push(git_remote *remote,
-				const git_strarray *refspecs,
-				const git_push_options *opts);
+GIT_EXTERN(int)
+git_remote_push(git_remote *remote,
+	const git_strarray *refspecs,
+	const git_push_options *opts);
 
 /**
  * Get the statistics structure that is filled in by the fetch operation.
  */
-GIT_EXTERN(const git_transfer_progress *) git_remote_stats(git_remote *remote);
+GIT_EXTERN(const git_transfer_progress *)
+git_remote_stats(git_remote *remote);
 
 /**
  * Retrieve the tag auto-follow setting
@@ -766,7 +810,8 @@ GIT_EXTERN(const git_transfer_progress *) git_remote_stats(git_remote *remote);
  * @param remote the remote to query
  * @return the auto-follow setting
  */
-GIT_EXTERN(git_remote_autotag_option_t) git_remote_autotag(const git_remote *remote);
+GIT_EXTERN(git_remote_autotag_option_t)
+git_remote_autotag(const git_remote *remote);
 
 /**
  * Set the remote's tag following setting.
@@ -778,14 +823,16 @@ GIT_EXTERN(git_remote_autotag_option_t) git_remote_autotag(const git_remote *rem
  * @param remote the name of the remote
  * @param value the new value to take.
  */
-GIT_EXTERN(int) git_remote_set_autotag(git_repository *repo, const char *remote, git_remote_autotag_option_t value);
+GIT_EXTERN(int)
+git_remote_set_autotag(git_repository *repo, const char *remote, git_remote_autotag_option_t value);
 /**
  * Retrieve the ref-prune setting
  *
  * @param remote the remote to query
  * @return the ref-prune setting
  */
-GIT_EXTERN(int) git_remote_prune_refs(const git_remote *remote);
+GIT_EXTERN(int)
+git_remote_prune_refs(const git_remote *remote);
 
 /**
  * Give the remote a new name
@@ -807,7 +854,8 @@ GIT_EXTERN(int) git_remote_prune_refs(const git_remote *remote);
  * @param new_name the new name the remote should bear
  * @return 0, GIT_EINVALIDSPEC, GIT_EEXISTS or an error code
  */
-GIT_EXTERN(int) git_remote_rename(
+GIT_EXTERN(int)
+git_remote_rename(
 	git_strarray *problems,
 	git_repository *repo,
 	const char *name,
@@ -819,7 +867,8 @@ GIT_EXTERN(int) git_remote_rename(
  * @param remote_name name to be checked.
  * @return 1 if the reference name is acceptable; 0 if it isn't
  */
-GIT_EXTERN(int) git_remote_is_valid_name(const char *remote_name);
+GIT_EXTERN(int)
+git_remote_is_valid_name(const char *remote_name);
 
 /**
 * Delete an existing persisted remote.
@@ -831,7 +880,8 @@ GIT_EXTERN(int) git_remote_is_valid_name(const char *remote_name);
 * @param name the name of the remote to delete
 * @return 0 on success, or an error code.
 */
-GIT_EXTERN(int) git_remote_delete(git_repository *repo, const char *name);
+GIT_EXTERN(int)
+git_remote_delete(git_repository *repo, const char *name);
 
 /**
  * Retrieve the name of the remote's default branch
@@ -849,7 +899,8 @@ GIT_EXTERN(int) git_remote_delete(git_repository *repo, const char *name);
  * @return 0, GIT_ENOTFOUND if the remote does not have any references
  * or none of them point to HEAD's commit, or an error message.
  */
-GIT_EXTERN(int) git_remote_default_branch(git_buf *out, git_remote *remote);
+GIT_EXTERN(int)
+git_remote_default_branch(git_buf *out, git_remote *remote);
 
 /** @} */
 GIT_END_DECL

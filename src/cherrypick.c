@@ -19,7 +19,7 @@
 #include "git2/commit.h"
 #include "git2/sys/commit.h"
 
-#define GIT_CHERRYPICK_FILE_MODE		0666
+#define GIT_CHERRYPICK_FILE_MODE 0666
 
 static int write_cherrypick_head(
 	git_repository *repo,
@@ -99,7 +99,7 @@ static int cherrypick_normalize_opts(
 
 static int cherrypick_state_cleanup(git_repository *repo)
 {
-	const char *state_files[] = { GIT_CHERRYPICK_HEAD_FILE, GIT_MERGE_MSG_FILE };
+	const char *state_files[] = {GIT_CHERRYPICK_HEAD_FILE, GIT_MERGE_MSG_FILE};
 
 	return git_repository__cleanup_files(repo, state_files, ARRAY_SIZE(state_files));
 }
@@ -144,7 +144,7 @@ int git_cherrypick_commit(
 
 	if (parent &&
 		((error = git_commit_parent(&parent_commit, cherrypick_commit, (parent - 1))) < 0 ||
-		(error = git_commit_tree(&parent_tree, parent_commit)) < 0))
+			(error = git_commit_tree(&parent_tree, parent_commit)) < 0))
 		goto done;
 
 	if ((error = git_commit_tree(&cherrypick_tree, cherrypick_commit)) < 0 ||

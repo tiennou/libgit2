@@ -12,10 +12,10 @@
 #include "path.h"
 #include <ctype.h>
 #if GIT_WIN32
-#include "win32/findfile.h"
+#	include "win32/findfile.h"
 #else
-#include <unistd.h>
-#include <pwd.h>
+#	include <unistd.h>
+#	include <pwd.h>
 #endif
 
 static int git_sysdir_guess_programdata_dirs(git_buf *out)
@@ -91,9 +91,9 @@ static int git_sysdir_guess_global_dirs(git_buf *out)
 	 * of the effective user.
 	 */
 	if (uid == euid)
-	    error = git__getenv(out, "HOME");
+		error = git__getenv(out, "HOME");
 	else
-	    error = get_passwd_home(out, euid);
+		error = get_passwd_home(out, euid);
 
 	if (error == GIT_ENOTFOUND) {
 		giterr_clear();
@@ -156,11 +156,11 @@ struct git_sysdir__dir {
 };
 
 static struct git_sysdir__dir git_sysdir__dirs[] = {
-	{ GIT_BUF_INIT, git_sysdir_guess_system_dirs },
-	{ GIT_BUF_INIT, git_sysdir_guess_global_dirs },
-	{ GIT_BUF_INIT, git_sysdir_guess_xdg_dirs },
-	{ GIT_BUF_INIT, git_sysdir_guess_programdata_dirs },
-	{ GIT_BUF_INIT, git_sysdir_guess_template_dirs },
+	{GIT_BUF_INIT, git_sysdir_guess_system_dirs},
+	{GIT_BUF_INIT, git_sysdir_guess_global_dirs},
+	{GIT_BUF_INIT, git_sysdir_guess_xdg_dirs},
+	{GIT_BUF_INIT, git_sysdir_guess_programdata_dirs},
+	{GIT_BUF_INIT, git_sysdir_guess_template_dirs},
 };
 
 static void git_sysdir_global_shutdown(void)

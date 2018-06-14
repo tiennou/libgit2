@@ -21,9 +21,13 @@ extern char git_buf__initbuf[];
 extern char git_buf__oom[];
 
 /* Use to initialize buffer structure when git_buf is on stack */
-#define GIT_BUF_INIT { git_buf__initbuf, 0, 0 }
+#define GIT_BUF_INIT \
+	{ \
+		git_buf__initbuf, 0, 0 \
+	}
 
-GIT_INLINE(bool) git_buf_is_allocated(const git_buf *buf)
+GIT_INLINE(bool)
+git_buf_is_allocated(const git_buf *buf)
 {
 	return (buf->ptr != NULL && buf->asize > 0);
 }
@@ -92,7 +96,8 @@ extern void git_buf_attach_notowned(
  *
  * @return false if no error, true if allocation error
  */
-GIT_INLINE(bool) git_buf_oom(const git_buf *buf)
+GIT_INLINE(bool)
+git_buf_oom(const git_buf *buf)
 {
 	return (buf->ptr == git_buf__oom);
 }
@@ -129,17 +134,20 @@ int git_buf_join3(git_buf *buf, char separator, const char *str_a, const char *s
  * Join two strings as paths, inserting a slash between as needed.
  * @return 0 on success, -1 on failure
  */
-GIT_INLINE(int) git_buf_joinpath(git_buf *buf, const char *a, const char *b)
+GIT_INLINE(int)
+git_buf_joinpath(git_buf *buf, const char *a, const char *b)
 {
 	return git_buf_join(buf, '/', a, b);
 }
 
-GIT_INLINE(const char *) git_buf_cstr(const git_buf *buf)
+GIT_INLINE(const char *)
+git_buf_cstr(const git_buf *buf)
 {
 	return buf->ptr;
 }
 
-GIT_INLINE(size_t) git_buf_len(const git_buf *buf)
+GIT_INLINE(size_t)
+git_buf_len(const git_buf *buf)
 {
 	return buf->size;
 }
@@ -148,22 +156,28 @@ void git_buf_copy_cstr(char *data, size_t datasize, const git_buf *buf);
 
 #define git_buf_PUTS(buf, str) git_buf_put(buf, str, sizeof(str) - 1)
 
-GIT_INLINE(ssize_t) git_buf_rfind_next(const git_buf *buf, char ch)
+GIT_INLINE(ssize_t)
+git_buf_rfind_next(const git_buf *buf, char ch)
 {
 	ssize_t idx = (ssize_t)buf->size - 1;
-	while (idx >= 0 && buf->ptr[idx] == ch) idx--;
-	while (idx >= 0 && buf->ptr[idx] != ch) idx--;
+	while (idx >= 0 && buf->ptr[idx] == ch)
+		idx--;
+	while (idx >= 0 && buf->ptr[idx] != ch)
+		idx--;
 	return idx;
 }
 
-GIT_INLINE(ssize_t) git_buf_rfind(const git_buf *buf, char ch)
+GIT_INLINE(ssize_t)
+git_buf_rfind(const git_buf *buf, char ch)
 {
 	ssize_t idx = (ssize_t)buf->size - 1;
-	while (idx >= 0 && buf->ptr[idx] != ch) idx--;
+	while (idx >= 0 && buf->ptr[idx] != ch)
+		idx--;
 	return idx;
 }
 
-GIT_INLINE(ssize_t) git_buf_find(const git_buf *buf, char ch)
+GIT_INLINE(ssize_t)
+git_buf_find(const git_buf *buf, char ch)
 {
 	void *found = memchr(buf->ptr, ch, buf->size);
 	return found ? (ssize_t)((const char *)found - buf->ptr) : -1;

@@ -203,14 +203,14 @@ typedef enum {
  * being modified.
  */
 typedef enum {
-	GIT_CHECKOUT_NOTIFY_NONE      = 0,
-	GIT_CHECKOUT_NOTIFY_CONFLICT  = (1u << 0),
-	GIT_CHECKOUT_NOTIFY_DIRTY     = (1u << 1),
-	GIT_CHECKOUT_NOTIFY_UPDATED   = (1u << 2),
+	GIT_CHECKOUT_NOTIFY_NONE = 0,
+	GIT_CHECKOUT_NOTIFY_CONFLICT = (1u << 0),
+	GIT_CHECKOUT_NOTIFY_DIRTY = (1u << 1),
+	GIT_CHECKOUT_NOTIFY_UPDATED = (1u << 2),
 	GIT_CHECKOUT_NOTIFY_UNTRACKED = (1u << 3),
-	GIT_CHECKOUT_NOTIFY_IGNORED   = (1u << 4),
+	GIT_CHECKOUT_NOTIFY_IGNORED = (1u << 4),
 
-	GIT_CHECKOUT_NOTIFY_ALL       = 0x0FFFFu
+	GIT_CHECKOUT_NOTIFY_ALL = 0x0FFFFu
 } git_checkout_notify_t;
 
 typedef struct {
@@ -285,8 +285,8 @@ typedef struct git_checkout_options {
 	const char *target_directory; /**< alternative checkout path to workdir */
 
 	const char *ancestor_label; /**< the name of the common ancestor side of conflicts */
-	const char *our_label; /**< the name of the "our" side of conflicts */
-	const char *their_label; /**< the name of the "their" side of conflicts */
+	const char *our_label;      /**< the name of the "our" side of conflicts */
+	const char *their_label;    /**< the name of the "their" side of conflicts */
 
 	/** Optional callback to notify the consumer of performance data. */
 	git_checkout_perfdata_cb perfdata_cb;
@@ -294,7 +294,10 @@ typedef struct git_checkout_options {
 } git_checkout_options;
 
 #define GIT_CHECKOUT_OPTIONS_VERSION 1
-#define GIT_CHECKOUT_OPTIONS_INIT {GIT_CHECKOUT_OPTIONS_VERSION, GIT_CHECKOUT_SAFE}
+#define GIT_CHECKOUT_OPTIONS_INIT \
+	{ \
+		GIT_CHECKOUT_OPTIONS_VERSION, GIT_CHECKOUT_SAFE \
+	}
 
 /**
  * Initialize git_checkout_options structure
@@ -306,7 +309,8 @@ typedef struct git_checkout_options {
  * @param version The struct version; pass `GIT_CHECKOUT_OPTIONS_VERSION`.
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_checkout_init_options(
+GIT_EXTERN(int)
+git_checkout_init_options(
 	git_checkout_options *opts,
 	unsigned int version);
 
@@ -327,7 +331,8 @@ GIT_EXTERN(int) git_checkout_init_options(
  *         existing branch, non-zero value returned by `notify_cb`, or
  *         other error code < 0 (use giterr_last for error details)
  */
-GIT_EXTERN(int) git_checkout_head(
+GIT_EXTERN(int)
+git_checkout_head(
 	git_repository *repo,
 	const git_checkout_options *opts);
 
@@ -340,7 +345,8 @@ GIT_EXTERN(int) git_checkout_head(
  * @return 0 on success, non-zero return value from `notify_cb`, or error
  *         code < 0 (use giterr_last for error details)
  */
-GIT_EXTERN(int) git_checkout_index(
+GIT_EXTERN(int)
+git_checkout_index(
 	git_repository *repo,
 	git_index *index,
 	const git_checkout_options *opts);
@@ -356,7 +362,8 @@ GIT_EXTERN(int) git_checkout_index(
  * @return 0 on success, non-zero return value from `notify_cb`, or error
  *         code < 0 (use giterr_last for error details)
  */
-GIT_EXTERN(int) git_checkout_tree(
+GIT_EXTERN(int)
+git_checkout_tree(
 	git_repository *repo,
 	const git_object *treeish,
 	const git_checkout_options *opts);

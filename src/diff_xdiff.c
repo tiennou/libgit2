@@ -18,7 +18,8 @@ static int git_xdiff_scan_int(const char **str, int *value)
 	const char *scan = *str;
 	int v = 0, digits = 0;
 	/* find next digit */
-	for (scan = *str; *scan && !git__isdigit(*scan); scan++);
+	for (scan = *str; *scan && !git__isdigit(*scan); scan++)
+		;
 	/* parse next number */
 	for (; git__isdigit(*scan); scan++, digits++)
 		v = (v * 10) + (*scan - '0');
@@ -76,7 +77,7 @@ static int diff_update_lines(
 		if (*scan == '\n')
 			++line->num_lines;
 
-	line->content     = content;
+	line->content = content;
 	line->content_len = content_len;
 
 	/* expect " "/"-"/"+", then data */
@@ -128,7 +129,7 @@ static int git_xdiff_cb(void *priv, mmbuffer_t *bufs, int len)
 			info->hunk.header_len = sizeof(info->hunk.header) - 1;
 
 		/* Sanitize the hunk header in case there is invalid Unicode */
-		buffer_len = git__utf8_valid_buf_length((const uint8_t *) bufs[0].ptr, info->hunk.header_len);
+		buffer_len = git__utf8_valid_buf_length((const uint8_t *)bufs[0].ptr, info->hunk.header_len);
 		/* Sanitizing the hunk header may delete the newline, so add it back again if there is room */
 		if (buffer_len < info->hunk.header_len) {
 			bufs[0].ptr[buffer_len] = '\n';
@@ -141,7 +142,7 @@ static int git_xdiff_cb(void *priv, mmbuffer_t *bufs, int len)
 
 		if (output->hunk_cb != NULL &&
 			(output->error = output->hunk_cb(
-				delta, &info->hunk, output->payload)))
+					delta, &info->hunk, output->payload)))
 			return output->error;
 
 		info->old_lineno = info->hunk.old_start;
@@ -151,9 +152,7 @@ static int git_xdiff_cb(void *priv, mmbuffer_t *bufs, int len)
 	if (len == 2 || len == 3) {
 		/* expect " "/"-"/"+", then data */
 		line.origin =
-			(*bufs[0].ptr == '+') ? GIT_DIFF_LINE_ADDITION :
-			(*bufs[0].ptr == '-') ? GIT_DIFF_LINE_DELETION :
-			GIT_DIFF_LINE_CONTEXT;
+			(*bufs[0].ptr == '+') ? GIT_DIFF_LINE_ADDITION : (*bufs[0].ptr == '-') ? GIT_DIFF_LINE_DELETION : GIT_DIFF_LINE_CONTEXT;
 
 		if (line.origin == GIT_DIFF_LINE_ADDITION)
 			line.content_offset = bufs[1].ptr - info->xd_new_data.ptr;
@@ -177,9 +176,7 @@ static int git_xdiff_cb(void *priv, mmbuffer_t *bufs, int len)
 		 * with out a newline but added a blank line, so ADD_EOFNL.
 		 */
 		line.origin =
-			(*bufs[0].ptr == '+') ? GIT_DIFF_LINE_DEL_EOFNL :
-			(*bufs[0].ptr == '-') ? GIT_DIFF_LINE_ADD_EOFNL :
-			GIT_DIFF_LINE_CONTEXT_EOFNL;
+			(*bufs[0].ptr == '+') ? GIT_DIFF_LINE_DEL_EOFNL : (*bufs[0].ptr == '-') ? GIT_DIFF_LINE_ADD_EOFNL : GIT_DIFF_LINE_CONTEXT_EOFNL;
 
 		line.content_offset = -1;
 
@@ -202,7 +199,7 @@ static int git_xdiff(git_patch_generated_output *output, git_patch_generated *pa
 
 	memset(&info, 0, sizeof(info));
 	info.patch = patch;
-	info.xo    = xo;
+	info.xo = xo;
 
 	xo->callback.priv = &info;
 

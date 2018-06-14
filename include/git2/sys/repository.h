@@ -28,7 +28,8 @@ GIT_BEGIN_DECL
  * @param out The blank repository
  * @return 0 on success, or an error code
  */
-GIT_EXTERN(int) git_repository_new(git_repository **out);
+GIT_EXTERN(int)
+git_repository_new(git_repository **out);
 
 /**
  * Reset all the internal state in a repository.
@@ -41,7 +42,8 @@ GIT_EXTERN(int) git_repository_new(git_repository **out);
  * deallocation. `git_repository_free` already performs this operation
  * before deallocation the repo.
  */
-GIT_EXTERN(void) git_repository__cleanup(git_repository *repo);
+GIT_EXTERN(void)
+git_repository__cleanup(git_repository *repo);
 
 /**
  * Update the filesystem config settings for an open repository
@@ -58,7 +60,8 @@ GIT_EXTERN(void) git_repository__cleanup(git_repository *repo);
  * @param recurse_submodules Should submodules be updated recursively
  * @return 0 on success, < 0 on error
  */
-GIT_EXTERN(int) git_repository_reinit_filesystem(
+GIT_EXTERN(int)
+git_repository_reinit_filesystem(
 	git_repository *repo,
 	int recurse_submodules);
 
@@ -75,7 +78,8 @@ GIT_EXTERN(int) git_repository_reinit_filesystem(
  * @param repo A repository object
  * @param config A Config object
  */
-GIT_EXTERN(void) git_repository_set_config(git_repository *repo, git_config *config);
+GIT_EXTERN(void)
+git_repository_set_config(git_repository *repo, git_config *config);
 
 /**
  * Set the Object Database for this repository
@@ -90,7 +94,8 @@ GIT_EXTERN(void) git_repository_set_config(git_repository *repo, git_config *con
  * @param repo A repository object
  * @param odb An ODB object
  */
-GIT_EXTERN(void) git_repository_set_odb(git_repository *repo, git_odb *odb);
+GIT_EXTERN(void)
+git_repository_set_odb(git_repository *repo, git_odb *odb);
 
 /**
  * Set the Reference Database Backend for this repository
@@ -105,7 +110,8 @@ GIT_EXTERN(void) git_repository_set_odb(git_repository *repo, git_odb *odb);
  * @param repo A repository object
  * @param refdb An refdb object
  */
-GIT_EXTERN(void) git_repository_set_refdb(git_repository *repo, git_refdb *refdb);
+GIT_EXTERN(void)
+git_repository_set_refdb(git_repository *repo, git_refdb *refdb);
 
 /**
  * Set the index file for this repository
@@ -120,7 +126,8 @@ GIT_EXTERN(void) git_repository_set_refdb(git_repository *repo, git_refdb *refdb
  * @param repo A repository object
  * @param index An index object
  */
-GIT_EXTERN(void) git_repository_set_index(git_repository *repo, git_index *index);
+GIT_EXTERN(void)
+git_repository_set_index(git_repository *repo, git_index *index);
 
 /**
  * Set a repository to be bare.
@@ -133,7 +140,8 @@ GIT_EXTERN(void) git_repository_set_index(git_repository *repo, git_index *index
  * @param repo Repo to make bare
  * @return 0 on success, <0 on failure
  */
-GIT_EXTERN(int) git_repository_set_bare(git_repository *repo);
+GIT_EXTERN(int)
+git_repository_set_bare(git_repository *repo);
 
 /**
  * Load and cache all submodules.
@@ -146,7 +154,8 @@ GIT_EXTERN(int) git_repository_set_bare(git_repository *repo);
  *
  * @param repo the repository whose submodules will be cached.
  */
-GIT_EXTERN(int) git_repository_submodule_cache_all(
+GIT_EXTERN(int)
+git_repository_submodule_cache_all(
 	git_repository *repo);
 
 /**
@@ -161,7 +170,8 @@ GIT_EXTERN(int) git_repository_submodule_cache_all(
  *
  * @param repo the repository whose submodule cache will be cleared
  */
-GIT_EXTERN(int) git_repository_submodule_cache_clear(
+GIT_EXTERN(int)
+git_repository_submodule_cache_clear(
 	git_repository *repo);
 
 /** @} */

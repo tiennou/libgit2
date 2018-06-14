@@ -9,14 +9,14 @@
 
 #ifdef GIT_SECURE_TRANSPORT
 
-#include <CoreFoundation/CoreFoundation.h>
-#include <Security/SecureTransport.h>
-#include <Security/SecCertificate.h>
+#	include <CoreFoundation/CoreFoundation.h>
+#	include <Security/SecureTransport.h>
+#	include <Security/SecCertificate.h>
 
-#include "git2/transport.h"
+#	include "git2/transport.h"
 
-#include "streams/socket.h"
-#include "streams/curl.h"
+#	include "streams/socket.h"
+#	include "streams/curl.h"
 
 static int stransport_error(OSStatus ret)
 {
@@ -27,16 +27,16 @@ static int stransport_error(OSStatus ret)
 		return 0;
 	}
 
-#if !TARGET_OS_IPHONE
+#	if !TARGET_OS_IPHONE
 	message = SecCopyErrorMessageString(ret, NULL);
 	GITERR_CHECK_ALLOC(message);
 
 	giterr_set(GITERR_NET, "SecureTransport error: %s", CFStringGetCStringPtr(message, kCFStringEncodingUTF8));
 	CFRelease(message);
-#else
-    giterr_set(GITERR_NET, "SecureTransport error: OSStatus %d", (unsigned int)ret);
-    GIT_UNUSED(message);
-#endif
+#	else
+	giterr_set(GITERR_NET, "SecureTransport error: OSStatus %d", (unsigned int)ret);
+	GIT_UNUSED(message);
+#	endif
 
 	return -1;
 }
@@ -51,7 +51,7 @@ typedef struct {
 
 static int stransport_connect(git_stream *stream)
 {
-	stransport_stream *st = (stransport_stream *) stream;
+	stransport_stream *st = (stransport_stream *)stream;
 	int error;
 	SecTrustRef trust = NULL;
 	SecTrustResultType sec_res;
@@ -83,7 +83,7 @@ static int stransport_connect(git_stream *stream)
 	}
 
 	if (sec_res == kSecTrustResultDeny || sec_res == kSecTrustResultRecoverableTrustFailure ||
-	    sec_res == kSecTrustResultFatalTrustFailure) {
+		sec_res == kSecTrustResultFatalTrustFailure) {
 		giterr_set(GITERR_SSL, "untrusted connection error");
 		return GIT_ECERTIFICATE;
 	}
@@ -99,7 +99,7 @@ on_error:
 
 static int stransport_certificate(git_cert **out, git_stream *stream)
 {
-	stransport_stream *st = (stransport_stream *) stream;
+	stransport_stream *st = (stransport_stream *)stream;
 	SecTrustRef trust = NULL;
 	SecCertificateRef sec_cert;
 	OSStatus ret;
@@ -117,7 +117,7 @@ static int stransport_certificate(git_cert **out, git_stream *stream)
 	}
 
 	st->cert_info.parent.cert_type = GIT_CERT_X509;
-	st->cert_info.data = (void *) CFDataGetBytePtr(st->der_data);
+	st->cert_info.data = (void *)CFDataGetBytePtr(st->der_data);
 	st->cert_info.len = CFDataGetLength(st->der_data);
 
 	*out = (git_cert *)&st->cert_info;
@@ -128,7 +128,7 @@ static int stransport_set_proxy(
 	git_stream *stream,
 	const git_proxy_options *proxy_opts)
 {
-	stransport_stream *st = (stransport_stream *) stream;
+	stransport_stream *st = (stransport_stream *)stream;
 
 	return git_stream_set_proxy(st->io, proxy_opts);
 }
@@ -147,7 +147,7 @@ static int stransport_set_proxy(
  */
 static OSStatus write_cb(SSLConnectionRef conn, const void *data, size_t *len)
 {
-	git_stream *io = (git_stream *) conn;
+	git_stream *io = (git_stream *)conn;
 
 	if (git_stream_write(io, data, *len, 0) < 0) {
 		return -36; /* "ioErr" from MacErrors.h which is not available on iOS */
@@ -158,7 +158,7 @@ static OSStatus write_cb(SSLConnectionRef conn, const void *data, size_t *len)
 
 static ssize_t stransport_write(git_stream *stream, const char *data, size_t len, int flags)
 {
-	stransport_stream *st = (stransport_stream *) stream;
+	stransport_stream *st = (stransport_stream *)stream;
 	size_t data_len, processed;
 	OSStatus ret;
 
@@ -182,7 +182,7 @@ static ssize_t stransport_write(git_stream *stream, const char *data, size_t len
  */
 static OSStatus read_cb(SSLConnectionRef conn, void *data, size_t *len)
 {
-	git_stream *io = (git_stream *) conn;
+	git_stream *io = (git_stream *)conn;
 	OSStatus error = noErr;
 	size_t off = 0;
 	ssize_t ret;
@@ -207,7 +207,7 @@ static OSStatus read_cb(SSLConnectionRef conn, void *data, size_t *len)
 
 static ssize_t stransport_read(git_stream *stream, void *data, size_t len)
 {
-	stransport_stream *st = (stransport_stream *) stream;
+	stransport_stream *st = (stransport_stream *)stream;
 	size_t processed;
 	OSStatus ret;
 
@@ -219,7 +219,7 @@ static ssize_t stransport_read(git_stream *stream, void *data, size_t len)
 
 static int stransport_close(git_stream *stream)
 {
-	stransport_stream *st = (stransport_stream *) stream;
+	stransport_stream *st = (stransport_stream *)stream;
 	OSStatus ret;
 
 	ret = SSLClose(st->ctx);
@@ -231,7 +231,7 @@ static int stransport_close(git_stream *stream)
 
 static void stransport_free(git_stream *stream)
 {
-	stransport_stream *st = (stransport_stream *) stream;
+	stransport_stream *st = (stransport_stream *)stream;
 
 	git_stream_free(st->io);
 	CFRelease(st->ctx);
@@ -251,13 +251,13 @@ int git_stransport_stream_new(git_stream **out, const char *host, const char *po
 	st = git__calloc(1, sizeof(stransport_stream));
 	GITERR_CHECK_ALLOC(st);
 
-#ifdef GIT_CURL
+#	ifdef GIT_CURL
 	error = git_curl_stream_new(&st->io, host, port);
-#else
+#	else
 	error = git_socket_stream_new(&st->io, host, port);
-#endif
+#	endif
 
-	if (error < 0){
+	if (error < 0) {
 		git__free(st);
 		return error;
 	}
@@ -270,11 +270,11 @@ int git_stransport_stream_new(git_stream **out, const char *host, const char *po
 	}
 
 	if ((ret = SSLSetIOFuncs(st->ctx, read_cb, write_cb)) != noErr ||
-	    (ret = SSLSetConnection(st->ctx, st->io)) != noErr ||
-	    (ret = SSLSetSessionOption(st->ctx, kSSLSessionOptionBreakOnServerAuth, true)) != noErr ||
-	    (ret = SSLSetProtocolVersionMin(st->ctx, kTLSProtocol1)) != noErr ||
-	    (ret = SSLSetProtocolVersionMax(st->ctx, kTLSProtocol12)) != noErr ||
-	    (ret = SSLSetPeerDomainName(st->ctx, host, strlen(host))) != noErr) {
+		(ret = SSLSetConnection(st->ctx, st->io)) != noErr ||
+		(ret = SSLSetSessionOption(st->ctx, kSSLSessionOptionBreakOnServerAuth, true)) != noErr ||
+		(ret = SSLSetProtocolVersionMin(st->ctx, kTLSProtocol1)) != noErr ||
+		(ret = SSLSetProtocolVersionMax(st->ctx, kTLSProtocol12)) != noErr ||
+		(ret = SSLSetPeerDomainName(st->ctx, host, strlen(host))) != noErr) {
 		CFRelease(st->ctx);
 		git__free(st);
 		return stransport_error(ret);
@@ -291,7 +291,7 @@ int git_stransport_stream_new(git_stream **out, const char *host, const char *po
 	st->parent.close = stransport_close;
 	st->parent.free = stransport_free;
 
-	*out = (git_stream *) st;
+	*out = (git_stream *)st;
 	return 0;
 }
 

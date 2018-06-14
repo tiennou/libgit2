@@ -31,7 +31,8 @@ GIT_BEGIN_DECL
  * @param repo the repo to use when listing working trees
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_worktree_list(git_strarray *out, git_repository *repo);
+GIT_EXTERN(int)
+git_worktree_list(git_strarray *out, git_repository *repo);
 
 /**
  * Lookup a working tree by its name for a given repository
@@ -41,7 +42,8 @@ GIT_EXTERN(int) git_worktree_list(git_strarray *out, git_repository *repo);
  * @param name Name of the working tree to look up
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_worktree_lookup(git_worktree **out, git_repository *repo, const char *name);
+GIT_EXTERN(int)
+git_worktree_lookup(git_worktree **out, git_repository *repo, const char *name);
 
 /**
  * Open a worktree of a given repository
@@ -53,14 +55,16 @@ GIT_EXTERN(int) git_worktree_lookup(git_worktree **out, git_repository *repo, co
  * @param out Out-pointer for the newly allocated worktree
  * @param repo Repository to look up worktree for
  */
-GIT_EXTERN(int) git_worktree_open_from_repository(git_worktree **out, git_repository *repo);
+GIT_EXTERN(int)
+git_worktree_open_from_repository(git_worktree **out, git_repository *repo);
 
 /**
  * Free a previously allocated worktree
  *
  * @param wt worktree handle to close. If NULL nothing occurs.
  */
-GIT_EXTERN(void) git_worktree_free(git_worktree *wt);
+GIT_EXTERN(void)
+git_worktree_free(git_worktree *wt);
 
 /**
  * Check if worktree is valid
@@ -72,7 +76,8 @@ GIT_EXTERN(void) git_worktree_free(git_worktree *wt);
  * @param wt Worktree to check
  * @return 0 when worktree is valid, error-code otherwise
  */
-GIT_EXTERN(int) git_worktree_validate(const git_worktree *wt);
+GIT_EXTERN(int)
+git_worktree_validate(const git_worktree *wt);
 
 /**
  * Worktree add options structure
@@ -84,12 +89,15 @@ GIT_EXTERN(int) git_worktree_validate(const git_worktree *wt);
 typedef struct git_worktree_add_options {
 	unsigned int version;
 
-	int lock; /**< lock newly created worktree */
+	int lock;           /**< lock newly created worktree */
 	git_reference *ref; /**< reference to use for the new worktree HEAD */
 } git_worktree_add_options;
 
 #define GIT_WORKTREE_ADD_OPTIONS_VERSION 1
-#define GIT_WORKTREE_ADD_OPTIONS_INIT {GIT_WORKTREE_ADD_OPTIONS_VERSION,0,NULL}
+#define GIT_WORKTREE_ADD_OPTIONS_INIT \
+	{ \
+		GIT_WORKTREE_ADD_OPTIONS_VERSION, 0, NULL \
+	}
 
 /**
  * Initialize git_worktree_add_options structure
@@ -118,7 +126,8 @@ int git_worktree_add_init_options(git_worktree_add_options *opts,
  * @param opts Options to modify default behavior. May be NULL
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_worktree_add(git_worktree **out, git_repository *repo,
+GIT_EXTERN(int)
+git_worktree_add(git_worktree **out, git_repository *repo,
 	const char *name, const char *path,
 	const git_worktree_add_options *opts);
 
@@ -132,7 +141,8 @@ GIT_EXTERN(int) git_worktree_add(git_worktree **out, git_repository *repo,
  * @param reason Reason why the working tree is being locked
  * @return 0 on success, non-zero otherwise
  */
-GIT_EXTERN(int) git_worktree_lock(git_worktree *wt, const char *reason);
+GIT_EXTERN(int)
+git_worktree_lock(git_worktree *wt, const char *reason);
 
 /**
  * Unlock a locked worktree
@@ -141,7 +151,8 @@ GIT_EXTERN(int) git_worktree_lock(git_worktree *wt, const char *reason);
  * @return 0 on success, 1 if worktree was not locked, error-code
  *  otherwise
  */
-GIT_EXTERN(int) git_worktree_unlock(git_worktree *wt);
+GIT_EXTERN(int)
+git_worktree_unlock(git_worktree *wt);
 
 /**
  * Check if worktree is locked
@@ -155,7 +166,8 @@ GIT_EXTERN(int) git_worktree_unlock(git_worktree *wt);
  *  than zero if it is locked, less than zero if there was an
  *  error
  */
-GIT_EXTERN(int) git_worktree_is_locked(git_buf *reason, const git_worktree *wt);
+GIT_EXTERN(int)
+git_worktree_is_locked(git_buf *reason, const git_worktree *wt);
 
 /**
  * Retrieve the name of the worktree
@@ -164,7 +176,8 @@ GIT_EXTERN(int) git_worktree_is_locked(git_buf *reason, const git_worktree *wt);
  * @return The worktree's name. The pointer returned is valid for the
  *  lifetime of the git_worktree
  */
-GIT_EXTERN(const char *) git_worktree_name(const git_worktree *wt);
+GIT_EXTERN(const char *)
+git_worktree_name(const git_worktree *wt);
 
 /**
  * Retrieve the filesystem path for the worktree
@@ -173,8 +186,9 @@ GIT_EXTERN(const char *) git_worktree_name(const git_worktree *wt);
  * @return The worktree's filesystem path. The pointer returned
  *  is valid for the lifetime of the git_worktree.
  */
-GIT_EXTERN(const char *) git_worktree_path(const git_worktree *wt);
- 
+GIT_EXTERN(const char *)
+git_worktree_path(const git_worktree *wt);
+
 /**
  * Flags which can be passed to git_worktree_prune to alter its
  * behavior.
@@ -202,7 +216,10 @@ typedef struct git_worktree_prune_options {
 } git_worktree_prune_options;
 
 #define GIT_WORKTREE_PRUNE_OPTIONS_VERSION 1
-#define GIT_WORKTREE_PRUNE_OPTIONS_INIT {GIT_WORKTREE_PRUNE_OPTIONS_VERSION,0}
+#define GIT_WORKTREE_PRUNE_OPTIONS_INIT \
+	{ \
+		GIT_WORKTREE_PRUNE_OPTIONS_VERSION, 0 \
+	}
 
 /**
  * Initialize git_worktree_prune_options structure
@@ -214,7 +231,8 @@ typedef struct git_worktree_prune_options {
  * @param version The struct version; pass `GIT_WORKTREE_PRUNE_OPTIONS_VERSION`.
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_worktree_prune_init_options(
+GIT_EXTERN(int)
+git_worktree_prune_init_options(
 	git_worktree_prune_options *opts,
 	unsigned int version);
 
@@ -232,7 +250,8 @@ GIT_EXTERN(int) git_worktree_prune_init_options(
  * flags have been passed in, this function will return a
  * positive value.
  */
-GIT_EXTERN(int) git_worktree_is_prunable(git_worktree *wt,
+GIT_EXTERN(int)
+git_worktree_is_prunable(git_worktree *wt,
 	git_worktree_prune_options *opts);
 
 /**
@@ -247,7 +266,8 @@ GIT_EXTERN(int) git_worktree_is_prunable(git_worktree *wt,
  *        `git_worktree_is_prunable`. May be NULL
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_worktree_prune(git_worktree *wt,
+GIT_EXTERN(int)
+git_worktree_prune(git_worktree *wt,
 	git_worktree_prune_options *opts);
 
 /** @} */

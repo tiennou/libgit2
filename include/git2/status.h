@@ -34,21 +34,21 @@ GIT_BEGIN_DECL
 typedef enum {
 	GIT_STATUS_CURRENT = 0,
 
-	GIT_STATUS_INDEX_NEW        = (1u << 0),
-	GIT_STATUS_INDEX_MODIFIED   = (1u << 1),
-	GIT_STATUS_INDEX_DELETED    = (1u << 2),
-	GIT_STATUS_INDEX_RENAMED    = (1u << 3),
+	GIT_STATUS_INDEX_NEW = (1u << 0),
+	GIT_STATUS_INDEX_MODIFIED = (1u << 1),
+	GIT_STATUS_INDEX_DELETED = (1u << 2),
+	GIT_STATUS_INDEX_RENAMED = (1u << 3),
 	GIT_STATUS_INDEX_TYPECHANGE = (1u << 4),
 
-	GIT_STATUS_WT_NEW           = (1u << 7),
-	GIT_STATUS_WT_MODIFIED      = (1u << 8),
-	GIT_STATUS_WT_DELETED       = (1u << 9),
-	GIT_STATUS_WT_TYPECHANGE    = (1u << 10),
-	GIT_STATUS_WT_RENAMED       = (1u << 11),
-	GIT_STATUS_WT_UNREADABLE    = (1u << 12),
+	GIT_STATUS_WT_NEW = (1u << 7),
+	GIT_STATUS_WT_MODIFIED = (1u << 8),
+	GIT_STATUS_WT_DELETED = (1u << 9),
+	GIT_STATUS_WT_TYPECHANGE = (1u << 10),
+	GIT_STATUS_WT_RENAMED = (1u << 11),
+	GIT_STATUS_WT_UNREADABLE = (1u << 12),
 
-	GIT_STATUS_IGNORED          = (1u << 14),
-	GIT_STATUS_CONFLICTED       = (1u << 15),
+	GIT_STATUS_IGNORED = (1u << 14),
+	GIT_STATUS_CONFLICTED = (1u << 15),
 } git_status_t;
 
 /**
@@ -137,28 +137,28 @@ typedef enum {
  * together as `GIT_STATUS_OPT_DEFAULTS` if you want them as a baseline.
  */
 typedef enum {
-	GIT_STATUS_OPT_INCLUDE_UNTRACKED                = (1u << 0),
-	GIT_STATUS_OPT_INCLUDE_IGNORED                  = (1u << 1),
-	GIT_STATUS_OPT_INCLUDE_UNMODIFIED               = (1u << 2),
-	GIT_STATUS_OPT_EXCLUDE_SUBMODULES               = (1u << 3),
-	GIT_STATUS_OPT_RECURSE_UNTRACKED_DIRS           = (1u << 4),
-	GIT_STATUS_OPT_DISABLE_PATHSPEC_MATCH           = (1u << 5),
-	GIT_STATUS_OPT_RECURSE_IGNORED_DIRS             = (1u << 6),
-	GIT_STATUS_OPT_RENAMES_HEAD_TO_INDEX            = (1u << 7),
-	GIT_STATUS_OPT_RENAMES_INDEX_TO_WORKDIR         = (1u << 8),
-	GIT_STATUS_OPT_SORT_CASE_SENSITIVELY            = (1u << 9),
-	GIT_STATUS_OPT_SORT_CASE_INSENSITIVELY          = (1u << 10),
-	GIT_STATUS_OPT_RENAMES_FROM_REWRITES            = (1u << 11),
-	GIT_STATUS_OPT_NO_REFRESH                       = (1u << 12),
-	GIT_STATUS_OPT_UPDATE_INDEX                     = (1u << 13),
-	GIT_STATUS_OPT_INCLUDE_UNREADABLE               = (1u << 14),
-	GIT_STATUS_OPT_INCLUDE_UNREADABLE_AS_UNTRACKED  = (1u << 15),
+	GIT_STATUS_OPT_INCLUDE_UNTRACKED = (1u << 0),
+	GIT_STATUS_OPT_INCLUDE_IGNORED = (1u << 1),
+	GIT_STATUS_OPT_INCLUDE_UNMODIFIED = (1u << 2),
+	GIT_STATUS_OPT_EXCLUDE_SUBMODULES = (1u << 3),
+	GIT_STATUS_OPT_RECURSE_UNTRACKED_DIRS = (1u << 4),
+	GIT_STATUS_OPT_DISABLE_PATHSPEC_MATCH = (1u << 5),
+	GIT_STATUS_OPT_RECURSE_IGNORED_DIRS = (1u << 6),
+	GIT_STATUS_OPT_RENAMES_HEAD_TO_INDEX = (1u << 7),
+	GIT_STATUS_OPT_RENAMES_INDEX_TO_WORKDIR = (1u << 8),
+	GIT_STATUS_OPT_SORT_CASE_SENSITIVELY = (1u << 9),
+	GIT_STATUS_OPT_SORT_CASE_INSENSITIVELY = (1u << 10),
+	GIT_STATUS_OPT_RENAMES_FROM_REWRITES = (1u << 11),
+	GIT_STATUS_OPT_NO_REFRESH = (1u << 12),
+	GIT_STATUS_OPT_UPDATE_INDEX = (1u << 13),
+	GIT_STATUS_OPT_INCLUDE_UNREADABLE = (1u << 14),
+	GIT_STATUS_OPT_INCLUDE_UNREADABLE_AS_UNTRACKED = (1u << 15),
 } git_status_opt_t;
 
 #define GIT_STATUS_OPT_DEFAULTS \
 	(GIT_STATUS_OPT_INCLUDE_IGNORED | \
-	GIT_STATUS_OPT_INCLUDE_UNTRACKED | \
-	GIT_STATUS_OPT_RECURSE_UNTRACKED_DIRS)
+		GIT_STATUS_OPT_INCLUDE_UNTRACKED | \
+		GIT_STATUS_OPT_RECURSE_UNTRACKED_DIRS)
 
 /**
  * Options to control how `git_status_foreach_ext()` will issue callbacks.
@@ -180,15 +180,18 @@ typedef enum {
  * and index; defaults to HEAD.
  */
 typedef struct {
-	unsigned int      version;
+	unsigned int version;
 	git_status_show_t show;
-	unsigned int      flags;
-	git_strarray      pathspec;
-	git_tree          *baseline;
+	unsigned int flags;
+	git_strarray pathspec;
+	git_tree *baseline;
 } git_status_options;
 
 #define GIT_STATUS_OPTIONS_VERSION 1
-#define GIT_STATUS_OPTIONS_INIT {GIT_STATUS_OPTIONS_VERSION}
+#define GIT_STATUS_OPTIONS_INIT \
+	{ \
+		GIT_STATUS_OPTIONS_VERSION \
+	}
 
 /**
  * Initialize git_status_options structure
@@ -200,7 +203,8 @@ typedef struct {
  * @param version The struct version; pass `GIT_STATUS_OPTIONS_VERSION`.
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_status_init_options(
+GIT_EXTERN(int)
+git_status_init_options(
 	git_status_options *opts,
 	unsigned int version);
 
@@ -240,7 +244,8 @@ typedef struct {
  * @param payload Pointer to pass through to callback function
  * @return 0 on success, non-zero callback return value, or error code
  */
-GIT_EXTERN(int) git_status_foreach(
+GIT_EXTERN(int)
+git_status_foreach(
 	git_repository *repo,
 	git_status_cb callback,
 	void *payload);
@@ -264,7 +269,8 @@ GIT_EXTERN(int) git_status_foreach(
  * @param payload Pointer to pass through to callback function
  * @return 0 on success, non-zero callback return value, or error code
  */
-GIT_EXTERN(int) git_status_foreach_ext(
+GIT_EXTERN(int)
+git_status_foreach_ext(
 	git_repository *repo,
 	const git_status_options *opts,
 	git_status_cb callback,
@@ -296,7 +302,8 @@ GIT_EXTERN(int) git_status_foreach_ext(
  *      index, and work tree, GIT_EAMBIGUOUS if `path` matches multiple files
  *      or if it refers to a folder, and -1 on other errors.
  */
-GIT_EXTERN(int) git_status_file(
+GIT_EXTERN(int)
+git_status_file(
 	unsigned int *status_flags,
 	git_repository *repo,
 	const char *path);
@@ -314,7 +321,8 @@ GIT_EXTERN(int) git_status_file(
  * @param opts Status options structure
  * @return 0 on success or error code
  */
-GIT_EXTERN(int) git_status_list_new(
+GIT_EXTERN(int)
+git_status_list_new(
 	git_status_list **out,
 	git_repository *repo,
 	const git_status_options *opts);
@@ -328,7 +336,8 @@ GIT_EXTERN(int) git_status_list_new(
  * @param statuslist Existing status list object
  * @return the number of status entries
  */
-GIT_EXTERN(size_t) git_status_list_entrycount(
+GIT_EXTERN(size_t)
+git_status_list_entrycount(
 	git_status_list *statuslist);
 
 /**
@@ -340,7 +349,8 @@ GIT_EXTERN(size_t) git_status_list_entrycount(
  * @param idx Position of the entry
  * @return Pointer to the entry; NULL if out of bounds
  */
-GIT_EXTERN(const git_status_entry *) git_status_byindex(
+GIT_EXTERN(const git_status_entry *)
+git_status_byindex(
 	git_status_list *statuslist,
 	size_t idx);
 
@@ -349,7 +359,8 @@ GIT_EXTERN(const git_status_entry *) git_status_byindex(
  *
  * @param statuslist Existing status list object
  */
-GIT_EXTERN(void) git_status_list_free(
+GIT_EXTERN(void)
+git_status_list_free(
 	git_status_list *statuslist);
 
 /**
@@ -368,7 +379,8 @@ GIT_EXTERN(void) git_status_list_free(
  * @return 0 if ignore rules could be processed for the file (regardless
  *         of whether it exists or not), or an error < 0 if they could not.
  */
-GIT_EXTERN(int) git_status_should_ignore(
+GIT_EXTERN(int)
+git_status_should_ignore(
 	int *ignored,
 	git_repository *repo,
 	const char *path);

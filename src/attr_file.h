@@ -16,35 +16,35 @@
 #include "buffer.h"
 #include "fileops.h"
 
-#define GIT_ATTR_FILE			".gitattributes"
-#define GIT_ATTR_FILE_INREPO	"attributes"
-#define GIT_ATTR_FILE_SYSTEM	"gitattributes"
-#define GIT_ATTR_FILE_XDG		"attributes"
+#define GIT_ATTR_FILE ".gitattributes"
+#define GIT_ATTR_FILE_INREPO "attributes"
+#define GIT_ATTR_FILE_SYSTEM "gitattributes"
+#define GIT_ATTR_FILE_XDG "attributes"
 
-#define GIT_ATTR_FNMATCH_NEGATIVE	(1U << 0)
-#define GIT_ATTR_FNMATCH_DIRECTORY	(1U << 1)
-#define GIT_ATTR_FNMATCH_FULLPATH	(1U << 2)
-#define GIT_ATTR_FNMATCH_MACRO		(1U << 3)
-#define GIT_ATTR_FNMATCH_IGNORE		(1U << 4)
-#define GIT_ATTR_FNMATCH_HASWILD	(1U << 5)
-#define GIT_ATTR_FNMATCH_ALLOWSPACE	(1U << 6)
-#define GIT_ATTR_FNMATCH_ICASE		(1U << 7)
-#define GIT_ATTR_FNMATCH_MATCH_ALL	(1U << 8)
-#define GIT_ATTR_FNMATCH_ALLOWNEG   (1U << 9)
+#define GIT_ATTR_FNMATCH_NEGATIVE (1U << 0)
+#define GIT_ATTR_FNMATCH_DIRECTORY (1U << 1)
+#define GIT_ATTR_FNMATCH_FULLPATH (1U << 2)
+#define GIT_ATTR_FNMATCH_MACRO (1U << 3)
+#define GIT_ATTR_FNMATCH_IGNORE (1U << 4)
+#define GIT_ATTR_FNMATCH_HASWILD (1U << 5)
+#define GIT_ATTR_FNMATCH_ALLOWSPACE (1U << 6)
+#define GIT_ATTR_FNMATCH_ICASE (1U << 7)
+#define GIT_ATTR_FNMATCH_MATCH_ALL (1U << 8)
+#define GIT_ATTR_FNMATCH_ALLOWNEG (1U << 9)
 #define GIT_ATTR_FNMATCH_ALLOWMACRO (1U << 10)
 #define GIT_ATTR_FNMATCH_LEADINGDIR (1U << 11)
 #define GIT_ATTR_FNMATCH_NOLEADINGDIR (1U << 12)
 
 #define GIT_ATTR_FNMATCH__INCOMING \
 	(GIT_ATTR_FNMATCH_ALLOWSPACE | GIT_ATTR_FNMATCH_ALLOWNEG | \
-	 GIT_ATTR_FNMATCH_ALLOWMACRO | GIT_ATTR_FNMATCH_NOLEADINGDIR)
+		GIT_ATTR_FNMATCH_ALLOWMACRO | GIT_ATTR_FNMATCH_NOLEADINGDIR)
 
 typedef enum {
-	GIT_ATTR_FILE__IN_MEMORY   = 0,
-	GIT_ATTR_FILE__FROM_FILE   = 1,
-	GIT_ATTR_FILE__FROM_INDEX  = 2,
+	GIT_ATTR_FILE__IN_MEMORY = 0,
+	GIT_ATTR_FILE__FROM_FILE = 1,
+	GIT_ATTR_FILE__FROM_INDEX = 2,
 
-	GIT_ATTR_FILE_NUM_SOURCES  = 3
+	GIT_ATTR_FILE_NUM_SOURCES = 3
 } git_attr_file_source;
 
 extern const char *git_attr__true;
@@ -61,7 +61,7 @@ typedef struct {
 
 typedef struct {
 	git_attr_fnmatch match;
-	git_vector assigns;		/* vector of <git_attr_assignment*> */
+	git_vector assigns; /* vector of <git_attr_assignment*> */
 } git_attr_rule;
 
 typedef struct {
@@ -71,7 +71,7 @@ typedef struct {
 } git_attr_name;
 
 typedef struct {
-	git_refcount rc;		/* for macros */
+	git_refcount rc; /* for macros */
 	char *name;
 	uint32_t name_hash;
 	const char *value;
@@ -84,9 +84,9 @@ typedef struct {
 	git_mutex lock;
 	git_attr_file_entry *entry;
 	git_attr_file_source source;
-	git_vector rules;			/* vector of <rule*> or <fnmatch*> */
+	git_vector rules; /* vector of <rule*> or <fnmatch*> */
 	git_pool pool;
-	unsigned int nonexistent:1;
+	unsigned int nonexistent : 1;
 	int session_key;
 	union {
 		git_oid oid;
@@ -101,10 +101,10 @@ struct git_attr_file_entry {
 };
 
 typedef struct {
-	git_buf  full;
-	char    *path;
-	char    *basename;
-	int      is_dir;
+	git_buf full;
+	char *path;
+	char *basename;
+	int is_dir;
 } git_attr_path;
 
 /* A git_attr_session can provide an "instance" of reading, to prevent cache
@@ -113,8 +113,8 @@ typedef struct {
 
 typedef struct {
 	int key;
-	unsigned int init_setup:1,
-		init_sysdir:1;
+	unsigned int init_setup : 1,
+		init_sysdir : 1;
 	git_buf sysdir;
 	git_buf tmp;
 } git_attr_session;
@@ -174,9 +174,8 @@ int git_attr_file__lookup_one(
 	const char **value);
 
 /* loop over rules in file from bottom to top */
-#define git_attr_file__foreach_matching_rule(file, path, iter, rule)	\
-	git_vector_rforeach(&(file)->rules, (iter), (rule)) \
-		if (git_attr_rule__match((rule), (path)))
+#define git_attr_file__foreach_matching_rule(file, path, iter, rule) \
+	git_vector_rforeach(&(file)->rules, (iter), (rule)) if (git_attr_rule__match((rule), (path)))
 
 uint32_t git_attr_file__name_hash(const char *name);
 
@@ -204,7 +203,9 @@ extern bool git_attr_rule__match(
 extern git_attr_assignment *git_attr_rule__lookup_assignment(
 	git_attr_rule *rule, const char *name);
 
-typedef enum { GIT_DIR_FLAG_TRUE = 1, GIT_DIR_FLAG_FALSE = 0, GIT_DIR_FLAG_UNKNOWN = -1 } git_dir_flag;
+typedef enum { GIT_DIR_FLAG_TRUE = 1,
+	GIT_DIR_FLAG_FALSE = 0,
+	GIT_DIR_FLAG_UNKNOWN = -1 } git_dir_flag;
 
 extern int git_attr_path__init(
 	git_attr_path *info, const char *path, const char *base, git_dir_flag is_dir);

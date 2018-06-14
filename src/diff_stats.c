@@ -82,13 +82,12 @@ int git_diff_file_stats__full_to_buf(
 
 	if (delta->flags & GIT_DIFF_FLAG_BINARY) {
 		if (git_buf_printf(out,
-				"Bin %" PRIuZ " -> %" PRIuZ " bytes", old_size, new_size) < 0)
+							"Bin %" PRIuZ " -> %" PRIuZ " bytes", old_size, new_size) < 0)
 			goto on_error;
-	}
-	else {
+	} else {
 		if (git_buf_printf(out,
-				"%*" PRIuZ, stats->max_digits,
-				filestat->insertions + filestat->deletions) < 0)
+							"%*" PRIuZ, stats->max_digits,
+							filestat->insertions + filestat->deletions) < 0)
 			goto on_error;
 
 		if (filestat->insertions || filestat->deletions) {
@@ -106,7 +105,7 @@ int git_diff_file_stats__full_to_buf(
 				size_t plus = full * filestat->insertions / total;
 				size_t minus = full - plus;
 
-				if (git_buf_putcn(out, '+', max(plus,  1)) < 0 ||
+				if (git_buf_putcn(out, '+', max(plus, 1)) < 0 ||
 					git_buf_putcn(out, '-', max(minus, 1)) < 0)
 					goto on_error;
 			}
@@ -128,7 +127,10 @@ int git_diff_file_stats__number_to_buf(
 	const char *path = delta->new_file.path;
 
 	if (delta->flags & GIT_DIFF_FLAG_BINARY)
-		error = git_buf_printf(out, "%-8c" "%-8c" "%s\n", '-', '-', path);
+		error = git_buf_printf(out, "%-8c"
+																														"%-8c"
+																														"%s\n",
+			'-', '-', path);
 	else
 		error = git_buf_printf(out, "%-8" PRIuZ "%-8" PRIuZ "%s\n",
 			filestats->insertions, filestats->deletions, path);
@@ -144,12 +146,10 @@ int git_diff_file_stats__summary_to_buf(
 		if (delta->old_file.mode == 0) {
 			git_buf_printf(out, " create mode %06o %s\n",
 				delta->new_file.mode, delta->new_file.path);
-		}
-		else if (delta->new_file.mode == 0) {
+		} else if (delta->new_file.mode == 0) {
 			git_buf_printf(out, " delete mode %06o %s\n",
 				delta->old_file.mode, delta->old_file.path);
-		}
-		else {
+		} else {
 			git_buf_printf(out, " mode change %06o => %06o %s\n",
 				delta->old_file.mode, delta->new_file.mode, delta->new_file.path);
 		}

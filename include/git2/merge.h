@@ -46,7 +46,10 @@ typedef struct {
 } git_merge_file_input;
 
 #define GIT_MERGE_FILE_INPUT_VERSION 1
-#define GIT_MERGE_FILE_INPUT_INIT {GIT_MERGE_FILE_INPUT_VERSION}
+#define GIT_MERGE_FILE_INPUT_INIT \
+	{ \
+		GIT_MERGE_FILE_INPUT_VERSION \
+	}
 
 /**
  * Initializes a `git_merge_file_input` with default values. Equivalent to
@@ -57,7 +60,8 @@ typedef struct {
  *        `GIT_MERGE_FILE_INPUT_VERSION` here.
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_merge_file_init_input(
+GIT_EXTERN(int)
+git_merge_file_init_input(
 	git_merge_file_input *opts,
 	unsigned int version);
 
@@ -162,7 +166,7 @@ typedef enum {
 	GIT_MERGE_FILE_DIFF_MINIMAL = (1 << 7),
 } git_merge_file_flag_t;
 
-#define GIT_MERGE_CONFLICT_MARKER_SIZE	7
+#define GIT_MERGE_CONFLICT_MARKER_SIZE 7
 
 /**
  * Options for merging a file
@@ -200,7 +204,10 @@ typedef struct {
 } git_merge_file_options;
 
 #define GIT_MERGE_FILE_OPTIONS_VERSION 1
-#define GIT_MERGE_FILE_OPTIONS_INIT {GIT_MERGE_FILE_OPTIONS_VERSION}
+#define GIT_MERGE_FILE_OPTIONS_INIT \
+	{ \
+		GIT_MERGE_FILE_OPTIONS_VERSION \
+	}
 
 /**
  * Initialize git_merge_file_options structure
@@ -212,7 +219,8 @@ typedef struct {
  * @param version The struct version; pass `GIT_MERGE_FILE_OPTIONS_VERSION`.
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_merge_file_init_options(
+GIT_EXTERN(int)
+git_merge_file_init_options(
 	git_merge_file_options *opts,
 	unsigned int version);
 
@@ -297,8 +305,10 @@ typedef struct {
 } git_merge_options;
 
 #define GIT_MERGE_OPTIONS_VERSION 1
-#define GIT_MERGE_OPTIONS_INIT { \
-	GIT_MERGE_OPTIONS_VERSION, GIT_MERGE_FIND_RENAMES }
+#define GIT_MERGE_OPTIONS_INIT \
+	{ \
+		GIT_MERGE_OPTIONS_VERSION, GIT_MERGE_FIND_RENAMES \
+	}
 
 /**
  * Initialize git_merge_options structure
@@ -310,7 +320,8 @@ typedef struct {
  * @param version The struct version; pass `GIT_MERGE_OPTIONS_VERSION`.
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_merge_init_options(
+GIT_EXTERN(int)
+git_merge_init_options(
 	git_merge_options *opts,
 	unsigned int version);
 
@@ -381,7 +392,8 @@ typedef enum {
  * @param their_heads_len the number of heads to merge
  * @return 0 on success or error code
  */
-GIT_EXTERN(int) git_merge_analysis(
+GIT_EXTERN(int)
+git_merge_analysis(
 	git_merge_analysis_t *analysis_out,
 	git_merge_preference_t *preference_out,
 	git_repository *repo,
@@ -397,7 +409,8 @@ GIT_EXTERN(int) git_merge_analysis(
  * @param two the other commit
  * @return 0 on success, GIT_ENOTFOUND if not found or error code
  */
-GIT_EXTERN(int) git_merge_base(
+GIT_EXTERN(int)
+git_merge_base(
 	git_oid *out,
 	git_repository *repo,
 	const git_oid *one,
@@ -412,7 +425,8 @@ GIT_EXTERN(int) git_merge_base(
  * @param two the other commit
  * @return 0 on success, GIT_ENOTFOUND if not found or error code
  */
-GIT_EXTERN(int) git_merge_bases(
+GIT_EXTERN(int)
+git_merge_bases(
 	git_oidarray *out,
 	git_repository *repo,
 	const git_oid *one,
@@ -427,7 +441,8 @@ GIT_EXTERN(int) git_merge_bases(
  * @param input_array oids of the commits
  * @return Zero on success; GIT_ENOTFOUND or -1 on failure.
  */
-GIT_EXTERN(int) git_merge_base_many(
+GIT_EXTERN(int)
+git_merge_base_many(
 	git_oid *out,
 	git_repository *repo,
 	size_t length,
@@ -442,7 +457,8 @@ GIT_EXTERN(int) git_merge_base_many(
  * @param input_array oids of the commits
  * @return Zero on success; GIT_ENOTFOUND or -1 on failure.
  */
-GIT_EXTERN(int) git_merge_bases_many(
+GIT_EXTERN(int)
+git_merge_bases_many(
 	git_oidarray *out,
 	git_repository *repo,
 	size_t length,
@@ -457,7 +473,8 @@ GIT_EXTERN(int) git_merge_bases_many(
  * @param input_array oids of the commits
  * @return Zero on success; GIT_ENOTFOUND or -1 on failure.
  */
-GIT_EXTERN(int) git_merge_base_octopus(
+GIT_EXTERN(int)
+git_merge_base_octopus(
 	git_oid *out,
 	git_repository *repo,
 	size_t length,
@@ -479,7 +496,8 @@ GIT_EXTERN(int) git_merge_base_octopus(
  * @param opts The merge file options or `NULL` for defaults
  * @return 0 on success or error code
  */
-GIT_EXTERN(int) git_merge_file(
+GIT_EXTERN(int)
+git_merge_file(
 	git_merge_file_result *out,
 	const git_merge_file_input *ancestor,
 	const git_merge_file_input *ours,
@@ -500,7 +518,8 @@ GIT_EXTERN(int) git_merge_file(
  * @param opts The merge file options or NULL
  * @return 0 on success or error code
  */
-GIT_EXTERN(int) git_merge_file_from_index(
+GIT_EXTERN(int)
+git_merge_file_from_index(
 	git_merge_file_result *out,
 	git_repository *repo,
 	const git_index_entry *ancestor,
@@ -513,7 +532,8 @@ GIT_EXTERN(int) git_merge_file_from_index(
  *
  * @param result The result to free or `NULL`
  */
-GIT_EXTERN(void) git_merge_file_result_free(git_merge_file_result *result);
+GIT_EXTERN(void)
+git_merge_file_result_free(git_merge_file_result *result);
 
 /**
  * Merge two trees, producing a `git_index` that reflects the result of
@@ -531,7 +551,8 @@ GIT_EXTERN(void) git_merge_file_result_free(git_merge_file_result *result);
  * @param opts the merge tree options (or null for defaults)
  * @return 0 on success or error code
  */
-GIT_EXTERN(int) git_merge_trees(
+GIT_EXTERN(int)
+git_merge_trees(
 	git_index **out,
 	git_repository *repo,
 	const git_tree *ancestor_tree,
@@ -554,7 +575,8 @@ GIT_EXTERN(int) git_merge_trees(
  * @param opts the merge tree options (or null for defaults)
  * @return 0 on success or error code
  */
-GIT_EXTERN(int) git_merge_commits(
+GIT_EXTERN(int)
+git_merge_commits(
 	git_index **out,
 	git_repository *repo,
 	const git_commit *our_commit,
@@ -579,7 +601,8 @@ GIT_EXTERN(int) git_merge_commits(
  * @param checkout_opts checkout options
  * @return 0 on success or error code
  */
-GIT_EXTERN(int) git_merge(
+GIT_EXTERN(int)
+git_merge(
 	git_repository *repo,
 	const git_annotated_commit **their_heads,
 	size_t their_heads_len,

@@ -23,7 +23,7 @@ static int ident_find_id(
 			return GIT_ENOTFOUND;
 
 		start = found + 1;
-		len   = remaining;
+		len = remaining;
 
 		if (start[0] == 'I' && start[1] == 'd')
 			break;
@@ -43,7 +43,7 @@ static int ident_find_id(
 static int ident_insert_id(
 	git_buf *to, const git_buf *from, const git_filter_source *src)
 {
-	char oid[GIT_OID_HEXSZ+1];
+	char oid[GIT_OID_HEXSZ + 1];
 	const char *id_start, *id_end, *from_end = from->ptr + from->size;
 	size_t need_size;
 
@@ -96,13 +96,14 @@ static int ident_remove_id(
 }
 
 static int ident_apply(
-	git_filter     *self,
-	void          **payload,
-	git_buf        *to,
-	const git_buf  *from,
+	git_filter *self,
+	void **payload,
+	git_buf *to,
+	const git_buf *from,
 	const git_filter_source *src)
 {
-	GIT_UNUSED(self); GIT_UNUSED(payload);
+	GIT_UNUSED(self);
+	GIT_UNUSED(payload);
 
 	/* Don't filter binary files */
 	if (git_buf_text_is_binary(from))
@@ -123,7 +124,7 @@ git_filter *git_ident_filter_new(void)
 	f->version = GIT_FILTER_VERSION;
 	f->attributes = "+ident"; /* apply to files with ident attribute set */
 	f->shutdown = git_filter_free;
-	f->apply    = ident_apply;
+	f->apply = ident_apply;
 
 	return f;
 }

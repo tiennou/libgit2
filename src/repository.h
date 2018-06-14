@@ -37,19 +37,19 @@ extern bool git_repository__fsync_gitdir;
 
 /** Cvar cache identifiers */
 typedef enum {
-	GIT_CVAR_AUTO_CRLF = 0, /* core.autocrlf */
-	GIT_CVAR_EOL,           /* core.eol */
-	GIT_CVAR_SYMLINKS,      /* core.symlinks */
-	GIT_CVAR_IGNORECASE,    /* core.ignorecase */
-	GIT_CVAR_FILEMODE,      /* core.filemode */
-	GIT_CVAR_IGNORESTAT,    /* core.ignorestat */
-	GIT_CVAR_TRUSTCTIME,    /* core.trustctime */
-	GIT_CVAR_ABBREV,        /* core.abbrev */
-	GIT_CVAR_PRECOMPOSE,    /* core.precomposeunicode */
-	GIT_CVAR_SAFE_CRLF,		/* core.safecrlf */
+	GIT_CVAR_AUTO_CRLF = 0,    /* core.autocrlf */
+	GIT_CVAR_EOL,              /* core.eol */
+	GIT_CVAR_SYMLINKS,         /* core.symlinks */
+	GIT_CVAR_IGNORECASE,       /* core.ignorecase */
+	GIT_CVAR_FILEMODE,         /* core.filemode */
+	GIT_CVAR_IGNORESTAT,       /* core.ignorestat */
+	GIT_CVAR_TRUSTCTIME,       /* core.trustctime */
+	GIT_CVAR_ABBREV,           /* core.abbrev */
+	GIT_CVAR_PRECOMPOSE,       /* core.precomposeunicode */
+	GIT_CVAR_SAFE_CRLF,        /* core.safecrlf */
 	GIT_CVAR_LOGALLREFUPDATES, /* core.logallrefupdates */
-	GIT_CVAR_PROTECTHFS,    /* core.protectHFS */
-	GIT_CVAR_PROTECTNTFS,   /* core.protectNTFS */
+	GIT_CVAR_PROTECTHFS,       /* core.protectHFS */
+	GIT_CVAR_PROTECTNTFS,      /* core.protectNTFS */
 	GIT_CVAR_FSYNCOBJECTFILES, /* core.fsyncObjectFiles */
 	GIT_CVAR_CACHE_MAX
 } git_cvar_cached;
@@ -119,7 +119,7 @@ typedef enum {
 enum {
 	GIT_REPOSITORY_INIT__HAS_DOTGIT = (1u << 16),
 	GIT_REPOSITORY_INIT__NATURAL_WD = (1u << 17),
-	GIT_REPOSITORY_INIT__IS_REINIT  = (1u << 18),
+	GIT_REPOSITORY_INIT__IS_REINIT = (1u << 18),
 };
 
 /** Internal structure for repository object */
@@ -144,8 +144,8 @@ struct git_repository {
 
 	git_array_t(git_buf) reserved_names;
 
-	unsigned is_bare:1;
-	unsigned is_worktree:1;
+	unsigned is_bare : 1;
+	unsigned is_worktree : 1;
 
 	unsigned int lru_counter;
 
@@ -155,7 +155,8 @@ struct git_repository {
 	git_strmap *submodule_cache;
 };
 
-GIT_INLINE(git_attr_cache *) git_repository_attr_cache(git_repository *repo)
+GIT_INLINE(git_attr_cache *)
+git_repository_attr_cache(git_repository *repo)
 {
 	return repo->attrcache;
 }
@@ -204,7 +205,8 @@ int git_repository_index__weakptr(git_index **out, git_repository *repo);
 int git_repository__cvar(int *out, git_repository *repo, git_cvar_cached cvar);
 void git_repository__cvar_cache_clear(git_repository *repo);
 
-GIT_INLINE(int) git_repository__ensure_not_bare(
+GIT_INLINE(int)
+git_repository__ensure_not_bare(
 	git_repository *repo,
 	const char *operation_name)
 {

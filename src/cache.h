@@ -23,17 +23,17 @@ enum {
 };
 
 typedef struct {
-	git_oid    oid;
-	int16_t    type;  /* git_otype value */
-	uint16_t   flags; /* GIT_CACHE_STORE value */
-	size_t     size;
+	git_oid oid;
+	int16_t type;   /* git_otype value */
+	uint16_t flags; /* GIT_CACHE_STORE value */
+	size_t size;
 	git_atomic refcount;
 } git_cached_obj;
 
 typedef struct {
 	git_oidmap *map;
-	git_rwlock  lock;
-	ssize_t     used_memory;
+	git_rwlock lock;
+	ssize_t used_memory;
 } git_cache;
 
 extern bool git_cache__enabled;
@@ -53,12 +53,14 @@ git_odb_object *git_cache_get_raw(git_cache *cache, const git_oid *oid);
 git_object *git_cache_get_parsed(git_cache *cache, const git_oid *oid);
 void *git_cache_get_any(git_cache *cache, const git_oid *oid);
 
-GIT_INLINE(size_t) git_cache_size(git_cache *cache)
+GIT_INLINE(size_t)
+git_cache_size(git_cache *cache)
 {
 	return (size_t)git_oidmap_size(cache->map);
 }
 
-GIT_INLINE(void) git_cached_obj_incref(void *_obj)
+GIT_INLINE(void)
+git_cached_obj_incref(void *_obj)
 {
 	git_cached_obj *obj = _obj;
 	git_atomic_inc(&obj->refcount);

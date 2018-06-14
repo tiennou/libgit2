@@ -16,9 +16,9 @@
 #include "push.h"
 #include "git2/sys/transport.h"
 
-#define GIT_SIDE_BAND_DATA     1
+#define GIT_SIDE_BAND_DATA 1
 #define GIT_SIDE_BAND_PROGRESS 2
-#define GIT_SIDE_BAND_ERROR    3
+#define GIT_SIDE_BAND_ERROR 3
 
 #define GIT_CAP_OFS_DELTA "ofs-delta"
 #define GIT_CAP_MULTI_ACK "multi_ack"
@@ -120,16 +120,16 @@ typedef struct {
 } git_pkt_unpack;
 
 typedef struct transport_smart_caps {
-	int common:1,
-		ofs_delta:1,
-		multi_ack: 1,
-		multi_ack_detailed: 1,
-		side_band:1,
-		side_band_64k:1,
-		include_tag:1,
-		delete_refs:1,
-		report_status:1,
-		thin_pack:1;
+	int common : 1,
+		ofs_delta : 1,
+		multi_ack : 1,
+		multi_ack_detailed : 1,
+		side_band : 1,
+		side_band_64k : 1,
+		include_tag : 1,
+		delete_refs : 1,
+		report_status : 1,
+		thin_pack : 1;
 } transport_smart_caps;
 
 typedef int (*packetsize_cb)(size_t received, void *payload);
@@ -172,7 +172,7 @@ int git_smart__push(git_transport *transport, git_push *push, const git_remote_c
 int git_smart__negotiate_fetch(
 	git_transport *transport,
 	git_repository *repo,
-	const git_remote_head * const *refs,
+	const git_remote_head *const *refs,
 	size_t count);
 
 int git_smart__download_pack(
@@ -193,7 +193,7 @@ int git_pkt_parse_line(git_pkt **head, const char *line, const char **out, size_
 int git_pkt_buffer_flush(git_buf *buf);
 int git_pkt_send_flush(GIT_SOCKET s);
 int git_pkt_buffer_done(git_buf *buf);
-int git_pkt_buffer_wants(const git_remote_head * const *refs, size_t count, transport_smart_caps *caps, git_buf *buf);
+int git_pkt_buffer_wants(const git_remote_head *const *refs, size_t count, transport_smart_caps *caps, git_buf *buf);
 int git_pkt_buffer_have(git_oid *oid, git_buf *buf);
 void git_pkt_free(git_pkt *pkt);
 

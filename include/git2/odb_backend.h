@@ -31,7 +31,8 @@ GIT_BEGIN_DECL
  *
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_odb_backend_pack(git_odb_backend **out, const char *objects_dir);
+GIT_EXTERN(int)
+git_odb_backend_pack(git_odb_backend **out, const char *objects_dir);
 
 /**
  * Create a backend for loose objects
@@ -45,7 +46,8 @@ GIT_EXTERN(int) git_odb_backend_pack(git_odb_backend **out, const char *objects_
  *
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_odb_backend_loose(
+GIT_EXTERN(int)
+git_odb_backend_loose(
 	git_odb_backend **out,
 	const char *objects_dir,
 	int compression_level,
@@ -64,7 +66,8 @@ GIT_EXTERN(int) git_odb_backend_loose(
  *
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_odb_backend_one_pack(git_odb_backend **out, const char *index_file);
+GIT_EXTERN(int)
+git_odb_backend_one_pack(git_odb_backend **out, const char *index_file);
 
 /** Streaming mode */
 typedef enum {

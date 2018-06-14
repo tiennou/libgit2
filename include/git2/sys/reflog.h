@@ -13,8 +13,10 @@
 
 GIT_BEGIN_DECL
 
-GIT_EXTERN(git_reflog_entry *) git_reflog_entry__alloc(void);
-GIT_EXTERN(void) git_reflog_entry__free(git_reflog_entry *entry);
+GIT_EXTERN(git_reflog_entry *)
+git_reflog_entry__alloc(void);
+GIT_EXTERN(void)
+git_reflog_entry__free(git_reflog_entry *entry);
 
 GIT_END_DECL
 

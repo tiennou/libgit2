@@ -30,15 +30,15 @@ typedef void (*git_sortedcache_free_item_fn)(void *payload, void *item);
 
 typedef struct {
 	git_refcount rc;
-	git_rwlock   lock;
-	size_t       item_path_offset;
+	git_rwlock lock;
+	size_t item_path_offset;
 	git_sortedcache_free_item_fn free_item;
-	void         *free_item_payload;
-	git_pool     pool;
-	git_vector   items;
-	git_strmap   *map;
+	void *free_item_payload;
+	git_pool pool;
+	git_vector items;
+	git_strmap *map;
 	git_futils_filestamp stamp;
-	char         path[GIT_FLEX_ARRAY];
+	char path[GIT_FLEX_ARRAY];
 } git_sortedcache;
 
 /* Create a new sortedcache

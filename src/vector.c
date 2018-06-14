@@ -10,9 +10,10 @@
 #include "integer.h"
 
 /* In elements, not bytes */
-#define MIN_ALLOCSIZE	8
+#define MIN_ALLOCSIZE 8
 
-GIT_INLINE(size_t) compute_new_size(git_vector *v)
+GIT_INLINE(size_t)
+compute_new_size(git_vector *v)
 {
 	size_t new_size = v->_alloc_size;
 
@@ -28,7 +29,8 @@ GIT_INLINE(size_t) compute_new_size(git_vector *v)
 	return new_size;
 }
 
-GIT_INLINE(int) resize_vector(git_vector *v, size_t new_size)
+GIT_INLINE(int)
+resize_vector(git_vector *v, size_t new_size)
 {
 	void *new_contents;
 
@@ -59,7 +61,7 @@ int git_vector_dup(git_vector *v, const git_vector *src, git_vector_cmp cmp)
 	v->_alloc_size = src->length;
 	v->_cmp = cmp ? cmp : src->_cmp;
 	v->length = src->length;
-	v->flags  = src->flags;
+	v->flags = src->flags;
 	if (cmp != src->_cmp)
 		git_vector_set_sorted(v, 0);
 	v->contents = git__malloc(bytes);
@@ -118,7 +120,7 @@ void **git_vector_detach(size_t *size, size_t *asize, git_vector *v)
 		*asize = v->_alloc_size;
 
 	v->_alloc_size = 0;
-	v->length   = 0;
+	v->length = 0;
 	v->contents = NULL;
 
 	return data;
@@ -165,7 +167,7 @@ int git_vector_insert_sorted(
 	/* shift elements to the right */
 	if (pos < v->length)
 		memmove(v->contents + pos + 1, v->contents + pos,
-		        (v->length - pos) * sizeof(void *));
+			(v->length - pos) * sizeof(void *));
 
 	v->contents[pos] = element;
 	v->length++;
@@ -256,7 +258,7 @@ void git_vector_pop(git_vector *v)
 		v->length--;
 }
 
-void git_vector_uniq(git_vector *v, void  (*git_free_cb)(void *))
+void git_vector_uniq(git_vector *v, void (*git_free_cb)(void *))
 {
 	git_vector_cmp cmp;
 	size_t i, j;
@@ -267,7 +269,7 @@ void git_vector_uniq(git_vector *v, void  (*git_free_cb)(void *))
 	git_vector_sort(v);
 	cmp = v->_cmp ? v->_cmp : strict_comparison;
 
-	for (i = 0, j = 1 ; j < v->length; ++j)
+	for (i = 0, j = 1; j < v->length; ++j)
 		if (!cmp(v->contents[i], v->contents[j])) {
 			if (git_free_cb)
 				git_free_cb(v->contents[i]);
@@ -354,7 +356,7 @@ int git_vector_remove_range(git_vector *v, size_t idx, size_t remove_len)
 {
 	size_t new_length = v->length - remove_len;
 	size_t end_idx = 0;
-	
+
 	assert(remove_len > 0);
 
 	if (git__add_sizet_overflow(&end_idx, idx, remove_len))

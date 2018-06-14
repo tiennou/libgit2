@@ -22,7 +22,7 @@
 #include "git2/pack.h"
 
 #define GIT_PACK_WINDOW 10 /* number of objects to possibly delta against */
-#define GIT_PACK_DEPTH 50 /* max delta depth */
+#define GIT_PACK_DEPTH 50  /* max delta depth */
 #define GIT_PACK_DELTA_CACHE_SIZE (256 * 1024 * 1024)
 #define GIT_PACK_DELTA_CACHE_LIMIT 1000
 #define GIT_PACK_BIG_FILE_THRESHOLD (512 * 1024 * 1024)
@@ -36,8 +36,8 @@ typedef struct git_pobject {
 
 	unsigned int hash; /* name hint hash */
 
-	struct git_pobject *delta; /* delta base object */
-	struct git_pobject *delta_child; /* deltified objects who bases me */
+	struct git_pobject *delta;         /* delta base object */
+	struct git_pobject *delta_child;   /* deltified objects who bases me */
 	struct git_pobject *delta_sibling; /* other deltified objects
 					    * who uses the same base as
 					    * me */
@@ -46,21 +46,21 @@ typedef struct git_pobject {
 	size_t delta_size;
 	size_t z_delta_size;
 
-	int written:1,
-	    recursing:1,
-	    tagged:1,
-	    filled:1;
+	int written : 1,
+		recursing : 1,
+		tagged : 1,
+		filled : 1;
 } git_pobject;
 
 typedef struct {
 	git_oid id;
-	unsigned int uninteresting:1,
-		seen:1;
+	unsigned int uninteresting : 1,
+		seen : 1;
 } git_walk_object;
 
 struct git_packbuilder {
 	git_repository *repo; /* associated repository */
-	git_odb *odb; /* associated object database */
+	git_odb *odb;         /* associated object database */
 
 	git_hash_ctx ctx;
 	git_zstream zstream;

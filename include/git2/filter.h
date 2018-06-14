@@ -87,7 +87,8 @@ typedef struct git_filter_list git_filter_list;
  * @return 0 on success (which could still return NULL if no filters are
  *         needed for the requested file), <0 on error
  */
-GIT_EXTERN(int) git_filter_list_load(
+GIT_EXTERN(int)
+git_filter_list_load(
 	git_filter_list **filters,
 	git_repository *repo,
 	git_blob *blob, /* can be NULL */
@@ -107,7 +108,8 @@ GIT_EXTERN(int) git_filter_list_load(
  * @param name The name of the filter to query
  * @return 1 if the filter is in the list, 0 otherwise
  */
-GIT_EXTERN(int) git_filter_list_contains(
+GIT_EXTERN(int)
+git_filter_list_contains(
 	git_filter_list *filters,
 	const char *name);
 
@@ -131,7 +133,8 @@ GIT_EXTERN(int) git_filter_list_contains(
  * @param in Buffer containing the data to filter
  * @return 0 on success, an error code otherwise
  */
-GIT_EXTERN(int) git_filter_list_apply_to_data(
+GIT_EXTERN(int)
+git_filter_list_apply_to_data(
 	git_buf *out,
 	git_filter_list *filters,
 	git_buf *in);
@@ -145,7 +148,8 @@ GIT_EXTERN(int) git_filter_list_apply_to_data(
  * @param path the path of the file to filter, a relative path will be
  * taken as relative to the workdir
  */
-GIT_EXTERN(int) git_filter_list_apply_to_file(
+GIT_EXTERN(int)
+git_filter_list_apply_to_file(
 	git_buf *out,
 	git_filter_list *filters,
 	git_repository *repo,
@@ -158,7 +162,8 @@ GIT_EXTERN(int) git_filter_list_apply_to_file(
  * @param filters the list of filters to apply
  * @param blob the blob to filter
  */
-GIT_EXTERN(int) git_filter_list_apply_to_blob(
+GIT_EXTERN(int)
+git_filter_list_apply_to_blob(
 	git_buf *out,
 	git_filter_list *filters,
 	git_blob *blob);
@@ -170,7 +175,8 @@ GIT_EXTERN(int) git_filter_list_apply_to_blob(
  * @param data the buffer to filter
  * @param target the stream into which the data will be written
  */
-GIT_EXTERN(int) git_filter_list_stream_data(
+GIT_EXTERN(int)
+git_filter_list_stream_data(
 	git_filter_list *filters,
 	git_buf *data,
 	git_writestream *target);
@@ -184,7 +190,8 @@ GIT_EXTERN(int) git_filter_list_stream_data(
  * taken as relative to the workdir
  * @param target the stream into which the data will be written
  */
-GIT_EXTERN(int) git_filter_list_stream_file(
+GIT_EXTERN(int)
+git_filter_list_stream_file(
 	git_filter_list *filters,
 	git_repository *repo,
 	const char *path,
@@ -197,7 +204,8 @@ GIT_EXTERN(int) git_filter_list_stream_file(
  * @param blob the blob to filter
  * @param target the stream into which the data will be written
  */
-GIT_EXTERN(int) git_filter_list_stream_blob(
+GIT_EXTERN(int)
+git_filter_list_stream_blob(
 	git_filter_list *filters,
 	git_blob *blob,
 	git_writestream *target);
@@ -207,7 +215,8 @@ GIT_EXTERN(int) git_filter_list_stream_blob(
  *
  * @param filters A git_filter_list created by `git_filter_list_load`
  */
-GIT_EXTERN(void) git_filter_list_free(git_filter_list *filters);
+GIT_EXTERN(void)
+git_filter_list_free(git_filter_list *filters);
 
 
 GIT_END_DECL
