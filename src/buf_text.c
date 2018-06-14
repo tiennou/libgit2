@@ -18,7 +18,7 @@ int git_buf_text_puts_escaped(
 	if (!string)
 		return 0;
 
-	for (scan = string; *scan; ) {
+	for (scan = string; *scan;) {
 		/* count run of non-escaped characters */
 		count = strcspn(scan, esc_chars);
 		total += count;
@@ -33,7 +33,7 @@ int git_buf_text_puts_escaped(
 	if (git_buf_grow_by(buf, alloclen) < 0)
 		return -1;
 
-	for (scan = string; *scan; ) {
+	for (scan = string; *scan;) {
 		count = strcspn(scan, esc_chars);
 
 		memmove(buf->ptr + buf->size, scan, count);
@@ -168,9 +168,8 @@ int git_buf_text_common_prefix(git_buf *buf, const git_strarray *strings)
 
 	/* go through the rest of the strings, truncating to shared prefix */
 	for (i = 1; i < strings->count; ++i) {
-
 		for (str = strings->strings[i], pfx = buf->ptr;
-			 *str && *str == *pfx; str++, pfx++)
+		        *str && *str == *pfx; str++, pfx++)
 			/* scanning */;
 
 		git_buf_truncate(buf, pfx - buf->ptr);
@@ -288,7 +287,8 @@ bool git_buf_text_gather_stats(
 
 		if (c > 0x1F && c != 0x7F)
 			stats->printable++;
-		else switch (c) {
+		else
+			switch (c) {
 			case '\0':
 				stats->nul++;
 				stats->nonprintable++;
@@ -301,7 +301,7 @@ bool git_buf_text_gather_stats(
 				if (scan < end && *scan == '\n')
 					stats->crlf++;
 				break;
-			case '\t': case '\f': case '\v': case '\b': case 0x1b: /*ESC*/
+			case '\t': case '\f': case '\v': case '\b': case 0x1b:	/*ESC*/
 				stats->printable++;
 				break;
 			default:
@@ -311,5 +311,5 @@ bool git_buf_text_gather_stats(
 	}
 
 	return (stats->nul > 0 ||
-		((stats->printable >> 7) < stats->nonprintable));
+	       ((stats->printable >> 7) < stats->nonprintable));
 }

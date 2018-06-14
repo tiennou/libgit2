@@ -92,8 +92,8 @@ typedef enum {
 	(((E)->flags & GIT_IDXENTRY_STAGEMASK) >> GIT_IDXENTRY_STAGESHIFT)
 
 #define GIT_IDXENTRY_STAGE_SET(E,S) do { \
-	(E)->flags = ((E)->flags & ~GIT_IDXENTRY_STAGEMASK) | \
-		(((S) & 0x03) << GIT_IDXENTRY_STAGESHIFT); } while (0)
+		(E)->flags = ((E)->flags & ~GIT_IDXENTRY_STAGEMASK) | \
+		        (((S) & 0x03) << GIT_IDXENTRY_STAGESHIFT); } while (0)
 
 /**
  * Bitmasks for on-disk fields of `git_index_entry`'s `flags_extended`
@@ -113,7 +113,6 @@ typedef enum {
  *
  */
 typedef enum {
-
 	GIT_IDXENTRY_INTENT_TO_ADD  =  (1 << 13),
 	GIT_IDXENTRY_SKIP_WORKTREE  =  (1 << 14),
 	/** Reserved for future extension */
@@ -127,7 +126,7 @@ typedef enum {
 
 	GIT_IDXENTRY_HASHED            =  (1 << 4),
 	GIT_IDXENTRY_UNHASHED          =  (1 << 5),
-	GIT_IDXENTRY_WT_REMOVE         =  (1 << 6), /**< remove in work directory */
+	GIT_IDXENTRY_WT_REMOVE         =  (1 << 6),	/**< remove in work directory */
 	GIT_IDXENTRY_CONFLICTED        =  (1 << 7),
 
 	GIT_IDXENTRY_UNPACKED          =  (1 << 8),

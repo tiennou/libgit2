@@ -62,14 +62,14 @@ static int init_common(void)
 
 	/* Initialize any other subsystems that have global state */
 	if ((ret = git_allocator_global_init()) == 0 &&
-		(ret = git_hash_global_init()) == 0 &&
-		(ret = git_sysdir_global_init()) == 0 &&
-		(ret = git_filter_global_init()) == 0 &&
-		(ret = git_merge_driver_global_init()) == 0 &&
-		(ret = git_transport_ssh_global_init()) == 0 &&
-		(ret = git_openssl_stream_global_init()) == 0 &&
-		(ret = git_curl_stream_global_init()) == 0 &&
-		(ret = git_mbedtls_stream_global_init()) == 0)
+	        (ret = git_hash_global_init()) == 0 &&
+	        (ret = git_sysdir_global_init()) == 0 &&
+	        (ret = git_filter_global_init()) == 0 &&
+	        (ret = git_merge_driver_global_init()) == 0 &&
+	        (ret = git_transport_ssh_global_init()) == 0 &&
+	        (ret = git_openssl_stream_global_init()) == 0 &&
+	        (ret = git_curl_stream_global_init()) == 0 &&
+	        (ret = git_mbedtls_stream_global_init()) == 0)
 		ret = git_mwindow_global_init();
 
 	GIT_MEMORY_BARRIER;
@@ -83,9 +83,8 @@ static void shutdown_common(void)
 
 	/* Shutdown subsystems that have registered */
 	for (pos = git_atomic_get(&git__n_shutdown_callbacks);
-		pos > 0;
-		pos = git_atomic_dec(&git__n_shutdown_callbacks)) {
-
+	        pos > 0;
+	        pos = git_atomic_dec(&git__n_shutdown_callbacks)) {
 		git_global_shutdown_fn cb = git__swap(
 			git__shutdown_callbacks[pos - 1], NULL);
 
@@ -157,7 +156,9 @@ int git_libgit2_init(void)
 	int ret;
 
 	/* Enter the lock */
-	while (InterlockedCompareExchange(&_mutex, 1, 0)) { Sleep(0); }
+	while (InterlockedCompareExchange(&_mutex, 1, 0)) {
+		Sleep(0);
+	}
 
 	/* Only do work on a 0 -> 1 transition of the refcount */
 	if ((ret = git_atomic_inc(&git__n_inits)) == 1) {
@@ -176,7 +177,9 @@ int git_libgit2_shutdown(void)
 	int ret;
 
 	/* Enter the lock */
-	while (InterlockedCompareExchange(&_mutex, 1, 0)) { Sleep(0); }
+	while (InterlockedCompareExchange(&_mutex, 1, 0)) {
+		Sleep(0);
+	}
 
 	/* Only do work on a 1 -> 0 transition of the refcount */
 	if ((ret = git_atomic_dec(&git__n_inits)) == 0) {
@@ -378,4 +381,4 @@ git_global_st *git__global_state(void)
 	return &__state;
 }
 
-#endif /* GIT_THREADS */
+#endif	/* GIT_THREADS */

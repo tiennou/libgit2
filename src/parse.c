@@ -63,8 +63,8 @@ int git_parse_advance_ws(git_parse_ctx *ctx)
 	int ret = -1;
 
 	while (ctx->line_len > 0 &&
-		ctx->line[0] != '\n' &&
-		git__isspace(ctx->line[0])) {
+	        ctx->line[0] != '\n' &&
+	        git__isspace(ctx->line[0])) {
 		ctx->line++;
 		ctx->line_len--;
 		ctx->remain_len--;
@@ -107,7 +107,7 @@ int git_parse_peek(char *out, git_parse_ctx *ctx, int flags)
 		char c = *ptr;
 
 		if ((flags & GIT_PARSE_PEEK_SKIP_WHITESPACE) &&
-		    git__isspace(c)) {
+		        git__isspace(c)) {
 			remain--;
 			ptr++;
 			continue;

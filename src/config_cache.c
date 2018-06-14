@@ -112,7 +112,7 @@ int git_repository__cvar(int *out, git_repository *repo, git_cvar_cached cvar)
 		git_config *config;
 
 		if ((error = git_repository_config__weakptr(&config, repo)) < 0 ||
-			(error = git_config__cvar(out, config, cvar)) < 0)
+		        (error = git_config__cvar(out, config, cvar)) < 0)
 			return error;
 
 		repo->cvar_cache[(int)cvar] = *out;
@@ -128,4 +128,3 @@ void git_repository__cvar_cache_clear(git_repository *repo)
 	for (i = 0; i < GIT_CVAR_CACHE_MAX; ++i)
 		repo->cvar_cache[i] = GIT_CVAR_NOT_CACHED;
 }
-

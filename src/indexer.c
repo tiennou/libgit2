@@ -32,11 +32,11 @@ struct entry {
 };
 
 struct git_indexer {
-	unsigned int parsed_header :1,
-		pack_committed :1,
-		have_stream :1,
-		have_delta :1,
-		do_fsync :1;
+	unsigned int parsed_header : 1,
+	        pack_committed : 1,
+	        have_stream : 1,
+	        have_delta : 1,
+	        do_fsync : 1;
 	struct git_pack_header hdr;
 	struct git_pack_file *pack;
 	unsigned int mode;
@@ -105,12 +105,12 @@ static int objects_cmp(const void *a, const void *b)
 }
 
 int git_indexer_new(
-		git_indexer **out,
-		const char *prefix,
-		unsigned int mode,
-		git_odb *odb,
-		git_transfer_progress_cb progress_cb,
-		void *progress_payload)
+	git_indexer **out,
+	const char *prefix,
+	unsigned int mode,
+	git_odb *odb,
+	git_transfer_progress_cb progress_cb,
+	void *progress_payload)
 {
 	git_indexer *idx;
 	git_buf path = GIT_BUF_INIT, tmp_path = GIT_BUF_INIT;
@@ -200,7 +200,7 @@ static int hash_header(git_hash_ctx *ctx, git_off_t len, git_otype type)
 	return git_hash_update(ctx, buffer, hdrlen);
 }
 
-static int hash_object_stream(git_indexer*idx, git_packfile_stream *stream)
+static int hash_object_stream(git_indexer *idx, git_packfile_stream *stream)
 {
 	ssize_t read;
 
@@ -319,7 +319,6 @@ static int store_object(git_indexer *idx)
 		git__free(pentry);
 		goto on_error;
 	}
-
 
 	git_oidmap_set_value_at(idx->pack->idx_cache, k, pentry);
 
@@ -517,7 +516,7 @@ static int append_to_pack(git_indexer *idx, const void *data, size_t size)
 	page_start = new_size - page_offset;
 
 	if (p_lseek(fd, page_start + mmap_alignment - 1, SEEK_SET) < 0 ||
-	    p_write(idx->pack->mwf.fd, data, 1) < 0) {
+	        p_write(idx->pack->mwf.fd, data, 1) < 0) {
 		giterr_set(GITERR_OS, "cannot extend packfile '%s'", idx->pack->pack_name);
 		return -1;
 	}
@@ -690,7 +689,7 @@ static int index_path(git_buf *path, git_indexer *idx, const char *suffix)
 		slash--;
 
 	if (git_buf_grow(path, slash + 1 + strlen(prefix) +
-					 GIT_OID_HEXSZ + strlen(suffix) + 1) < 0)
+		GIT_OID_HEXSZ + strlen(suffix) + 1) < 0)
 		return -1;
 
 	git_buf_truncate(path, slash);
@@ -859,7 +858,9 @@ static int resolve_deltas(git_indexer *idx, git_transfer_progress *stats)
 		progressed = 0;
 		non_null = 0;
 		git_vector_foreach(&idx->deltas, i, delta) {
-			git_rawobj obj = {NULL};
+			git_rawobj obj = {
+				NULL
+			};
 
 			if (!delta)
 				continue;
@@ -914,7 +915,6 @@ static int update_header_and_rehash(git_indexer *idx, git_transfer_progress *sta
 
 	git_hash_init(&idx->trailer);
 
-
 	/* Update the header to include the numer of local objects we injected */
 	idx->hdr.hdr_entries = htonl(stats->total_objects + stats->local_objects);
 	if (write_at(idx, &idx->hdr, 0, sizeof(struct git_pack_header)) < 0)
@@ -951,7 +951,9 @@ int git_indexer_commit(git_indexer *idx, git_transfer_progress *stats)
 	git_buf filename = GIT_BUF_INIT;
 	struct entry *entry;
 	git_oid trailer_hash, file_hash;
-	git_filebuf index_file = {0};
+	git_filebuf index_file = {
+		0
+	};
 	void *packfile_trailer;
 
 	if (!idx->parsed_header) {
@@ -1116,7 +1118,7 @@ int git_indexer_commit(git_indexer *idx, git_transfer_progress *stats)
 
 	/* And fsync the parent directory if we're asked to. */
 	if (idx->do_fsync &&
-		git_futils_fsync_parent(git_buf_cstr(&filename)) < 0)
+	        git_futils_fsync_parent(git_buf_cstr(&filename)) < 0)
 		goto on_error;
 
 	idx->pack_committed = 1;

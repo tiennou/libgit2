@@ -27,7 +27,7 @@ enum {
 struct git_patch_generated {
 	struct git_patch base;
 
-	git_diff *diff; /* for refcount purposes, maybe NULL for blob diffs */
+	git_diff *diff;	/* for refcount purposes, maybe NULL for blob diffs */
 	size_t delta_index;
 	git_diff_file_content ofile;
 	git_diff_file_content nfile;
@@ -63,7 +63,7 @@ struct git_patch_generated_output {
 	 * see diff_xdiff.h for how to use this in practice for now.
 	 */
 	int (*diff_cb)(git_patch_generated_output *output,
-		git_patch_generated *patch);
+	        git_patch_generated *patch);
 };
 
 #endif

@@ -24,7 +24,6 @@ int git_stream_register_tls(git_stream_cb ctor)
 
 int git_tls_stream_new(git_stream **out, const char *host, const char *port)
 {
-
 	if (tls_ctor)
 		return tls_ctor(out, host, port);
 

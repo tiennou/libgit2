@@ -128,7 +128,6 @@ GIT_EXTERN(const git_signature *) git_tag_tagger(const git_tag *tag);
  */
 GIT_EXTERN(const char *) git_tag_message(const git_tag *tag);
 
-
 /**
  * Create a new tag in the repository from an object
  *
@@ -317,7 +316,6 @@ GIT_EXTERN(int) git_tag_list_match(
 	const char *pattern,
 	git_repository *repo);
 
-
 typedef int (*git_tag_foreach_cb)(const char *name, git_oid *oid, void *payload);
 
 /**
@@ -331,7 +329,6 @@ GIT_EXTERN(int) git_tag_foreach(
 	git_repository *repo,
 	git_tag_foreach_cb callback,
 	void *payload);
-
 
 /**
  * Recursively peel a tag until a non tag git_object is found

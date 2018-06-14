@@ -127,7 +127,7 @@ int git_fetch_negotiate(git_remote *remote, const git_fetch_options *opts)
 	 */
 	return t->negotiate_fetch(t,
 		remote->repo,
-		(const git_remote_head * const *)remote->refs.contents,
+		(const git_remote_head *const *)remote->refs.contents,
 		remote->refs.length);
 }
 

@@ -50,7 +50,7 @@ GIT_BEGIN_DECL
  * those cases, the behavior will be clearly documented by the API.
  */
 typedef struct {
-	char   *ptr;
+	char *ptr;
 	size_t asize, size;
 } git_buf;
 

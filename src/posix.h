@@ -66,13 +66,13 @@
 
 /* access() mode parameter #defines	*/
 #ifndef F_OK
-#define F_OK 0 /* existence check */
+#define F_OK 0	/* existence check */
 #endif
 #ifndef W_OK
-#define W_OK 2 /* write mode check */
+#define W_OK 2	/* write mode check */
 #endif
 #ifndef R_OK
-#define R_OK 4 /* read mode check */
+#define R_OK 4	/* read mode check */
 #endif
 
 /* Determine whether an errno value indicates that a read or write failed
@@ -129,9 +129,9 @@ extern size_t p_fsync__cnt;
  * Platform-dependent methods
  */
 #ifdef GIT_WIN32
-#	include "win32/posix.h"
+#       include "win32/posix.h"
 #else
-#	include "unix/posix.h"
+#       include "unix/posix.h"
 #endif
 
 #include "strnlen.h"
@@ -143,12 +143,12 @@ GIT_INLINE(int) p_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **res
 	*result = readdir(dirp);
 	return 0;
 }
-#else /* NO_READDIR_R */
-#	define p_readdir_r(d,e,r) readdir_r(d,e,r)
+#else	/* NO_READDIR_R */
+#       define p_readdir_r(d,e,r) readdir_r(d,e,r)
 #endif
 
 #ifdef NO_ADDRINFO
-#	include <netdb.h>
+#       include <netdb.h>
 struct addrinfo {
 	struct hostent *ai_hostent;
 	struct servent *ai_servent;
@@ -163,13 +163,13 @@ struct addrinfo {
 };
 
 extern int p_getaddrinfo(const char *host, const char *port,
-	struct addrinfo *hints, struct addrinfo **info);
+        struct addrinfo *hints, struct addrinfo **info);
 extern void p_freeaddrinfo(struct addrinfo *info);
 extern const char *p_gai_strerror(int ret);
 #else
-#	define p_getaddrinfo(a, b, c, d) getaddrinfo(a, b, c, d)
-#	define p_freeaddrinfo(a) freeaddrinfo(a)
-#	define p_gai_strerror(c) gai_strerror(c)
-#endif /* NO_ADDRINFO */
+#       define p_getaddrinfo(a, b, c, d) getaddrinfo(a, b, c, d)
+#       define p_freeaddrinfo(a) freeaddrinfo(a)
+#       define p_gai_strerror(c) gai_strerror(c)
+#endif	/* NO_ADDRINFO */
 
 #endif

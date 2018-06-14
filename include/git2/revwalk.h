@@ -249,7 +249,6 @@ GIT_EXTERN(int) git_revwalk_push_range(git_revwalk *walk, const char *range);
  */
 GIT_EXTERN(void) git_revwalk_simplify_first_parent(git_revwalk *walk);
 
-
 /**
  * Free a revision walker previously allocated.
  *
@@ -274,7 +273,7 @@ GIT_EXTERN(git_repository *) git_revwalk_repository(git_revwalk *walk);
  * @param commit_id oid of Commit
  * @param payload User-specified pointer to data to be passed as data payload
  */
-typedef int(*git_revwalk_hide_cb)(
+typedef int (*git_revwalk_hide_cb)(
 	const git_oid *commit_id,
 	void *payload);
 

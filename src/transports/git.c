@@ -213,7 +213,6 @@ static int _git_uploadpack_ls(
 	git__free(user);
 	git__free(pass);
 
-
 	if (error < 0) {
 		git_proto_stream_free(*stream);
 		return error;
@@ -311,17 +310,17 @@ static int _git_action(
 	git_subtransport *t = (git_subtransport *) subtransport;
 
 	switch (action) {
-		case GIT_SERVICE_UPLOADPACK_LS:
-			return _git_uploadpack_ls(t, url, stream);
+	case GIT_SERVICE_UPLOADPACK_LS:
+		return _git_uploadpack_ls(t, url, stream);
 
-		case GIT_SERVICE_UPLOADPACK:
-			return _git_uploadpack(t, url, stream);
+	case GIT_SERVICE_UPLOADPACK:
+		return _git_uploadpack(t, url, stream);
 
-		case GIT_SERVICE_RECEIVEPACK_LS:
-			return _git_receivepack_ls(t, url, stream);
+	case GIT_SERVICE_RECEIVEPACK_LS:
+		return _git_receivepack_ls(t, url, stream);
 
-		case GIT_SERVICE_RECEIVEPACK:
-			return _git_receivepack(t, url, stream);
+	case GIT_SERVICE_RECEIVEPACK:
+		return _git_receivepack(t, url, stream);
 	}
 
 	*stream = NULL;

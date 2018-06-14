@@ -17,17 +17,23 @@
 #include <krb5.h>
 
 static gss_OID_desc negotiate_oid_spnego =
-	{ 6, (void *) "\x2b\x06\x01\x05\x05\x02" };
+{
+	6, (void *) "\x2b\x06\x01\x05\x05\x02"
+};
 static gss_OID_desc negotiate_oid_krb5 =
-	{ 9, (void *) "\x2a\x86\x48\x86\xf7\x12\x01\x02\x02" };
+{
+	9, (void *) "\x2a\x86\x48\x86\xf7\x12\x01\x02\x02"
+};
 
 static gss_OID negotiate_oids[] =
-	{ &negotiate_oid_spnego, &negotiate_oid_krb5, NULL };
+{
+	&negotiate_oid_spnego, &negotiate_oid_krb5, NULL
+};
 
 typedef struct {
 	git_http_auth_context parent;
 	unsigned configured : 1,
-		complete : 1;
+	        complete : 1;
 	git_buf target;
 	char *challenge;
 	gss_ctx_id_t gss_context;
@@ -78,8 +84,8 @@ static int negotiate_next_token(
 	http_auth_negotiate_context *ctx = (http_auth_negotiate_context *)c;
 	OM_uint32 status_major, status_minor;
 	gss_buffer_desc target_buffer = GSS_C_EMPTY_BUFFER,
-		input_token = GSS_C_EMPTY_BUFFER,
-		output_token = GSS_C_EMPTY_BUFFER;
+	        input_token = GSS_C_EMPTY_BUFFER,
+	        output_token = GSS_C_EMPTY_BUFFER;
 	gss_buffer_t input_token_ptr = GSS_C_NO_BUFFER;
 	git_buf input_buf = GIT_BUF_INIT;
 	gss_name_t server = NULL;
@@ -113,7 +119,7 @@ static int negotiate_next_token(
 		goto done;
 	} else if (challenge_len > 9) {
 		if (git_buf_decode_base64(&input_buf,
-				ctx->challenge + 10, challenge_len - 10) < 0) {
+			ctx->challenge + 10, challenge_len - 10) < 0) {
 			giterr_set(GITERR_NET, "invalid negotiate challenge from server");
 			error = -1;
 			goto done;
@@ -214,11 +220,10 @@ static int negotiate_init_context(
 				item = &mechanism_list->elements[i];
 
 				if (item->length == (*oid)->length &&
-					memcmp(item->elements, (*oid)->elements, item->length) == 0) {
+				        memcmp(item->elements, (*oid)->elements, item->length) == 0) {
 					ctx->oid = *oid;
 					break;
 				}
-
 			}
 
 			if (ctx->oid)
@@ -272,5 +277,4 @@ int git_http_auth_negotiate(
 	return 0;
 }
 
-#endif /* GIT_GSSAPI */
-
+#endif	/* GIT_GSSAPI */

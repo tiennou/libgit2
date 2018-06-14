@@ -75,7 +75,6 @@ typedef struct {
 	void *frames[GIT_WIN32__STACK__MAX_FRAMES];
 } git_win32__stack__raw_data;
 
-
 /**
  * Load symbol table data.  This should be done in the primary
  * thread at startup (under a lock if there are other threads
@@ -89,7 +88,6 @@ void git_win32__stack_init(void);
  * threads active).
  */
 void git_win32__stack_cleanup(void);
-
 
 /**
  * Capture raw stack trace data for the current process/thread.
@@ -132,9 +130,9 @@ int git_win32__stack_format(
  * @param suffix String written after each frame; defaults to "\n".
  */
 int git_win32__stack(
-	char * pbuf, int buf_len,
+	char *pbuf, int buf_len,
 	int skip,
 	const char *prefix, const char *suffix);
 
-#endif /* GIT_MSVC_CRTDBG */
+#endif	/* GIT_MSVC_CRTDBG */
 #endif

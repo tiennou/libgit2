@@ -125,7 +125,6 @@ typedef struct {
 	char *password;
 } git_cred_userpass_plaintext;
 
-
 /*
  * If the user hasn't included libssh2.h before git2.h, we need to
  * define a few types for the callback signatures.
@@ -137,7 +136,7 @@ typedef struct _LIBSSH2_USERAUTH_KBDINT_RESPONSE LIBSSH2_USERAUTH_KBDINT_RESPONS
 #endif
 
 typedef int (*git_cred_sign_callback)(LIBSSH2_SESSION *session, unsigned char **sig, size_t *sig_len, const unsigned char *data, size_t data_len, void **abstract);
-typedef void (*git_cred_ssh_interactive_callback)(const char* name, int name_len, const char* instruction, int instruction_len, int num_prompts, const LIBSSH2_USERAUTH_KBDINT_PROMPT* prompts, LIBSSH2_USERAUTH_KBDINT_RESPONSE* responses, void **abstract);
+typedef void (*git_cred_ssh_interactive_callback)(const char *name, int name_len, const char *instruction, int instruction_len, int num_prompts, const LIBSSH2_USERAUTH_KBDINT_PROMPT *prompts, LIBSSH2_USERAUTH_KBDINT_RESPONSE *responses, void **abstract);
 
 /**
  * A ssh key from disk
@@ -306,7 +305,6 @@ GIT_EXTERN(int) git_cred_ssh_key_memory_new(
 	const char *publickey,
 	const char *privatekey,
 	const char *passphrase);
-
 
 /**
  * Free a credential.

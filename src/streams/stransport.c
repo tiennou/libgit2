@@ -34,8 +34,8 @@ static int stransport_error(OSStatus ret)
 	giterr_set(GITERR_NET, "SecureTransport error: %s", CFStringGetCStringPtr(message, kCFStringEncodingUTF8));
 	CFRelease(message);
 #else
-    giterr_set(GITERR_NET, "SecureTransport error: OSStatus %d", (unsigned int)ret);
-    GIT_UNUSED(message);
+	giterr_set(GITERR_NET, "SecureTransport error: OSStatus %d", (unsigned int)ret);
+	GIT_UNUSED(message);
 #endif
 
 	return -1;
@@ -83,7 +83,7 @@ static int stransport_connect(git_stream *stream)
 	}
 
 	if (sec_res == kSecTrustResultDeny || sec_res == kSecTrustResultRecoverableTrustFailure ||
-	    sec_res == kSecTrustResultFatalTrustFailure) {
+	        sec_res == kSecTrustResultFatalTrustFailure) {
 		giterr_set(GITERR_SSL, "untrusted connection error");
 		return GIT_ECERTIFICATE;
 	}
@@ -150,7 +150,7 @@ static OSStatus write_cb(SSLConnectionRef conn, const void *data, size_t *len)
 	git_stream *io = (git_stream *) conn;
 
 	if (git_stream_write(io, data, *len, 0) < 0) {
-		return -36; /* "ioErr" from MacErrors.h which is not available on iOS */
+		return -36;	/* "ioErr" from MacErrors.h which is not available on iOS */
 	}
 
 	return noErr;
@@ -190,7 +190,7 @@ static OSStatus read_cb(SSLConnectionRef conn, void *data, size_t *len)
 	do {
 		ret = git_stream_read(io, data + off, *len - off);
 		if (ret < 0) {
-			error = -36; /* "ioErr" from MacErrors.h which is not available on iOS */
+			error = -36;	/* "ioErr" from MacErrors.h which is not available on iOS */
 			break;
 		}
 		if (ret == 0) {
@@ -257,7 +257,7 @@ int git_stransport_stream_new(git_stream **out, const char *host, const char *po
 	error = git_socket_stream_new(&st->io, host, port);
 #endif
 
-	if (error < 0){
+	if (error < 0) {
 		git__free(st);
 		return error;
 	}
@@ -270,11 +270,11 @@ int git_stransport_stream_new(git_stream **out, const char *host, const char *po
 	}
 
 	if ((ret = SSLSetIOFuncs(st->ctx, read_cb, write_cb)) != noErr ||
-	    (ret = SSLSetConnection(st->ctx, st->io)) != noErr ||
-	    (ret = SSLSetSessionOption(st->ctx, kSSLSessionOptionBreakOnServerAuth, true)) != noErr ||
-	    (ret = SSLSetProtocolVersionMin(st->ctx, kTLSProtocol1)) != noErr ||
-	    (ret = SSLSetProtocolVersionMax(st->ctx, kTLSProtocol12)) != noErr ||
-	    (ret = SSLSetPeerDomainName(st->ctx, host, strlen(host))) != noErr) {
+	        (ret = SSLSetConnection(st->ctx, st->io)) != noErr ||
+	        (ret = SSLSetSessionOption(st->ctx, kSSLSessionOptionBreakOnServerAuth, true)) != noErr ||
+	        (ret = SSLSetProtocolVersionMin(st->ctx, kTLSProtocol1)) != noErr ||
+	        (ret = SSLSetProtocolVersionMax(st->ctx, kTLSProtocol12)) != noErr ||
+	        (ret = SSLSetPeerDomainName(st->ctx, host, strlen(host))) != noErr) {
 		CFRelease(st->ctx);
 		git__free(st);
 		return stransport_error(ret);

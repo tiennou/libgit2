@@ -114,7 +114,7 @@ int git_cred_userpass_plaintext_new(
 static void ssh_key_free(struct git_cred *cred)
 {
 	git_cred_ssh_key *c =
-		(git_cred_ssh_key *)cred;
+	        (git_cred_ssh_key *)cred;
 
 	git__free(c->username);
 

@@ -107,7 +107,6 @@ GIT_EXTERN(int) git_revparse(
 	git_repository *repo,
 	const char *spec);
 
-
 /** @} */
 GIT_END_DECL
 #endif

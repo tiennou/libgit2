@@ -743,7 +743,6 @@ GIT_EXTERN(int) git_reference_is_valid_name(const char *refname);
  */
 GIT_EXTERN(const char *) git_reference_shorthand(const git_reference *ref);
 
-
 /** @} */
 GIT_END_DECL
 #endif

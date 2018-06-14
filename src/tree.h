@@ -53,7 +53,6 @@ int git_tree__parse(void *tree, git_odb_object *obj);
  */
 int git_tree__prefix_position(const git_tree *tree, const char *prefix);
 
-
 /**
  * Write a tree to the given repository
  */

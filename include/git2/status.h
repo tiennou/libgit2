@@ -180,11 +180,11 @@ typedef enum {
  * and index; defaults to HEAD.
  */
 typedef struct {
-	unsigned int      version;
+	unsigned int version;
 	git_status_show_t show;
-	unsigned int      flags;
-	git_strarray      pathspec;
-	git_tree          *baseline;
+	unsigned int flags;
+	git_strarray pathspec;
+	git_tree *baseline;
 } git_status_options;
 
 #define GIT_STATUS_OPTIONS_VERSION 1
@@ -223,7 +223,6 @@ typedef struct {
 	git_diff_delta *head_to_index;
 	git_diff_delta *index_to_workdir;
 } git_status_entry;
-
 
 /**
  * Gather file statuses and run a callback for each one.

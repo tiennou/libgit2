@@ -22,6 +22,6 @@ extern int git_http_auth_negotiate(
 
 #define git_http_auth_negotiate git_http_auth_dummy
 
-#endif /* GIT_GSSAPI */
+#endif	/* GIT_GSSAPI */
 
 #endif

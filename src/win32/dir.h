@@ -32,13 +32,13 @@ extern void git__rewinddir(git__DIR *);
 extern int git__closedir(git__DIR *);
 
 # ifndef GIT__WIN32_NO_WRAP_DIR
-#	define dirent git__dirent
-#	define DIR git__DIR
-#	define opendir	git__opendir
-#	define readdir	git__readdir
+#       define dirent git__dirent
+#       define DIR git__DIR
+#       define opendir  git__opendir
+#       define readdir  git__readdir
 #   define readdir_r(d,e,r) git__readdir_ext((d),(e),(r),NULL)
-#	define rewinddir git__rewinddir
-#	define closedir git__closedir
+#       define rewinddir git__rewinddir
+#       define closedir git__closedir
 # endif
 
 #endif

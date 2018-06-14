@@ -52,9 +52,7 @@ GIT_EXTERN(void) git_strarray_free(git_strarray *array);
  */
 GIT_EXTERN(int) git_strarray_copy(git_strarray *tgt, const git_strarray *src);
 
-
 /** @} */
 GIT_END_DECL
 
 #endif
-

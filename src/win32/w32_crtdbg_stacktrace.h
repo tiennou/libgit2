@@ -100,7 +100,6 @@ typedef enum git_win32__crtdbg_stacktrace_options {
 	 * Just return leak count.
 	 */
 	GIT_WIN32__CRTDBG_STACKTRACE__QUIET            = (1 << 3),
-
 } git_win32__crtdbg_stacktrace_options;
 
 /**

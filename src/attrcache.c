@@ -15,7 +15,7 @@
 
 GIT_INLINE(int) attr_cache_lock(git_attr_cache *cache)
 {
-	GIT_UNUSED(cache); /* avoid warning if threading is off */
+	GIT_UNUSED(cache);	/* avoid warning if threading is off */
 
 	if (git_mutex_lock(&cache->lock) < 0) {
 		giterr_set(GITERR_OS, "unable to get attr cache lock");
@@ -26,7 +26,7 @@ GIT_INLINE(int) attr_cache_lock(git_attr_cache *cache)
 
 GIT_INLINE(void) attr_cache_unlock(git_attr_cache *cache)
 {
-	GIT_UNUSED(cache); /* avoid warning if threading is off */
+	GIT_UNUSED(cache);	/* avoid warning if threading is off */
 	git_mutex_unlock(&cache->lock);
 }
 
@@ -223,7 +223,7 @@ int git_attr_cache__get(
 	git_attr_file *file = NULL, *updated = NULL;
 
 	if ((error = attr_cache_lookup(
-			&file, &entry, repo, attr_session, source, base, filename)) < 0)
+		&file, &entry, repo, attr_session, source, base, filename)) < 0)
 		return error;
 
 	/* load file if we don't have one or if existing one is out of date */
@@ -235,7 +235,7 @@ int git_attr_cache__get(
 		if ((error = attr_cache_upsert(cache, updated)) < 0)
 			git_attr_file__free(updated);
 		else {
-			git_attr_file__free(file); /* offset incref from lookup */
+			git_attr_file__free(file);	/* offset incref from lookup */
 			file = updated;
 		}
 	}
@@ -245,7 +245,7 @@ int git_attr_cache__get(
 		/* remove existing entry */
 		if (file) {
 			attr_cache_remove(cache, file);
-			git_attr_file__free(file); /* offset incref from lookup */
+			git_attr_file__free(file);	/* offset incref from lookup */
 			file = NULL;
 		}
 		/* no error if file simply doesn't exist */
@@ -281,7 +281,6 @@ bool git_attr_cache__is_cached(
 	return entry && (entry->file[source] != NULL);
 }
 
-
 static int attr_cache__lookup_path(
 	char **out, git_config *cfg, const char *key, const char *fallback)
 {
@@ -299,7 +298,7 @@ static int attr_cache__lookup_path(
 
 		/* expand leading ~/ as needed */
 		if (cfgval && cfgval[0] == '~' && cfgval[1] == '/') {
-			if (! (error = git_sysdir_expand_global_file(&buf, &cfgval[2])))
+			if (!(error = git_sysdir_expand_global_file(&buf, &cfgval[2])))
 				*out = git_buf_detach(&buf);
 		} else if (cfgval) {
 			*out = git__strdup(cfgval);
@@ -331,9 +330,9 @@ static void attr_cache__free(git_attr_cache *cache)
 
 		git_strmap_foreach_value(cache->files, entry, {
 			for (i = 0; i < GIT_ATTR_FILE_NUM_SOURCES; ++i) {
-				if ((file = git__swap(entry->file[i], NULL)) != NULL) {
-					GIT_REFCOUNT_OWN(file, NULL);
-					git_attr_file__free(file);
+			        if ((file = git__swap(entry->file[i], NULL)) != NULL) {
+			                GIT_REFCOUNT_OWN(file, NULL);
+			                git_attr_file__free(file);
 				}
 			}
 		});
@@ -401,14 +400,14 @@ int git_attr_cache__init(git_repository *repo)
 	 * hashtable for attribute macros, and string pool
 	 */
 	if ((ret = git_strmap_alloc(&cache->files)) < 0 ||
-		(ret = git_strmap_alloc(&cache->macros)) < 0)
+	        (ret = git_strmap_alloc(&cache->macros)) < 0)
 		goto cancel;
 
 	git_pool_init(&cache->pool, 1);
 
 	cache = git__compare_and_swap(&repo->attrcache, NULL, cache);
 	if (cache)
-		goto cancel; /* raced with another thread, free this but no error */
+		goto cancel;	/* raced with another thread, free this but no error */
 
 	git_config_free(cfg);
 
@@ -466,4 +465,3 @@ git_attr_rule *git_attr_cache__lookup_macro(
 
 	return (git_attr_rule *)git_strmap_value_at(macros, pos);
 }
-

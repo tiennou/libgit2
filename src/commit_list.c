@@ -76,7 +76,6 @@ static git_commit_list_node **alloc_parents(
 		&walk->commit_pool, (uint32_t)(n_parents * sizeof(git_commit_list_node *)));
 }
 
-
 void git_commit_list_free(git_commit_list **list_p)
 {
 	git_commit_list *list = *list_p;
@@ -202,4 +201,3 @@ int git_commit_list_parse(git_revwalk *walk, git_commit_list_node *commit)
 	git_odb_object_free(obj);
 	return error;
 }
-

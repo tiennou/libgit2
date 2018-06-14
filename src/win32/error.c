@@ -19,7 +19,7 @@ char *git_win32_get_error_message(DWORD error_code)
 	HMODULE hModule = NULL;
 	char *utf8_msg = NULL;
 	DWORD dwFlags =
-		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS;
+	        FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS;
 
 	if (!error_code)
 		return NULL;
@@ -27,7 +27,7 @@ char *git_win32_get_error_message(DWORD error_code)
 #ifdef GIT_WINHTTP
 	/* Errors raised by WinHTTP are not in the system resource table */
 	if (error_code >= WINHTTP_ERROR_BASE &&
-		error_code <= WINHTTP_ERROR_LAST)
+	        error_code <= WINHTTP_ERROR_LAST)
 		hModule = GetModuleHandleW(L"winhttp");
 #endif
 

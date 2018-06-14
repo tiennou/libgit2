@@ -80,9 +80,9 @@ int git_mbedtls_stream_global_init(void)
 	git__ssl_conf = git__malloc(sizeof(mbedtls_ssl_config));
 	mbedtls_ssl_config_init(git__ssl_conf);
 	if (mbedtls_ssl_config_defaults(git__ssl_conf,
-		                            MBEDTLS_SSL_IS_CLIENT,
-		                            MBEDTLS_SSL_TRANSPORT_STREAM,
-		                            MBEDTLS_SSL_PRESET_DEFAULT) != 0) {
+		MBEDTLS_SSL_IS_CLIENT,
+		MBEDTLS_SSL_TRANSPORT_STREAM,
+		MBEDTLS_SSL_PRESET_DEFAULT) != 0) {
 		giterr_set(GITERR_SSL, "failed to initialize mbedTLS");
 		goto cleanup;
 	}
@@ -101,7 +101,8 @@ int git_mbedtls_stream_global_init(void)
 	cipher_string = cipher_string_tmp = git__strdup(GIT_SSL_DEFAULT_CIPHERS);
 	while ((cipher_name = git__strtok(&cipher_string_tmp, ":")) != NULL) {
 		int cipherid = mbedtls_ssl_get_ciphersuite_id(cipher_name);
-		if (cipherid == 0) continue;
+		if (cipherid == 0)
+			continue;
 
 		ciphers_list[ciphers_known++] = cipherid;
 	}
@@ -120,8 +121,8 @@ int git_mbedtls_stream_global_init(void)
 	ctr_drbg = git__malloc(sizeof(mbedtls_ctr_drbg_context));
 	mbedtls_ctr_drbg_init(ctr_drbg);
 	if (mbedtls_ctr_drbg_seed(ctr_drbg,
-		                      mbedtls_entropy_func,
-		                      mbedtls_entropy, NULL, 0) != 0) {
+		mbedtls_entropy_func,
+		mbedtls_entropy, NULL, 0) != 0) {
 		giterr_set(GITERR_SSL, "failed to initialize mbedTLS entropy pool");
 		goto cleanup;
 	}
@@ -175,8 +176,8 @@ static int ssl_set_error(mbedtls_ssl_context *ssl, int error)
 	if (error != 0)
 		mbedtls_strerror( error, errbuf, 512 );
 
-	switch(error) {
-		case 0:
+	switch (error) {
+	case 0:
 		giterr_set(GITERR_SSL, "SSL error: unknown error");
 		break;
 
@@ -211,7 +212,8 @@ static int verify_server_cert(mbedtls_ssl_context *ssl)
 	if ((ret = mbedtls_ssl_get_verify_result(ssl)) != 0) {
 		char vrfy_buf[512];
 		int len = mbedtls_x509_crt_verify_info(vrfy_buf, sizeof(vrfy_buf), "", ret);
-		if (len >= 1) vrfy_buf[len - 1] = '\0'; /* Remove trailing \n */
+		if (len >= 1)
+			vrfy_buf[len - 1] = '\0';	/* Remove trailing \n */
 		giterr_set(GITERR_SSL, "the SSL certificate is invalid: %#04x - %s", ret, vrfy_buf);
 		return GIT_ECERTIFICATE;
 	}
@@ -227,7 +229,6 @@ typedef struct {
 	mbedtls_ssl_context *ssl;
 	git_cert_x509 cert_info;
 } mbedtls_stream;
-
 
 int mbedtls_connect(git_stream *stream)
 {

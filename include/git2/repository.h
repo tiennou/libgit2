@@ -87,10 +87,10 @@ GIT_EXTERN(int) git_repository_wrap_odb(git_repository **out, git_odb *odb);
  * @return 0 or an error code
  */
 GIT_EXTERN(int) git_repository_discover(
-		git_buf *out,
-		const char *start_path,
-		int across_fs,
-		const char *ceiling_dirs);
+	git_buf *out,
+	const char *start_path,
+	int across_fs,
+	const char *ceiling_dirs);
 
 /**
  * Option flags for `git_repository_open_ext`.
@@ -288,8 +288,8 @@ typedef enum {
  */
 typedef struct {
 	unsigned int version;
-	uint32_t    flags;
-	uint32_t    mode;
+	uint32_t flags;
+	uint32_t mode;
 	const char *workdir_path;
 	const char *description;
 	const char *template_path;
@@ -628,10 +628,10 @@ GIT_EXTERN(int) git_repository_message_remove(git_repository *repo);
 GIT_EXTERN(int) git_repository_state_cleanup(git_repository *repo);
 
 typedef int (*git_repository_fetchhead_foreach_cb)(const char *ref_name,
-	const char *remote_url,
-	const git_oid *oid,
-	unsigned int is_merge,
-	void *payload);
+        const char *remote_url,
+        const git_oid *oid,
+        unsigned int is_merge,
+        void *payload);
 
 /**
  * Invoke 'callback' for each entry in the given FETCH_HEAD file.
@@ -650,7 +650,7 @@ GIT_EXTERN(int) git_repository_fetchhead_foreach(
 	void *payload);
 
 typedef int (*git_repository_mergehead_foreach_cb)(const git_oid *oid,
-	void *payload);
+        void *payload);
 
 /**
  * If a merge is in progress, invoke 'callback' for each commit ID in the
@@ -719,7 +719,7 @@ GIT_EXTERN(int) git_repository_hashfile(
  */
 GIT_EXTERN(int) git_repository_set_head(
 	git_repository* repo,
-	const char* refname);
+	const char *refname);
 
 /**
  * Make the repository HEAD directly point to the Commit.
@@ -828,7 +828,6 @@ GIT_EXTERN(int) git_repository_set_namespace(git_repository *repo, const char *n
  * @return the active namespace, or NULL if there isn't one
  */
 GIT_EXTERN(const char *) git_repository_get_namespace(git_repository *repo);
-
 
 /**
  * Determine if the repository was a shallow clone

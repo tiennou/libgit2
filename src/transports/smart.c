@@ -46,7 +46,7 @@ GIT_INLINE(int) git_smart__reset_stream(transport_smart *t, bool close_subtransp
 	}
 
 	if (close_subtransport &&
-		t->wrapped->close(t->wrapped) < 0)
+	        t->wrapped->close(t->wrapped) < 0)
 		return -1;
 
 	return 0;
@@ -167,7 +167,7 @@ int git_smart__update_heads(transport_smart *t, git_vector *symrefs)
 			git_vector_foreach(symrefs, j, spec) {
 				git_buf_clear(&buf);
 				if (git_refspec_src_matches(spec, ref->head.name) &&
-				    !(error = git_refspec_transform(&buf, spec, ref->head.name)))
+				        !(error = git_refspec_transform(&buf, spec, ref->head.name)))
 					ref->head.symref_target = git_buf_detach(&buf);
 			}
 
@@ -277,7 +277,7 @@ static int git_smart__connect(
 
 	/* If the only ref in the list is capabilities^{} with OID_ZERO, remove it */
 	if (1 == t->refs.length && !strcmp(first->head.name, "capabilities^{}") &&
-		git_oid_iszero(&first->head.oid)) {
+	        git_oid_iszero(&first->head.oid)) {
 		git_vector_clear(&t->refs);
 		git_pkt_free((git_pkt *)first);
 	}
@@ -407,14 +407,14 @@ static int git_smart__close(git_transport *transport)
 	 * will complain that we disconnected unexpectedly.
 	 */
 	if (t->connected && !t->rpc &&
-	    !t->wrapped->action(&stream, t->wrapped, t->url, GIT_SERVICE_UPLOADPACK)) {
+	        !t->wrapped->action(&stream, t->wrapped, t->url, GIT_SERVICE_UPLOADPACK)) {
 		t->current_stream->write(t->current_stream, flush, 4);
 	}
 
 	ret = git_smart__reset_stream(t, true);
 
 	git_vector_foreach(common, i, p)
-		git_pkt_free(p);
+	git_pkt_free(p);
 
 	git_vector_free(common);
 
@@ -443,7 +443,7 @@ static void git_smart__free(git_transport *transport)
 
 	git_vector_free(&t->heads);
 	git_vector_foreach(refs, i, p)
-		git_pkt_free(p);
+	git_pkt_free(p);
 
 	git_vector_free(refs);
 	git__free((char *)t->proxy.url);

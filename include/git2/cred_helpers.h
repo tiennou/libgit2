@@ -26,7 +26,6 @@ typedef struct git_cred_userpass_payload {
 	const char *password;
 } git_cred_userpass_payload;
 
-
 /**
  * Stock callback usable as a git_cred_acquire_cb.  This calls
  * git_cred_userpass_plaintext_new unless the protocol has not specified
@@ -41,12 +40,11 @@ typedef struct git_cred_userpass_payload {
  *        interpreted as a `git_cred_userpass_payload*`.)
  */
 GIT_EXTERN(int) git_cred_userpass(
-		git_cred **cred,
-		const char *url,
-		const char *user_from_url,
-		unsigned int allowed_types,
-		void *payload);
-
+	git_cred **cred,
+	const char *url,
+	const char *user_from_url,
+	unsigned int allowed_types,
+	void *payload);
 
 /** @} */
 GIT_END_DECL

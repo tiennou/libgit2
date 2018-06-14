@@ -18,7 +18,8 @@ static int git_xdiff_scan_int(const char **str, int *value)
 	const char *scan = *str;
 	int v = 0, digits = 0;
 	/* find next digit */
-	for (scan = *str; *scan && !git__isdigit(*scan); scan++);
+	for (scan = *str; *scan && !git__isdigit(*scan); scan++)
+		;
 	/* parse next number */
 	for (; git__isdigit(*scan); scan++, digits++)
 		v = (v * 10) + (*scan - '0');
@@ -140,7 +141,7 @@ static int git_xdiff_cb(void *priv, mmbuffer_t *bufs, int len)
 		info->hunk.header[info->hunk.header_len] = '\0';
 
 		if (output->hunk_cb != NULL &&
-			(output->error = output->hunk_cb(
+		        (output->error = output->hunk_cb(
 				delta, &info->hunk, output->payload)))
 			return output->error;
 
@@ -151,9 +152,9 @@ static int git_xdiff_cb(void *priv, mmbuffer_t *bufs, int len)
 	if (len == 2 || len == 3) {
 		/* expect " "/"-"/"+", then data */
 		line.origin =
-			(*bufs[0].ptr == '+') ? GIT_DIFF_LINE_ADDITION :
-			(*bufs[0].ptr == '-') ? GIT_DIFF_LINE_DELETION :
-			GIT_DIFF_LINE_CONTEXT;
+		        (*bufs[0].ptr == '+') ? GIT_DIFF_LINE_ADDITION :
+		        (*bufs[0].ptr == '-') ? GIT_DIFF_LINE_DELETION :
+		        GIT_DIFF_LINE_CONTEXT;
 
 		if (line.origin == GIT_DIFF_LINE_ADDITION)
 			line.content_offset = bufs[1].ptr - info->xd_new_data.ptr;
@@ -177,9 +178,9 @@ static int git_xdiff_cb(void *priv, mmbuffer_t *bufs, int len)
 		 * with out a newline but added a blank line, so ADD_EOFNL.
 		 */
 		line.origin =
-			(*bufs[0].ptr == '+') ? GIT_DIFF_LINE_DEL_EOFNL :
-			(*bufs[0].ptr == '-') ? GIT_DIFF_LINE_ADD_EOFNL :
-			GIT_DIFF_LINE_CONTEXT_EOFNL;
+		        (*bufs[0].ptr == '+') ? GIT_DIFF_LINE_DEL_EOFNL :
+		        (*bufs[0].ptr == '-') ? GIT_DIFF_LINE_ADD_EOFNL :
+		        GIT_DIFF_LINE_CONTEXT_EOFNL;
 
 		line.content_offset = -1;
 
@@ -223,7 +224,7 @@ static int git_xdiff(git_patch_generated_output *output, git_patch_generated *pa
 	git_patch_generated_new_data(&info.xd_new_data.ptr, &info.xd_new_data.size, patch);
 
 	if (info.xd_old_data.size > GIT_XDIFF_MAX_SIZE ||
-		info.xd_new_data.size > GIT_XDIFF_MAX_SIZE) {
+	        info.xd_new_data.size > GIT_XDIFF_MAX_SIZE) {
 		giterr_set(GITERR_INVALID, "files too large for diff");
 		return -1;
 	}

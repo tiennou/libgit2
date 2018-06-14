@@ -76,13 +76,12 @@ int git_attr_get(
 	attr.name_hash = git_attr_file__name_hash(name);
 
 	git_vector_foreach(&files, i, file) {
-
 		git_attr_file__foreach_matching_rule(file, &path, j, rule) {
 			size_t pos;
 
 			if (!git_vector_bsearch(&pos, &rule->assigns, &attr)) {
 				*value = ((git_attr_assignment *)git_vector_get(
-							  &rule->assigns, pos))->value;
+					&rule->assigns, pos))->value;
 				goto cleanup;
 			}
 		}
@@ -94,7 +93,6 @@ cleanup:
 
 	return error;
 }
-
 
 typedef struct {
 	git_attr_name name;
@@ -138,13 +136,11 @@ int git_attr_get_many_with_session(
 	GITERR_CHECK_ALLOC(info);
 
 	git_vector_foreach(&files, i, file) {
-
 		git_attr_file__foreach_matching_rule(file, &path, j, rule) {
-
 			for (k = 0; k < num_attr; k++) {
 				size_t pos;
 
-				if (info[k].found != NULL) /* already found assignment */
+				if (info[k].found != NULL)	/* already found assignment */
 					continue;
 
 				if (!info[k].name.name) {
@@ -154,7 +150,7 @@ int git_attr_get_many_with_session(
 
 				if (!git_vector_bsearch(&pos, &rule->assigns, &info[k].name)) {
 					info[k].found = (git_attr_assignment *)
-						git_vector_get(&rule->assigns, pos);
+					        git_vector_get(&rule->assigns, pos);
 					values[k] = info[k].found->value;
 
 					if (++num_found == num_attr)
@@ -215,13 +211,11 @@ int git_attr_foreach(
 		return -1;
 
 	if ((error = collect_attr_files(repo, NULL, flags, pathname, &files)) < 0 ||
-		(error = git_strmap_alloc(&seen)) < 0)
+	        (error = git_strmap_alloc(&seen)) < 0)
 		goto cleanup;
 
 	git_vector_foreach(&files, i, file) {
-
 		git_attr_file__foreach_matching_rule(file, &path, j, rule) {
-
 			git_vector_foreach(&rule->assigns, k, assign) {
 				/* skip if higher priority assignment was already seen */
 				if (git_strmap_exists(seen, assign->name))
@@ -261,7 +255,7 @@ static int preload_attr_file(
 	if (!file)
 		return 0;
 	if (!(error = git_attr_cache__get(
-			&preload, repo, attr_session, source, base, file, git_attr_file__parse_buffer)))
+		&preload, repo, attr_session, source, base, file, git_attr_file__parse_buffer)))
 		git_attr_file__free(preload);
 
 	return error;
@@ -332,26 +326,26 @@ static int attr_setup(git_repository *repo, git_attr_session *attr_session)
 		goto out;
 
 	if ((error = preload_attr_file(
-			repo, attr_session, GIT_ATTR_FILE__FROM_FILE,
-			NULL, git_repository_attr_cache(repo)->cfg_attr_file)) < 0)
+		repo, attr_session, GIT_ATTR_FILE__FROM_FILE,
+		NULL, git_repository_attr_cache(repo)->cfg_attr_file)) < 0)
 		goto out;
 
 	if ((error = git_repository_item_path(&path,
-			repo, GIT_REPOSITORY_ITEM_INFO)) < 0)
+		repo, GIT_REPOSITORY_ITEM_INFO)) < 0)
 		goto out;
 
 	if ((error = preload_attr_file(
-			repo, attr_session, GIT_ATTR_FILE__FROM_FILE,
-			path.ptr, GIT_ATTR_FILE_INREPO)) < 0)
+		repo, attr_session, GIT_ATTR_FILE__FROM_FILE,
+		path.ptr, GIT_ATTR_FILE_INREPO)) < 0)
 		goto out;
 
 	if (workdir != NULL &&
-		(error = preload_attr_file(
+	        (error = preload_attr_file(
 			repo, attr_session, GIT_ATTR_FILE__FROM_FILE, workdir, GIT_ATTR_FILE)) < 0)
 		goto out;
 
 	if ((error = git_repository_index__weakptr(&idx, repo)) < 0 ||
-		(error = preload_attr_file(
+	        (error = preload_attr_file(
 			repo, attr_session, GIT_ATTR_FILE__FROM_INDEX, NULL, GIT_ATTR_FILE)) < 0)
 		goto out;
 
@@ -497,7 +491,9 @@ static int collect_attr_files(
 	int error = 0;
 	git_buf dir = GIT_BUF_INIT, attrfile = GIT_BUF_INIT;
 	const char *workdir = git_repository_workdir(repo);
-	attr_walk_up_info info = { NULL };
+	attr_walk_up_info info = {
+		NULL
+	};
 
 	if ((error = attr_setup(repo, attr_session)) < 0)
 		return error;
@@ -532,7 +528,7 @@ static int collect_attr_files(
 	info.flags = flags;
 	info.workdir = workdir;
 	if (git_repository_index__weakptr(&info.index, repo) < 0)
-		giterr_clear(); /* no error even if there is no index */
+		giterr_clear();	/* no error even if there is no index */
 	info.files = files;
 
 	if (!strcmp(dir.ptr, "."))
@@ -562,7 +558,7 @@ static int collect_attr_files(
 			error = 0;
 	}
 
- cleanup:
+cleanup:
 	if (error < 0)
 		release_attr_files(files);
 	git_buf_dispose(&attrfile);

@@ -70,7 +70,7 @@ static int push_commit(git_revwalk *walk, const git_oid *oid, int uninteresting,
 
 	commit = git_revwalk__commit_lookup(walk, &commit_id);
 	if (commit == NULL)
-		return -1; /* error already reported by failed lookup */
+		return -1;	/* error already reported by failed lookup */
 
 	/* A previous hide already told us we don't want this commit  */
 	if (commit->uninteresting)
@@ -98,7 +98,6 @@ int git_revwalk_push(git_revwalk *walk, const git_oid *oid)
 	assert(walk && oid);
 	return push_commit(walk, oid, 0, false);
 }
-
 
 int git_revwalk_hide(git_revwalk *walk, const git_oid *oid)
 {
@@ -289,7 +288,6 @@ static void mark_parents_uninteresting(git_commit_list_node *commit)
 	for (i = 0; i < commit->out_degree; i++)
 		git_commit_list_insert(commit->parents[i], &parents);
 
-
 	while (parents) {
 		commit = git_commit_list_pop(&parents);
 
@@ -423,7 +421,7 @@ static int limit_list(git_commit_list **out, git_revwalk *walk, git_commit_list 
 		}
 
 		if (!commit->uninteresting && walk->hide_cb && walk->hide_cb(&commit->oid, walk->hide_cb_payload))
-				continue;
+			continue;
 
 		time = commit->time;
 		p = &git_commit_list_insert(commit, p)->next;
@@ -464,7 +462,7 @@ static int sort_in_topological_order(git_commit_list **out, git_revwalk *walk, g
 	 * ourselves to those commits in the original list (in-degree
 	 * of 1) avoiding setting it for any parent that was hidden.
 	 */
-	for(ll = list; ll; ll = ll->next) {
+	for (ll = list; ll; ll = ll->next) {
 		for (i = 0; i < ll->item->out_degree; ++i) {
 			git_commit_list_node *parent = ll->item->parents[i];
 			if (parent->in_degree)
@@ -476,7 +474,7 @@ static int sort_in_topological_order(git_commit_list **out, git_revwalk *walk, g
 	 * Now we find the tips i.e. those not reachable from any other node
 	 * i.e. those which still have an in-degree of 1.
 	 */
-	for(ll = list; ll; ll = ll->next) {
+	for (ll = list; ll; ll = ll->next) {
 		if (ll->item->in_degree == 1) {
 			if ((error = git_pqueue_insert(&queue, ll->item)))
 				goto cleanup;
@@ -490,7 +488,6 @@ static int sort_in_topological_order(git_commit_list **out, git_revwalk *walk, g
 	 */
 	if ((walk->sorting & GIT_SORT_TIME) == 0)
 		git_pqueue_reverse(&queue);
-
 
 	pptr = &newlist;
 	newlist = NULL;
@@ -571,7 +568,6 @@ static int prepare_walk(git_revwalk *walk)
 	}
 
 	if (walk->sorting & GIT_SORT_REVERSE) {
-
 		while ((error = walk->get_next(&next, walk)) == 0)
 			if (git_commit_list_insert(next, &walk->iterator_reverse) == NULL)
 				return -1;
@@ -585,7 +581,6 @@ static int prepare_walk(git_revwalk *walk)
 	walk->walking = 1;
 	return 0;
 }
-
 
 int git_revwalk_new(git_revwalk **revwalk_out, git_repository *repo)
 {
@@ -695,7 +690,7 @@ void git_revwalk_reset(git_revwalk *walk)
 		commit->uninteresting = 0;
 		commit->added = 0;
 		commit->flags = 0;
-		});
+	});
 
 	git_pqueue_clear(&walk->iterator_time);
 	git_commit_list_free(&walk->iterator_topo);
@@ -728,4 +723,3 @@ int git_revwalk_add_hide_cb(
 
 	return 0;
 }
-

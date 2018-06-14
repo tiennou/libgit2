@@ -184,8 +184,8 @@ GIT_EXTERN(int) git_branch_lookup(
  *  ref is no local or remote branch).
  */
 GIT_EXTERN(int) git_branch_name(
-		const char **out,
-		const git_reference *ref);
+	const char **out,
+	const git_reference *ref);
 
 /**
  * Return the reference supporting the remote tracking branch,
@@ -276,7 +276,6 @@ GIT_EXTERN(int) git_branch_remote_name(
 	git_repository *repo,
 	const char *canonical_branch_name);
 
-
 /**
  * Retrieve the name of the upstream remote of a local branch
  *
@@ -285,7 +284,7 @@ GIT_EXTERN(int) git_branch_remote_name(
  * @param refname the full name of the branch
  * @return 0 or an error code
  */
- GIT_EXTERN(int) git_branch_upstream_remote(git_buf *buf, git_repository *repo, const char *refname);
+GIT_EXTERN(int) git_branch_upstream_remote(git_buf *buf, git_repository *repo, const char *refname);
 
 /** @} */
 GIT_END_DECL
