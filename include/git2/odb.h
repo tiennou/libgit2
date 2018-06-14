@@ -97,7 +97,8 @@ GIT_EXTERN(void) git_odb_free(git_odb *db);
  * - 0 if the object was read;
  * - GIT_ENOTFOUND if the object is not in the database.
  */
-GIT_EXTERN(int) git_odb_read(git_odb_object **out, git_odb *db, const git_oid *id);
+GIT_EXTERN(int)
+git_odb_read(git_odb_object **out, git_odb *db, const git_oid *id);
 
 /**
  * Read an object from the database, given a prefix
@@ -126,7 +127,8 @@ GIT_EXTERN(int) git_odb_read(git_odb_object **out, git_odb *db, const git_oid *i
  * - GIT_ENOTFOUND if the object is not in the database.
  * - GIT_EAMBIGUOUS if the prefix is ambiguous (several objects match the prefix)
  */
-GIT_EXTERN(int) git_odb_read_prefix(git_odb_object **out, git_odb *db, const git_oid *short_id, size_t len);
+GIT_EXTERN(int)
+git_odb_read_prefix(git_odb_object **out, git_odb *db, const git_oid *short_id, size_t len);
 
 /**
  * Read the header of an object from the database, without
@@ -146,7 +148,8 @@ GIT_EXTERN(int) git_odb_read_prefix(git_odb_object **out, git_odb *db, const git
  * - 0 if the object was read;
  * - GIT_ENOTFOUND if the object is not in the database.
  */
-GIT_EXTERN(int) git_odb_read_header(size_t *len_out, git_otype *type_out, git_odb *db, const git_oid *id);
+GIT_EXTERN(int)
+git_odb_read_header(size_t *len_out, git_otype *type_out, git_odb *db, const git_oid *id);
 
 /**
  * Determine if the given object can be found in the object database.
@@ -170,8 +173,8 @@ GIT_EXTERN(int) git_odb_exists(git_odb *db, const git_oid *id);
  * @return 0 if found, GIT_ENOTFOUND if not found, GIT_EAMBIGUOUS if multiple
  *         matches were found, other value < 0 if there was a read error.
  */
-GIT_EXTERN(int) git_odb_exists_prefix(
-	git_oid *out, git_odb *db, const git_oid *short_id, size_t len);
+GIT_EXTERN(int)
+git_odb_exists_prefix(git_oid *out, git_odb *db, const git_oid *short_id, size_t len);
 
 /**
  * The information about object IDs to query in `git_odb_expand_ids`,
@@ -212,10 +215,8 @@ typedef struct git_odb_expand_id {
  * @param count The length of the `ids` array
  * @return 0 on success or an error code on failure
  */
-GIT_EXTERN(int) git_odb_expand_ids(
-	git_odb *db,
-	git_odb_expand_id *ids,
-	size_t count);
+GIT_EXTERN(int)
+git_odb_expand_ids(git_odb *db, git_odb_expand_id *ids, size_t count);
 
 /**
  * Refresh the object database to load newly added files.
@@ -250,7 +251,8 @@ GIT_EXTERN(int) git_odb_refresh(struct git_odb *db);
  * @param payload data to pass to the callback
  * @return 0 on success, non-zero callback return value, or error code
  */
-GIT_EXTERN(int) git_odb_foreach(git_odb *db, git_odb_foreach_cb cb, void *payload);
+GIT_EXTERN(int)
+git_odb_foreach(git_odb *db, git_odb_foreach_cb cb, void *payload);
 
 /**
  * Write an object directly into the ODB
@@ -270,7 +272,8 @@ GIT_EXTERN(int) git_odb_foreach(git_odb *db, git_odb_foreach_cb cb, void *payloa
  * @param type type of the data to store
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_odb_write(git_oid *out, git_odb *odb, const void *data, size_t len, git_otype type);
+GIT_EXTERN(int)
+git_odb_write(git_oid *out, git_odb *odb, const void *data, size_t len, git_otype type);
 
 /**
  * Open a stream to write an object into the ODB
@@ -293,7 +296,8 @@ GIT_EXTERN(int) git_odb_write(git_oid *out, git_odb *odb, const void *data, size
  * @param type type of the object that will be written
  * @return 0 if the stream was created; error code otherwise
  */
-GIT_EXTERN(int) git_odb_open_wstream(git_odb_stream **out, git_odb *db, git_off_t size, git_otype type);
+GIT_EXTERN(int)
+git_odb_open_wstream(git_odb_stream **out, git_odb *db, git_off_t size, git_otype type);
 
 /**
  * Write to an odb stream
@@ -306,7 +310,8 @@ GIT_EXTERN(int) git_odb_open_wstream(git_odb_stream **out, git_odb *db, git_off_
  * @param len the buffer's length
  * @return 0 if the write succeeded; error code otherwise
  */
-GIT_EXTERN(int) git_odb_stream_write(git_odb_stream *stream, const char *buffer, size_t len);
+GIT_EXTERN(int)
+git_odb_stream_write(git_odb_stream *stream, const char *buffer, size_t len);
 
 /**
  * Finish writing to an odb stream
@@ -321,14 +326,16 @@ GIT_EXTERN(int) git_odb_stream_write(git_odb_stream *stream, const char *buffer,
  * @param stream the stream
  * @return 0 on success; an error code otherwise
  */
-GIT_EXTERN(int) git_odb_stream_finalize_write(git_oid *out, git_odb_stream *stream);
+GIT_EXTERN(int)
+git_odb_stream_finalize_write(git_oid *out, git_odb_stream *stream);
 
 /**
  * Read from an odb stream
  *
  * Most backends don't implement streaming reads
  */
-GIT_EXTERN(int) git_odb_stream_read(git_odb_stream *stream, char *buffer, size_t len);
+GIT_EXTERN(int)
+git_odb_stream_read(git_odb_stream *stream, char *buffer, size_t len);
 
 /**
  * Free an odb stream
@@ -363,8 +370,8 @@ GIT_EXTERN(void) git_odb_stream_free(git_odb_stream *stream);
  * @param oid oid of the object the stream will read from
  * @return 0 if the stream was created; error code otherwise
  */
-GIT_EXTERN(int) git_odb_open_rstream(
-	git_odb_stream **out,
+GIT_EXTERN(int)
+git_odb_open_rstream(git_odb_stream **out,
 	size_t *len,
 	git_otype *type,
 	git_odb *db,
@@ -388,8 +395,8 @@ GIT_EXTERN(int) git_odb_open_rstream(
  * so performance may be affected.
  * @param progress_payload payload for the progress callback
  */
-GIT_EXTERN(int) git_odb_write_pack(
-	git_odb_writepack **out,
+GIT_EXTERN(int)
+git_odb_write_pack(git_odb_writepack **out,
 	git_odb *db,
 	git_transfer_progress_cb progress_cb,
 	void *progress_payload);
@@ -406,7 +413,8 @@ GIT_EXTERN(int) git_odb_write_pack(
  * @param type of the data to hash
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_odb_hash(git_oid *out, const void *data, size_t len, git_otype type);
+GIT_EXTERN(int)
+git_odb_hash(git_oid *out, const void *data, size_t len, git_otype type);
 
 /**
  * Read a file from disk and fill a git_oid with the object id
@@ -421,7 +429,8 @@ GIT_EXTERN(int) git_odb_hash(git_oid *out, const void *data, size_t len, git_oty
  * @param type the type of the object that will be hashed
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_odb_hashfile(git_oid *out, const char *path, git_otype type);
+GIT_EXTERN(int)
+git_odb_hashfile(git_oid *out, const char *path, git_otype type);
 
 /**
  * Create a copy of an odb_object
@@ -435,7 +444,8 @@ GIT_EXTERN(int) git_odb_hashfile(git_oid *out, const char *path, git_otype type)
  * @param source object to copy
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_odb_object_dup(git_odb_object **dest, git_odb_object *source);
+GIT_EXTERN(int)
+git_odb_object_dup(git_odb_object **dest, git_odb_object *source);
 
 /**
  * Close an ODB object
@@ -502,7 +512,8 @@ GIT_EXTERN(git_otype) git_odb_object_type(git_odb_object *object);
  * @param priority Value for ordering the backends queue
  * @return 0 on success; error code otherwise
  */
-GIT_EXTERN(int) git_odb_add_backend(git_odb *odb, git_odb_backend *backend, int priority);
+GIT_EXTERN(int)
+git_odb_add_backend(git_odb *odb, git_odb_backend *backend, int priority);
 
 /**
  * Add a custom backend to an existing Object DB; this
@@ -523,7 +534,8 @@ GIT_EXTERN(int) git_odb_add_backend(git_odb *odb, git_odb_backend *backend, int 
  * @param priority Value for ordering the backends queue
  * @return 0 on success; error code otherwise
  */
-GIT_EXTERN(int) git_odb_add_alternate(git_odb *odb, git_odb_backend *backend, int priority);
+GIT_EXTERN(int)
+git_odb_add_alternate(git_odb *odb, git_odb_backend *backend, int priority);
 
 /**
  * Get the number of ODB backend objects
@@ -541,7 +553,8 @@ GIT_EXTERN(size_t) git_odb_num_backends(git_odb *odb);
  * @param pos index into object database backend list
  * @return 0 on success; GIT_ENOTFOUND if pos is invalid; other errors < 0
  */
-GIT_EXTERN(int) git_odb_get_backend(git_odb_backend **out, git_odb *odb, size_t pos);
+GIT_EXTERN(int)
+git_odb_get_backend(git_odb_backend **out, git_odb *odb, size_t pos);
 
 /** @} */
 GIT_END_DECL

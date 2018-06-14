@@ -109,26 +109,25 @@ extern void git_submodule_cache_free(git_repository *repo);
 
 /* Additional flags on top of public GIT_SUBMODULE_STATUS values */
 enum {
-	GIT_SUBMODULE_STATUS__WD_SCANNED          = (1u << 20),
-	GIT_SUBMODULE_STATUS__HEAD_OID_VALID      = (1u << 21),
-	GIT_SUBMODULE_STATUS__INDEX_OID_VALID     = (1u << 22),
-	GIT_SUBMODULE_STATUS__WD_OID_VALID        = (1u << 23),
-	GIT_SUBMODULE_STATUS__HEAD_NOT_SUBMODULE  = (1u << 24),
+	GIT_SUBMODULE_STATUS__WD_SCANNED = (1u << 20),
+	GIT_SUBMODULE_STATUS__HEAD_OID_VALID = (1u << 21),
+	GIT_SUBMODULE_STATUS__INDEX_OID_VALID = (1u << 22),
+	GIT_SUBMODULE_STATUS__WD_OID_VALID = (1u << 23),
+	GIT_SUBMODULE_STATUS__HEAD_NOT_SUBMODULE = (1u << 24),
 	GIT_SUBMODULE_STATUS__INDEX_NOT_SUBMODULE = (1u << 25),
-	GIT_SUBMODULE_STATUS__WD_NOT_SUBMODULE    = (1u << 26),
+	GIT_SUBMODULE_STATUS__WD_NOT_SUBMODULE = (1u << 26),
 	GIT_SUBMODULE_STATUS__INDEX_MULTIPLE_ENTRIES = (1u << 27),
 };
 
-#define GIT_SUBMODULE_STATUS__CLEAR_INTERNAL(S) \
-	((S) & ~(0xFFFFFFFFu << 20))
+#define GIT_SUBMODULE_STATUS__CLEAR_INTERNAL(S) ((S) & ~(0xFFFFFFFFu << 20))
 
 /* Internal lookup does not attempt to refresh cached data */
-extern int git_submodule__lookup(
-	git_submodule **out, git_repository *repo, const char *path);
+extern int git_submodule__lookup(git_submodule **out,
+	git_repository *repo,
+	const char *path);
 
 /* Internal status fn returns status and optionally the various OIDs */
-extern int git_submodule__status(
-	unsigned int *out_status,
+extern int git_submodule__status(unsigned int *out_status,
 	git_oid *out_head_id,
 	git_oid *out_index_id,
 	git_oid *out_wd_id,
@@ -136,18 +135,12 @@ extern int git_submodule__status(
 	git_submodule_ignore_t ign);
 
 /* Open submodule repository as bare repo for quick HEAD check, etc. */
-extern int git_submodule_open_bare(
-	git_repository **repo,
-	git_submodule *submodule);
+extern int git_submodule_open_bare(git_repository **repo, git_submodule *submodule);
 
-extern int git_submodule_parse_ignore(
-	git_submodule_ignore_t *out, const char *value);
-extern int git_submodule_parse_update(
-	git_submodule_update_t *out, const char *value);
+extern int git_submodule_parse_ignore(git_submodule_ignore_t *out, const char *value);
+extern int git_submodule_parse_update(git_submodule_update_t *out, const char *value);
 
-extern int git_submodule__map(
-	git_repository *repo,
-	git_strmap *map);
+extern int git_submodule__map(git_repository *repo, git_strmap *map);
 
 /**
  * Check whether a submodule's name is valid.

@@ -58,10 +58,15 @@ struct git_config_backend {
 	struct git_config *cfg;
 
 	/* Open means open the file/database and parse if necessary */
-	int (*open)(struct git_config_backend *, git_config_level_t level, const git_repository *repo);
+	int (*open)(struct git_config_backend *,
+		git_config_level_t level,
+		const git_repository *repo);
 	int (*get)(struct git_config_backend *, const char *key, git_config_entry **entry);
 	int (*set)(struct git_config_backend *, const char *key, const char *value);
-	int (*set_multivar)(git_config_backend *cfg, const char *name, const char *regexp, const char *value);
+	int (*set_multivar)(git_config_backend *cfg,
+		const char *name,
+		const char *regexp,
+		const char *value);
 	int (*del)(struct git_config_backend *, const char *key);
 	int (*del_multivar)(struct git_config_backend *, const char *key, const char *regexp);
 	int (*iterator)(git_config_iterator **, struct git_config_backend *);
@@ -84,7 +89,10 @@ struct git_config_backend {
 	void (*free)(struct git_config_backend *);
 };
 #define GIT_CONFIG_BACKEND_VERSION 1
-#define GIT_CONFIG_BACKEND_INIT {GIT_CONFIG_BACKEND_VERSION}
+#define GIT_CONFIG_BACKEND_INIT \
+	{ \
+		GIT_CONFIG_BACKEND_VERSION \
+	}
 
 /**
  * Initializes a `git_config_backend` with default values. Equivalent to
@@ -94,9 +102,8 @@ struct git_config_backend {
  * @param version Version of struct; pass `GIT_CONFIG_BACKEND_VERSION`
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_config_init_backend(
-	git_config_backend *backend,
-	unsigned int version);
+GIT_EXTERN(int)
+git_config_init_backend(git_config_backend *backend, unsigned int version);
 
 /**
  * Add a generic config file instance to an existing config
@@ -118,8 +125,8 @@ GIT_EXTERN(int) git_config_init_backend(
  * @return 0 on success, GIT_EEXISTS when adding more than one file
  *  for a given priority level (and force_replace set to 0), or error code
  */
-GIT_EXTERN(int) git_config_add_backend(
-	git_config *cfg,
+GIT_EXTERN(int)
+git_config_add_backend(git_config *cfg,
 	git_config_backend *file,
 	git_config_level_t level,
 	const git_repository *repo,

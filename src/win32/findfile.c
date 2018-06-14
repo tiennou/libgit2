@@ -11,12 +11,15 @@
 #include "utf-conv.h"
 #include "path.h"
 
-#define REG_MSYSGIT_INSTALL_LOCAL L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Git_is1"
+#define REG_MSYSGIT_INSTALL_LOCAL \
+	L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Git_is1"
 
 #ifndef _WIN64
 #define REG_MSYSGIT_INSTALL REG_MSYSGIT_INSTALL_LOCAL
 #else
-#define REG_MSYSGIT_INSTALL L"SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Git_is1"
+#define REG_MSYSGIT_INSTALL \
+	L"SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\G" \
+	L"it_is1"
 #endif
 
 typedef struct {
@@ -49,7 +52,7 @@ static int win32_path_to_8(git_buf *dest, const wchar_t *src)
 	return git_buf_sets(dest, utf8_path);
 }
 
-static wchar_t* win32_walkpath(wchar_t *path, wchar_t *buf, size_t buflen)
+static wchar_t *win32_walkpath(wchar_t *path, wchar_t *buf, size_t buflen)
 {
 	wchar_t term, *base = path;
 
@@ -77,14 +80,14 @@ static int win32_find_git_in_path(git_buf *buf, const wchar_t *gitexe, const wch
 	if (!env)
 		return -1;
 
-	while ((env = win32_walkpath(env, root.path, MAX_PATH-1)) && *root.path) {
+	while ((env = win32_walkpath(env, root.path, MAX_PATH - 1)) && *root.path) {
 		root.len = (DWORD)wcslen(root.path);
 		lastch = root.path[root.len - 1];
 
 		/* ensure trailing slash (MAX_PATH-1 to walkpath guarantees space) */
 		if (lastch != L'/' && lastch != L'\\') {
 			root.path[root.len++] = L'\\';
-			root.path[root.len]   = L'\0';
+			root.path[root.len] = L'\0';
 		}
 
 		if (root.len + gitexe_len >= MAX_PATH)
@@ -103,8 +106,10 @@ static int win32_find_git_in_path(git_buf *buf, const wchar_t *gitexe, const wch
 	return GIT_ENOTFOUND;
 }
 
-static int win32_find_git_in_registry(
-	git_buf *buf, const HKEY hive, const wchar_t *key, const wchar_t *subdir)
+static int win32_find_git_in_registry(git_buf *buf,
+	const HKEY hive,
+	const wchar_t *key,
+	const wchar_t *subdir)
 {
 	HKEY hKey;
 	int error = GIT_ENOTFOUND;
@@ -120,7 +125,8 @@ static int win32_find_git_in_registry(
 		cbData = (DWORD)(sizeof(path) - wcslen(subdir) * sizeof(wchar_t));
 
 		/* InstallLocation points to the root of the git directory */
-		if (!RegQueryValueExW(hKey, L"InstallLocation", NULL, &dwType, (LPBYTE)path, &cbData) &&
+		if (!RegQueryValueExW(hKey, L"InstallLocation", NULL, &dwType,
+				(LPBYTE)path, &cbData) &&
 			dwType == REG_SZ) {
 
 			/* Append the suffix */
@@ -138,8 +144,7 @@ static int win32_find_git_in_registry(
 	return error;
 }
 
-static int win32_find_existing_dirs(
-	git_buf *out, const wchar_t *tmpl[])
+static int win32_find_existing_dirs(git_buf *out, const wchar_t *tmpl[])
 {
 	_findfile_path path16;
 	git_buf buf = GIT_BUF_INIT;
@@ -147,10 +152,8 @@ static int win32_find_existing_dirs(
 	git_buf_clear(out);
 
 	for (; *tmpl != NULL; tmpl++) {
-		if (!git_win32__expand_path(&path16, *tmpl) &&
-			path16.path[0] != L'%' &&
-			!_waccess(path16.path, F_OK))
-		{
+		if (!git_win32__expand_path(&path16, *tmpl) && path16.path[0] != L'%' &&
+			!_waccess(path16.path, F_OK)) {
 			win32_path_to_8(&buf, path16.path);
 
 			if (buf.size)
@@ -178,11 +181,12 @@ int git_win32__find_system_dirs(git_buf *out, const wchar_t *subdir)
 
 	/* directories where git is installed according to registry */
 	if (!win32_find_git_in_registry(
-			&buf, HKEY_CURRENT_USER, REG_MSYSGIT_INSTALL_LOCAL, subdir) && buf.size)
+			&buf, HKEY_CURRENT_USER, REG_MSYSGIT_INSTALL_LOCAL, subdir) &&
+		buf.size)
 		git_buf_join(out, GIT_PATH_LIST_SEPARATOR, out->ptr, buf.ptr);
 
-	if (!win32_find_git_in_registry(
-			&buf, HKEY_LOCAL_MACHINE, REG_MSYSGIT_INSTALL, subdir) && buf.size)
+	if (!win32_find_git_in_registry(&buf, HKEY_LOCAL_MACHINE, REG_MSYSGIT_INSTALL, subdir) &&
+		buf.size)
 		git_buf_join(out, GIT_PATH_LIST_SEPARATOR, out->ptr, buf.ptr);
 
 	git_buf_dispose(&buf);

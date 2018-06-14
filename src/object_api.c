@@ -23,7 +23,10 @@ int git_commit_lookup(git_commit **out, git_repository *repo, const git_oid *id)
 	return git_object_lookup((git_object **)out, repo, id, GIT_OBJ_COMMIT);
 }
 
-int git_commit_lookup_prefix(git_commit **out, git_repository *repo, const git_oid *id, size_t len)
+int git_commit_lookup_prefix(git_commit **out,
+	git_repository *repo,
+	const git_oid *id,
+	size_t len)
 {
 	return git_object_lookup_prefix((git_object **)out, repo, id, len, GIT_OBJ_COMMIT);
 }

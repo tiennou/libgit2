@@ -72,40 +72,39 @@ GIT_BEGIN_DECL
  * * WD_UNTRACKED      - wd contains untracked files
  */
 typedef enum {
-	GIT_SUBMODULE_STATUS_IN_HEAD           = (1u << 0),
-	GIT_SUBMODULE_STATUS_IN_INDEX          = (1u << 1),
-	GIT_SUBMODULE_STATUS_IN_CONFIG         = (1u << 2),
-	GIT_SUBMODULE_STATUS_IN_WD             = (1u << 3),
-	GIT_SUBMODULE_STATUS_INDEX_ADDED       = (1u << 4),
-	GIT_SUBMODULE_STATUS_INDEX_DELETED     = (1u << 5),
-	GIT_SUBMODULE_STATUS_INDEX_MODIFIED    = (1u << 6),
-	GIT_SUBMODULE_STATUS_WD_UNINITIALIZED  = (1u << 7),
-	GIT_SUBMODULE_STATUS_WD_ADDED          = (1u << 8),
-	GIT_SUBMODULE_STATUS_WD_DELETED        = (1u << 9),
-	GIT_SUBMODULE_STATUS_WD_MODIFIED       = (1u << 10),
+	GIT_SUBMODULE_STATUS_IN_HEAD = (1u << 0),
+	GIT_SUBMODULE_STATUS_IN_INDEX = (1u << 1),
+	GIT_SUBMODULE_STATUS_IN_CONFIG = (1u << 2),
+	GIT_SUBMODULE_STATUS_IN_WD = (1u << 3),
+	GIT_SUBMODULE_STATUS_INDEX_ADDED = (1u << 4),
+	GIT_SUBMODULE_STATUS_INDEX_DELETED = (1u << 5),
+	GIT_SUBMODULE_STATUS_INDEX_MODIFIED = (1u << 6),
+	GIT_SUBMODULE_STATUS_WD_UNINITIALIZED = (1u << 7),
+	GIT_SUBMODULE_STATUS_WD_ADDED = (1u << 8),
+	GIT_SUBMODULE_STATUS_WD_DELETED = (1u << 9),
+	GIT_SUBMODULE_STATUS_WD_MODIFIED = (1u << 10),
 	GIT_SUBMODULE_STATUS_WD_INDEX_MODIFIED = (1u << 11),
-	GIT_SUBMODULE_STATUS_WD_WD_MODIFIED    = (1u << 12),
-	GIT_SUBMODULE_STATUS_WD_UNTRACKED      = (1u << 13),
+	GIT_SUBMODULE_STATUS_WD_WD_MODIFIED = (1u << 12),
+	GIT_SUBMODULE_STATUS_WD_UNTRACKED = (1u << 13),
 } git_submodule_status_t;
 
-#define GIT_SUBMODULE_STATUS__IN_FLAGS		0x000Fu
-#define GIT_SUBMODULE_STATUS__INDEX_FLAGS	0x0070u
-#define GIT_SUBMODULE_STATUS__WD_FLAGS		0x3F80u
+#define GIT_SUBMODULE_STATUS__IN_FLAGS 0x000Fu
+#define GIT_SUBMODULE_STATUS__INDEX_FLAGS 0x0070u
+#define GIT_SUBMODULE_STATUS__WD_FLAGS 0x3F80u
 
 #define GIT_SUBMODULE_STATUS_IS_UNMODIFIED(S) \
 	(((S) & ~GIT_SUBMODULE_STATUS__IN_FLAGS) == 0)
 
 #define GIT_SUBMODULE_STATUS_IS_INDEX_UNMODIFIED(S) \
-	(((S) & GIT_SUBMODULE_STATUS__INDEX_FLAGS) == 0)
+	(((S)&GIT_SUBMODULE_STATUS__INDEX_FLAGS) == 0)
 
 #define GIT_SUBMODULE_STATUS_IS_WD_UNMODIFIED(S) \
-	(((S) & (GIT_SUBMODULE_STATUS__WD_FLAGS & \
-	~GIT_SUBMODULE_STATUS_WD_UNINITIALIZED)) == 0)
+	(((S) & (GIT_SUBMODULE_STATUS__WD_FLAGS & ~GIT_SUBMODULE_STATUS_WD_UNINITIALIZED)) == 0)
 
 #define GIT_SUBMODULE_STATUS_IS_WD_DIRTY(S) \
-	(((S) & (GIT_SUBMODULE_STATUS_WD_INDEX_MODIFIED | \
-	GIT_SUBMODULE_STATUS_WD_WD_MODIFIED | \
-	GIT_SUBMODULE_STATUS_WD_UNTRACKED)) != 0)
+	(((S) & \
+		 (GIT_SUBMODULE_STATUS_WD_INDEX_MODIFIED | GIT_SUBMODULE_STATUS_WD_WD_MODIFIED | \
+			 GIT_SUBMODULE_STATUS_WD_UNTRACKED)) != 0)
 
 /**
  * Function pointer to receive each submodule
@@ -115,8 +114,7 @@ typedef enum {
  * @param payload value you passed to the foreach function as payload
  * @return 0 on success or error code
  */
-typedef int (*git_submodule_cb)(
-	git_submodule *sm, const char *name, void *payload);
+typedef int (*git_submodule_cb)(git_submodule *sm, const char *name, void *payload);
 
 /**
  * Submodule update options structure
@@ -133,7 +131,7 @@ typedef struct git_submodule_update_options {
 	 * checkout, set the `checkout_strategy` to
 	 * `GIT_CHECKOUT_NONE`. Generally you will want the use
 	 * GIT_CHECKOUT_SAFE to update files in the working
-	 * directory. 
+	 * directory.
 	 */
 	git_checkout_options checkout_opts;
 
@@ -154,9 +152,11 @@ typedef struct git_submodule_update_options {
 
 #define GIT_SUBMODULE_UPDATE_OPTIONS_VERSION 1
 #define GIT_SUBMODULE_UPDATE_OPTIONS_INIT \
-	{ GIT_SUBMODULE_UPDATE_OPTIONS_VERSION, \
-		{ GIT_CHECKOUT_OPTIONS_VERSION, GIT_CHECKOUT_SAFE }, \
-	GIT_FETCH_OPTIONS_INIT, 1 }
+	{ \
+		GIT_SUBMODULE_UPDATE_OPTIONS_VERSION, \
+			{ GIT_CHECKOUT_OPTIONS_VERSION, GIT_CHECKOUT_SAFE }, \
+			GIT_FETCH_OPTIONS_INIT, 1 \
+	}
 
 /**
  * Initialize git_submodule_update_options structure
@@ -168,8 +168,9 @@ typedef struct git_submodule_update_options {
  * @param version The struct version; pass `GIT_SUBMODULE_UPDATE_OPTIONS_VERSION`.
  * @return Zero on success; -1 on failure.
  */
-GIT_EXTERN(int) git_submodule_update_init_options(
-	git_submodule_update_options *opts, unsigned int version);
+GIT_EXTERN(int)
+git_submodule_update_init_options(git_submodule_update_options *opts,
+	unsigned int version);
 
 /**
  * Update a submodule. This will clone a missing submodule and
@@ -189,7 +190,10 @@ GIT_EXTERN(int) git_submodule_update_init_options(
  *         function, or a negative value to indicate an error (use
  *         `giterr_last` for a detailed error message).
  */
-GIT_EXTERN(int) git_submodule_update(git_submodule *submodule, int init, git_submodule_update_options *options);
+GIT_EXTERN(int)
+git_submodule_update(git_submodule *submodule,
+	int init,
+	git_submodule_update_options *options);
 
 /**
  * Lookup submodule information by name or path.
@@ -218,10 +222,8 @@ GIT_EXTERN(int) git_submodule_update(git_submodule *submodule, int init, git_sub
  *         GIT_EEXISTS if a repository is found in working directory only,
  *         -1 on other errors.
  */
-GIT_EXTERN(int) git_submodule_lookup(
-	git_submodule **out,
-	git_repository *repo,
-	const char *name);
+GIT_EXTERN(int)
+git_submodule_lookup(git_submodule **out, git_repository *repo, const char *name);
 
 /**
  * Release a submodule
@@ -248,10 +250,8 @@ GIT_EXTERN(void) git_submodule_free(git_submodule *submodule);
  * @param payload Extra data to pass to callback
  * @return 0 on success, -1 on error, or non-zero return value of callback
  */
-GIT_EXTERN(int) git_submodule_foreach(
-	git_repository *repo,
-	git_submodule_cb callback,
-	void *payload);
+GIT_EXTERN(int)
+git_submodule_foreach(git_repository *repo, git_submodule_cb callback, void *payload);
 
 /**
  * Set up a new git submodule for checkout.
@@ -278,8 +278,8 @@ GIT_EXTERN(int) git_submodule_foreach(
  * @return 0 on success, GIT_EEXISTS if submodule already exists,
  *         -1 on other errors.
  */
-GIT_EXTERN(int) git_submodule_add_setup(
-	git_submodule **out,
+GIT_EXTERN(int)
+git_submodule_add_setup(git_submodule **out,
 	git_repository *repo,
 	const char *url,
 	const char *path,
@@ -307,9 +307,8 @@ GIT_EXTERN(int) git_submodule_add_finalize(git_submodule *submodule);
  *            save the change.
  * @return 0 on success, <0 on failure
  */
-GIT_EXTERN(int) git_submodule_add_to_index(
-	git_submodule *submodule,
-	int write_index);
+GIT_EXTERN(int)
+git_submodule_add_to_index(git_submodule *submodule, int write_index);
 
 /**
  * Get the containing repository for a submodule.
@@ -359,14 +358,15 @@ GIT_EXTERN(const char *) git_submodule_url(git_submodule *submodule);
  * @param url Relative url
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_submodule_resolve_url(git_buf *out, git_repository *repo, const char *url);
+GIT_EXTERN(int)
+git_submodule_resolve_url(git_buf *out, git_repository *repo, const char *url);
 
 /**
-* Get the branch for the submodule.
-*
-* @param submodule Pointer to submodule object
-* @return Pointer to the submodule branch
-*/
+ * Get the branch for the submodule.
+ *
+ * @param submodule Pointer to submodule object
+ * @return Pointer to the submodule branch
+ */
 GIT_EXTERN(const char *) git_submodule_branch(git_submodule *submodule);
 
 /**
@@ -380,7 +380,8 @@ GIT_EXTERN(const char *) git_submodule_branch(git_submodule *submodule);
  * @param branch Branch that should be used for the submodule
  * @return 0 on success, <0 on failure
  */
-GIT_EXTERN(int) git_submodule_set_branch(git_repository *repo, const char *name, const char *branch);
+GIT_EXTERN(int)
+git_submodule_set_branch(git_repository *repo, const char *name, const char *branch);
 
 /**
  * Set the URL for the submodule in the configuration
@@ -394,7 +395,8 @@ GIT_EXTERN(int) git_submodule_set_branch(git_repository *repo, const char *name,
  * @param url URL that should be used for the submodule
  * @return 0 on success, <0 on failure
  */
-GIT_EXTERN(int) git_submodule_set_url(git_repository *repo, const char *name, const char *url);
+GIT_EXTERN(int)
+git_submodule_set_url(git_repository *repo, const char *name, const char *url);
 
 /**
  * Get the OID for the submodule in the index.
@@ -448,8 +450,8 @@ GIT_EXTERN(const git_oid *) git_submodule_wd_id(git_submodule *submodule);
  * @return The current git_submodule_ignore_t valyue what will be used for
  *         this submodule.
  */
-GIT_EXTERN(git_submodule_ignore_t) git_submodule_ignore(
-	git_submodule *submodule);
+GIT_EXTERN(git_submodule_ignore_t)
+git_submodule_ignore(git_submodule *submodule);
 
 /**
  * Set the ignore rule for the submodule in the configuration
@@ -461,8 +463,8 @@ GIT_EXTERN(git_submodule_ignore_t) git_submodule_ignore(
  * @param ignore The new value for the ignore rule
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_submodule_set_ignore(
-	git_repository *repo,
+GIT_EXTERN(int)
+git_submodule_set_ignore(git_repository *repo,
 	const char *name,
 	git_submodule_ignore_t ignore);
 
@@ -476,8 +478,8 @@ GIT_EXTERN(int) git_submodule_set_ignore(
  * @return The current git_submodule_update_t value that will be used
  *         for this submodule.
  */
-GIT_EXTERN(git_submodule_update_t) git_submodule_update_strategy(
-	git_submodule *submodule);
+GIT_EXTERN(git_submodule_update_t)
+git_submodule_update_strategy(git_submodule *submodule);
 
 /**
  * Set the update rule for the submodule in the configuration
@@ -489,8 +491,8 @@ GIT_EXTERN(git_submodule_update_t) git_submodule_update_strategy(
  * @param update The new value to use
  * @return 0 or an error code
  */
-GIT_EXTERN(int) git_submodule_set_update(
-	git_repository *repo,
+GIT_EXTERN(int)
+git_submodule_set_update(git_repository *repo,
 	const char *name,
 	git_submodule_update_t update);
 
@@ -505,8 +507,8 @@ GIT_EXTERN(int) git_submodule_set_update(
  *
  * @return 0 if fetchRecurseSubmodules is false, 1 if true
  */
-GIT_EXTERN(git_submodule_recurse_t) git_submodule_fetch_recurse_submodules(
-	git_submodule *submodule);
+GIT_EXTERN(git_submodule_recurse_t)
+git_submodule_fetch_recurse_submodules(git_submodule *submodule);
 
 /**
  * Set the fetchRecurseSubmodules rule for a submodule in the configuration
@@ -518,8 +520,8 @@ GIT_EXTERN(git_submodule_recurse_t) git_submodule_fetch_recurse_submodules(
  * @param fetch_recurse_submodules Boolean value
  * @return old value for fetchRecurseSubmodules
  */
-GIT_EXTERN(int) git_submodule_set_fetch_recurse_submodules(
-	git_repository *repo,
+GIT_EXTERN(int)
+git_submodule_set_fetch_recurse_submodules(git_repository *repo,
 	const char *name,
 	git_submodule_recurse_t fetch_recurse_submodules);
 
@@ -551,10 +553,8 @@ GIT_EXTERN(int) git_submodule_init(git_submodule *submodule, int overwrite);
  *        the repo in .git/modules vs. repo directly in workdir.
  * @return 0 on success, <0 on failure.
  */
-GIT_EXTERN(int) git_submodule_repo_init(
-	git_repository **out,
-	const git_submodule *sm,
-	int use_gitlink);
+GIT_EXTERN(int)
+git_submodule_repo_init(git_repository **out, const git_submodule *sm, int use_gitlink);
 
 /**
  * Copy submodule remote info into submodule repo.
@@ -578,9 +578,8 @@ GIT_EXTERN(int) git_submodule_sync(git_submodule *submodule);
  * @param submodule Submodule to be opened
  * @return 0 on success, <0 if submodule repo could not be opened.
  */
-GIT_EXTERN(int) git_submodule_open(
-	git_repository **repo,
-	git_submodule *submodule);
+GIT_EXTERN(int)
+git_submodule_open(git_repository **repo, git_submodule *submodule);
 
 /**
  * Reread submodule info from config, index, and HEAD.
@@ -608,8 +607,8 @@ GIT_EXTERN(int) git_submodule_reload(git_submodule *submodule, int force);
  * @param ignore the ignore rules to follow
  * @return 0 on success, <0 on error
  */
-GIT_EXTERN(int) git_submodule_status(
-	unsigned int *status,
+GIT_EXTERN(int)
+git_submodule_status(unsigned int *status,
 	git_repository *repo,
 	const char *name,
 	git_submodule_ignore_t ignore);
@@ -628,9 +627,8 @@ GIT_EXTERN(int) git_submodule_status(
  * @param submodule Submodule for which to get status
  * @return 0 on success, <0 on error
  */
-GIT_EXTERN(int) git_submodule_location(
-	unsigned int *location_status,
-	git_submodule *submodule);
+GIT_EXTERN(int)
+git_submodule_location(unsigned int *location_status, git_submodule *submodule);
 
 /** @} */
 GIT_END_DECL

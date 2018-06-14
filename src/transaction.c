@@ -40,8 +40,7 @@ typedef struct {
 	const char *message;
 	git_signature *sig;
 
-	unsigned int committed :1,
-		remove :1;
+	unsigned int committed : 1, remove : 1;
 } transaction_node;
 
 struct git_transaction {
@@ -120,7 +119,7 @@ int git_transaction_lock_ref(git_transaction *tx, const char *refname)
 		return error;
 
 	git_strmap_insert(tx->locks, node->name, node, &error);
-	if (error < 0) 
+	if (error < 0)
 		goto cleanup;
 
 	return 0;
@@ -148,7 +147,10 @@ static int find_locked(transaction_node **out, git_transaction *tx, const char *
 	return 0;
 }
 
-static int copy_common(transaction_node *node, git_transaction *tx, const git_signature *sig, const char *msg)
+static int copy_common(transaction_node *node,
+	git_transaction *tx,
+	const git_signature *sig,
+	const char *msg)
 {
 	if (sig && git_signature__pdup(&node->sig, sig, &tx->pool) < 0)
 		return -1;
@@ -175,7 +177,11 @@ static int copy_common(transaction_node *node, git_transaction *tx, const git_si
 	return 0;
 }
 
-int git_transaction_set_target(git_transaction *tx, const char *refname, const git_oid *target, const git_signature *sig, const char *msg)
+int git_transaction_set_target(git_transaction *tx,
+	const char *refname,
+	const git_oid *target,
+	const git_signature *sig,
+	const char *msg)
 {
 	int error;
 	transaction_node *node;
@@ -194,7 +200,11 @@ int git_transaction_set_target(git_transaction *tx, const char *refname, const g
 	return 0;
 }
 
-int git_transaction_set_symbolic_target(git_transaction *tx, const char *refname, const char *target, const git_signature *sig, const char *msg)
+int git_transaction_set_symbolic_target(git_transaction *tx,
+	const char *refname,
+	const char *target,
+	const git_signature *sig,
+	const char *msg)
 {
 	int error;
 	transaction_node *node;
@@ -271,7 +281,9 @@ static int dup_reflog(git_reflog **out, const git_reflog *in, git_pool *pool)
 	return 0;
 }
 
-int git_transaction_set_reflog(git_transaction *tx, const char *refname, const git_reflog *reflog)
+int git_transaction_set_reflog(git_transaction *tx,
+	const char *refname,
+	const git_reflog *reflog)
 {
 	int error;
 	transaction_node *node;
@@ -304,11 +316,13 @@ static int update_target(git_refdb *db, transaction_node *node)
 	update_reflog = node->reflog == NULL;
 
 	if (node->remove) {
-		error =  git_refdb_unlock(db, node->payload, 2, false, ref, NULL, NULL);
+		error = git_refdb_unlock(db, node->payload, 2, false, ref, NULL, NULL);
 	} else if (node->ref_type == GIT_REF_OID) {
-		error = git_refdb_unlock(db, node->payload, true, update_reflog, ref, node->sig, node->message);
+		error = git_refdb_unlock(db, node->payload, true, update_reflog, ref,
+			node->sig, node->message);
 	} else if (node->ref_type == GIT_REF_SYMBOLIC) {
-		error = git_refdb_unlock(db, node->payload, true, update_reflog, ref, node->sig, node->message);
+		error = git_refdb_unlock(db, node->payload, true, update_reflog, ref,
+			node->sig, node->message);
 	} else {
 		abort();
 	}
@@ -333,7 +347,7 @@ int git_transaction_commit(git_transaction *tx)
 		return error;
 	}
 
-	git_strmap_foreach_value(tx->locks, node, {
+	git_strmap_foreach_value (tx->locks, node, {
 		if (node->reflog) {
 			if ((error = tx->db->backend->reflog_write(tx->db->backend, node->reflog)) < 0)
 				return error;
@@ -343,7 +357,8 @@ int git_transaction_commit(git_transaction *tx)
 			if ((error = update_target(tx->db, node)) < 0)
 				return error;
 		}
-	});
+	})
+		;
 
 	return 0;
 }
@@ -366,12 +381,13 @@ void git_transaction_free(git_transaction *tx)
 	}
 
 	/* start by unlocking the ones we've left hanging, if any */
-	git_strmap_foreach_value(tx->locks, node, {
+	git_strmap_foreach_value (tx->locks, node, {
 		if (node->committed)
 			continue;
 
 		git_refdb_unlock(tx->db, node->payload, false, false, NULL, NULL, NULL);
-	});
+	})
+		;
 
 	git_refdb_free(tx->db);
 	git_strmap_free(tx->locks);

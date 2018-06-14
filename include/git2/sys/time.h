@@ -28,4 +28,3 @@ GIT_EXTERN(double) git_time_monotonic(void);
 
 GIT_END_DECL
 #endif
-

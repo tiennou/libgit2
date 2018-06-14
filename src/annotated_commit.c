@@ -18,8 +18,7 @@
 #include "git2/tree.h"
 #include "git2/index.h"
 
-static int annotated_commit_init(
-	git_annotated_commit **out,
+static int annotated_commit_init(git_annotated_commit **out,
 	git_commit *commit,
 	const char *description)
 {
@@ -54,8 +53,7 @@ done:
 	return error;
 }
 
-static int annotated_commit_init_from_id(
-	git_annotated_commit **out,
+static int annotated_commit_init_from_id(git_annotated_commit **out,
 	git_repository *repo,
 	const git_oid *id,
 	const char *description)
@@ -77,23 +75,19 @@ done:
 	return error;
 }
 
-int git_annotated_commit_lookup(
-	git_annotated_commit **out,
+int git_annotated_commit_lookup(git_annotated_commit **out,
 	git_repository *repo,
 	const git_oid *id)
 {
 	return annotated_commit_init_from_id(out, repo, id, NULL);
 }
 
-int git_annotated_commit_from_commit(
-	git_annotated_commit **out,
-	git_commit *commit)
+int git_annotated_commit_from_commit(git_annotated_commit **out, git_commit *commit)
 {
 	return annotated_commit_init(out, commit, NULL);
 }
 
-int git_annotated_commit_from_revspec(
-	git_annotated_commit **out,
+int git_annotated_commit_from_revspec(git_annotated_commit **out,
 	git_repository *repo,
 	const char *revspec)
 {
@@ -118,8 +112,7 @@ int git_annotated_commit_from_revspec(
 	return error;
 }
 
-int git_annotated_commit_from_ref(
-	git_annotated_commit **out,
+int git_annotated_commit_from_ref(git_annotated_commit **out,
 	git_repository *repo,
 	const git_reference *ref)
 {
@@ -132,11 +125,9 @@ int git_annotated_commit_from_ref(
 
 	if ((error = git_reference_resolve(&resolved, ref)) < 0)
 		return error;
-	
-	error = annotated_commit_init_from_id(out,
-		repo,
-		git_reference_target(resolved),
-		git_reference_name(ref));
+
+	error = annotated_commit_init_from_id(
+		out, repo, git_reference_target(resolved), git_reference_name(ref));
 
 	if (!error) {
 		(*out)->ref_name = git__strdup(git_reference_name(ref));
@@ -147,9 +138,7 @@ int git_annotated_commit_from_ref(
 	return error;
 }
 
-int git_annotated_commit_from_head(
-	git_annotated_commit **out,
-	git_repository *repo)
+int git_annotated_commit_from_head(git_annotated_commit **out, git_repository *repo)
 {
 	git_reference *head;
 	int error;
@@ -158,7 +147,7 @@ int git_annotated_commit_from_head(
 
 	*out = NULL;
 
-    if ((error = git_reference_lookup(&head, repo, GIT_HEAD_FILE)) < 0)
+	if ((error = git_reference_lookup(&head, repo, GIT_HEAD_FILE)) < 0)
 		return -1;
 
 	error = git_annotated_commit_from_ref(out, repo, head);
@@ -167,8 +156,7 @@ int git_annotated_commit_from_head(
 	return error;
 }
 
-int git_annotated_commit_from_fetchhead(
-	git_annotated_commit **out,
+int git_annotated_commit_from_fetchhead(git_annotated_commit **out,
 	git_repository *repo,
 	const char *branch_name,
 	const char *remote_url,
@@ -189,8 +177,7 @@ int git_annotated_commit_from_fetchhead(
 }
 
 
-const git_oid *git_annotated_commit_id(
-	const git_annotated_commit *annotated_commit)
+const git_oid *git_annotated_commit_id(const git_annotated_commit *annotated_commit)
 {
 	assert(annotated_commit);
 	return git_commit_id(annotated_commit->commit);
@@ -202,19 +189,19 @@ void git_annotated_commit_free(git_annotated_commit *annotated_commit)
 		return;
 
 	switch (annotated_commit->type) {
-		case GIT_ANNOTATED_COMMIT_REAL:
-			git_commit_free(annotated_commit->commit);
-			git_tree_free(annotated_commit->tree);
-			git__free((char *)annotated_commit->description);
-			git__free((char *)annotated_commit->ref_name);
-			git__free((char *)annotated_commit->remote_url);
-			break;
-		case GIT_ANNOTATED_COMMIT_VIRTUAL:
-			git_index_free(annotated_commit->index);
-			git_array_clear(annotated_commit->parents);
-			break;
-		default:
-			abort();
+	case GIT_ANNOTATED_COMMIT_REAL:
+		git_commit_free(annotated_commit->commit);
+		git_tree_free(annotated_commit->tree);
+		git__free((char *)annotated_commit->description);
+		git__free((char *)annotated_commit->ref_name);
+		git__free((char *)annotated_commit->remote_url);
+		break;
+	case GIT_ANNOTATED_COMMIT_VIRTUAL:
+		git_index_free(annotated_commit->index);
+		git_array_clear(annotated_commit->parents);
+		break;
+	default:
+		abort();
 	}
 
 	git__free(annotated_commit);

@@ -16,4 +16,3 @@ extern int git_win32__find_xdg_dirs(git_buf *out);
 extern int git_win32__find_programdata_dirs(git_buf *out);
 
 #endif
-

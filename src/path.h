@@ -85,31 +85,27 @@ extern int git_path_to_dir(git_buf *path);
 /**
  * Ensure string has a trailing '/' if there is space for it.
  */
-extern void git_path_string_to_dir(char* path, size_t size);
+extern void git_path_string_to_dir(char *path, size_t size);
 
 /**
  * Taken from git.git; returns nonzero if the given path is "." or "..".
  */
 GIT_INLINE(int) git_path_is_dot_or_dotdot(const char *name)
 {
-	return (name[0] == '.' &&
-			  (name[1] == '\0' ||
-				(name[1] == '.' && name[2] == '\0')));
+	return (name[0] == '.' && (name[1] == '\0' || (name[1] == '.' && name[2] == '\0')));
 }
 
 #ifdef GIT_WIN32
 GIT_INLINE(int) git_path_is_dot_or_dotdotW(const wchar_t *name)
 {
 	return (name[0] == L'.' &&
-			  (name[1] == L'\0' ||
-				(name[1] == L'.' && name[2] == L'\0')));
+		(name[1] == L'\0' || (name[1] == L'.' && name[2] == L'\0')));
 }
 
 #define git_path_is_absolute(p) \
 	(git__isalpha((p)[0]) && (p)[1] == ':' && ((p)[2] == '\\' || (p)[2] == '/'))
 
-#define git_path_is_dirsep(p) \
-	((p) == '/' || (p) == '\\')
+#define git_path_is_dirsep(p) ((p) == '/' || (p) == '\\')
 
 /**
  * Convert backslashes in path to forward slashes.
@@ -124,13 +120,11 @@ GIT_INLINE(void) git_path_mkposix(char *path)
 	}
 }
 #else
-#	define git_path_mkposix(p) /* blank */
+#define git_path_mkposix(p) /* blank */
 
-#define git_path_is_absolute(p) \
-	((p)[0] == '/')
+#define git_path_is_absolute(p) ((p)[0] == '/')
 
-#define git_path_is_dirsep(p) \
-	((p) == '/')
+#define git_path_is_dirsep(p) ((p) == '/')
 
 #endif
 
@@ -254,8 +248,10 @@ extern bool git_path_contains_file(git_buf *dir, const char *file);
  * This will optionally return the index into the path where the "root"
  * is, either the end of the base directory prefix or the path root.
  */
-extern int git_path_join_unrooted(
-	git_buf *path_out, const char *path, const char *base, ssize_t *root_at);
+extern int git_path_join_unrooted(git_buf *path_out,
+	const char *path,
+	const char *base,
+	ssize_t *root_at);
 
 /**
  * Removes multiple occurrences of '/' in a row, squashing them into a
@@ -327,8 +323,7 @@ enum {
  * @param payload Passed to callback as first argument.
  * @return 0 on success or error code from OS error or from callback
  */
-extern int git_path_direach(
-	git_buf *pathbuf,
+extern int git_path_direach(git_buf *pathbuf,
 	uint32_t flags,
 	int (*callback)(void *payload, git_buf *path),
 	void *payload);
@@ -336,9 +331,12 @@ extern int git_path_direach(
 /**
  * Sort function to order two paths
  */
-extern int git_path_cmp(
-	const char *name1, size_t len1, int isdir1,
-	const char *name2, size_t len2, int isdir2,
+extern int git_path_cmp(const char *name1,
+	size_t len1,
+	int isdir1,
+	const char *name2,
+	size_t len2,
+	int isdir2,
 	int (*compare)(const char *, const char *, size_t));
 
 /**
@@ -359,8 +357,7 @@ extern int git_path_cmp(
  *		be modified in any way. Return non-zero to stop iteration.
  * @param payload Passed to fn as the first ath.
  */
-extern int git_path_walk_up(
-	git_buf *pathbuf,
+extern int git_path_walk_up(git_buf *pathbuf,
 	const char *ceiling,
 	int (*callback)(void *payload, const char *path),
 	void *payload);
@@ -373,10 +370,8 @@ enum { GIT_PATH_NOTEQUAL = 0, GIT_PATH_EQUAL = 1, GIT_PATH_PREFIX = 2 };
  * @param parent The possible parent
  * @param child The possible child
  */
-GIT_INLINE(int) git_path_equal_or_prefixed(
-	const char *parent,
-	const char *child,
-	ssize_t *prefixlen)
+GIT_INLINE(int)
+git_path_equal_or_prefixed(const char *parent, const char *child, ssize_t *prefixlen)
 {
 	const char *p = parent, *c = child;
 	int lastslash = 0;
@@ -409,8 +404,7 @@ GIT_INLINE(int) git_path_equal_or_prefixed(
 }
 
 /* translate errno to libgit2 error code and set error message */
-extern int git_path_set_error(
-	int errno_value, const char *path, const char *action);
+extern int git_path_set_error(int errno_value, const char *path, const char *action);
 
 /* check if non-ascii characters are present in filename */
 extern bool git_path_has_non_ascii(const char *path, size_t pathlen);
@@ -432,7 +426,10 @@ typedef struct {
 	git_buf buf;
 } git_path_iconv_t;
 
-#define GIT_PATH_ICONV_INIT { (iconv_t)-1, GIT_BUF_INIT }
+#define GIT_PATH_ICONV_INIT \
+	{ \
+		(iconv_t) - 1, GIT_BUF_INIT \
+	}
 
 /* Init iconv data for converting decomposed UTF-8 to precomposed */
 extern int git_path_iconv_init_precompose(git_path_iconv_t *ic);
@@ -456,8 +453,7 @@ typedef struct git_path_diriter git_path_diriter;
 
 #if defined(GIT_WIN32) && !defined(__MINGW32__)
 
-struct git_path_diriter
-{
+struct git_path_diriter {
 	git_win32_path path;
 	size_t parent_len;
 
@@ -472,12 +468,14 @@ struct git_path_diriter
 	unsigned int needs_next;
 };
 
-#define GIT_PATH_DIRITER_INIT { {0}, 0, GIT_BUF_INIT, 0, INVALID_HANDLE_VALUE }
+#define GIT_PATH_DIRITER_INIT \
+	{ \
+		{ 0 }, 0, GIT_BUF_INIT, 0, INVALID_HANDLE_VALUE \
+	}
 
 #else
 
-struct git_path_diriter
-{
+struct git_path_diriter {
 	git_buf path;
 	size_t parent_len;
 
@@ -490,7 +488,10 @@ struct git_path_diriter
 #endif
 };
 
-#define GIT_PATH_DIRITER_INIT { GIT_BUF_INIT }
+#define GIT_PATH_DIRITER_INIT \
+	{ \
+		GIT_BUF_INIT \
+	}
 
 #endif
 
@@ -502,8 +503,7 @@ struct git_path_diriter
  * @param flags Directory reader flags
  * @return 0 or an error code
  */
-extern int git_path_diriter_init(
-	git_path_diriter *diriter,
+extern int git_path_diriter_init(git_path_diriter *diriter,
 	const char *path,
 	unsigned int flags);
 
@@ -524,8 +524,7 @@ extern int git_path_diriter_next(git_path_diriter *diriter);
  * @param diriter The directory iterator
  * @return 0 or an error code
  */
-extern int git_path_diriter_filename(
-	const char **out,
+extern int git_path_diriter_filename(const char **out,
 	size_t *out_len,
 	git_path_diriter *diriter);
 
@@ -539,8 +538,7 @@ extern int git_path_diriter_filename(
  * @param diriter The directory iterator
  * @return 0 or an error code
  */
-extern int git_path_diriter_fullpath(
-	const char **out,
+extern int git_path_diriter_fullpath(const char **out,
 	size_t *out_len,
 	git_path_diriter *diriter);
 
@@ -575,8 +573,7 @@ extern void git_path_diriter_free(git_path_diriter *diriter);
  * 		prefix_len 3, the entries will look like "b/e1", "b/e2", etc.
  * @param flags Combination of GIT_PATH_DIR flags.
  */
-extern int git_path_dirload(
-	git_vector *contents,
+extern int git_path_dirload(git_vector *contents,
 	const char *path,
 	size_t prefix_len,
 	uint32_t flags);
@@ -587,38 +584,34 @@ extern bool git_path_is_local_file_url(const char *file_url);
 extern int git_path_from_url_or_path(git_buf *local_path_out, const char *url_or_path);
 
 /* Flags to determine path validity in `git_path_isvalid` */
-#define GIT_PATH_REJECT_TRAVERSAL          (1 << 0)
-#define GIT_PATH_REJECT_DOT_GIT            (1 << 1)
-#define GIT_PATH_REJECT_SLASH              (1 << 2)
-#define GIT_PATH_REJECT_BACKSLASH          (1 << 3)
-#define GIT_PATH_REJECT_TRAILING_DOT       (1 << 4)
-#define GIT_PATH_REJECT_TRAILING_SPACE     (1 << 5)
-#define GIT_PATH_REJECT_TRAILING_COLON     (1 << 6)
-#define GIT_PATH_REJECT_DOS_PATHS          (1 << 7)
-#define GIT_PATH_REJECT_NT_CHARS           (1 << 8)
-#define GIT_PATH_REJECT_DOT_GIT_LITERAL    (1 << 9)
-#define GIT_PATH_REJECT_DOT_GIT_HFS        (1 << 10)
-#define GIT_PATH_REJECT_DOT_GIT_NTFS       (1 << 11)
+#define GIT_PATH_REJECT_TRAVERSAL (1 << 0)
+#define GIT_PATH_REJECT_DOT_GIT (1 << 1)
+#define GIT_PATH_REJECT_SLASH (1 << 2)
+#define GIT_PATH_REJECT_BACKSLASH (1 << 3)
+#define GIT_PATH_REJECT_TRAILING_DOT (1 << 4)
+#define GIT_PATH_REJECT_TRAILING_SPACE (1 << 5)
+#define GIT_PATH_REJECT_TRAILING_COLON (1 << 6)
+#define GIT_PATH_REJECT_DOS_PATHS (1 << 7)
+#define GIT_PATH_REJECT_NT_CHARS (1 << 8)
+#define GIT_PATH_REJECT_DOT_GIT_LITERAL (1 << 9)
+#define GIT_PATH_REJECT_DOT_GIT_HFS (1 << 10)
+#define GIT_PATH_REJECT_DOT_GIT_NTFS (1 << 11)
 
 /* Default path safety for writing files to disk: since we use the
  * Win32 "File Namespace" APIs ("\\?\") we need to protect from
  * paths that the normal Win32 APIs would not write.
  */
 #ifdef GIT_WIN32
-# define GIT_PATH_REJECT_FILESYSTEM_DEFAULTS \
-	GIT_PATH_REJECT_TRAVERSAL | \
-	GIT_PATH_REJECT_BACKSLASH | \
-	GIT_PATH_REJECT_TRAILING_DOT | \
-	GIT_PATH_REJECT_TRAILING_SPACE | \
-	GIT_PATH_REJECT_TRAILING_COLON | \
-	GIT_PATH_REJECT_DOS_PATHS | \
-	GIT_PATH_REJECT_NT_CHARS
+#define GIT_PATH_REJECT_FILESYSTEM_DEFAULTS \
+	GIT_PATH_REJECT_TRAVERSAL | GIT_PATH_REJECT_BACKSLASH | \
+		GIT_PATH_REJECT_TRAILING_DOT | GIT_PATH_REJECT_TRAILING_SPACE | \
+		GIT_PATH_REJECT_TRAILING_COLON | GIT_PATH_REJECT_DOS_PATHS | \
+		GIT_PATH_REJECT_NT_CHARS
 #else
-# define GIT_PATH_REJECT_FILESYSTEM_DEFAULTS \
-	GIT_PATH_REJECT_TRAVERSAL
+#define GIT_PATH_REJECT_FILESYSTEM_DEFAULTS GIT_PATH_REJECT_TRAVERSAL
 #endif
 
- /* Paths that should never be written into the working directory. */
+/* Paths that should never be written into the working directory. */
 #define GIT_PATH_REJECT_WORKDIR_DEFAULTS \
 	GIT_PATH_REJECT_FILESYSTEM_DEFAULTS | GIT_PATH_REJECT_DOT_GIT
 
@@ -634,8 +627,7 @@ extern int git_path_from_url_or_path(git_buf *local_path_out, const char *url_or
  * path name to reject (if `GIT_PATH_REJECT_DOS_SHORTNAME` is specified),
  * in addition to the default of "git~1".
  */
-extern bool git_path_isvalid(
-	git_repository *repo,
+extern bool git_path_isvalid(git_repository *repo,
 	const char *path,
 	uint16_t mode,
 	unsigned int flags);
@@ -681,6 +673,9 @@ typedef enum {
  * @return 0 in case the file does not match, a positive value if
  *         it does; -1 in case of an error
  */
-extern int git_path_is_gitfile(const char *path, size_t pathlen, git_path_gitfile gitfile, git_path_fs fs);
+extern int git_path_is_gitfile(const char *path,
+	size_t pathlen,
+	git_path_gitfile gitfile,
+	git_path_fs fs);
 
 #endif

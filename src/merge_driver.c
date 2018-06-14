@@ -32,38 +32,39 @@ static struct merge_driver_registry merge_driver_registry;
 
 static void git_merge_driver_global_shutdown(void);
 
-const git_repository* git_merge_driver_source_repo(const git_merge_driver_source *src)
+const git_repository *git_merge_driver_source_repo(const git_merge_driver_source *src)
 {
 	assert(src);
 	return src->repo;
 }
 
-const git_index_entry* git_merge_driver_source_ancestor(const git_merge_driver_source *src)
+const git_index_entry *git_merge_driver_source_ancestor(
+	const git_merge_driver_source *src)
 {
 	assert(src);
 	return src->ancestor;
 }
 
-const git_index_entry* git_merge_driver_source_ours(const git_merge_driver_source *src)
+const git_index_entry *git_merge_driver_source_ours(const git_merge_driver_source *src)
 {
 	assert(src);
 	return src->ours;
 }
 
-const git_index_entry* git_merge_driver_source_theirs(const git_merge_driver_source *src)
+const git_index_entry *git_merge_driver_source_theirs(const git_merge_driver_source *src)
 {
 	assert(src);
 	return src->theirs;
 }
 
-const git_merge_file_options* git_merge_driver_source_file_options(const git_merge_driver_source *src)
+const git_merge_file_options *git_merge_driver_source_file_options(
+	const git_merge_driver_source *src)
 {
 	assert(src);
 	return src->file_opts;
 }
 
-int git_merge_driver__builtin_apply(
-	git_merge_driver *self,
+int git_merge_driver__builtin_apply(git_merge_driver *self,
 	const char **path_out,
 	uint32_t *mode_out,
 	git_buf *merged_out,
@@ -72,7 +73,7 @@ int git_merge_driver__builtin_apply(
 {
 	git_merge_driver__builtin *driver = (git_merge_driver__builtin *)self;
 	git_merge_file_options file_opts = GIT_MERGE_FILE_OPTIONS_INIT;
-	git_merge_file_result result = {0};
+	git_merge_file_result result = { 0 };
 	int error;
 
 	GIT_UNUSED(filter_name);
@@ -83,25 +84,20 @@ int git_merge_driver__builtin_apply(
 	if (driver->favor)
 		file_opts.favor = driver->favor;
 
-	if ((error = git_merge_file_from_index(&result, src->repo,
-		src->ancestor, src->ours, src->theirs, &file_opts)) < 0)
+	if ((error = git_merge_file_from_index(&result, src->repo, src->ancestor,
+			 src->ours, src->theirs, &file_opts)) < 0)
 		goto done;
 
-	if (!result.automergeable &&
-		!(file_opts.flags & GIT_MERGE_FILE_FAVOR__CONFLICTED)) {
+	if (!result.automergeable && !(file_opts.flags & GIT_MERGE_FILE_FAVOR__CONFLICTED)) {
 		error = GIT_EMERGECONFLICT;
 		goto done;
 	}
 
-	*path_out = git_merge_file__best_path(
-		src->ancestor ? src->ancestor->path : NULL,
-		src->ours ? src->ours->path : NULL,
-		src->theirs ? src->theirs->path : NULL);
+	*path_out = git_merge_file__best_path(src->ancestor ? src->ancestor->path : NULL,
+		src->ours ? src->ours->path : NULL, src->theirs ? src->theirs->path : NULL);
 
-	*mode_out = git_merge_file__best_mode(
-		src->ancestor ? src->ancestor->mode : 0,
-		src->ours ? src->ours->mode : 0,
-		src->theirs ? src->theirs->mode : 0);
+	*mode_out = git_merge_file__best_mode(src->ancestor ? src->ancestor->mode : 0,
+		src->ours ? src->ours->mode : 0, src->theirs ? src->theirs->mode : 0);
 
 	merged_out->ptr = (char *)result.ptr;
 	merged_out->size = result.len;
@@ -113,8 +109,7 @@ done:
 	return error;
 }
 
-static int merge_driver_binary_apply(
-	git_merge_driver *self,
+static int merge_driver_binary_apply(git_merge_driver *self,
 	const char **path_out,
 	uint32_t *mode_out,
 	git_buf *merged_out,
@@ -147,36 +142,27 @@ static int merge_driver_entry_search(const void *a, const void *b)
 	return strcmp(name_a, entry_b->name);
 }
 
-git_merge_driver__builtin git_merge_driver__text = {
-	{
-		GIT_MERGE_DRIVER_VERSION,
-		NULL,
-		NULL,
-		git_merge_driver__builtin_apply,
-	},
-	GIT_MERGE_FILE_FAVOR_NORMAL
-};
+git_merge_driver__builtin git_merge_driver__text = { {
+														 GIT_MERGE_DRIVER_VERSION,
+														 NULL,
+														 NULL,
+														 git_merge_driver__builtin_apply,
+													 },
+	GIT_MERGE_FILE_FAVOR_NORMAL };
 
-git_merge_driver__builtin git_merge_driver__union = {
-	{
-		GIT_MERGE_DRIVER_VERSION,
-		NULL,
-		NULL,
-		git_merge_driver__builtin_apply,
-	},
-	GIT_MERGE_FILE_FAVOR_UNION
-};
+git_merge_driver__builtin git_merge_driver__union = { {
+														  GIT_MERGE_DRIVER_VERSION,
+														  NULL,
+														  NULL,
+														  git_merge_driver__builtin_apply,
+													  },
+	GIT_MERGE_FILE_FAVOR_UNION };
 
-git_merge_driver git_merge_driver__binary = {
-	GIT_MERGE_DRIVER_VERSION,
-	NULL,
-	NULL,
-	merge_driver_binary_apply
-};
+git_merge_driver git_merge_driver__binary = { GIT_MERGE_DRIVER_VERSION, NULL,
+	NULL, merge_driver_binary_apply };
 
 /* Note: callers must lock the registry before calling this function */
-static int merge_driver_registry_insert(
-	const char *name, git_merge_driver *driver)
+static int merge_driver_registry_insert(const char *name, git_merge_driver *driver)
 {
 	git_merge_driver_entry *entry;
 
@@ -186,8 +172,7 @@ static int merge_driver_registry_insert(
 	strcpy(entry->name, name);
 	entry->driver = driver;
 
-	return git_vector_insert_sorted(
-		&merge_driver_registry.drivers, entry, NULL);
+	return git_vector_insert_sorted(&merge_driver_registry.drivers, entry, NULL);
 }
 
 int git_merge_driver_global_init(void)
@@ -197,16 +182,16 @@ int git_merge_driver_global_init(void)
 	if (git_rwlock_init(&merge_driver_registry.lock) < 0)
 		return -1;
 
-	if ((error = git_vector_init(&merge_driver_registry.drivers, 3,
-		merge_driver_entry_cmp)) < 0)
+	if ((error = git_vector_init(
+			 &merge_driver_registry.drivers, 3, merge_driver_entry_cmp)) < 0)
 		goto done;
 
 	if ((error = merge_driver_registry_insert(
-			merge_driver_name__text, &git_merge_driver__text.base)) < 0 ||
+			 merge_driver_name__text, &git_merge_driver__text.base)) < 0 ||
 		(error = merge_driver_registry_insert(
-			merge_driver_name__union, &git_merge_driver__union.base)) < 0 ||
+			 merge_driver_name__union, &git_merge_driver__union.base)) < 0 ||
 		(error = merge_driver_registry_insert(
-			merge_driver_name__binary, &git_merge_driver__binary)) < 0)
+			 merge_driver_name__binary, &git_merge_driver__binary)) < 0)
 		goto done;
 
 	git__on_shutdown(git_merge_driver_global_shutdown);
@@ -226,7 +211,7 @@ static void git_merge_driver_global_shutdown(void)
 	if (git_rwlock_wrlock(&merge_driver_registry.lock) < 0)
 		return;
 
-	git_vector_foreach(&merge_driver_registry.drivers, i, entry) {
+	git_vector_foreach (&merge_driver_registry.drivers, i, entry) {
 		if (entry->driver->shutdown)
 			entry->driver->shutdown(entry->driver);
 
@@ -242,13 +227,12 @@ static void git_merge_driver_global_shutdown(void)
 /* Note: callers must lock the registry before calling this function */
 static int merge_driver_registry_find(size_t *pos, const char *name)
 {
-	return git_vector_search2(pos, &merge_driver_registry.drivers,
-		merge_driver_entry_search, name);
+	return git_vector_search2(
+		pos, &merge_driver_registry.drivers, merge_driver_entry_search, name);
 }
 
 /* Note: callers must lock the registry before calling this function */
-static git_merge_driver_entry *merge_driver_registry_lookup(
-	size_t *pos, const char *name)
+static git_merge_driver_entry *merge_driver_registry_lookup(size_t *pos, const char *name)
 {
 	git_merge_driver_entry *entry = NULL;
 
@@ -270,8 +254,7 @@ int git_merge_driver_register(const char *name, git_merge_driver *driver)
 	}
 
 	if (!merge_driver_registry_find(NULL, name)) {
-		giterr_set(GITERR_MERGE, "attempt to reregister existing driver '%s'",
-			name);
+		giterr_set(GITERR_MERGE, "attempt to reregister existing driver '%s'", name);
 		error = GIT_EEXISTS;
 		goto done;
 	}
@@ -295,8 +278,7 @@ int git_merge_driver_unregister(const char *name)
 	}
 
 	if ((entry = merge_driver_registry_lookup(&pos, name)) == NULL) {
-		giterr_set(GITERR_MERGE, "cannot find merge driver '%s' to unregister",
-			name);
+		giterr_set(GITERR_MERGE, "cannot find merge driver '%s' to unregister", name);
 		error = GIT_ENOTFOUND;
 		goto done;
 	}
@@ -356,8 +338,7 @@ git_merge_driver *git_merge_driver_lookup(const char *name)
 	return entry->driver;
 }
 
-static int merge_driver_name_for_path(
-	const char **out,
+static int merge_driver_name_for_path(const char **out,
 	git_repository *repo,
 	const char *path,
 	const char *default_driver)
@@ -391,8 +372,8 @@ static int merge_driver_name_for_path(
 }
 
 
-GIT_INLINE(git_merge_driver *) merge_driver_lookup_with_wildcard(
-	const char *name)
+GIT_INLINE(git_merge_driver *)
+merge_driver_lookup_with_wildcard(const char *name)
 {
 	git_merge_driver *driver = git_merge_driver_lookup(name);
 
@@ -402,25 +383,21 @@ GIT_INLINE(git_merge_driver *) merge_driver_lookup_with_wildcard(
 	return driver;
 }
 
-int git_merge_driver_for_source(
-	const char **name_out,
+int git_merge_driver_for_source(const char **name_out,
 	git_merge_driver **driver_out,
 	const git_merge_driver_source *src)
 {
 	const char *path, *driver_name;
 	int error = 0;
 
-	path = git_merge_file__best_path(
-		src->ancestor ? src->ancestor->path : NULL,
-		src->ours ? src->ours->path : NULL,
-		src->theirs ? src->theirs->path : NULL);
+	path = git_merge_file__best_path(src->ancestor ? src->ancestor->path : NULL,
+		src->ours ? src->ours->path : NULL, src->theirs ? src->theirs->path : NULL);
 
 	if ((error = merge_driver_name_for_path(
-			&driver_name, src->repo, path, src->default_driver)) < 0)
+			 &driver_name, src->repo, path, src->default_driver)) < 0)
 		return error;
 
 	*name_out = driver_name;
 	*driver_out = merge_driver_lookup_with_wildcard(driver_name);
 	return error;
 }
-

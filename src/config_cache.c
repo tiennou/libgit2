@@ -29,12 +29,9 @@ struct map_data {
  *	value is native. See gitattributes(5) for more information on
  *	end-of-line conversion.
  */
-static git_cvar_map _cvar_map_eol[] = {
-	{GIT_CVAR_FALSE, NULL, GIT_EOL_UNSET},
-	{GIT_CVAR_STRING, "lf", GIT_EOL_LF},
-	{GIT_CVAR_STRING, "crlf", GIT_EOL_CRLF},
-	{GIT_CVAR_STRING, "native", GIT_EOL_NATIVE}
-};
+static git_cvar_map _cvar_map_eol[] = { { GIT_CVAR_FALSE, NULL, GIT_EOL_UNSET },
+	{ GIT_CVAR_STRING, "lf", GIT_EOL_LF }, { GIT_CVAR_STRING, "crlf", GIT_EOL_CRLF },
+	{ GIT_CVAR_STRING, "native", GIT_EOL_NATIVE } };
 
 /*
  *	core.autocrlf
@@ -46,40 +43,38 @@ static git_cvar_map _cvar_map_eol[] = {
  *	does not have normalized line endings. This variable can be set to input,
  *	in which case no output conversion is performed.
  */
-static git_cvar_map _cvar_map_autocrlf[] = {
-	{GIT_CVAR_FALSE, NULL, GIT_AUTO_CRLF_FALSE},
-	{GIT_CVAR_TRUE, NULL, GIT_AUTO_CRLF_TRUE},
-	{GIT_CVAR_STRING, "input", GIT_AUTO_CRLF_INPUT}
-};
+static git_cvar_map _cvar_map_autocrlf[] = { { GIT_CVAR_FALSE, NULL, GIT_AUTO_CRLF_FALSE },
+	{ GIT_CVAR_TRUE, NULL, GIT_AUTO_CRLF_TRUE },
+	{ GIT_CVAR_STRING, "input", GIT_AUTO_CRLF_INPUT } };
 
-static git_cvar_map _cvar_map_safecrlf[] = {
-	{GIT_CVAR_FALSE, NULL, GIT_SAFE_CRLF_FALSE},
-	{GIT_CVAR_TRUE, NULL, GIT_SAFE_CRLF_FAIL},
-	{GIT_CVAR_STRING, "warn", GIT_SAFE_CRLF_WARN}
-};
+static git_cvar_map _cvar_map_safecrlf[] = { { GIT_CVAR_FALSE, NULL, GIT_SAFE_CRLF_FALSE },
+	{ GIT_CVAR_TRUE, NULL, GIT_SAFE_CRLF_FAIL },
+	{ GIT_CVAR_STRING, "warn", GIT_SAFE_CRLF_WARN } };
 
 /*
  * Generic map for integer values
  */
 static git_cvar_map _cvar_map_int[] = {
-	{GIT_CVAR_INT32, NULL, 0},
+	{ GIT_CVAR_INT32, NULL, 0 },
 };
 
 static struct map_data _cvar_maps[] = {
-	{"core.autocrlf", _cvar_map_autocrlf, ARRAY_SIZE(_cvar_map_autocrlf), GIT_AUTO_CRLF_DEFAULT},
-	{"core.eol", _cvar_map_eol, ARRAY_SIZE(_cvar_map_eol), GIT_EOL_DEFAULT},
-	{"core.symlinks", NULL, 0, GIT_SYMLINKS_DEFAULT },
-	{"core.ignorecase", NULL, 0, GIT_IGNORECASE_DEFAULT },
-	{"core.filemode", NULL, 0, GIT_FILEMODE_DEFAULT },
-	{"core.ignorestat", NULL, 0, GIT_IGNORESTAT_DEFAULT },
-	{"core.trustctime", NULL, 0, GIT_TRUSTCTIME_DEFAULT },
-	{"core.abbrev", _cvar_map_int, 1, GIT_ABBREV_DEFAULT },
-	{"core.precomposeunicode", NULL, 0, GIT_PRECOMPOSE_DEFAULT },
-	{"core.safecrlf", _cvar_map_safecrlf, ARRAY_SIZE(_cvar_map_safecrlf), GIT_SAFE_CRLF_DEFAULT},
-	{"core.logallrefupdates", NULL, 0, GIT_LOGALLREFUPDATES_DEFAULT },
-	{"core.protecthfs", NULL, 0, GIT_PROTECTHFS_DEFAULT },
-	{"core.protectntfs", NULL, 0, GIT_PROTECTNTFS_DEFAULT },
-	{"core.fsyncobjectfiles", NULL, 0, GIT_FSYNCOBJECTFILES_DEFAULT },
+	{ "core.autocrlf", _cvar_map_autocrlf, ARRAY_SIZE(_cvar_map_autocrlf),
+		GIT_AUTO_CRLF_DEFAULT },
+	{ "core.eol", _cvar_map_eol, ARRAY_SIZE(_cvar_map_eol), GIT_EOL_DEFAULT },
+	{ "core.symlinks", NULL, 0, GIT_SYMLINKS_DEFAULT },
+	{ "core.ignorecase", NULL, 0, GIT_IGNORECASE_DEFAULT },
+	{ "core.filemode", NULL, 0, GIT_FILEMODE_DEFAULT },
+	{ "core.ignorestat", NULL, 0, GIT_IGNORESTAT_DEFAULT },
+	{ "core.trustctime", NULL, 0, GIT_TRUSTCTIME_DEFAULT },
+	{ "core.abbrev", _cvar_map_int, 1, GIT_ABBREV_DEFAULT },
+	{ "core.precomposeunicode", NULL, 0, GIT_PRECOMPOSE_DEFAULT },
+	{ "core.safecrlf", _cvar_map_safecrlf, ARRAY_SIZE(_cvar_map_safecrlf),
+		GIT_SAFE_CRLF_DEFAULT },
+	{ "core.logallrefupdates", NULL, 0, GIT_LOGALLREFUPDATES_DEFAULT },
+	{ "core.protecthfs", NULL, 0, GIT_PROTECTHFS_DEFAULT },
+	{ "core.protectntfs", NULL, 0, GIT_PROTECTNTFS_DEFAULT },
+	{ "core.fsyncobjectfiles", NULL, 0, GIT_FSYNCOBJECTFILES_DEFAULT },
 };
 
 int git_config__cvar(int *out, git_config *config, git_cvar_cached cvar)
@@ -128,4 +123,3 @@ void git_repository__cvar_cache_clear(git_repository *repo)
 	for (i = 0; i < GIT_CVAR_CACHE_MAX; ++i)
 		repo->cvar_cache[i] = GIT_CVAR_NOT_CACHED;
 }
-

@@ -86,9 +86,6 @@ struct git_blame {
 	git_off_t final_buf_size;
 };
 
-git_blame *git_blame__alloc(
-	git_repository *repo,
-	git_blame_options opts,
-	const char *path);
+git_blame *git_blame__alloc(git_repository *repo, git_blame_options opts, const char *path);
 
 #endif

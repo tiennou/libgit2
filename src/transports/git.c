@@ -62,8 +62,8 @@ static int gen_proto(git_buf *request, const char *cmd, const char *url)
 	len = 4 + strlen(cmd) + 1 + strlen(repo) + 1 + strlen(host) + (delim - url) + 1;
 
 	git_buf_grow(request, len);
-	git_buf_printf(request, "%04x%s %s%c%s",
-		(unsigned int)(len & 0x0FFFF), cmd, repo, 0, host);
+	git_buf_printf(request, "%04x%s %s%c%s", (unsigned int)(len & 0x0FFFF), cmd,
+		repo, 0, host);
 	git_buf_put(request, url, delim - url);
 	git_buf_putc(request, '\0');
 
@@ -91,8 +91,7 @@ cleanup:
 	return error;
 }
 
-static int git_proto_stream_read(
-	git_smart_subtransport_stream *stream,
+static int git_proto_stream_read(git_smart_subtransport_stream *stream,
 	char *buffer,
 	size_t buf_size,
 	size_t *bytes_read)
@@ -116,8 +115,7 @@ static int git_proto_stream_read(
 	return 0;
 }
 
-static int git_proto_stream_write(
-	git_smart_subtransport_stream *stream,
+static int git_proto_stream_write(git_smart_subtransport_stream *stream,
 	const char *buffer,
 	size_t len)
 {
@@ -149,8 +147,7 @@ static void git_proto_stream_free(git_smart_subtransport_stream *stream)
 	git__free(s);
 }
 
-static int git_proto_stream_alloc(
-	git_subtransport *t,
+static int git_proto_stream_alloc(git_subtransport *t,
 	const char *url,
 	const char *cmd,
 	const char *host,
@@ -187,12 +184,11 @@ static int git_proto_stream_alloc(
 	return 0;
 }
 
-static int _git_uploadpack_ls(
-	git_subtransport *t,
+static int _git_uploadpack_ls(git_subtransport *t,
 	const char *url,
 	git_smart_subtransport_stream **stream)
 {
-	char *host=NULL, *port=NULL, *path=NULL, *user=NULL, *pass=NULL;
+	char *host = NULL, *port = NULL, *path = NULL, *user = NULL, *pass = NULL;
 	const char *stream_url = url;
 	git_proto_stream *s;
 	int error;
@@ -202,7 +198,8 @@ static int _git_uploadpack_ls(
 	if (!git__prefixcmp(url, prefix_git))
 		stream_url += strlen(prefix_git);
 
-	if ((error = gitno_extract_url_parts(&host, &port, &path, &user, &pass, url, GIT_DEFAULT_PORT)) < 0)
+	if ((error = gitno_extract_url_parts(
+			 &host, &port, &path, &user, &pass, url, GIT_DEFAULT_PORT)) < 0)
 		return error;
 
 	error = git_proto_stream_alloc(t, stream_url, cmd_uploadpack, host, port, stream);
@@ -219,7 +216,7 @@ static int _git_uploadpack_ls(
 		return error;
 	}
 
-	s = (git_proto_stream *) *stream;
+	s = (git_proto_stream *)*stream;
 	if ((error = git_stream_connect(s->io)) < 0) {
 		git_proto_stream_free(*stream);
 		return error;
@@ -230,8 +227,7 @@ static int _git_uploadpack_ls(
 	return 0;
 }
 
-static int _git_uploadpack(
-	git_subtransport *t,
+static int _git_uploadpack(git_subtransport *t,
 	const char *url,
 	git_smart_subtransport_stream **stream)
 {
@@ -246,12 +242,11 @@ static int _git_uploadpack(
 	return -1;
 }
 
-static int _git_receivepack_ls(
-	git_subtransport *t,
+static int _git_receivepack_ls(git_subtransport *t,
 	const char *url,
 	git_smart_subtransport_stream **stream)
 {
-	char *host=NULL, *port=NULL, *path=NULL, *user=NULL, *pass=NULL;
+	char *host = NULL, *port = NULL, *path = NULL, *user = NULL, *pass = NULL;
 	const char *stream_url = url;
 	git_proto_stream *s;
 	int error;
@@ -260,7 +255,8 @@ static int _git_receivepack_ls(
 	if (!git__prefixcmp(url, prefix_git))
 		stream_url += strlen(prefix_git);
 
-	if ((error = gitno_extract_url_parts(&host, &port, &path, &user, &pass, url, GIT_DEFAULT_PORT)) < 0)
+	if ((error = gitno_extract_url_parts(
+			 &host, &port, &path, &user, &pass, url, GIT_DEFAULT_PORT)) < 0)
 		return error;
 
 	error = git_proto_stream_alloc(t, stream_url, cmd_receivepack, host, port, stream);
@@ -276,7 +272,7 @@ static int _git_receivepack_ls(
 		return error;
 	}
 
-	s = (git_proto_stream *) *stream;
+	s = (git_proto_stream *)*stream;
 
 	if ((error = git_stream_connect(s->io)) < 0)
 		return error;
@@ -286,8 +282,7 @@ static int _git_receivepack_ls(
 	return 0;
 }
 
-static int _git_receivepack(
-	git_subtransport *t,
+static int _git_receivepack(git_subtransport *t,
 	const char *url,
 	git_smart_subtransport_stream **stream)
 {
@@ -302,26 +297,25 @@ static int _git_receivepack(
 	return -1;
 }
 
-static int _git_action(
-	git_smart_subtransport_stream **stream,
+static int _git_action(git_smart_subtransport_stream **stream,
 	git_smart_subtransport *subtransport,
 	const char *url,
 	git_smart_service_t action)
 {
-	git_subtransport *t = (git_subtransport *) subtransport;
+	git_subtransport *t = (git_subtransport *)subtransport;
 
 	switch (action) {
-		case GIT_SERVICE_UPLOADPACK_LS:
-			return _git_uploadpack_ls(t, url, stream);
+	case GIT_SERVICE_UPLOADPACK_LS:
+		return _git_uploadpack_ls(t, url, stream);
 
-		case GIT_SERVICE_UPLOADPACK:
-			return _git_uploadpack(t, url, stream);
+	case GIT_SERVICE_UPLOADPACK:
+		return _git_uploadpack(t, url, stream);
 
-		case GIT_SERVICE_RECEIVEPACK_LS:
-			return _git_receivepack_ls(t, url, stream);
+	case GIT_SERVICE_RECEIVEPACK_LS:
+		return _git_receivepack_ls(t, url, stream);
 
-		case GIT_SERVICE_RECEIVEPACK:
-			return _git_receivepack(t, url, stream);
+	case GIT_SERVICE_RECEIVEPACK:
+		return _git_receivepack(t, url, stream);
 	}
 
 	*stream = NULL;
@@ -330,7 +324,7 @@ static int _git_action(
 
 static int _git_close(git_smart_subtransport *subtransport)
 {
-	git_subtransport *t = (git_subtransport *) subtransport;
+	git_subtransport *t = (git_subtransport *)subtransport;
 
 	assert(!t->current_stream);
 
@@ -341,7 +335,7 @@ static int _git_close(git_smart_subtransport *subtransport)
 
 static void _git_free(git_smart_subtransport *subtransport)
 {
-	git_subtransport *t = (git_subtransport *) subtransport;
+	git_subtransport *t = (git_subtransport *)subtransport;
 
 	assert(!t->current_stream);
 
@@ -365,6 +359,6 @@ int git_smart_subtransport_git(git_smart_subtransport **out, git_transport *owne
 	t->parent.close = _git_close;
 	t->parent.free = _git_free;
 
-	*out = (git_smart_subtransport *) t;
+	*out = (git_smart_subtransport *)t;
 	return 0;
 }

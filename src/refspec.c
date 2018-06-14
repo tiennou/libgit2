@@ -69,25 +69,25 @@ int git_refspec__parse(git_refspec *refspec, const char *input, bool is_fetch)
 
 	refspec->pattern = is_glob;
 	refspec->src = git__strndup(lhs, llen);
-	flags = GIT_REF_FORMAT_ALLOW_ONELEVEL | GIT_REF_FORMAT_REFSPEC_SHORTHAND
-		| (is_glob ? GIT_REF_FORMAT_REFSPEC_PATTERN : 0);
+	flags = GIT_REF_FORMAT_ALLOW_ONELEVEL | GIT_REF_FORMAT_REFSPEC_SHORTHAND |
+		(is_glob ? GIT_REF_FORMAT_REFSPEC_PATTERN : 0);
 
 	if (is_fetch) {
 		/*
-			* LHS
-			* - empty is allowed; it means HEAD.
-			* - otherwise it must be a valid looking ref.
-			*/
+		 * LHS
+		 * - empty is allowed; it means HEAD.
+		 * - otherwise it must be a valid looking ref.
+		 */
 		if (!*refspec->src)
 			; /* empty is ok */
 		else if (!git_reference__is_valid_name(refspec->src, flags))
 			goto invalid;
 		/*
-			* RHS
-			* - missing is ok, and is same as empty.
-			* - empty is ok; it means not to store.
-			* - otherwise it must be a valid looking ref.
-			*/
+		 * RHS
+		 * - missing is ok, and is same as empty.
+		 * - empty is ok; it means not to store.
+		 * - otherwise it must be a valid looking ref.
+		 */
 		if (!refspec->dst)
 			; /* ok */
 		else if (!*refspec->dst)
@@ -96,28 +96,27 @@ int git_refspec__parse(git_refspec *refspec, const char *input, bool is_fetch)
 			goto invalid;
 	} else {
 		/*
-			* LHS
-			* - empty is allowed; it means delete.
-			* - when wildcarded, it must be a valid looking ref.
-			* - otherwise, it must be an extended SHA-1, but
-			*   there is no existing way to validate this.
-			*/
+		 * LHS
+		 * - empty is allowed; it means delete.
+		 * - when wildcarded, it must be a valid looking ref.
+		 * - otherwise, it must be an extended SHA-1, but
+		 *   there is no existing way to validate this.
+		 */
 		if (!*refspec->src)
 			; /* empty is ok */
 		else if (is_glob) {
 			if (!git_reference__is_valid_name(refspec->src, flags))
 				goto invalid;
-		}
-		else {
+		} else {
 			; /* anything goes, for now */
 		}
 		/*
-			* RHS
-			* - missing is allowed, but LHS then must be a
-			*   valid looking ref.
-			* - empty is not allowed.
-			* - otherwise it must be a valid looking ref.
-			*/
+		 * RHS
+		 * - missing is allowed, but LHS then must be a
+		 *   valid looking ref.
+		 * - empty is not allowed.
+		 * - otherwise it must be a valid looking ref.
+		 */
 		if (!refspec->dst) {
 			if (!git_reference__is_valid_name(refspec->src, flags))
 				goto invalid;
@@ -140,11 +139,9 @@ int git_refspec__parse(git_refspec *refspec, const char *input, bool is_fetch)
 
 	return 0;
 
- invalid:
-        giterr_set(
-                GITERR_INVALID,
-                "'%s' is not a valid refspec.", input);
-        git_refspec__free(refspec);
+invalid:
+	giterr_set(GITERR_INVALID, "'%s' is not a valid refspec.", input);
+	git_refspec__free(refspec);
 	return -1;
 }
 
@@ -198,8 +195,7 @@ int git_refspec_dst_matches(const git_refspec *refspec, const char *refname)
 	return (p_fnmatch(refspec->dst, refname, 0) == 0);
 }
 
-static int refspec_transform(
-	git_buf *out, const char *from, const char *to, const char *name)
+static int refspec_transform(git_buf *out, const char *from, const char *to, const char *name)
 {
 	const char *from_star, *to_star;
 	const char *name_slash, *from_slash;
@@ -278,8 +274,7 @@ int git_refspec__serialize(git_buf *out, const git_refspec *refspec)
 	if (refspec->force)
 		git_buf_putc(out, '+');
 
-	git_buf_printf(out, "%s:%s",
-		refspec->src != NULL ? refspec->src : "",
+	git_buf_printf(out, "%s:%s", refspec->src != NULL ? refspec->src : "",
 		refspec->dst != NULL ? refspec->dst : "");
 
 	return git_buf_oom(out) == false;
@@ -306,12 +301,8 @@ int git_refspec__dwim_one(git_vector *out, git_refspec *spec, git_vector *refs)
 	git_remote_head key;
 	git_refspec *cur;
 
-	const char* formatters[] = {
-		GIT_REFS_DIR "%s",
-		GIT_REFS_TAGS_DIR "%s",
-		GIT_REFS_HEADS_DIR "%s",
-		NULL
-	};
+	const char *formatters[] = { GIT_REFS_DIR "%s", GIT_REFS_TAGS_DIR "%s",
+		GIT_REFS_HEADS_DIR "%s", NULL };
 
 	assert(out && spec && refs);
 
@@ -331,7 +322,7 @@ int git_refspec__dwim_one(git_vector *out, git_refspec *spec, git_vector *refs)
 			git_buf_printf(&buf, formatters[j], spec->src);
 			GITERR_CHECK_ALLOC_BUF(&buf);
 
-			key.name = (char *) git_buf_cstr(&buf);
+			key.name = (char *)git_buf_cstr(&buf);
 			if (!git_vector_search(&pos, refs, &key)) {
 				/* we found something to match the shorthand, set src to that */
 				cur->src = git_buf_detach(&buf);

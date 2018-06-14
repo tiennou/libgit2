@@ -25,7 +25,7 @@ struct git_index {
 
 	char *index_file_path;
 	git_futils_filestamp stamp;
-	git_oid checksum;   /* checksum at the end of the file */
+	git_oid checksum; /* checksum at the end of the file */
 
 	git_vector entries;
 	git_idxmap *entries_map;
@@ -33,10 +33,10 @@ struct git_index {
 	git_vector deleted; /* deleted entries if readers > 0 */
 	git_atomic readers; /* number of active iterators */
 
-	unsigned int on_disk:1;
-	unsigned int ignore_case:1;
-	unsigned int distrust_filemode:1;
-	unsigned int no_symlinks:1;
+	unsigned int on_disk : 1;
+	unsigned int ignore_case : 1;
+	unsigned int distrust_filemode : 1;
+	unsigned int no_symlinks : 1;
 
 	git_tree_cache *tree;
 	git_pool tree_pool;
@@ -57,8 +57,9 @@ struct git_index_conflict_iterator {
 	size_t cur;
 };
 
-extern void git_index_entry__init_from_stat(
-	git_index_entry *entry, struct stat *st, bool trust_mode);
+extern void git_index_entry__init_from_stat(git_index_entry *entry,
+	struct stat *st,
+	bool trust_mode);
 
 /* Index entry comparison functions for array sorting */
 extern int git_index_entry_cmp(const void *a, const void *b);
@@ -69,7 +70,8 @@ extern int git_index_entry_srch(const void *a, const void *b);
 extern int git_index_entry_isrch(const void *a, const void *b);
 
 /* Index time handling functions */
-GIT_INLINE(bool) git_index_time_eq(const git_index_time *one, const git_index_time *two)
+GIT_INLINE(bool)
+git_index_time_eq(const git_index_time *one, const git_index_time *two)
 {
 	if (one->seconds != two->seconds)
 		return false;
@@ -87,14 +89,14 @@ GIT_INLINE(bool) git_index_time_eq(const git_index_time *one, const git_index_ti
  * If the timestamps are exactly equivalent, then the given index time is
  * considered "racily newer" than the existing index entry.
  */
-GIT_INLINE(bool) git_index_entry_newer_than_index(
-	const git_index_entry *entry, git_index *index)
+GIT_INLINE(bool)
+git_index_entry_newer_than_index(const git_index_entry *entry, git_index *index)
 {
 	/* If we never read the index, we can't have this race either */
 	if (!index || index->stamp.mtime.tv_sec == 0)
 		return false;
 
-	/* If the timestamp is the same or newer than the index, it's racy */
+		/* If the timestamp is the same or newer than the index, it's racy */
 #if defined(GIT_USE_NSEC)
 	if ((int32_t)index->stamp.mtime.tv_sec < entry->mtime.seconds)
 		return true;
@@ -113,8 +115,11 @@ GIT_INLINE(bool) git_index_entry_newer_than_index(
  * `at_pos` is set to the position where it is or would be inserted.
  * Pass `path_len` as strlen of path or 0 to call strlen internally.
  */
-extern int git_index__find_pos(
-	size_t *at_pos, git_index *index, const char *path, size_t path_len, int stage);
+extern int git_index__find_pos(size_t *at_pos,
+	git_index *index,
+	const char *path,
+	size_t path_len,
+	int stage);
 
 extern int git_index__fill(git_index *index, const git_vector *source_entries);
 
@@ -124,7 +129,7 @@ extern unsigned int git_index__create_mode(unsigned int mode);
 
 GIT_INLINE(const git_futils_filestamp *) git_index__filestamp(git_index *index)
 {
-   return &index->stamp;
+	return &index->stamp;
 }
 
 extern int git_index__changed_relative_to(git_index *index, const git_oid *checksum);
@@ -136,9 +141,12 @@ extern int git_index_snapshot_new(git_vector *snap, git_index *index);
 extern void git_index_snapshot_release(git_vector *snap, git_index *index);
 
 /* Allow searching in a snapshot; entries must already be sorted! */
-extern int git_index_snapshot_find(
-	size_t *at_pos, git_vector *snap, git_vector_cmp entry_srch,
-	const char *path, size_t path_len, int stage);
+extern int git_index_snapshot_find(size_t *at_pos,
+	git_vector *snap,
+	git_vector_cmp entry_srch,
+	const char *path,
+	size_t path_len,
+	int stage);
 
 /* Replace an index with a new index */
 int git_index_read_index(git_index *index, const git_index *new_index);
@@ -146,10 +154,13 @@ int git_index_read_index(git_index *index, const git_index *new_index);
 typedef struct {
 	git_index *index;
 	git_filebuf file;
-	unsigned int should_write:1;
+	unsigned int should_write : 1;
 } git_indexwriter;
 
-#define GIT_INDEXWRITER_INIT { NULL, GIT_FILEBUF_INIT }
+#define GIT_INDEXWRITER_INIT \
+	{ \
+		NULL, GIT_FILEBUF_INIT \
+	}
 
 /* Lock the index for eventual writing. */
 extern int git_indexwriter_init(git_indexwriter *writer, git_index *index);
@@ -159,8 +170,7 @@ extern int git_indexwriter_init(git_indexwriter *writer, git_index *index);
  * will be updated for the operation's use so that checkout will not write
  * the index.
  */
-extern int git_indexwriter_init_for_operation(
-	git_indexwriter *writer,
+extern int git_indexwriter_init_for_operation(git_indexwriter *writer,
 	git_repository *repo,
 	unsigned int *checkout_strategy);
 

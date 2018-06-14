@@ -13,7 +13,7 @@
 
 #ifdef GIT_TRACE
 
-struct git_trace_data git_trace__data = {0};
+struct git_trace_data git_trace__data = { 0 };
 
 #endif
 
@@ -31,8 +31,7 @@ int git_trace_set(git_trace_level_t level, git_trace_callback callback)
 	GIT_UNUSED(level);
 	GIT_UNUSED(callback);
 
-	giterr_set(GITERR_INVALID,
-		"this version of libgit2 was not built with tracing.");
+	giterr_set(GITERR_INVALID, "this version of libgit2 was not built with tracing.");
 	return -1;
 #endif
 }

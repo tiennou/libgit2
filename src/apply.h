@@ -12,8 +12,7 @@
 #include "git2/patch.h"
 #include "buffer.h"
 
-extern int git_apply__patch(
-	git_buf *out,
+extern int git_apply__patch(git_buf *out,
 	char **filename,
 	unsigned int *mode,
 	const char *source,

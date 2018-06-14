@@ -14,16 +14,16 @@
 #include <zlib.h>
 
 #ifdef GIT_THREADS
-#	define GIT_FILEBUF_THREADS
+#define GIT_FILEBUF_THREADS
 #endif
 
-#define GIT_FILEBUF_HASH_CONTENTS		(1 << 0)
-#define GIT_FILEBUF_APPEND				(1 << 2)
-#define GIT_FILEBUF_FORCE				(1 << 3)
-#define GIT_FILEBUF_TEMPORARY			(1 << 4)
-#define GIT_FILEBUF_DO_NOT_BUFFER		(1 << 5)
-#define GIT_FILEBUF_FSYNC				(1 << 6)
-#define GIT_FILEBUF_DEFLATE_SHIFT		(7)
+#define GIT_FILEBUF_HASH_CONTENTS (1 << 0)
+#define GIT_FILEBUF_APPEND (1 << 2)
+#define GIT_FILEBUF_FORCE (1 << 3)
+#define GIT_FILEBUF_TEMPORARY (1 << 4)
+#define GIT_FILEBUF_DO_NOT_BUFFER (1 << 5)
+#define GIT_FILEBUF_FSYNC (1 << 6)
+#define GIT_FILEBUF_DEFLATE_SHIFT (7)
 
 #define GIT_FILELOCK_EXTENSION ".lock\0"
 #define GIT_FILELOCK_EXTLENGTH 6
@@ -54,7 +54,10 @@ struct git_filebuf {
 	int last_error;
 };
 
-#define GIT_FILEBUF_INIT {0}
+#define GIT_FILEBUF_INIT \
+	{ \
+		0 \
+	}
 
 /*
  * The git_filebuf object lifecycle is:
@@ -80,10 +83,15 @@ struct git_filebuf {
  */
 int git_filebuf_write(git_filebuf *lock, const void *buff, size_t len);
 int git_filebuf_reserve(git_filebuf *file, void **buff, size_t len);
-int git_filebuf_printf(git_filebuf *file, const char *format, ...) GIT_FORMAT_PRINTF(2, 3);
+int git_filebuf_printf(git_filebuf *file, const char *format, ...)
+	GIT_FORMAT_PRINTF(2, 3);
 
 int git_filebuf_open(git_filebuf *lock, const char *path, int flags, mode_t mode);
-int git_filebuf_open_withsize(git_filebuf *file, const char *path, int flags, mode_t mode, size_t size);
+int git_filebuf_open_withsize(git_filebuf *file,
+	const char *path,
+	int flags,
+	mode_t mode,
+	size_t size);
 int git_filebuf_commit(git_filebuf *lock);
 int git_filebuf_commit_at(git_filebuf *lock, const char *path);
 void git_filebuf_cleanup(git_filebuf *lock);

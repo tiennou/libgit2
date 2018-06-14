@@ -28,8 +28,7 @@ bool git_win32__findfirstfile_filter(git_win32_path dest, const char *src)
 	 * because we're about to add one. Don't rely our trim_end
 	 * helper, because we want to remove the backslash even for
 	 * drive letter paths, in this case. */
-	if (len > 0 &&
-		(dest[len - 1] == L'/' || dest[len - 1] == L'\\')) {
+	if (len > 0 && (dest[len - 1] == L'/' || dest[len - 1] == L'\\')) {
 		dest[len - 1] = L'\0';
 		len--;
 	}

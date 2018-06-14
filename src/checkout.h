@@ -19,8 +19,7 @@
  * expected baseline value can be passed in via the checkout options
  * or else will default to the HEAD commit.
  */
-extern int git_checkout_iterator(
-	git_iterator *target,
+extern int git_checkout_iterator(git_iterator *target,
 	git_index *index,
 	const git_checkout_options *opts);
 

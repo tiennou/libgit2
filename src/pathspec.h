@@ -46,8 +46,9 @@ extern char *git_pathspec_prefix(const git_strarray *pathspec);
 extern bool git_pathspec_is_empty(const git_strarray *pathspec);
 
 /* build a vector of fnmatch patterns to evaluate efficiently */
-extern int git_pathspec__vinit(
-	git_vector *vspec, const git_strarray *strspec, git_pool *strpool);
+extern int git_pathspec__vinit(git_vector *vspec,
+	const git_strarray *strspec,
+	git_pool *strpool);
 
 /* free data from the pathspec vector */
 extern void git_pathspec__vfree(git_vector *vspec);
@@ -59,8 +60,7 @@ extern void git_pathspec__vfree(git_vector *vspec);
  * The matched pathspec is passed back into the `matched_pathspec` parameter,
  * unless it is passed as NULL by the caller.
  */
-extern bool git_pathspec__match(
-	const git_vector *vspec,
+extern bool git_pathspec__match(const git_vector *vspec,
 	const char *path,
 	bool disable_fnmatch,
 	bool casefold,

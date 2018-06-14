@@ -102,10 +102,7 @@ void git_strmap_delete(git_strmap *map, const char *key)
 		git_strmap_delete_at(map, idx);
 }
 
-int git_strmap_next(
-	void **data,
-	git_strmap_iter* iter,
-	git_strmap *map)
+int git_strmap_next(void **data, git_strmap_iter *iter, git_strmap *map)
 {
 	if (!map)
 		return GIT_ERROR;
