@@ -191,7 +191,7 @@ static bool valid_repository_path(git_buf *repository_path, git_buf *common_path
 	/* Check if we have a separate commondir (e.g. we have a
 	 * worktree) */
 	if (git_path_contains_file(repository_path, GIT_COMMONDIR_FILE)) {
-		git_buf common_link  = GIT_BUF_INIT;
+		git_buf common_link = GIT_BUF_INIT;
 		git_buf_joinpath(&common_link, repository_path->ptr, GIT_COMMONDIR_FILE);
 
 		git_futils_readbuffer(&common_link, common_link.ptr);
@@ -2268,12 +2268,15 @@ int git_repository_item_path(git_buf *out, const git_repository *repo, git_repos
 	case GIT_REPOSITORY_ITEM_GITDIR:
 		parent = git_repository_path(repo);
 		break;
+
 	case GIT_REPOSITORY_ITEM_WORKDIR:
 		parent = git_repository_workdir(repo);
 		break;
+
 	case GIT_REPOSITORY_ITEM_COMMONDIR:
 		parent = git_repository_commondir(repo);
 		break;
+
 	default:
 		giterr_set(GITERR_INVALID, "invalid item directory");
 		return -1;

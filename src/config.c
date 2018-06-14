@@ -889,7 +889,7 @@ int git_config_get_string_buf(
 
 	git_buf_sanitize(out);
 
-	ret  = get_entry(&entry, cfg, name, true, GET_ALL_ERRORS);
+	ret = get_entry(&entry, cfg, name, true, GET_ALL_ERRORS);
 	str = !ret ? (entry->value ? entry->value : "") : NULL;
 
 	if (str)
@@ -1457,8 +1457,8 @@ int git_config_rename_section(
 	if ((error = git_repository_config__weakptr(&config, repo)) < 0)
 		goto cleanup;
 
-	data.config  = config;
-	data.name    = &replace;
+	data.config = config;
+	data.name = &replace;
 	data.old_len = strlen(old_section_name) + 1;
 
 	if ((error = git_buf_join(&replace, '.', new_section_name, "")) < 0)

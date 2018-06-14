@@ -36,7 +36,9 @@ static void diff_file_content_binary_by_content(git_diff_file_content *fc)
 	switch (git_diff_driver_content_is_binary(
 		fc->driver, fc->map.data, fc->map.len)) {
 	case 0: fc->file->flags |= GIT_DIFF_FLAG_NOT_BINARY;break;
+
 	case 1: fc->file->flags |= GIT_DIFF_FLAG_BINARY;break;
+
 	default: break;
 	}
 }
@@ -79,7 +81,7 @@ static int diff_file_content_init_common(
 
 	if ((fc->flags & GIT_DIFF_FLAG__NO_DATA) != 0) {
 		fc->flags |= GIT_DIFF_FLAG__LOADED;
-		fc->map.len  = 0;
+		fc->map.len = 0;
 		fc->map.data = "";
 	}
 
@@ -100,7 +102,7 @@ int git_diff_file_content__init_from_diff(
 	memset(fc, 0, sizeof(*fc));
 	fc->repo = diff->repo;
 	fc->file = use_old ? &delta->old_file : &delta->new_file;
-	fc->src  = use_old ? diff->old_src : diff->new_src;
+	fc->src = use_old ? diff->old_src : diff->new_src;
 
 	if (git_diff_driver_lookup(&fc->driver, fc->repo,
 		&diff->attrsession, fc->file->path) < 0)
@@ -109,17 +111,21 @@ int git_diff_file_content__init_from_diff(
 	switch (delta->status) {
 	case GIT_DELTA_ADDED:
 		has_data = !use_old;break;
+
 	case GIT_DELTA_DELETED:
 		has_data = use_old;break;
+
 	case GIT_DELTA_UNTRACKED:
 		has_data = !use_old &&
 		        (diff->opts.flags & GIT_DIFF_SHOW_UNTRACKED_CONTENT) != 0;
 		break;
+
 	case GIT_DELTA_UNREADABLE:
 	case GIT_DELTA_MODIFIED:
 	case GIT_DELTA_COPIED:
 	case GIT_DELTA_RENAMED:
 		break;
+
 	default:
 		has_data = false;
 		break;
@@ -155,7 +161,7 @@ int git_diff_file_content__init_from_src(
 			git_oid_cpy(&fc->file->id, git_blob_id(src->blob));
 			fc->file->id_abbrev = GIT_OID_HEXSZ;
 
-			fc->map.len  = (size_t)fc->file->size;
+			fc->map.len = (size_t)fc->file->size;
 			fc->map.data = (char *)git_blob_rawcontent(src->blob);
 
 			fc->flags |= GIT_DIFF_FLAG__FREE_BLOB;
@@ -164,7 +170,7 @@ int git_diff_file_content__init_from_src(
 			git_odb_hash(&fc->file->id, src->buf, src->buflen, GIT_OBJ_BLOB);
 			fc->file->id_abbrev = GIT_OID_HEXSZ;
 
-			fc->map.len  = src->buflen;
+			fc->map.len = src->buflen;
 			fc->map.data = (char *)src->buf;
 		}
 	}
@@ -218,7 +224,7 @@ static int diff_file_content_commit_to_str(
 	if (git_buf_printf(&content, "Subproject commit %s%s\n", oid, status) < 0)
 		return -1;
 
-	fc->map.len  = git_buf_len(&content);
+	fc->map.len = git_buf_len(&content);
 	fc->map.data = git_buf_detach(&content);
 	fc->flags |= GIT_DIFF_FLAG__FREE_DATA;
 
@@ -261,7 +267,7 @@ static int diff_file_content_load_blob(
 	if (!error) {
 		fc->flags |= GIT_DIFF_FLAG__FREE_BLOB;
 		fc->map.data = (void *)git_blob_rawcontent(fc->blob);
-		fc->map.len  = (size_t)git_blob_rawsize(fc->blob);
+		fc->map.len = (size_t)git_blob_rawsize(fc->blob);
 	}
 
 	return error;
@@ -364,7 +370,7 @@ static int diff_file_content_load_workdir_file(
 			git_buf_dispose(&raw);
 
 		if (!error) {
-			fc->map.len  = out.size;
+			fc->map.len = out.size;
 			fc->map.data = out.ptr;
 			fc->flags |= GIT_DIFF_FLAG__FREE_DATA;
 		}
@@ -445,13 +451,13 @@ void git_diff_file_content__unload(git_diff_file_content *fc)
 	if (fc->flags & GIT_DIFF_FLAG__FREE_DATA) {
 		git__free(fc->map.data);
 		fc->map.data = "";
-		fc->map.len  = 0;
+		fc->map.len = 0;
 		fc->flags &= ~GIT_DIFF_FLAG__FREE_DATA;
 	}
 	else if (fc->flags & GIT_DIFF_FLAG__UNMAP_DATA) {
 		git_futils_mmap_free(&fc->map);
 		fc->map.data = "";
-		fc->map.len  = 0;
+		fc->map.len = 0;
 		fc->flags &= ~GIT_DIFF_FLAG__UNMAP_DATA;
 	}
 

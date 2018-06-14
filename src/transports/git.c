@@ -192,7 +192,7 @@ static int _git_uploadpack_ls(
 	const char *url,
 	git_smart_subtransport_stream **stream)
 {
-	char *host=NULL, *port=NULL, *path=NULL, *user=NULL, *pass=NULL;
+	char *host = NULL, *port = NULL, *path = NULL, *user = NULL, *pass = NULL;
 	const char *stream_url = url;
 	git_proto_stream *s;
 	int error;
@@ -250,7 +250,7 @@ static int _git_receivepack_ls(
 	const char *url,
 	git_smart_subtransport_stream **stream)
 {
-	char *host=NULL, *port=NULL, *path=NULL, *user=NULL, *pass=NULL;
+	char *host = NULL, *port = NULL, *path = NULL, *user = NULL, *pass = NULL;
 	const char *stream_url = url;
 	git_proto_stream *s;
 	int error;

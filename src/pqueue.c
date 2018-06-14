@@ -65,7 +65,7 @@ static void pqueue_down(git_pqueue *pq, size_t el)
 
 		if ((rkid = git_vector_get(pq, kid_el + 1)) != NULL &&
 		        pq->_cmp(kid, rkid) > 0) {
-			kid    = rkid;
+			kid = rkid;
 			kid_el += 1;
 		}
 

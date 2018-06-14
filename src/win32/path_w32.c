@@ -352,11 +352,13 @@ int git_win32_path_readlink_w(git_win32_path dest, const git_win32_path path)
 		        (reparse_buf->SymbolicLinkReparseBuffer.SubstituteNameOffset / sizeof(WCHAR));
 		target_len = reparse_buf->SymbolicLinkReparseBuffer.SubstituteNameLength / sizeof(WCHAR);
 		break;
+
 	case IO_REPARSE_TAG_MOUNT_POINT:
 		target = reparse_buf->MountPointReparseBuffer.PathBuffer +
 		        (reparse_buf->MountPointReparseBuffer.SubstituteNameOffset / sizeof(WCHAR));
 		target_len = reparse_buf->MountPointReparseBuffer.SubstituteNameLength / sizeof(WCHAR);
 		break;
+
 	default:
 		errno = EINVAL;
 		goto on_error;

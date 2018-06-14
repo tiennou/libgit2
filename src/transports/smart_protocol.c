@@ -707,6 +707,7 @@ static int add_push_report_pkt(git_push *push, git_pkt *pkt)
 			return -1;
 		}
 		break;
+
 	case GIT_PKT_NG:
 		status = git__calloc(1, sizeof(push_status));
 		GITERR_CHECK_ALLOC(status);
@@ -718,11 +719,14 @@ static int add_push_report_pkt(git_push *push, git_pkt *pkt)
 			return -1;
 		}
 		break;
+
 	case GIT_PKT_UNPACK:
 		push->unpack_ok = ((git_pkt_unpack *)pkt)->unpack_ok;
 		break;
+
 	case GIT_PKT_FLUSH:
 		return GIT_ITEROVER;
+
 	default:
 		giterr_set(GITERR_NET, "report-status: protocol error");
 		return -1;
@@ -828,17 +832,20 @@ static int parse_report(transport_smart *transport, git_push *push)
 			/* This is a sideband packet which contains other packets */
 			error = add_push_report_sideband_pkt(push, (git_pkt_data *)pkt, &data_pkt_buf);
 			break;
+
 		case GIT_PKT_ERR:
 			giterr_set(GITERR_NET, "report-status: Error reported: %s",
 				((git_pkt_err *)pkt)->error);
 			error = -1;
 			break;
+
 		case GIT_PKT_PROGRESS:
 			if (transport->progress_cb) {
 				git_pkt_progress *p = (git_pkt_progress *) pkt;
 				error = transport->progress_cb(p->data, p->len, transport->message_cb_payload);
 			}
 			break;
+
 		default:
 			error = add_push_report_pkt(push, pkt);
 			break;

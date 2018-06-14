@@ -375,9 +375,11 @@ static int ssl_set_error(SSL *ssl, int error)
 	case SSL_ERROR_WANT_ACCEPT:
 		giterr_set(GITERR_NET, "SSL error: connection failure");
 		break;
+
 	case SSL_ERROR_WANT_X509_LOOKUP:
 		giterr_set(GITERR_NET, "SSL error: x509 error");
 		break;
+
 	case SSL_ERROR_SYSCALL:
 		e = ERR_get_error();
 		if (e > 0) {
@@ -392,6 +394,7 @@ static int ssl_set_error(SSL *ssl, int error)
 		giterr_set(GITERR_NET, "SSL error: received early EOF");
 		return GIT_EEOF;
 		break;
+
 	case SSL_ERROR_SSL:
 	{
 		char errmsg[256];
@@ -400,6 +403,7 @@ static int ssl_set_error(SSL *ssl, int error)
 		giterr_set(GITERR_NET, "SSL error: %s", errmsg);
 		break;
 	}
+
 	case SSL_ERROR_NONE:
 	case SSL_ERROR_ZERO_RETURN:
 	default:

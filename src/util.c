@@ -422,10 +422,13 @@ uint32_t git__hash(const void *key, int len, unsigned int seed)
 
 	switch (len) {
 	case 3: h ^= data[2] << 16;
+
 	case 2: h ^= data[1] << 8;
+
 	case 1: h ^= data[0];
 		h *= m;
-	};
+	}
+	;
 
 	h ^= h >> 13;
 	h *= m;
@@ -476,8 +479,10 @@ uint32_t git__hash(const void *key, int len, uint32_t seed)
 
 	switch (len & 3) {
 	case 3: k1 ^= tail[2] << 16;
+
 	/* fall through */
 	case 2: k1 ^= tail[1] << 8;
+
 	/* fall through */
 	case 1: k1 ^= tail[0];
 		MURMUR_BLOCK();
@@ -777,11 +782,13 @@ int git__utf8_iterate(const uint8_t *str, int str_len, int32_t *dst)
 	case 1:
 		uc = str[0];
 		break;
+
 	case 2:
 		uc = ((str[0] & 0x1F) <<  6) + (str[1] & 0x3F);
 		if (uc < 0x80)
 			uc = -1;
 		break;
+
 	case 3:
 		uc = ((str[0] & 0x0F) << 12) + ((str[1] & 0x3F) <<  6)
 		        + (str[2] & 0x3F);
@@ -789,6 +796,7 @@ int git__utf8_iterate(const uint8_t *str, int str_len, int32_t *dst)
 		        (uc >= 0xFDD0 && uc < 0xFDF0))
 			uc = -1;
 		break;
+
 	case 4:
 		uc = ((str[0] & 0x07) << 18) + ((str[1] & 0x3F) << 12)
 		        + ((str[2] & 0x3F) <<  6) + (str[3] & 0x3F);

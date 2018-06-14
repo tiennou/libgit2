@@ -55,7 +55,9 @@ static git_diff_delta *diff_delta__alloc(
 	if (DIFF_FLAG_IS_SET(diff, GIT_DIFF_REVERSE)) {
 		switch (status) {
 		case GIT_DELTA_ADDED:   status = GIT_DELTA_DELETED;break;
+
 		case GIT_DELTA_DELETED: status = GIT_DELTA_ADDED;break;
+
 		default: break;	/* leave other status values alone */
 		}
 	}
@@ -261,22 +263,26 @@ static git_diff_delta *diff_delta__last_for_item(
 		if (git_oid__cmp(&delta->old_file.id, &item->id) == 0)
 			return delta;
 		break;
+
 	case GIT_DELTA_ADDED:
 		if (git_oid__cmp(&delta->new_file.id, &item->id) == 0)
 			return delta;
 		break;
+
 	case GIT_DELTA_UNREADABLE:
 	case GIT_DELTA_UNTRACKED:
 		if (diff->base.strcomp(delta->new_file.path, item->path) == 0 &&
 		        git_oid__cmp(&delta->new_file.id, &item->id) == 0)
 			return delta;
 		break;
+
 	case GIT_DELTA_MODIFIED:
 		if (git_oid__cmp(&delta->old_file.id, &item->id) == 0 ||
 		        (delta->new_file.mode == item->mode &&
 		        git_oid__cmp(&delta->new_file.id, &item->id) == 0))
 			return delta;
 		break;
+
 	default:
 		break;
 	}
@@ -346,10 +352,15 @@ static const char *diff_mnemonic_prefix(
 
 	switch (type) {
 	case GIT_ITERATOR_TYPE_EMPTY:   pfx = "c";break;
+
 	case GIT_ITERATOR_TYPE_TREE:    pfx = "c";break;
+
 	case GIT_ITERATOR_TYPE_INDEX:   pfx = "i";break;
+
 	case GIT_ITERATOR_TYPE_WORKDIR: pfx = "w";break;
+
 	case GIT_ITERATOR_TYPE_FS:      pfx = left_side ? "1" : "2";break;
+
 	default: break;
 	}
 
@@ -365,19 +376,19 @@ void git_diff__set_ignore_case(git_diff *diff, bool ignore_case)
 	if (!ignore_case) {
 		diff->opts.flags &= ~GIT_DIFF_IGNORE_CASE;
 
-		diff->strcomp    = git__strcmp;
-		diff->strncomp   = git__strncmp;
-		diff->pfxcomp    = git__prefixcmp;
-		diff->entrycomp  = git_diff__entry_cmp;
+		diff->strcomp = git__strcmp;
+		diff->strncomp = git__strncmp;
+		diff->pfxcomp = git__prefixcmp;
+		diff->entrycomp = git_diff__entry_cmp;
 
 		git_vector_set_cmp(&diff->deltas, git_diff_delta__cmp);
 	} else {
 		diff->opts.flags |= GIT_DIFF_IGNORE_CASE;
 
-		diff->strcomp    = git__strcasecmp;
-		diff->strncomp   = git__strncasecmp;
-		diff->pfxcomp    = git__prefixcmp_icase;
-		diff->entrycomp  = git_diff__entry_icmp;
+		diff->strcomp = git__strcasecmp;
+		diff->strncomp = git__strncasecmp;
+		diff->pfxcomp = git__prefixcmp_icase;
+		diff->entrycomp = git_diff__entry_icmp;
 
 		git_vector_set_cmp(&diff->deltas, git_diff_delta__casecmp);
 	}
@@ -544,8 +555,8 @@ static int diff_generated_apply_options(
 
 	if (DIFF_FLAG_IS_SET(diff, GIT_DIFF_REVERSE)) {
 		const char *tmp_prefix = diff->base.opts.old_prefix;
-		diff->base.opts.old_prefix  = diff->base.opts.new_prefix;
-		diff->base.opts.new_prefix  = tmp_prefix;
+		diff->base.opts.old_prefix = diff->base.opts.new_prefix;
+		diff->base.opts.new_prefix = tmp_prefix;
 	}
 
 	git_config_free(cfg);

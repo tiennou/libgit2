@@ -128,10 +128,10 @@ static void pathspec_match_context_init(
 		ctxt->fnmatch_flags = 0;
 
 	if (casefold) {
-		ctxt->strcomp  = git__strcasecmp;
+		ctxt->strcomp = git__strcasecmp;
 		ctxt->strncomp = git__strncasecmp;
 	} else {
-		ctxt->strcomp  = git__strcmp;
+		ctxt->strcomp = git__strcmp;
 		ctxt->strncomp = git__strncmp;
 	}
 }
@@ -286,7 +286,7 @@ int git_pathspec_matches_path(
 	const git_pathspec *ps, uint32_t flags, const char *path)
 {
 	bool no_fnmatch = (flags & GIT_PATHSPEC_NO_GLOB) != 0;
-	bool casefold =  (flags & GIT_PATHSPEC_IGNORE_CASE) != 0;
+	bool casefold = (flags & GIT_PATHSPEC_IGNORE_CASE) != 0;
 
 	assert(ps && path);
 

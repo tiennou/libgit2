@@ -345,10 +345,10 @@ int git_win32__crtdbg_stacktrace__dump(
 
 #define IS_BIT_SET(o,b) (((o) & (b)) != 0)
 
-	bool b_set_mark         = IS_BIT_SET(opt, GIT_WIN32__CRTDBG_STACKTRACE__SET_MARK);
+	bool b_set_mark = IS_BIT_SET(opt, GIT_WIN32__CRTDBG_STACKTRACE__SET_MARK);
 	bool b_leaks_since_mark = IS_BIT_SET(opt, GIT_WIN32__CRTDBG_STACKTRACE__LEAKS_SINCE_MARK);
-	bool b_leaks_total      = IS_BIT_SET(opt, GIT_WIN32__CRTDBG_STACKTRACE__LEAKS_TOTAL);
-	bool b_quiet            = IS_BIT_SET(opt, GIT_WIN32__CRTDBG_STACKTRACE__QUIET);
+	bool b_leaks_total = IS_BIT_SET(opt, GIT_WIN32__CRTDBG_STACKTRACE__LEAKS_TOTAL);
+	bool b_quiet = IS_BIT_SET(opt, GIT_WIN32__CRTDBG_STACKTRACE__QUIET);
 
 	if (b_leaks_since_mark && b_leaks_total) {
 		giterr_set(GITERR_INVALID, "cannot combine LEAKS_SINCE_MARK and LEAKS_TOTAL.");

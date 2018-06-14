@@ -410,7 +410,7 @@ int git_submodule_name_is_valid(git_repository *repo, const char *name, int flag
 		git_buf_attach_notowned(&buf, name, strlen(name));
 	}
 
-	isvalid =  git_path_isvalid(repo, buf.ptr, 0, flags);
+	isvalid = git_path_isvalid(repo, buf.ptr, 0, flags);
 	git_buf_dispose(&buf);
 
 	return isvalid;
@@ -1768,7 +1768,7 @@ static int submodule_alloc(
 	sm->ignore = sm->ignore_default = GIT_SUBMODULE_IGNORE_NONE;
 	sm->update = sm->update_default = GIT_SUBMODULE_UPDATE_CHECKOUT;
 	sm->fetch_recurse = sm->fetch_recurse_default = GIT_SUBMODULE_RECURSE_NO;
-	sm->repo   = repo;
+	sm->repo = repo;
 	sm->branch = NULL;
 
 	*out = sm;
@@ -1956,7 +1956,7 @@ static int submodule_load_each(const git_config_entry *entry, void *payload)
 		return 0;
 
 	namestart = entry->name + strlen("submodule.");
-	property  = strrchr(namestart, '.');
+	property = strrchr(namestart, '.');
 
 	if (!property || (property == namestart))
 		return 0;
@@ -2190,7 +2190,7 @@ out:
 
 static void submodule_get_index_status(unsigned int *status, git_submodule *sm)
 {
-	const git_oid *head_oid  = git_submodule_head_id(sm);
+	const git_oid *head_oid = git_submodule_head_id(sm);
 	const git_oid *index_oid = git_submodule_index_id(sm);
 
 	*status = *status & ~GIT_SUBMODULE_STATUS__INDEX_FLAGS;

@@ -20,7 +20,7 @@ USHORT WINAPI RtlCaptureStackBackTrace(ULONG, ULONG, PVOID *, PULONG);
 
 static bool g_win32_stack_initialized = false;
 static HANDLE g_win32_stack_process = INVALID_HANDLE_VALUE;
-static git_win32__stack__aux_cb_alloc g_aux_cb_alloc  = NULL;
+static git_win32__stack__aux_cb_alloc g_aux_cb_alloc = NULL;
 static git_win32__stack__aux_cb_lookup g_aux_cb_lookup = NULL;
 
 int git_win32__stack__set_aux_cb(
@@ -120,7 +120,7 @@ int git_win32__stack_format(
 	memset(&line, 0, sizeof(line));
 	line.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
 
-	for (k=0; k < pdata->nr_frames; k++) {
+	for (k = 0; k < pdata->nr_frames; k++) {
 		DWORD64 frame_k = (DWORD64)pdata->frames[k];
 		DWORD dwUnused;
 

@@ -373,13 +373,16 @@ int git_rebase_open(
 		giterr_set(GITERR_REBASE, "interactive rebase is not supported");
 		error = -1;
 		break;
+
 	case GIT_REBASE_TYPE_MERGE:
 		error = rebase_open_merge(rebase);
 		break;
+
 	case GIT_REBASE_TYPE_APPLY:
 		giterr_set(GITERR_REBASE, "patch application rebase is not supported");
 		error = -1;
 		break;
+
 	default:
 		abort();
 	}

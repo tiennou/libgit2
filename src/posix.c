@@ -98,7 +98,9 @@ const char *p_gai_strerror(int ret)
 {
 	switch (ret) {
 	case -1: return "Out of memory";break;
+
 	case -2: return "Address lookup failed";break;
+
 	default: return "Unknown error";break;
 	}
 }

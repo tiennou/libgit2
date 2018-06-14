@@ -494,7 +494,8 @@ static void add_descendants_to_write_order(git_pobject **wo, size_t *endp,
 			/* pass it off to sibling at this level */
 			po = po->delta_sibling;
 		}
-	};
+	}
+	;
 }
 
 static void add_family_to_write_order(git_pobject **wo, size_t *endp,
@@ -1483,12 +1484,15 @@ int git_packbuilder_insert_recur(git_packbuilder *pb, const git_oid *id, const c
 	case GIT_OBJ_BLOB:
 		error = git_packbuilder_insert(pb, id, name);
 		break;
+
 	case GIT_OBJ_TREE:
 		error = git_packbuilder_insert_tree(pb, id);
 		break;
+
 	case GIT_OBJ_COMMIT:
 		error = git_packbuilder_insert_commit(pb, id);
 		break;
+
 	case GIT_OBJ_TAG:
 		if ((error = git_packbuilder_insert(pb, id, name)) < 0)
 			goto cleanup;
@@ -1590,10 +1594,12 @@ static int mark_tree_uninteresting(git_packbuilder *pb, const git_oid *id)
 			if ((error = mark_tree_uninteresting(pb, entry_id)) < 0)
 				goto cleanup;
 			break;
+
 		case GIT_OBJ_BLOB:
 			if ((error = mark_blob_uninteresting(pb, entry_id)) < 0)
 				goto cleanup;
 			break;
+
 		default:
 			/* it's a submodule or something unknown, we don't want it */
 			;
@@ -1667,6 +1673,7 @@ int insert_tree(git_packbuilder *pb, git_tree *tree)
 				return error;
 
 			break;
+
 		case GIT_OBJ_BLOB:
 			if ((error = retrieve_object(&obj, pb, git_tree_id(tree))) < 0)
 				return error;
@@ -1676,6 +1683,7 @@ int insert_tree(git_packbuilder *pb, git_tree *tree)
 			if ((error = git_packbuilder_insert(pb, entry_id, name)) < 0)
 				return error;
 			break;
+
 		default:
 			/* it's a submodule or something unknown, we don't want it */
 			;

@@ -124,14 +124,23 @@ char git_diff_status_char(git_delta_t status)
 
 	switch (status) {
 	case GIT_DELTA_ADDED:      code = 'A';break;
+
 	case GIT_DELTA_DELETED:    code = 'D';break;
+
 	case GIT_DELTA_MODIFIED:   code = 'M';break;
+
 	case GIT_DELTA_RENAMED:    code = 'R';break;
+
 	case GIT_DELTA_COPIED:     code = 'C';break;
+
 	case GIT_DELTA_IGNORED:    code = 'I';break;
+
 	case GIT_DELTA_UNTRACKED:  code = '?';break;
+
 	case GIT_DELTA_TYPECHANGE: code = 'T';break;
+
 	case GIT_DELTA_UNREADABLE: code = 'X';break;
+
 	default:                   code = ' ';break;
 	}
 
@@ -156,8 +165,8 @@ static int diff_print_one_name_only(
 	if (git_buf_oom(out))
 		return -1;
 
-	pi->line.origin      = GIT_DIFF_LINE_FILE_HDR;
-	pi->line.content     = git_buf_cstr(out);
+	pi->line.origin = GIT_DIFF_LINE_FILE_HDR;
+	pi->line.content = git_buf_cstr(out);
 	pi->line.content_len = git_buf_len(out);
 
 	return pi->print_cb(delta, NULL, &pi->line, pi->payload);
@@ -197,8 +206,8 @@ static int diff_print_one_name_status(
 	if (git_buf_oom(out))
 		return -1;
 
-	pi->line.origin      = GIT_DIFF_LINE_FILE_HDR;
-	pi->line.content     = git_buf_cstr(out);
+	pi->line.origin = GIT_DIFF_LINE_FILE_HDR;
+	pi->line.content = git_buf_cstr(out);
 	pi->line.content_len = git_buf_len(out);
 
 	return pi->print_cb(delta, NULL, &pi->line, pi->payload);
@@ -252,8 +261,8 @@ static int diff_print_one_raw(
 	if (git_buf_oom(out))
 		return -1;
 
-	pi->line.origin      = GIT_DIFF_LINE_FILE_HDR;
-	pi->line.content     = git_buf_cstr(out);
+	pi->line.origin = GIT_DIFF_LINE_FILE_HDR;
+	pi->line.content = git_buf_cstr(out);
 	pi->line.content_len = git_buf_len(out);
 
 	return pi->print_cb(delta, NULL, &pi->line, pi->payload);
@@ -584,8 +593,8 @@ static int diff_print_patch_file(
 		pi->buf, delta, oldpfx, newpfx, id_strlen)) < 0)
 		return error;
 
-	pi->line.origin      = GIT_DIFF_LINE_FILE_HDR;
-	pi->line.content     = git_buf_cstr(pi->buf);
+	pi->line.origin = GIT_DIFF_LINE_FILE_HDR;
+	pi->line.content = git_buf_cstr(pi->buf);
 	pi->line.content_len = git_buf_len(pi->buf);
 
 	return pi->print_cb(delta, NULL, &pi->line, pi->payload);
@@ -626,8 +635,8 @@ static int diff_print_patch_hunk(
 	if (S_ISDIR(d->new_file.mode))
 		return 0;
 
-	pi->line.origin      = GIT_DIFF_LINE_HUNK_HDR;
-	pi->line.content     = h->header;
+	pi->line.origin = GIT_DIFF_LINE_HUNK_HDR;
+	pi->line.content = h->header;
 	pi->line.content_len = h->header_len;
 
 	return pi->print_cb(d, h, &pi->line, pi->payload);
@@ -669,18 +678,23 @@ int git_diff_print(
 		print_hunk = diff_print_patch_hunk;
 		print_line = diff_print_patch_line;
 		break;
+
 	case GIT_DIFF_FORMAT_PATCH_HEADER:
 		print_file = diff_print_patch_file;
 		break;
+
 	case GIT_DIFF_FORMAT_RAW:
 		print_file = diff_print_one_raw;
 		break;
+
 	case GIT_DIFF_FORMAT_NAME_ONLY:
 		print_file = diff_print_one_name_only;
 		break;
+
 	case GIT_DIFF_FORMAT_NAME_STATUS:
 		print_file = diff_print_one_name_status;
 		break;
+
 	default:
 		giterr_set(GITERR_INVALID, "unknown diff output format (%d)", format);
 		return -1;

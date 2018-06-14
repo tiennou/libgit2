@@ -670,10 +670,12 @@ int git_packfile_unpack(
 		if (error < 0)
 			goto cleanup;
 		break;
+
 	case GIT_OBJ_OFS_DELTA:
 	case GIT_OBJ_REF_DELTA:
 		error = packfile_error("dependency chain ends in a delta");
 		goto cleanup;
+
 	default:
 		error = packfile_error("invalid packfile type in header");
 		goto cleanup;

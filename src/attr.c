@@ -15,7 +15,7 @@
 #include "git2/oid.h"
 #include <ctype.h>
 
-const char *git_attr__true  = "[internal]__TRUE__";
+const char *git_attr__true = "[internal]__TRUE__";
 const char *git_attr__false = "[internal]__FALSE__";
 const char *git_attr__unset = "[internal]__UNSET__";
 
@@ -413,12 +413,14 @@ static int attr_decide_sources(
 		if (has_index)
 			srcs[count++] = GIT_ATTR_FILE__FROM_INDEX;
 		break;
+
 	case GIT_ATTR_CHECK_INDEX_THEN_FILE:
 		if (has_index)
 			srcs[count++] = GIT_ATTR_FILE__FROM_INDEX;
 		if (has_wd)
 			srcs[count++] = GIT_ATTR_FILE__FROM_FILE;
 		break;
+
 	case GIT_ATTR_CHECK_INDEX_ONLY:
 		if (has_index)
 			srcs[count++] = GIT_ATTR_FILE__FROM_INDEX;

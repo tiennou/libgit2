@@ -21,9 +21,11 @@ GIT_INLINE(int) zstream_seterr(git_zstream *zs)
 	case Z_STREAM_END:
 	case Z_BUF_ERROR:	/* not fatal; we retry with a larger buffer */
 		return 0;
+
 	case Z_MEM_ERROR:
 		giterr_set_oom();
 		break;
+
 	default:
 		if (zs->z.msg)
 			giterr_set_str(GITERR_ZLIB, zs->z.msg);

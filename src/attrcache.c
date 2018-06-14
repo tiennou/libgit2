@@ -201,7 +201,7 @@ static int attr_cache_lookup(
 	attr_cache_unlock(cache);
 
 cleanup:
-	*out_file  = file;
+	*out_file = file;
 	*out_entry = entry;
 
 	git_buf_dispose(&path);

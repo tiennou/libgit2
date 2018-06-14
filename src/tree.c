@@ -717,8 +717,10 @@ static git_otype otype_from_mode(git_filemode_t filemode)
 	switch (filemode) {
 	case GIT_FILEMODE_TREE:
 		return GIT_OBJ_TREE;
+
 	case GIT_FILEMODE_COMMIT:
 		return GIT_OBJ_COMMIT;
+
 	default:
 		return GIT_OBJ_BLOB;
 	}
@@ -957,6 +959,7 @@ int git_tree_entry_bypath(
 		 * walking down the path */
 		if (path[filename_len + 1] != '\0')
 			break;
+
 	/* fall through */
 	case '\0':
 		/* If there are no more components in the path, return
@@ -1270,6 +1273,7 @@ int git_tree_create_updated(git_oid *out, git_repository *repo, git_tree *baseli
 			git__free(basename);
 			break;
 		}
+
 		case GIT_TREE_UPDATE_REMOVE:
 		{
 			char *basename = git_path_basename(update->path);
@@ -1277,6 +1281,7 @@ int git_tree_create_updated(git_oid *out, git_repository *repo, git_tree *baseli
 			git__free(basename);
 			break;
 		}
+
 		default:
 			giterr_set(GITERR_TREE, "unknown action for update");
 			error = -1;

@@ -142,7 +142,7 @@ int git_fetch_download_pack(git_remote *remote, const git_remote_callbacks *call
 
 	if (callbacks) {
 		progress = callbacks->transfer_progress;
-		payload  = callbacks->payload;
+		payload = callbacks->payload;
 	}
 
 	return t->download_pack(t, remote->repo, &remote->stats, progress, payload);

@@ -35,22 +35,26 @@ const char *git_cred__username(git_cred *cred)
 		git_cred_username *c = (git_cred_username *) cred;
 		return c->username;
 	}
+
 	case GIT_CREDTYPE_USERPASS_PLAINTEXT:
 	{
 		git_cred_userpass_plaintext *c = (git_cred_userpass_plaintext *) cred;
 		return c->username;
 	}
+
 	case GIT_CREDTYPE_SSH_KEY:
 	case GIT_CREDTYPE_SSH_MEMORY:
 	{
 		git_cred_ssh_key *c = (git_cred_ssh_key *) cred;
 		return c->username;
 	}
+
 	case GIT_CREDTYPE_SSH_CUSTOM:
 	{
 		git_cred_ssh_custom *c = (git_cred_ssh_custom *) cred;
 		return c->username;
 	}
+
 	case GIT_CREDTYPE_SSH_INTERACTIVE:
 	{
 		git_cred_ssh_interactive *c = (git_cred_ssh_interactive *) cred;

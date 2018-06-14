@@ -75,6 +75,7 @@ p_fnmatchx(const char *pattern, const char *string, int flags, size_t recurs)
 			if ((flags & FNM_LEADING_DIR) && *string == '/')
 				return (0);
 			return (*string == EOS ? 0 : FNM_NOMATCH);
+
 		case '?':
 			if (*string == EOS)
 				return (FNM_NOMATCH);
@@ -86,6 +87,7 @@ p_fnmatchx(const char *pattern, const char *string, int flags, size_t recurs)
 				return (FNM_NOMATCH);
 			++string;
 			break;
+
 		case '*':
 			c = *pattern;
 
@@ -144,6 +146,7 @@ p_fnmatchx(const char *pattern, const char *string, int flags, size_t recurs)
 				++string;
 			}
 			return (FNM_NOMATCH);
+
 		case '[':
 			if (*string == EOS)
 				return (FNM_NOMATCH);
@@ -158,14 +161,17 @@ p_fnmatchx(const char *pattern, const char *string, int flags, size_t recurs)
 			case RANGE_ERROR:
 				/* not a good range, treat as normal text */
 				goto normal;
+
 			case RANGE_MATCH:
 				pattern = newp;
 				break;
+
 			case RANGE_NOMATCH:
 				return (FNM_NOMATCH);
 			}
 			++string;
 			break;
+
 		case '\\':
 			if (!(flags & FNM_NOESCAPE)) {
 				if ((c = *pattern++) == EOS) {
@@ -173,6 +179,7 @@ p_fnmatchx(const char *pattern, const char *string, int flags, size_t recurs)
 					--pattern;
 				}
 			}
+
 		/* FALLTHROUGH */
 		default:
 normal:

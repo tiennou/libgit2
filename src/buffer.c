@@ -88,7 +88,7 @@ int git_buf_try_grow(
 	}
 
 	buf->asize = new_size;
-	buf->ptr   = new_ptr;
+	buf->ptr = new_ptr;
 
 	/* truncate the existing buffer size if necessary */
 	if (buf->size >= buf->asize)
@@ -987,20 +987,30 @@ int git_buf_unquote(git_buf *buf)
 
 			switch (ch) {
 			/* \" or \\ simply copy the char in */
-			case '"': case '\\':
+			case '"':
+			case '\\':
 				break;
 
 			/* add the appropriate escaped char */
 			case 'a': ch = '\a';break;
+
 			case 'b': ch = '\b';break;
+
 			case 'f': ch = '\f';break;
+
 			case 'n': ch = '\n';break;
+
 			case 'r': ch = '\r';break;
+
 			case 't': ch = '\t';break;
+
 			case 'v': ch = '\v';break;
 
 			/* \xyz digits convert to the char*/
-			case '0': case '1': case '2': case '3':
+			case '0':
+			case '1':
+			case '2':
+			case '3':
 				if (j == buf->size-3) {
 					giterr_set(GITERR_INVALID,
 						"truncated quoted character \\%c", ch);

@@ -201,7 +201,8 @@ int git_oid_ncmp(const git_oid *oid_a, const git_oid *oid_b, size_t len)
 		a++;
 		b++;
 		len -= 2;
-	};
+	}
+	;
 
 	if (len)
 		if ((*a ^ *b) & 0xf0)

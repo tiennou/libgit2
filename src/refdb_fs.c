@@ -105,7 +105,7 @@ static int packed_reload(refdb_fs_backend *backend)
 	git_sortedcache_clear(backend->refcache, false);
 
 	scan = (char *)packedrefs.ptr;
-	eof  = scan + packedrefs.size;
+	eof = scan + packedrefs.size;
 
 	backend->peeling_mode = PEELING_NONE;
 
@@ -522,8 +522,10 @@ static int iter_load_loose_paths(refdb_fs_backend *backend, refdb_fs_iter *iter)
 			case '[':
 			case '\\':
 				break;
+
 			case '/':
 				last_sep = pos;
+
 			/* FALLTHROUGH */
 			default:
 				continue;
@@ -2055,11 +2057,11 @@ int git_refdb_backend_fs(
 
 	if (!git_repository__cvar(&t, backend->repo, GIT_CVAR_IGNORECASE) && t) {
 		backend->iterator_flags |= GIT_ITERATOR_IGNORE_CASE;
-		backend->direach_flags  |= GIT_PATH_DIR_IGNORE_CASE;
+		backend->direach_flags |= GIT_PATH_DIR_IGNORE_CASE;
 	}
 	if (!git_repository__cvar(&t, backend->repo, GIT_CVAR_PRECOMPOSE) && t) {
 		backend->iterator_flags |= GIT_ITERATOR_PRECOMPOSE_UNICODE;
-		backend->direach_flags  |= GIT_PATH_DIR_PRECOMPOSE_UNICODE;
+		backend->direach_flags |= GIT_PATH_DIR_PRECOMPOSE_UNICODE;
 	}
 	if ((!git_repository__cvar(&t, backend->repo, GIT_CVAR_FSYNCOBJECTFILES) && t) ||
 	        git_repository__fsync_gitdir)

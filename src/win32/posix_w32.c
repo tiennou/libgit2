@@ -55,9 +55,11 @@ GIT_INLINE(void) set_errno(void)
 	case ERROR_FILENAME_EXCED_RANGE:
 		errno = ENOENT;
 		break;
+
 	case ERROR_BAD_ENVIRONMENT:
 		errno = E2BIG;
 		break;
+
 	case ERROR_BAD_FORMAT:
 	case ERROR_INVALID_STARTING_CODESEG:
 	case ERROR_INVALID_STACKSEG:
@@ -76,26 +78,31 @@ GIT_INLINE(void) set_errno(void)
 	case ERROR_INFLOOP_IN_RELOC_CHAIN:
 		errno = ENOEXEC;
 		break;
+
 	case ERROR_INVALID_HANDLE:
 	case ERROR_INVALID_TARGET_HANDLE:
 	case ERROR_DIRECT_ACCESS_HANDLE:
 		errno = EBADF;
 		break;
+
 	case ERROR_WAIT_NO_CHILDREN:
 	case ERROR_CHILD_NOT_COMPLETE:
 		errno = ECHILD;
 		break;
+
 	case ERROR_NO_PROC_SLOTS:
 	case ERROR_MAX_THRDS_REACHED:
 	case ERROR_NESTING_NOT_ALLOWED:
 		errno = EAGAIN;
 		break;
+
 	case ERROR_ARENA_TRASHED:
 	case ERROR_NOT_ENOUGH_MEMORY:
 	case ERROR_INVALID_BLOCK:
 	case ERROR_NOT_ENOUGH_QUOTA:
 		errno = ENOMEM;
 		break;
+
 	case ERROR_ACCESS_DENIED:
 	case ERROR_CURRENT_DIRECTORY:
 	case ERROR_WRITE_PROTECT:
@@ -124,13 +131,16 @@ GIT_INLINE(void) set_errno(void)
 	case ERROR_LOCK_FAILED:
 		errno = EACCES;
 		break;
+
 	case ERROR_FILE_EXISTS:
 	case ERROR_ALREADY_EXISTS:
 		errno = EEXIST;
 		break;
+
 	case ERROR_NOT_SAME_DEVICE:
 		errno = EXDEV;
 		break;
+
 	case ERROR_INVALID_FUNCTION:
 	case ERROR_INVALID_ACCESS:
 	case ERROR_INVALID_DATA:
@@ -138,18 +148,23 @@ GIT_INLINE(void) set_errno(void)
 	case ERROR_NEGATIVE_SEEK:
 		errno = EINVAL;
 		break;
+
 	case ERROR_TOO_MANY_OPEN_FILES:
 		errno = EMFILE;
 		break;
+
 	case ERROR_DISK_FULL:
 		errno = ENOSPC;
 		break;
+
 	case ERROR_BROKEN_PIPE:
 		errno = EPIPE;
 		break;
+
 	case ERROR_DIR_NOT_EMPTY:
 		errno = ENOTEMPTY;
 		break;
+
 	default:
 		errno = EINVAL;
 	}
@@ -311,6 +326,7 @@ static int lstat_w(
 	case ERROR_ACCESS_DENIED:
 		errno = EACCES;
 		break;
+
 	default:
 		errno = ENOENT;
 		break;
@@ -419,9 +435,11 @@ GIT_INLINE(void) open_opts_from_posix(struct open_opts *opts, int flags, mode_t 
 	case O_WRONLY:
 		opts->access = GENERIC_WRITE;
 		break;
+
 	case O_RDWR:
 		opts->access = GENERIC_READ | GENERIC_WRITE;
 		break;
+
 	default:
 		opts->access = GENERIC_READ;
 		break;
@@ -434,15 +452,19 @@ GIT_INLINE(void) open_opts_from_posix(struct open_opts *opts, int flags, mode_t 
 	case O_CREAT | O_TRUNC | O_EXCL:
 		opts->creation_disposition = CREATE_NEW;
 		break;
+
 	case O_CREAT | O_TRUNC:
 		opts->creation_disposition = CREATE_ALWAYS;
 		break;
+
 	case O_TRUNC:
 		opts->creation_disposition = TRUNCATE_EXISTING;
 		break;
+
 	case O_CREAT:
 		opts->creation_disposition = OPEN_ALWAYS;
 		break;
+
 	default:
 		opts->creation_disposition = OPEN_EXISTING;
 		break;
@@ -906,7 +928,7 @@ p_localtime_r (const time_t *timer, struct tm *result)
 	if (local_result == NULL || result == NULL)
 		return NULL;
 
-	memcpy (result, local_result, sizeof (struct tm));
+	memcpy (result, local_result, sizeof(struct tm));
 	return result;
 }
 struct tm *
@@ -918,7 +940,7 @@ p_gmtime_r (const time_t *timer, struct tm *result)
 	if (local_result == NULL || result == NULL)
 		return NULL;
 
-	memcpy (result, local_result, sizeof (struct tm));
+	memcpy (result, local_result, sizeof(struct tm));
 	return result;
 }
 
@@ -948,9 +970,11 @@ int p_inet_pton(int af, const char *src, void *dst)
 	switch (WSAGetLastError()) {
 	case WSAEINVAL:
 		return 0;
+
 	case WSAEFAULT:
 		errno = ENOSPC;
 		return -1;
+
 	case WSA_NOT_ENOUGH_MEMORY:
 		errno = ENOMEM;
 		return -1;

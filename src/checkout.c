@@ -128,12 +128,14 @@ static int checkout_notify(
 			baseline = &delta->old_file;
 			target = &delta->new_file;
 			break;
+
 		case GIT_DELTA_ADDED:
 		case GIT_DELTA_IGNORED:
 		case GIT_DELTA_UNTRACKED:
 		case GIT_DELTA_UNREADABLE:
 			target = &delta->new_file;
 			break;
+
 		case GIT_DELTA_DELETED:
 			baseline = &delta->old_file;
 			break;
@@ -303,19 +305,24 @@ static int checkout_action_no_wd(
 			return error;
 		*action = CHECKOUT_ACTION_IF(RECREATE_MISSING, UPDATE_BLOB, NONE);
 		break;
+
 	case GIT_DELTA_ADDED:	/* case 2 or 28 (and 5 but not really) */
 		*action = CHECKOUT_ACTION_IF(SAFE, UPDATE_BLOB, NONE);
 		break;
+
 	case GIT_DELTA_MODIFIED:/* case 13 (and 35 but not really) */
 		*action = CHECKOUT_ACTION_IF(RECREATE_MISSING, UPDATE_BLOB, CONFLICT);
 		break;
+
 	case GIT_DELTA_TYPECHANGE:	/* case 21 (B->T) and 28 (T->B)*/
 		if (delta->new_file.mode == GIT_FILEMODE_TREE)
 			*action = CHECKOUT_ACTION_IF(SAFE, UPDATE_BLOB, NONE);
 		break;
+
 	case GIT_DELTA_DELETED:	/* case 8 or 25 */
 		*action = CHECKOUT_ACTION_IF(SAFE, REMOVE, NONE);
 		break;
+
 	default:/* impossible */
 		break;
 	}
@@ -496,18 +503,21 @@ static int checkout_action_with_wd(
 			*action = CHECKOUT_ACTION_IF(FORCE, UPDATE_BLOB, NONE);
 		}
 		break;
+
 	case GIT_DELTA_ADDED:	/* case 3, 4 or 6 */
 		if (git_iterator_current_is_ignored(workdir))
 			*action = CHECKOUT_ACTION_IF(DONT_OVERWRITE_IGNORED, CONFLICT, UPDATE_BLOB);
 		else
 			*action = CHECKOUT_ACTION_IF(FORCE, UPDATE_BLOB, CONFLICT);
 		break;
+
 	case GIT_DELTA_DELETED:	/* case 9 or 10 (or 26 but not really) */
 		if (checkout_is_workdir_modified(data, &delta->old_file, &delta->new_file, wd))
 			*action = CHECKOUT_ACTION_IF(FORCE, REMOVE, CONFLICT);
 		else
 			*action = CHECKOUT_ACTION_IF(SAFE, REMOVE, NONE);
 		break;
+
 	case GIT_DELTA_MODIFIED:/* case 16, 17, 18 (or 36 but not really) */
 		if (wd->mode != GIT_FILEMODE_COMMIT &&
 		        checkout_is_workdir_modified(data, &delta->old_file, &delta->new_file, wd))
@@ -515,6 +525,7 @@ static int checkout_action_with_wd(
 		else
 			*action = CHECKOUT_ACTION_IF(SAFE, UPDATE_BLOB, NONE);
 		break;
+
 	case GIT_DELTA_TYPECHANGE:	/* case 22, 23, 29, 30 */
 		if (delta->old_file.mode == GIT_FILEMODE_TREE) {
 			if (wd->mode == GIT_FILEMODE_TREE)
@@ -542,6 +553,7 @@ static int checkout_action_with_wd(
 		if (delta->new_file.mode == GIT_FILEMODE_TREE)
 			*action = (*action & ~CHECKOUT_ACTION__UPDATE_BLOB);
 		break;
+
 	default:/* impossible */
 		break;
 	}
@@ -564,17 +576,21 @@ static int checkout_action_with_wd_blocker(
 			checkout_notify(data, GIT_CHECKOUT_NOTIFY_DIRTY, delta, wd));
 		*action = CHECKOUT_ACTION_IF(FORCE, REMOVE_AND_UPDATE, NONE);
 		break;
+
 	case GIT_DELTA_ADDED:
 	case GIT_DELTA_MODIFIED:
 		*action = CHECKOUT_ACTION_IF(FORCE, REMOVE_AND_UPDATE, CONFLICT);
 		break;
+
 	case GIT_DELTA_DELETED:
 		*action = CHECKOUT_ACTION_IF(FORCE, REMOVE, CONFLICT);
 		break;
+
 	case GIT_DELTA_TYPECHANGE:
 		/* not 100% certain about this... */
 		*action = CHECKOUT_ACTION_IF(FORCE, REMOVE_AND_UPDATE, CONFLICT);
 		break;
+
 	default:/* impossible */
 		break;
 	}
@@ -599,6 +615,7 @@ static int checkout_action_with_wd_dir(
 			checkout_notify(data, GIT_CHECKOUT_NOTIFY_UNTRACKED, NULL, wd));
 		*action = CHECKOUT_ACTION_IF(FORCE, REMOVE_AND_UPDATE, NONE);
 		break;
+
 	case GIT_DELTA_ADDED:	/* case 4 (and 7 for dir) */
 	case GIT_DELTA_MODIFIED:/* case 20 (or 37 but not really) */
 		if (delta->old_file.mode == GIT_FILEMODE_COMMIT)
@@ -608,11 +625,13 @@ static int checkout_action_with_wd_dir(
 			        CHECKOUT_ACTION_IF(DONT_OVERWRITE_IGNORED, CONFLICT, REMOVE_AND_UPDATE) :
 			        CHECKOUT_ACTION_IF(FORCE, REMOVE_AND_UPDATE, CONFLICT);
 		break;
+
 	case GIT_DELTA_DELETED:	/* case 11 (and 27 for dir) */
 		if (delta->old_file.mode != GIT_FILEMODE_TREE)
 			GITERR_CHECK_ERROR(
 				checkout_notify(data, GIT_CHECKOUT_NOTIFY_UNTRACKED, NULL, wd));
 		break;
+
 	case GIT_DELTA_TYPECHANGE:	/* case 24 or 31 */
 		if (delta->old_file.mode == GIT_FILEMODE_TREE) {
 			/* For typechange from dir, remove dir and add blob, but it is
@@ -627,6 +646,7 @@ static int checkout_action_with_wd_dir(
 			/* For typechange to dir, dir is already created so no action */
 			*action = CHECKOUT_ACTION_IF(FORCE, REMOVE_AND_UPDATE, CONFLICT);
 		break;
+
 	default:/* impossible */
 		break;
 	}

@@ -229,8 +229,7 @@ int git_reference_lookup_resolved(
 
 	for (nesting = max_nesting;
 	        nesting >= 0 && scan_type == GIT_REF_SYMBOLIC;
-	        nesting--)
-	{
+	        nesting--) {
 		if (nesting != max_nesting) {
 			strncpy(scan_name, ref->target.symbolic, sizeof(scan_name));
 			git_reference_free(ref);
@@ -895,6 +894,7 @@ static int is_valid_ref_char(char ch)
 	case '[':
 	case '*':
 		return 0;
+
 	default:
 		return 1;
 	}
@@ -943,8 +943,7 @@ static bool is_all_caps_and_underscore(const char *name, size_t len)
 
 	assert(name && len > 0);
 
-	for (i = 0; i < len; i++)
-	{
+	for (i = 0; i < len; i++) {
 		c = name[i];
 		if ((c < 'A' || c > 'Z') && c != '_')
 			return false;
@@ -1201,7 +1200,7 @@ int git_reference__update_terminal(
 		giterr_clear();
 		error = reference__create(&ref2, repo, ref_name, oid, NULL, 0, to_use,
 			log_message, NULL, NULL);
-	}  else if (error == 0) {
+	} else if (error == 0) {
 		assert(git_reference_type(ref) == GIT_REF_OID);
 		error = reference__create(&ref2, repo, ref->name, oid, NULL, 1, to_use,
 			log_message, &ref->target.oid, NULL);

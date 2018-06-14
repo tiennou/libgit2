@@ -420,8 +420,7 @@ int git_branch_upstream_name(
 
 		if (git_refspec_transform(&buf, refspec, git_buf_cstr(&merge_name)) < 0)
 			goto cleanup;
-	} else
-	if (git_buf_set(&buf, git_buf_cstr(&merge_name), git_buf_len(&merge_name)) < 0)
+	} else if (git_buf_set(&buf, git_buf_cstr(&merge_name), git_buf_len(&merge_name)) < 0)
 		goto cleanup;
 
 	error = git_buf_set(out, git_buf_cstr(&buf), git_buf_len(&buf));

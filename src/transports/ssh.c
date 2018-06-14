@@ -357,6 +357,7 @@ static int _git_ssh_authenticate_session(
 			rc = libssh2_userauth_password(session, c->username, c->password);
 			break;
 		}
+
 		case GIT_CREDTYPE_SSH_KEY: {
 			git_cred_ssh_key *c = (git_cred_ssh_key *)cred;
 
@@ -369,6 +370,7 @@ static int _git_ssh_authenticate_session(
 
 			break;
 		}
+
 		case GIT_CREDTYPE_SSH_CUSTOM: {
 			git_cred_ssh_custom *c = (git_cred_ssh_custom *)cred;
 
@@ -377,6 +379,7 @@ static int _git_ssh_authenticate_session(
 				c->publickey_len, c->sign_callback, &c->payload);
 			break;
 		}
+
 		case GIT_CREDTYPE_SSH_INTERACTIVE: {
 			void **abstract = libssh2_session_abstract(session);
 			git_cred_ssh_interactive *c = (git_cred_ssh_interactive *)cred;
@@ -398,6 +401,7 @@ static int _git_ssh_authenticate_session(
 				session, c->username, c->prompt_callback);
 			break;
 		}
+
 #ifdef GIT_SSH_MEMORY_CREDENTIALS
 		case GIT_CREDTYPE_SSH_MEMORY: {
 			git_cred_ssh_key *c = (git_cred_ssh_key *)cred;
@@ -416,6 +420,7 @@ static int _git_ssh_authenticate_session(
 				c->passphrase);
 			break;
 		}
+
 #endif
 		default:
 			rc = LIBSSH2_ERROR_AUTHENTICATION_FAILED;
@@ -512,14 +517,14 @@ static int _git_ssh_setup_conn(
 	const char *cmd,
 	git_smart_subtransport_stream **stream)
 {
-	char *host=NULL, *port=NULL, *path=NULL, *user=NULL, *pass=NULL;
-	const char *default_port="22";
+	char *host = NULL, *port = NULL, *path = NULL, *user = NULL, *pass = NULL;
+	const char *default_port = "22";
 	int auth_methods, error = 0;
 	size_t i;
 	ssh_stream *s;
 	git_cred *cred = NULL;
-	LIBSSH2_SESSION *session=NULL;
-	LIBSSH2_CHANNEL *channel=NULL;
+	LIBSSH2_SESSION *session = NULL;
+	LIBSSH2_CHANNEL *channel = NULL;
 
 	t->current_stream = NULL;
 

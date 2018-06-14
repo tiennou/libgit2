@@ -672,8 +672,8 @@ int git_remote_connect(git_remote *remote, git_direction direction, const git_re
 	if (callbacks) {
 		GITERR_CHECK_VERSION(callbacks, GIT_REMOTE_CALLBACKS_VERSION, "git_remote_callbacks");
 		credentials = callbacks->credentials;
-		transport   = callbacks->transport;
-		payload     = callbacks->payload;
+		transport = callbacks->transport;
+		payload = callbacks->payload;
 	}
 
 	if (proxy)
@@ -1746,14 +1746,17 @@ int git_remote_set_autotag(git_repository *repo, const char *remote, git_remote_
 	case GIT_REMOTE_DOWNLOAD_TAGS_NONE:
 		error = git_config_set_string(config, var.ptr, "--no-tags");
 		break;
+
 	case GIT_REMOTE_DOWNLOAD_TAGS_ALL:
 		error = git_config_set_string(config, var.ptr, "--tags");
 		break;
+
 	case GIT_REMOTE_DOWNLOAD_TAGS_AUTO:
 		error = git_config_delete_entry(config, var.ptr);
 		if (error == GIT_ENOTFOUND)
 			error = 0;
 		break;
+
 	default:
 		giterr_set(GITERR_INVALID, "invalid value for the tagopt setting");
 		error = -1;

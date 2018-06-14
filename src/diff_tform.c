@@ -104,8 +104,8 @@ git_diff_delta *git_diff__merge_like_cgit(
 	}
 
 	git_oid_cpy(&dup->old_file.id, &a->old_file.id);
-	dup->old_file.mode  = a->old_file.mode;
-	dup->old_file.size  = a->old_file.size;
+	dup->old_file.mode = a->old_file.mode;
+	dup->old_file.size = a->old_file.size;
 	dup->old_file.flags = a->old_file.flags;
 
 	return dup;
@@ -127,7 +127,7 @@ int git_diff__merge(
 		return 0;
 
 	ignore_case = ((onto->opts.flags & GIT_DIFF_IGNORE_CASE) != 0);
-	reversed    = ((onto->opts.flags & GIT_DIFF_REVERSE) != 0);
+	reversed = ((onto->opts.flags & GIT_DIFF_REVERSE) != 0);
 
 	if (ignore_case != ((from->opts.flags & GIT_DIFF_IGNORE_CASE) != 0) ||
 	        reversed != ((from->opts.flags & GIT_DIFF_REVERSE) != 0)) {
@@ -452,8 +452,8 @@ typedef struct {
 static int similarity_init(
 	similarity_info *info, git_diff *diff, size_t file_idx)
 {
-	info->idx  = file_idx;
-	info->src  = (file_idx & 1) ? diff->new_src : diff->old_src;
+	info->idx = file_idx;
+	info->src = (file_idx & 1) ? diff->new_src : diff->old_src;
 	info->repo = diff->repo;
 	info->file = similarity_get_file(diff, file_idx);
 	info->odb_obj = NULL;
@@ -784,9 +784,9 @@ GIT_INLINE(bool) delta_is_new_only(git_diff_delta *delta)
 GIT_INLINE(void) delta_make_rename(
 	git_diff_delta *to, const git_diff_delta *from, uint16_t similarity)
 {
-	to->status     = GIT_DELTA_RENAMED;
+	to->status = GIT_DELTA_RENAMED;
 	to->similarity = similarity;
-	to->nfiles     = 2;
+	to->nfiles = 2;
 	memcpy(&to->old_file, &from->old_file, sizeof(to->old_file));
 	to->flags &= ~GIT_DIFF_FLAG__TO_SPLIT;
 }
@@ -1038,7 +1038,7 @@ find_best_matches:
 				if (tgt2src[s].idx == t &&
 				        tgt2src[s].similarity >
 				        opts.rename_from_rewrite_threshold) {
-					src->status     = GIT_DELTA_RENAMED;
+					src->status = GIT_DELTA_RENAMED;
 					src->similarity = tgt2src[s].similarity;
 					tgt2src[s].similarity = 0;
 					src->flags &= ~GIT_DIFF_FLAG__TO_SPLIT;
@@ -1072,9 +1072,9 @@ find_best_matches:
 			if (!delta_is_split(tgt) && !delta_is_new_only(tgt))
 				continue;
 
-			tgt->status     = GIT_DELTA_COPIED;
+			tgt->status = GIT_DELTA_COPIED;
 			tgt->similarity = best_match->similarity;
-			tgt->nfiles     = 2;
+			tgt->nfiles = 2;
 			memcpy(&tgt->old_file, &src->old_file, sizeof(tgt->old_file));
 			tgt->flags &= ~GIT_DIFF_FLAG__TO_SPLIT;
 

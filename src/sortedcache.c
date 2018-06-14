@@ -36,8 +36,8 @@ int git_sortedcache_new(
 		goto fail;
 	}
 
-	sc->item_path_offset  = item_path_offset;
-	sc->free_item         = free_item;
+	sc->item_path_offset = item_path_offset;
+	sc->free_item = free_item;
 	sc->free_item_payload = free_item_payload;
 	GIT_REFCOUNT_INC(sc);
 	if (pathlen)
@@ -129,7 +129,7 @@ int git_sortedcache_copy(
 	/* just use memcpy if no special copy fn is passed in */
 	if (!copy_item) {
 		copy_item = sortedcache_copy_item;
-		payload   = src;
+		payload = src;
 	}
 
 	if ((error = git_sortedcache_new(
@@ -282,7 +282,7 @@ int git_sortedcache_upsert(void **out, git_sortedcache *sc, const char *key)
 		goto done;
 	}
 
-	keylen  = strlen(key);
+	keylen = strlen(key);
 	itemlen = sc->item_path_offset + keylen + 1;
 	itemlen = (itemlen + 7) & ~7;
 
@@ -362,7 +362,7 @@ int git_sortedcache_lookup_index(
 	struct sortedcache_magic_key magic;
 
 	magic.offset = sc->item_path_offset;
-	magic.key    = key;
+	magic.key = key;
 
 	return git_vector_bsearch2(out, &sc->items, sortedcache_magic_cmp, &magic);
 }

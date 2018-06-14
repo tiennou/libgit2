@@ -44,7 +44,7 @@ int git_attr_file__new(
 
 	git_pool_init(&attrs->pool, 1);
 	GIT_REFCOUNT_INC(attrs);
-	attrs->entry  = entry;
+	attrs->entry = entry;
 	attrs->source = source;
 	*out = attrs;
 	return 0;
@@ -117,6 +117,7 @@ int git_attr_file__load(
 	case GIT_ATTR_FILE__IN_MEMORY:
 		/* in-memory attribute file doesn't need data */
 		break;
+
 	case GIT_ATTR_FILE__FROM_INDEX: {
 		git_oid id;
 
@@ -129,6 +130,7 @@ int git_attr_file__load(
 		git_buf_put(&content, git_blob_rawcontent(blob), git_blob_rawsize(blob));
 		break;
 	}
+
 	case GIT_ATTR_FILE__FROM_FILE: {
 		int fd = -1;
 
@@ -146,6 +148,7 @@ int git_attr_file__load(
 
 		break;
 	}
+
 	default:
 		giterr_set(GITERR_INVALID, "unknown file source %d", source);
 		return -1;
@@ -497,8 +500,7 @@ int git_attr_path__init(
 	if (!info->basename || !*info->basename)
 		info->basename = info->path;
 
-	switch (dir_flag)
-	{
+	switch (dir_flag) {
 	case GIT_DIR_FLAG_FALSE:
 		info->is_dir = 0;
 		break;

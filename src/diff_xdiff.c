@@ -77,7 +77,7 @@ static int diff_update_lines(
 		if (*scan == '\n')
 			++line->num_lines;
 
-	line->content     = content;
+	line->content = content;
 	line->content_len = content_len;
 
 	/* expect " "/"-"/"+", then data */
@@ -88,12 +88,14 @@ static int diff_update_lines(
 		line->new_lineno = info->new_lineno;
 		info->new_lineno += (int)line->num_lines;
 		break;
+
 	case GIT_DIFF_LINE_DELETION:
 	case GIT_DIFF_LINE_ADD_EOFNL:
 		line->old_lineno = info->old_lineno;
 		line->new_lineno = -1;
 		info->old_lineno += (int)line->num_lines;
 		break;
+
 	case GIT_DIFF_LINE_CONTEXT:
 	case GIT_DIFF_LINE_CONTEXT_EOFNL:
 		line->old_lineno = info->old_lineno;
@@ -101,6 +103,7 @@ static int diff_update_lines(
 		info->old_lineno += (int)line->num_lines;
 		info->new_lineno += (int)line->num_lines;
 		break;
+
 	default:
 		giterr_set(GITERR_INVALID, "unknown diff line origin %02x",
 			(unsigned int)line->origin);
@@ -203,7 +206,7 @@ static int git_xdiff(git_patch_generated_output *output, git_patch_generated *pa
 
 	memset(&info, 0, sizeof(info));
 	info.patch = patch;
-	info.xo    = xo;
+	info.xo = xo;
 
 	xo->callback.priv = &info;
 

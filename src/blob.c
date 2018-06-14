@@ -262,7 +262,7 @@ int git_blob_create_fromdisk(
 	}
 
 	hintpath = git_buf_cstr(&full_path);
-	workdir  = git_repository_workdir(repo);
+	workdir = git_repository_workdir(repo);
 
 	if (workdir && !git__prefixcmp(hintpath, workdir))
 		hintpath += strlen(workdir);
@@ -324,7 +324,7 @@ int git_blob_create_fromstream(git_writestream **out, git_repository *repo, cons
 	stream->repo = repo;
 	stream->parent.write = blob_writestream_write;
 	stream->parent.close = blob_writestream_close;
-	stream->parent.free  = blob_writestream_free;
+	stream->parent.free = blob_writestream_free;
 
 	if ((error = git_repository_item_path(&path, repo, GIT_REPOSITORY_ITEM_OBJECTS)) < 0
 	        || (error = git_buf_joinpath(&path, path.ptr, "streamed")) < 0)

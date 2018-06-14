@@ -269,12 +269,14 @@ static int git_diff_driver_load(
 		/* if diff.<driver>.binary is true, just return the binary driver */
 		*out = &global_drivers[DIFF_DRIVER_BINARY];
 		goto done;
+
 	case false:
 		/* if diff.<driver>.binary is false, force binary checks off */
 		/* but still may have custom function context patterns, etc. */
 		drv->binary_flags = GIT_DIFF_FORCE_TEXT;
 		found_driver = true;
 		break;
+
 	default:
 		/* diff.<driver>.binary unspecified or "auto", so just continue */
 		break;

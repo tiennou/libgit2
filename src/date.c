@@ -860,7 +860,7 @@ int git__date_parse(git_time_t *out, const char *date)
 {
 	time_t time_sec;
 	git_time_t timestamp;
-	int offset, error_ret=0;
+	int offset, error_ret = 0;
 
 	if (!parse_date_basic(date, &timestamp, &offset)) {
 		*out = timestamp;

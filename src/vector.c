@@ -59,7 +59,7 @@ int git_vector_dup(git_vector *v, const git_vector *src, git_vector_cmp cmp)
 	v->_alloc_size = src->length;
 	v->_cmp = cmp ? cmp : src->_cmp;
 	v->length = src->length;
-	v->flags  = src->flags;
+	v->flags = src->flags;
 	if (cmp != src->_cmp)
 		git_vector_set_sorted(v, 0);
 	v->contents = git__malloc(bytes);
@@ -118,7 +118,7 @@ void **git_vector_detach(size_t *size, size_t *asize, git_vector *v)
 		*asize = v->_alloc_size;
 
 	v->_alloc_size = 0;
-	v->length   = 0;
+	v->length = 0;
 	v->contents = NULL;
 
 	return data;

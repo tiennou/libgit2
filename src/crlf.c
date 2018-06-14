@@ -110,7 +110,7 @@ static int has_cr_in_index(const git_filter_source *src)
 		return false;
 
 	blobcontent = git_blob_rawcontent(blob);
-	blobsize    = git_blob_rawsize(blob);
+	blobsize = git_blob_rawsize(blob);
 	if (!git__is_sizet(blobsize))
 		blobsize = (size_t)-1;
 
@@ -154,9 +154,11 @@ static int crlf_apply_to_odb(
 					GITERR_FILTER, "LF would be replaced by CRLF in '%s'",
 					git_filter_source_path(src));
 				return -1;
+
 			case GIT_SAFE_CRLF_WARN:
 				/* TODO: issue warning when warning API is available */;
 				break;
+
 			default:
 				break;
 			}
@@ -205,6 +207,7 @@ static const char *line_ending(struct crlf_attrs *ca)
 	case GIT_CRLF_AUTO:
 		if (ca->eol == GIT_EOL_CRLF)
 			return "\r\n";
+
 	case GIT_CRLF_TEXT:
 		break;
 
@@ -380,9 +383,9 @@ git_filter *git_crlf_filter_new(void)
 	f->f.attributes = "crlf eol text";
 	f->f.initialize = NULL;
 	f->f.shutdown = git_filter_free;
-	f->f.check    = crlf_check;
-	f->f.apply    = crlf_apply;
-	f->f.cleanup  = crlf_cleanup;
+	f->f.check = crlf_check;
+	f->f.apply = crlf_apply;
+	f->f.cleanup = crlf_cleanup;
 
 	return (git_filter *)f;
 }

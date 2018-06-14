@@ -64,15 +64,19 @@ static int config_level_to_sysdir(int config_level)
 	case GIT_CONFIG_LEVEL_SYSTEM:
 		val = GIT_SYSDIR_SYSTEM;
 		break;
+
 	case GIT_CONFIG_LEVEL_XDG:
 		val = GIT_SYSDIR_XDG;
 		break;
+
 	case GIT_CONFIG_LEVEL_GLOBAL:
 		val = GIT_SYSDIR_GLOBAL;
 		break;
+
 	case GIT_CONFIG_LEVEL_PROGRAMDATA:
 		val = GIT_SYSDIR_PROGRAMDATA;
 		break;
+
 	default:
 		giterr_set(
 			GITERR_INVALID, "invalid config path selector %d", config_level);
@@ -195,6 +199,7 @@ int git_libgit2_opts(int key, ...)
 		error = -1;
 #endif
 		break;
+
 	case GIT_OPT_SET_USER_AGENT:
 		git__free(git__user_agent);
 		git__user_agent = git__strdup(va_arg(ap, const char *));

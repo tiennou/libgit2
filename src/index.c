@@ -385,15 +385,15 @@ void git_index__set_ignore_case(git_index *index, bool ignore_case)
 	index->ignore_case = ignore_case;
 
 	if (ignore_case) {
-		index->entries_cmp_path    = git__strcasecmp_cb;
-		index->entries_search      = git_index_entry_isrch;
+		index->entries_cmp_path = git__strcasecmp_cb;
+		index->entries_search = git_index_entry_isrch;
 		index->entries_search_path = index_entry_isrch_path;
-		index->reuc_search         = reuc_isrch;
+		index->reuc_search = reuc_isrch;
 	} else {
-		index->entries_cmp_path    = git__strcmp_cb;
-		index->entries_search      = git_index_entry_srch;
+		index->entries_cmp_path = git__strcmp_cb;
+		index->entries_search = git_index_entry_srch;
 		index->entries_search_path = index_entry_srch_path;
-		index->reuc_search         = reuc_srch;
+		index->reuc_search = reuc_srch;
 	}
 
 	git_vector_set_cmp(&index->entries,
@@ -859,12 +859,12 @@ void git_index_entry__init_from_stat(
 	entry->mtime.nanoseconds = st->st_mtime_nsec;
 	entry->ctime.nanoseconds = st->st_ctime_nsec;
 #endif
-	entry->dev  = st->st_rdev;
-	entry->ino  = st->st_ino;
+	entry->dev = st->st_rdev;
+	entry->ino = st->st_ino;
 	entry->mode = (!trust_mode && S_ISREG(st->st_mode)) ?
 	        git_index__create_mode(0666) : git_index__create_mode(st->st_mode);
-	entry->uid  = st->st_uid;
-	entry->gid  = st->st_gid;
+	entry->uid = st->st_uid;
+	entry->gid = st->st_gid;
 	entry->file_size = (uint32_t)st->st_size;
 }
 
@@ -1855,17 +1855,21 @@ static int index_conflict__get_byindex(
 			*their_out = conflict_entry;
 			len++;
 			break;
+
 		case 2:
 			*our_out = conflict_entry;
 			len++;
 			break;
+
 		case 1:
 			*ancestor_out = conflict_entry;
 			len++;
 			break;
+
 		default:
 			break;
-		};
+		}
+		;
 	}
 
 	return len;
@@ -2050,8 +2054,8 @@ int git_index_name_add(git_index *index,
 	GITERR_CHECK_ALLOC(conflict_name);
 
 	if ((ancestor && !(conflict_name->ancestor = git__strdup(ancestor))) ||
-	        (ours && !(conflict_name->ours     = git__strdup(ours))) ||
-	        (theirs && !(conflict_name->theirs   = git__strdup(theirs))) ||
+	        (ours && !(conflict_name->ours = git__strdup(ours))) ||
+	        (theirs && !(conflict_name->theirs = git__strdup(theirs))) ||
 	        git_vector_insert(&index->names, conflict_name) < 0)
 	{
 		index_name_entry_free(conflict_name);
@@ -3041,7 +3045,7 @@ int git_index_read_tree(git_index *index, const git_tree *tree)
 	data.index = index;
 	data.old_entries = &index->entries;
 	data.new_entries = &entries;
-	data.entry_cmp   = index->entries_search;
+	data.entry_cmp = index->entries_search;
 
 	index->tree = NULL;
 	git_pool_clear(&index->tree_pool);
@@ -3447,6 +3451,7 @@ static int index_apply_to_all(
 		switch (action) {
 		case INDEX_ACTION_NONE:
 			break;
+
 		case INDEX_ACTION_UPDATE:
 			error = git_index_add_bypath(index, path.ptr);
 
@@ -3459,10 +3464,12 @@ static int index_apply_to_all(
 					i--;
 			}
 			break;
+
 		case INDEX_ACTION_REMOVE:
 			if (!(error = git_index_remove_bypath(index, path.ptr)))
 				i--;	/* back up foreach if we removed this */
 			break;
+
 		default:
 			giterr_set(GITERR_INVALID, "unknown index action %d", action);
 			error = -1;

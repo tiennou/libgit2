@@ -320,14 +320,17 @@ static int check_type_combination(git_otype type, git_otype target)
 		/* a blob or tree can never be peeled to anything but themselves */
 		return GIT_EINVALIDSPEC;
 		break;
+
 	case GIT_OBJ_COMMIT:
 		/* a commit can only be peeled to a tree */
 		if (target != GIT_OBJ_TREE && target != GIT_OBJ_ANY)
 			return GIT_EINVALIDSPEC;
 		break;
+
 	case GIT_OBJ_TAG:
 		/* a tag may point to anything, so we let anything through */
 		break;
+
 	default:
 		return GIT_EINVALIDSPEC;
 	}

@@ -490,8 +490,7 @@ static int describe(
 	if ((error = git_pqueue_insert(&list, cmit)) < 0)
 		goto cleanup;
 
-	while (git_pqueue_size(&list) > 0)
-	{
+	while (git_pqueue_size(&list) > 0) {
 		int i;
 
 		git_commit_list_node *c = (git_commit_list_node *)git_pqueue_pop(&list);

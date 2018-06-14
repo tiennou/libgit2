@@ -413,12 +413,15 @@ static int local_push(
 		switch (error) {
 		case GIT_OK:
 			break;
+
 		case GIT_EINVALIDSPEC:
 			status->msg = git__strdup("funny refname");
 			break;
+
 		case GIT_ENOTFOUND:
 			status->msg = git__strdup("Remote branch not found to delete");
 			break;
+
 		default:
 			last = giterr_last();
 

@@ -460,11 +460,14 @@ static int line_cb(
 	case GIT_DIFF_LINE_ADDITION:
 		git_buf_putc(&buf, '+');
 		break;
+
 	case GIT_DIFF_LINE_DELETION:
 		git_buf_putc(&buf, '-');
 		break;
+
 	case GIT_DIFF_LINE_CONTEXT:
 		break;
+
 	default:
 		giterr_set(GITERR_PATCH, "invalid line origin for patch");
 		return -1;

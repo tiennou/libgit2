@@ -16,17 +16,14 @@
 #include <gssapi.h>
 #include <krb5.h>
 
-static gss_OID_desc negotiate_oid_spnego =
-{
+static gss_OID_desc negotiate_oid_spnego = {
 	6, (void *) "\x2b\x06\x01\x05\x05\x02"
 };
-static gss_OID_desc negotiate_oid_krb5 =
-{
+static gss_OID_desc negotiate_oid_krb5 = {
 	9, (void *) "\x2a\x86\x48\x86\xf7\x12\x01\x02\x02"
 };
 
-static gss_OID negotiate_oids[] =
-{
+static gss_OID negotiate_oids[] = {
 	&negotiate_oid_spnego, &negotiate_oid_krb5, NULL
 };
 

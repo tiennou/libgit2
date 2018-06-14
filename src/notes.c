@@ -80,7 +80,7 @@ static int find_blob(git_oid *blob, git_tree *tree, const char *target)
 	size_t i;
 	const git_tree_entry *entry;
 
-	for (i=0; i < git_tree_entrycount(tree); i++) {
+	for (i = 0; i < git_tree_entrycount(tree); i++) {
 		entry = git_tree_entry_byindex(tree, i);
 
 		if (!strcmp(git_tree_entry_name(entry), target)) {

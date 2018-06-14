@@ -30,24 +30,30 @@ static unsigned int index_delta2status(const git_diff_delta *head2idx)
 	case GIT_DELTA_COPIED:
 		st = GIT_STATUS_INDEX_NEW;
 		break;
+
 	case GIT_DELTA_DELETED:
 		st = GIT_STATUS_INDEX_DELETED;
 		break;
+
 	case GIT_DELTA_MODIFIED:
 		st = GIT_STATUS_INDEX_MODIFIED;
 		break;
+
 	case GIT_DELTA_RENAMED:
 		st = GIT_STATUS_INDEX_RENAMED;
 
 		if (!git_oid_equal(&head2idx->old_file.id, &head2idx->new_file.id))
 			st |= GIT_STATUS_INDEX_MODIFIED;
 		break;
+
 	case GIT_DELTA_TYPECHANGE:
 		st = GIT_STATUS_INDEX_TYPECHANGE;
 		break;
+
 	case GIT_DELTA_CONFLICTED:
 		st = GIT_STATUS_CONFLICTED;
 		break;
+
 	default:
 		break;
 	}
@@ -66,18 +72,23 @@ static unsigned int workdir_delta2status(
 	case GIT_DELTA_UNTRACKED:
 		st = GIT_STATUS_WT_NEW;
 		break;
+
 	case GIT_DELTA_UNREADABLE:
 		st = GIT_STATUS_WT_UNREADABLE;
 		break;
+
 	case GIT_DELTA_DELETED:
 		st = GIT_STATUS_WT_DELETED;
 		break;
+
 	case GIT_DELTA_MODIFIED:
 		st = GIT_STATUS_WT_MODIFIED;
 		break;
+
 	case GIT_DELTA_IGNORED:
 		st = GIT_STATUS_IGNORED;
 		break;
+
 	case GIT_DELTA_RENAMED:
 		st = GIT_STATUS_WT_RENAMED;
 
@@ -103,12 +114,15 @@ static unsigned int workdir_delta2status(
 				st |= GIT_STATUS_WT_MODIFIED;
 		}
 		break;
+
 	case GIT_DELTA_TYPECHANGE:
 		st = GIT_STATUS_WT_TYPECHANGE;
 		break;
+
 	case GIT_DELTA_CONFLICTED:
 		st = GIT_STATUS_CONFLICTED;
 		break;
+
 	default:
 		break;
 	}

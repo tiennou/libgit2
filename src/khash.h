@@ -156,15 +156,15 @@ typedef khint_t khiter_t;
 #define __ac_isempty(flag, i) ((flag[i>>4]>>((i&0xfU)<<1))&2)
 #define __ac_isdel(flag, i) ((flag[i>>4]>>((i&0xfU)<<1))&1)
 #define __ac_iseither(flag, i) ((flag[i>>4]>>((i&0xfU)<<1))&3)
-#define __ac_set_isdel_false(flag, i) (flag[i>>4]&=~(1ul<<((i&0xfU)<<1)))
-#define __ac_set_isempty_false(flag, i) (flag[i>>4]&=~(2ul<<((i&0xfU)<<1)))
-#define __ac_set_isboth_false(flag, i) (flag[i>>4]&=~(3ul<<((i&0xfU)<<1)))
-#define __ac_set_isdel_true(flag, i) (flag[i>>4]|=1ul<<((i&0xfU)<<1))
+#define __ac_set_isdel_false(flag, i) (flag[i>>4] &= ~(1ul<<((i&0xfU)<<1)))
+#define __ac_set_isempty_false(flag, i) (flag[i>>4] &= ~(2ul<<((i&0xfU)<<1)))
+#define __ac_set_isboth_false(flag, i) (flag[i>>4] &= ~(3ul<<((i&0xfU)<<1)))
+#define __ac_set_isdel_true(flag, i) (flag[i>>4] |= 1ul<<((i&0xfU)<<1))
 
 #define __ac_fsize(m) ((m) < 16 ? 1 : (m)>>4)
 
 #ifndef kroundup32
-#define kroundup32(x) (--(x), (x)|=(x)>>1, (x)|=(x)>>2, (x)|=(x)>>4, (x)|=(x)>>8, (x)|=(x)>>16, ++(x))
+#define kroundup32(x) (--(x), (x) |= (x)>>1, (x) |= (x)>>2, (x) |= (x)>>4, (x) |= (x)>>8, (x) |= (x)>>16, ++(x))
 #endif
 
 #ifndef kcalloc
@@ -422,11 +422,11 @@ static kh_inline khint_t __ac_X31_hash_string(const char *s)
 static kh_inline khint_t __ac_Wang_hash(khint_t key)
 {
 	key += ~(key << 15);
-	key ^=  (key >> 10);
-	key +=  (key << 3);
-	key ^=  (key >> 6);
+	key ^= (key >> 10);
+	key += (key << 3);
+	key ^= (key >> 6);
 	key += ~(key << 11);
-	key ^=  (key >> 16);
+	key ^= (key >> 16);
 	return key;
 }
 #define kh_int_hash_func2(k) __ac_Wang_hash((khint_t)key)

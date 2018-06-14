@@ -84,7 +84,7 @@ static int win32_find_git_in_path(git_buf *buf, const wchar_t *gitexe, const wch
 		/* ensure trailing slash (MAX_PATH-1 to walkpath guarantees space) */
 		if (lastch != L'/' && lastch != L'\\') {
 			root.path[root.len++] = L'\\';
-			root.path[root.len]   = L'\0';
+			root.path[root.len] = L'\0';
 		}
 
 		if (root.len + gitexe_len >= MAX_PATH)

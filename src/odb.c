@@ -145,7 +145,7 @@ static git_odb_object *odb_object__alloc(const git_oid *oid, git_rawobj *source)
 		git_oid_cpy(&object->cached.oid, oid);
 		object->cached.type = source->type;
 		object->cached.size = source->len;
-		object->buffer      = source->data;
+		object->buffer = source->data;
 	}
 
 	return object;
@@ -967,8 +967,10 @@ static int odb_read_header_1(
 		case GIT_PASSTHROUGH:
 			passthrough = true;
 			break;
+
 		case GIT_ENOTFOUND:
 			break;
+
 		default:
 			return error;
 		}

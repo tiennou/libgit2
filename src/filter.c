@@ -116,12 +116,16 @@ static void filter_def_set_attrs(git_filter_def *fdef)
 			*scan++ = '\0';
 			value = scan;
 			break;
+
 		case '-':
 			name = scan + 1;value = git_attr__false;break;
+
 		case '+':
 			name = scan + 1;value = git_attr__true;break;
+
 		case '!':
 			name = scan + 1;value = git_attr__unset;break;
+
 		default:
 			name = scan;value = NULL;break;
 		}
@@ -167,11 +171,11 @@ static int filter_registry_insert(
 	fdef->filter_name = git__strdup(name);
 	GITERR_CHECK_ALLOC(fdef->filter_name);
 
-	fdef->filter      = filter;
-	fdef->priority    = priority;
-	fdef->nattrs      = nattr;
-	fdef->nmatches    = nmatch;
-	fdef->attrdata    = git_buf_detach(&attrs);
+	fdef->filter = filter;
+	fdef->priority = priority;
+	fdef->nattrs = nattr;
+	fdef->nmatches = nmatch;
+	fdef->attrdata = git_buf_detach(&attrs);
 
 	filter_def_set_attrs(fdef);
 
@@ -449,7 +453,7 @@ static int filter_list_check_attributes(
 		if (!want)
 			continue;
 
-		want_type  = git_attr_value(want);
+		want_type = git_attr_value(want);
 		found_type = git_attr_value(strs[i]);
 
 		if (want_type != found_type)
@@ -658,7 +662,7 @@ int git_filter_list_push(
 
 	fe = git_array_alloc(fl->filters);
 	GITERR_CHECK_ALLOC(fe);
-	fe->filter  = filter;
+	fe->filter = filter;
 	fe->payload = payload;
 
 	return 0;

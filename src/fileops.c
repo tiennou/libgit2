@@ -76,8 +76,10 @@ int git_futils_creat_locked(const char *path, const mode_t mode)
 		switch (error) {
 		case EEXIST:
 			return GIT_ELOCKED;
+
 		case ENOENT:
 			return GIT_ENOTFOUND;
+
 		default:
 			return -1;
 		}
@@ -808,9 +810,9 @@ int git_futils_rmdir_r(
 		return -1;
 
 	memset(&data, 0, sizeof(data));
-	data.base    = base ? base : "";
+	data.base = base ? base : "";
 	data.baselen = base ? strlen(base) : 0;
-	data.flags   = flags;
+	data.flags = flags;
 
 	error = futils__rmdir_recurs_foreach(&data, &fullpath);
 
@@ -888,7 +890,7 @@ int git_futils_touch(const char *path, time_t *when)
 	struct p_timeval times[2];
 	int ret;
 
-	times[0].tv_sec =  times[1].tv_sec  = when ? *when : time(NULL);
+	times[0].tv_sec = times[1].tv_sec = when ? *when : time(NULL);
 	times[0].tv_usec = times[1].tv_usec = 0;
 
 	ret = p_utimes(path, times);
@@ -1062,7 +1064,7 @@ int git_futils_cp_r(
 
 	memset(&info, 0, sizeof(info));
 	info.to_root = to;
-	info.flags   = flags;
+	info.flags = flags;
 	info.dirmode = dirmode;
 	info.from_prefix = path.size;
 	git_buf_init(&info.to, 0);
@@ -1113,8 +1115,8 @@ int git_futils_filestamp_check(
 #if defined(GIT_USE_NSEC)
 	stamp->mtime.tv_nsec = st.st_mtime_nsec;
 #endif
-	stamp->size  = (git_off_t)st.st_size;
-	stamp->ino   = (unsigned int)st.st_ino;
+	stamp->size = (git_off_t)st.st_size;
+	stamp->ino = (unsigned int)st.st_ino;
 
 	return 1;
 }
@@ -1140,8 +1142,8 @@ void git_futils_filestamp_set_from_stat(
 #else
 		stamp->mtime.tv_nsec = 0;
 #endif
-		stamp->size  = (git_off_t)st->st_size;
-		stamp->ino   = (unsigned int)st->st_ino;
+		stamp->size = (git_off_t)st->st_size;
+		stamp->ino = (unsigned int)st->st_ino;
 	} else {
 		memset(stamp, 0, sizeof(*stamp));
 	}

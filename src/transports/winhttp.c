@@ -64,13 +64,11 @@ static const int no_check_cert_flags = SECURITY_FLAG_IGNORE_CERT_CN_INVALID |
         SECURITY_FLAG_IGNORE_UNKNOWN_CA;
 
 #if defined(__MINGW32__)
-static const CLSID CLSID_InternetSecurityManager_mingw =
-{
+static const CLSID CLSID_InternetSecurityManager_mingw = {
 	0x7B8A2D94, 0x0AC9, 0x11D1,
 	{ 0x89, 0x6C, 0x00, 0xC0, 0x4F, 0xB6, 0xBF, 0xC4 }
 };
-static const IID IID_IInternetSecurityManager_mingw =
-{
+static const IID IID_IInternetSecurityManager_mingw = {
 	0x79EAC9EE, 0xBAF9, 0x11CE,
 	{ 0x8C, 0x82, 0x00, 0xAA, 0x00, 0x4B, 0xA9, 0x0B }
 };
@@ -347,9 +345,9 @@ static int userpass_from_url(wchar_t **user, int *user_len,
 		return -1;
 	}
 
-	*user     = components.lpszUserName;
+	*user = components.lpszUserName;
 	*user_len = components.dwUserNameLength;
-	*pass     = components.lpszPassword;
+	*pass = components.lpszPassword;
 	*pass_len = components.dwPasswordLength;
 
 	return 0;
@@ -1524,8 +1522,7 @@ static int winhttp_action(
         if (!stream)
 		return -1;
 
-        switch (action)
-        {
+        switch (action) {
 	case GIT_SERVICE_UPLOADPACK_LS:
 		ret = winhttp_uploadpack_ls(t, s);
 		break;

@@ -2733,21 +2733,21 @@ static int write_merge_msg(
 		goto cleanup;
 
 	if (matching.length)
-		sep =',';
+		sep = ',';
 
 	if ((error = merge_msg_entries(&matching, entries, heads_len, msg_entry_is_tracking)) < 0 ||
 	        (error = merge_msg_write_tracking(&file, &matching, sep)) < 0)
 		goto cleanup;
 
 	if (matching.length)
-		sep =',';
+		sep = ',';
 
 	if ((error = merge_msg_entries(&matching, entries, heads_len, msg_entry_is_tag)) < 0 ||
 	        (error = merge_msg_write_tags(&file, &matching, sep)) < 0)
 		goto cleanup;
 
 	if (matching.length)
-		sep =',';
+		sep = ',';
 
 	/* We should never be called with multiple remote branches, but handle
 	 * it in case we are... */
@@ -2756,7 +2756,7 @@ static int write_merge_msg(
 			goto cleanup;
 
 		if (matching.length)
-			sep =',';
+			sep = ',';
 	}
 
 	if (error < 0)

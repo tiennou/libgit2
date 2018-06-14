@@ -163,7 +163,7 @@ static int retrieve_previously_checked_out_branch_or_revision(git_object **out, 
 	if (git_reflog_read(&reflog, repo, GIT_HEAD_FILE) < 0)
 		goto cleanup;
 
-	numentries  = git_reflog_entrycount(reflog);
+	numentries = git_reflog_entrycount(reflog);
 
 	for (i = 0; i < numentries; i++) {
 		entry = git_reflog_entry_byindex(reflog, i);

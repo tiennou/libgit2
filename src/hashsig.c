@@ -47,9 +47,9 @@ struct git_hashsig {
 
 static void hashsig_heap_init(hashsig_heap *h, hashsig_cmp cmp)
 {
-	h->size  = 0;
+	h->size = 0;
 	h->asize = HASHSIG_HEAP_SIZE;
-	h->cmp   = cmp;
+	h->cmp = cmp;
 }
 
 static int hashsig_cmp_max(const void *a, const void *b, void *payload)
@@ -89,7 +89,7 @@ static void hashsig_heap_down(hashsig_heap *h, int el)
 	while (el < h->size / 2) {
 		int lel = HEAP_LCHILD_OF(el), rel = HEAP_RCHILD_OF(el), swapel;
 
-		v  = h->values[el];
+		v = h->values[el];
 		lv = h->values[lel];
 		rv = h->values[rel];
 

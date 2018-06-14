@@ -107,8 +107,11 @@ int git_patch_line_stats(
 
 		switch (line->origin) {
 		case GIT_DIFF_LINE_CONTEXT:  totals[0]++;break;
+
 		case GIT_DIFF_LINE_ADDITION: totals[1]++;break;
+
 		case GIT_DIFF_LINE_DELETION: totals[2]++;break;
+
 		default:
 			/* diff --stat and --numstat don't count EOFNL marks because
 			* they will always be paired with a ADDITION or DELETION line.

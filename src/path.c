@@ -78,7 +78,7 @@ int git_path_basename_r(git_buf *buffer, const char *path)
 	/* Empty or NULL string gets treated as "." */
 	if (path == NULL || *path == '\0') {
 		startp = ".";
-		len             = 1;
+		len = 1;
 		goto Exit;
 	}
 
@@ -90,7 +90,7 @@ int git_path_basename_r(git_buf *buffer, const char *path)
 	/* All slashes becomes "/" */
 	if (endp == path && *endp == '/') {
 		startp = "/";
-		len     = 1;
+		len = 1;
 		goto Exit;
 	}
 
@@ -406,8 +406,7 @@ int git__percent_decode(git_buf *decoded_out, const char *input)
 	len = (int)strlen(input);
 	git_buf_clear(decoded_out);
 
-	for (i = 0; i < len; i++)
-	{
+	for (i = 0; i < len; i++) {
 		char c = input[i];
 
 		if (c != '%')
@@ -981,7 +980,7 @@ int git_path_iconv(git_path_iconv_t *ic, const char **in, size_t *inlen)
 		if (git_buf_grow(&ic->buf, alloclen) < 0)
 			return -1;
 
-		nfc    = ic->buf.ptr   + ic->buf.size;
+		nfc = ic->buf.ptr   + ic->buf.size;
 		nfclen = ic->buf.asize - ic->buf.size;
 
 		rv = iconv(ic->map, &nfd, &nfdlen, &nfc, &nfclen);
@@ -1008,7 +1007,7 @@ int git_path_iconv(git_path_iconv_t *ic, const char **in, size_t *inlen)
 
 	ic->buf.ptr[ic->buf.size] = '\0';
 
-	*in    = ic->buf.ptr;
+	*in = ic->buf.ptr;
 	*inlen = ic->buf.size;
 
 	return 0;
@@ -1904,10 +1903,13 @@ extern int git_path_is_gitfile(const char *path, size_t pathlen, git_path_gitfil
 	case GIT_PATH_FS_GENERIC:
 		return !verify_dotgit_ntfs_generic(path, pathlen, file, filelen, hash) ||
 		       !verify_dotgit_hfs_generic(path, pathlen, file, filelen);
+
 	case GIT_PATH_FS_NTFS:
 		return !verify_dotgit_ntfs_generic(path, pathlen, file, filelen, hash);
+
 	case GIT_PATH_FS_HFS:
 		return !verify_dotgit_hfs_generic(path, pathlen, file, filelen);
+
 	default:
 		giterr_set(GITERR_OS, "invalid filesystem for path validation");
 		return -1;

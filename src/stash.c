@@ -469,7 +469,7 @@ static int ensure_there_are_changes_to_stash(
 	int error;
 	git_status_options opts = GIT_STATUS_OPTIONS_INIT;
 
-	opts.show  = GIT_STATUS_SHOW_INDEX_AND_WORKDIR;
+	opts.show = GIT_STATUS_SHOW_INDEX_AND_WORKDIR;
 	opts.flags = GIT_STATUS_OPT_EXCLUDE_SUBMODULES;
 
 	if (include_untracked_files)

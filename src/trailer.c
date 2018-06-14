@@ -304,6 +304,7 @@ int git_message_trailers(git_message_trailer_array *trailer_arr, const char *mes
 			key = ptr;
 			GOTO(S_KEY);
 		}
+
 		case S_KEY: {
 			if (*ptr == 0) {
 				goto ret;
@@ -328,6 +329,7 @@ int git_message_trailers(git_message_trailer_array *trailer_arr, const char *mes
 			// illegal character
 			GOTO(S_IGNORE);
 		}
+
 		case S_KEY_WS: {
 			if (*ptr == 0) {
 				goto ret;
@@ -344,6 +346,7 @@ int git_message_trailers(git_message_trailer_array *trailer_arr, const char *mes
 			// illegal character
 			GOTO(S_IGNORE);
 		}
+
 		case S_SEP_WS: {
 			if (*ptr == 0) {
 				goto ret;
@@ -356,6 +359,7 @@ int git_message_trailers(git_message_trailer_array *trailer_arr, const char *mes
 			value = ptr;
 			NEXT(S_VALUE);
 		}
+
 		case S_VALUE: {
 			if (*ptr == 0) {
 				GOTO(S_VALUE_END);
@@ -367,6 +371,7 @@ int git_message_trailers(git_message_trailer_array *trailer_arr, const char *mes
 
 			NEXT(S_VALUE);
 		}
+
 		case S_VALUE_NL: {
 			if (*ptr == ' ') {
 				// continuation;
@@ -376,6 +381,7 @@ int git_message_trailers(git_message_trailer_array *trailer_arr, const char *mes
 			ptr[-1] = 0;
 			GOTO(S_VALUE_END);
 		}
+
 		case S_VALUE_END: {
 			git_message_trailer *t = git_array_alloc(arr);
 
@@ -387,6 +393,7 @@ int git_message_trailers(git_message_trailer_array *trailer_arr, const char *mes
 
 			GOTO(S_START);
 		}
+
 		case S_IGNORE: {
 			if (*ptr == 0) {
 				goto ret;

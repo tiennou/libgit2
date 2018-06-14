@@ -452,7 +452,7 @@ static void hash_partially(git_indexer *idx, const uint8_t *data, size_t size)
 	}
 
 	/* We need to partially drain the buffer and then append */
-	to_keep   = GIT_OID_RAWSZ - size;
+	to_keep = GIT_OID_RAWSZ - size;
 	to_expell = idx->inbuf_len - to_keep;
 
 	git_hash_update(&idx->trailer, idx->inbuf, to_expell);

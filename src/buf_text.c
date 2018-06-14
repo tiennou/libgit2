@@ -234,18 +234,21 @@ int git_buf_text_detect_bom(git_bom_t *bom, const git_buf *buf)
 			return 4;
 		}
 		break;
+
 	case '\xEF':
 		if (len >= 3 && ptr[0] == '\xBB' && ptr[1] == '\xBF') {
 			*bom = GIT_BOM_UTF8;
 			return 3;
 		}
 		break;
+
 	case '\xFE':
 		if (*ptr == '\xFF') {
 			*bom = GIT_BOM_UTF16_BE;
 			return 2;
 		}
 		break;
+
 	case '\xFF':
 		if (*ptr != '\xFE')
 			break;
@@ -257,6 +260,7 @@ int git_buf_text_detect_bom(git_bom_t *bom, const git_buf *buf)
 			return 2;
 		}
 		break;
+
 	default:
 		break;
 	}
@@ -293,17 +297,25 @@ bool git_buf_text_gather_stats(
 				stats->nul++;
 				stats->nonprintable++;
 				break;
+
 			case '\n':
 				stats->lf++;
 				break;
+
 			case '\r':
 				stats->cr++;
 				if (scan < end && *scan == '\n')
 					stats->crlf++;
 				break;
-			case '\t': case '\f': case '\v': case '\b': case 0x1b:	/*ESC*/
+
+			case '\t':
+			case '\f':
+			case '\v':
+			case '\b':
+			case 0x1b:						/*ESC*/
 				stats->printable++;
 				break;
+
 			default:
 				stats->nonprintable++;
 				break;

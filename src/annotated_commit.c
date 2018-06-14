@@ -208,10 +208,12 @@ void git_annotated_commit_free(git_annotated_commit *annotated_commit)
 		git__free((char *)annotated_commit->ref_name);
 		git__free((char *)annotated_commit->remote_url);
 		break;
+
 	case GIT_ANNOTATED_COMMIT_VIRTUAL:
 		git_index_free(annotated_commit->index);
 		git_array_clear(annotated_commit->parents);
 		break;
+
 	default:
 		abort();
 	}

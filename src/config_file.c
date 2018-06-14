@@ -103,7 +103,8 @@ static void config_entry_list_free(config_entry_list *list)
 		git__free(list);
 
 		list = next;
-	};
+	}
+	;
 }
 
 int git_config_file_normalize_section(char *start, char *end)
