@@ -44,6 +44,9 @@ typedef struct {
 		remove :1;
 } transaction_node;
 
+typedef int (*txn_commit_cb)(git_transaction *tx);
+typedef void (*txn_free_cb)(git_transaction *tx);
+
 struct git_transaction {
 	transaction_t type;
 	git_repository *repo;
@@ -52,7 +55,27 @@ struct git_transaction {
 
 	git_strmap *locks;
 	git_pool pool;
+	txn_commit_cb commit;
+	txn_free_cb free;
 };
+
+static int transaction_config_commit(git_transaction *tx)
+{
+	int error = git_config_unlock(tx->cfg, true);
+	tx->cfg = NULL;
+
+	return error;
+}
+
+static void transaction_config_free(git_transaction *tx)
+{
+	if (tx->cfg) {
+		git_config_unlock(tx->cfg, false);
+		git_config_free(tx->cfg);
+	}
+
+	git__free(tx);
+}
 
 int git_transaction_config_new(git_transaction **out, git_config *cfg)
 {
@@ -64,9 +87,14 @@ int git_transaction_config_new(git_transaction **out, git_config *cfg)
 
 	tx->type = TRANSACTION_CONFIG;
 	tx->cfg = cfg;
+	tx->commit = transaction_config_commit;
+	tx->free = transaction_config_free;
 	*out = tx;
 	return 0;
 }
+
+static int transaction_refs_commit(git_transaction *tx);
+static void transaction_refs_free(git_transaction *tx);
 
 int git_transaction_new(git_transaction **out, git_repository *repo)
 {
@@ -95,12 +123,30 @@ int git_transaction_new(git_transaction **out, git_repository *repo)
 	tx->type = TRANSACTION_REFS;
 	memcpy(&tx->pool, &pool, sizeof(git_pool));
 	tx->repo = repo;
+	tx->commit = transaction_refs_commit;
+	tx->free = transaction_refs_free;
+
 	*out = tx;
 	return 0;
 
 on_error:
 	git_pool_clear(&pool);
 	return error;
+}
+
+int git_transaction_commit(git_transaction *tx)
+{
+	assert(tx);
+
+	return tx->commit(tx);
+}
+
+void git_transaction_free(git_transaction *tx)
+{
+	if (tx == NULL)
+		return;
+
+	tx->free(tx);
 }
 
 int git_transaction_lock_ref(git_transaction *tx, const char *refname)
@@ -314,19 +360,10 @@ static int update_target(git_refdb *db, transaction_node *node)
 	return error;
 }
 
-int git_transaction_commit(git_transaction *tx)
+static int transaction_refs_commit(git_transaction *tx)
 {
 	transaction_node *node;
 	int error = 0;
-
-	assert(tx);
-
-	if (tx->type == TRANSACTION_CONFIG) {
-		error = git_config_unlock(tx->cfg, true);
-		tx->cfg = NULL;
-
-		return error;
-	}
 
 	git_strmap_foreach_value(tx->locks, node, {
 		if (node->reflog) {
@@ -349,22 +386,10 @@ int git_transaction_commit(git_transaction *tx)
 	return 0;
 }
 
-void git_transaction_free(git_transaction *tx)
+static void transaction_refs_free(git_transaction *tx)
 {
 	transaction_node *node;
 	git_pool pool;
-
-	assert(tx);
-
-	if (tx->type == TRANSACTION_CONFIG) {
-		if (tx->cfg) {
-			git_config_unlock(tx->cfg, false);
-			git_config_free(tx->cfg);
-		}
-
-		git__free(tx);
-		return;
-	}
 
 	/* start by unlocking the ones we've left hanging, if any */
 	git_strmap_foreach_value(tx->locks, node, {
