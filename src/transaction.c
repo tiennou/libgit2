@@ -59,6 +59,8 @@ struct git_transaction {
 	txn_free_cb free;
 };
 
+static void *transaction_alloc(transaction_t type, size_t objsize, txn_commit_cb commit_cb, txn_free_cb free_cb);
+
 static int transaction_config_commit(git_transaction *tx)
 {
 	int error = git_config_unlock(tx->cfg, true);
@@ -82,35 +84,62 @@ int git_transaction_config_new(git_transaction **out, git_config *cfg)
 	git_transaction *tx;
 	assert(out && cfg);
 
-	tx = git__calloc(1, sizeof(git_transaction));
+	tx = transaction_alloc(TRANSACTION_CONFIG, sizeof(*tx), transaction_config_commit, transaction_config_free);
 	GIT_ERROR_CHECK_ALLOC(tx);
 
-	tx->type = TRANSACTION_CONFIG;
 	tx->cfg = cfg;
-	tx->commit = transaction_config_commit;
-	tx->free = transaction_config_free;
+
 	*out = tx;
+
 	return 0;
 }
 
 static int transaction_refs_commit(git_transaction *tx);
 static void transaction_refs_free(git_transaction *tx);
 
+static void *transaction_alloc(transaction_t type, size_t objsize, txn_commit_cb commit_cb, txn_free_cb free_cb)
+{
+	git_transaction *tx;
+	git_pool pool;
+
+	assert(objsize >= sizeof(git_transaction));
+
+	git_pool_init(&pool, 1);
+
+	tx = git_pool_mallocz(&pool, objsize);
+	if (tx == NULL) {
+		git_pool_clear(&pool);
+		return NULL;
+	}
+
+	tx->type = type;
+	memcpy(&tx->pool, &pool, sizeof(git_pool));
+	tx->commit = commit_cb;
+	tx->free = free_cb;
+
+	return tx;
+}
+
+void git_transaction__free(git_transaction *tx)
+{
+	git_pool pool;
+
+	/* tx itself was allocated from this pool
+	 * manipulate a copy so we don't trample over free memory
+	 */
+	memcpy(&pool, &tx->pool, sizeof(git_pool));
+	git_pool_clear(&pool);
+}
+
 int git_transaction_new(git_transaction **out, git_repository *repo)
 {
 	int error;
-	git_pool pool;
 	git_transaction *tx = NULL;
 
 	assert(out && repo);
 
-	git_pool_init(&pool, 1);
-
-	tx = git_pool_mallocz(&pool, sizeof(git_transaction));
-	if (!tx) {
-		error = -1;
-		goto on_error;
-	}
+	tx = transaction_alloc(TRANSACTION_REFS, sizeof(*tx), transaction_refs_commit, transaction_refs_free);
+	GIT_ERROR_CHECK_ALLOC(tx);
 
 	if ((error = git_strmap_new(&tx->locks)) < 0) {
 		error = -1;
@@ -120,17 +149,13 @@ int git_transaction_new(git_transaction **out, git_repository *repo)
 	if ((error = git_repository_refdb(&tx->db, repo)) < 0)
 		goto on_error;
 
-	tx->type = TRANSACTION_REFS;
-	memcpy(&tx->pool, &pool, sizeof(git_pool));
 	tx->repo = repo;
-	tx->commit = transaction_refs_commit;
-	tx->free = transaction_refs_free;
 
 	*out = tx;
 	return 0;
 
 on_error:
-	git_pool_clear(&pool);
+	git_transaction_free(tx);
 	return error;
 }
 
@@ -147,6 +172,8 @@ void git_transaction_free(git_transaction *tx)
 		return;
 
 	tx->free(tx);
+
+	git_transaction__free(tx);
 }
 
 int git_transaction_lock_ref(git_transaction *tx, const char *refname)
@@ -382,14 +409,12 @@ static int transaction_refs_commit(git_transaction *tx)
 				return error;
 		}
 	});
-
-	return 0;
+	return error;
 }
 
 static void transaction_refs_free(git_transaction *tx)
 {
 	transaction_node *node;
-	git_pool pool;
 
 	/* start by unlocking the ones we've left hanging, if any */
 	git_strmap_foreach_value(tx->locks, node, {
@@ -401,8 +426,4 @@ static void transaction_refs_free(git_transaction *tx)
 
 	git_refdb_free(tx->db);
 	git_strmap_free(tx->locks);
-
-	/* tx is inside the pool, so we need to extract the data */
-	memcpy(&pool, &tx->pool, sizeof(git_pool));
-	git_pool_clear(&pool);
 }
