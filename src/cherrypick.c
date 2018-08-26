@@ -17,6 +17,7 @@
 #include "git2/merge.h"
 #include "git2/cherrypick.h"
 #include "git2/commit.h"
+#include "git2/transaction.h"
 #include "git2/sys/commit.h"
 
 #define GIT_CHERRYPICK_FILE_MODE		0666
@@ -174,7 +175,7 @@ int git_cherrypick(
 	const char *commit_msg, *commit_summary;
 	git_buf their_label = GIT_BUF_INIT;
 	git_index *index = NULL;
-	git_indexwriter indexwriter = GIT_INDEXWRITER_INIT;
+	git_transaction *tx = NULL;
 	int error = 0;
 
 	assert(repo && commit);
@@ -195,7 +196,7 @@ int git_cherrypick(
 	if ((error = write_merge_msg(repo, commit_msg)) < 0 ||
 		(error = git_buf_printf(&their_label, "%.7s... %s", commit_oidstr, commit_summary)) < 0 ||
 		(error = cherrypick_normalize_opts(repo, &opts, given_opts, git_buf_cstr(&their_label))) < 0 ||
-		(error = git_indexwriter_init_for_operation(&indexwriter, repo, &opts.checkout_opts.checkout_strategy)) < 0 ||
+		(error = git_transaction_index_for_operation(&tx, repo, &opts.checkout_opts.checkout_strategy)) < 0 ||
 		(error = write_cherrypick_head(repo, commit_oidstr)) < 0 ||
 		(error = git_repository_head(&our_ref, repo)) < 0 ||
 		(error = git_reference_peel((git_object **)&our_commit, our_ref, GIT_OBJECT_COMMIT)) < 0 ||
@@ -203,7 +204,7 @@ int git_cherrypick(
 		(error = git_merge__check_result(repo, index)) < 0 ||
 		(error = git_merge__append_conflicts_to_merge_msg(repo, index)) < 0 ||
 		(error = git_checkout_index(repo, index, &opts.checkout_opts)) < 0 ||
-		(error = git_indexwriter_commit(&indexwriter)) < 0)
+		(error = git_transaction_commit(tx)) < 0)
 		goto on_error;
 
 	goto done;
@@ -212,7 +213,7 @@ on_error:
 	cherrypick_state_cleanup(repo);
 
 done:
-	git_indexwriter_cleanup(&indexwriter);
+	git_transaction_free(tx);
 	git_index_free(index);
 	git_commit_free(our_commit);
 	git_reference_free(our_ref);

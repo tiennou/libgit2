@@ -3267,7 +3267,7 @@ int git_merge(
 	git_checkout_options checkout_opts;
 	git_annotated_commit *our_head = NULL, *base = NULL;
 	git_index *repo_index = NULL, *index = NULL;
-	git_indexwriter indexwriter = GIT_INDEXWRITER_INIT;
+	git_transaction *tx = NULL;
 	unsigned int checkout_strategy;
 	int error = 0;
 
@@ -3285,7 +3285,7 @@ int git_merge(
 		given_checkout_opts->checkout_strategy :
 		GIT_CHECKOUT_SAFE;
 
-	if ((error = git_indexwriter_init_for_operation(&indexwriter, repo,
+	if ((error = git_transaction_index_for_operation(&tx, repo,
 		&checkout_strategy)) < 0)
 		goto done;
 
@@ -3315,13 +3315,13 @@ int git_merge(
 		(error = git_checkout_index(repo, index, &checkout_opts)) < 0)
 		goto done;
 
-	error = git_indexwriter_commit(&indexwriter);
+	error = git_transaction_commit(tx);
 
 done:
 	if (error < 0)
 		merge_state_cleanup(repo);
 
-	git_indexwriter_cleanup(&indexwriter);
+	git_transaction_free(tx);
 	git_index_free(index);
 	git_annotated_commit_free(our_head);
 	git_annotated_commit_free(base);

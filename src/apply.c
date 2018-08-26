@@ -14,6 +14,7 @@
 #include "git2/index.h"
 #include "git2/checkout.h"
 #include "git2/repository.h"
+#include "git2/transaction.h"
 #include "array.h"
 #include "patch.h"
 #include "futils.h"
@@ -795,7 +796,7 @@ int git_apply(
 	git_apply_location_t location,
 	const git_apply_options *given_opts)
 {
-	git_indexwriter indexwriter = GIT_INDEXWRITER_INIT;
+	git_transaction *tx = NULL;
 	git_index *index = NULL, *preimage = NULL, *postimage = NULL;
 	git_reader *pre_reader = NULL, *post_reader = NULL;
 	git_apply_options opts = GIT_APPLY_OPTIONS_INIT;
@@ -844,9 +845,9 @@ int git_apply(
 		goto done;
 
 	if (!(opts.flags & GIT_APPLY_CHECK))
-		if ((error = git_repository_index(&index, repo)) < 0 ||
-		    (error = git_indexwriter_init(&indexwriter, index)) < 0)
-			goto done;
+	if ((error = git_repository_index(&index, repo)) < 0 ||
+	    (error = git_transaction_index_for_operation(&tx, repo, NULL)) < 0)
+		goto done;
 
 	if ((error = apply_deltas(repo, pre_reader, preimage, post_reader, postimage, diff, &opts)) < 0)
 		goto done;
@@ -871,10 +872,10 @@ int git_apply(
 	if (error < 0)
 		goto done;
 
-	error = git_indexwriter_commit(&indexwriter);
+	error = git_transaction_commit(tx);
 
 done:
-	git_indexwriter_cleanup(&indexwriter);
+	git_transaction_free(tx);
 	git_index_free(postimage);
 	git_index_free(preimage);
 	git_index_free(index);

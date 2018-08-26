@@ -16,6 +16,7 @@ typedef enum {
 	GIT_TRANSACTION_NONE,
 	GIT_TRANSACTION_REFS,
 	GIT_TRANSACTION_CONFIG,
+	GIT_TRANSACTION_INDEX,
 } git_transaction_type;
 
 typedef int (*git_txn_commit_cb)(git_transaction *tx);

@@ -159,33 +159,14 @@ GIT_INLINE(int) git_index_is_dirty(git_index *index)
 
 extern int git_index_read_safely(git_index *index);
 
-typedef struct {
-	git_index *index;
-	git_filebuf file;
-	unsigned int should_write:1;
-} git_indexwriter;
-
-#define GIT_INDEXWRITER_INIT { NULL, GIT_FILEBUF_INIT }
-
 /* Lock the index for eventual writing. */
-extern int git_indexwriter_init(git_indexwriter *writer, git_index *index);
+extern int git_transaction_index_new(git_transaction **out, git_index *index);
 
 /* Lock the index for eventual writing by a repository operation: a merge,
  * revert, cherry-pick or a rebase.  Note that the given checkout strategy
  * will be updated for the operation's use so that checkout will not write
  * the index.
  */
-extern int git_indexwriter_init_for_operation(
-	git_indexwriter *writer,
-	git_repository *repo,
-	unsigned int *checkout_strategy);
-
-/* Write the index and unlock it. */
-extern int git_indexwriter_commit(git_indexwriter *writer);
-
-/* Cleanup an index writing session, unlocking the file (if it is still
- * locked and freeing any data structures.
- */
-extern void git_indexwriter_cleanup(git_indexwriter *writer);
+extern int git_transaction_index_for_operation(git_transaction **out, git_repository *repo, unsigned int *checkout_strategy);
 
 #endif

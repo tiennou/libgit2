@@ -17,6 +17,7 @@
 #include "annotated_commit.h"
 #include "index.h"
 
+#include <git2/transaction.h>
 #include <git2/types.h>
 #include <git2/annotated_commit.h>
 #include <git2/rebase.h>
@@ -796,7 +797,7 @@ static int rebase_next_merge(
 	git_commit *current_commit = NULL, *parent_commit = NULL;
 	git_tree *current_tree = NULL, *head_tree = NULL, *parent_tree = NULL;
 	git_index *index = NULL;
-	git_indexwriter indexwriter = GIT_INDEXWRITER_INIT;
+	git_transaction *tx = NULL;
 	git_rebase_operation *operation;
 	git_checkout_options checkout_opts;
 	char current_idstr[GIT_OID_HEXSZ];
@@ -826,19 +827,19 @@ static int rebase_next_merge(
 
 	normalize_checkout_options_for_apply(&checkout_opts, rebase, current_commit);
 
-	if ((error = git_indexwriter_init_for_operation(&indexwriter, rebase->repo, &checkout_opts.checkout_strategy)) < 0 ||
+	if ((error = git_transaction_index_for_operation(&tx, rebase->repo, &checkout_opts.checkout_strategy)) < 0 ||
 		(error = rebase_setupfile(rebase, MSGNUM_FILE, 0, "%" PRIuZ "\n", rebase->current+1)) < 0 ||
 		(error = rebase_setupfile(rebase, CURRENT_FILE, 0, "%.*s\n", GIT_OID_HEXSZ, current_idstr)) < 0 ||
 		(error = git_merge_trees(&index, rebase->repo, parent_tree, head_tree, current_tree, &rebase->options.merge_options)) < 0 ||
 		(error = git_merge__check_result(rebase->repo, index)) < 0 ||
 		(error = git_checkout_index(rebase->repo, index, &checkout_opts)) < 0 ||
-		(error = git_indexwriter_commit(&indexwriter)) < 0)
+		(error = git_transaction_commit(tx)) < 0)
 		goto done;
 
 	*out = operation;
 
 done:
-	git_indexwriter_cleanup(&indexwriter);
+	git_transaction_free(tx);
 	git_index_free(index);
 	git_tree_free(current_tree);
 	git_tree_free(head_tree);

@@ -1,5 +1,6 @@
 #include "clar_libgit2.h"
 #include "index.h"
+#include "transaction.h"
 
 static const size_t index_entry_count = 109;
 static const size_t index_entry_count_2 = 1437;
@@ -971,23 +972,22 @@ void test_index_tests__can_lock_index(void)
 {
 	git_repository *repo;
 	git_index *index;
-	git_indexwriter one = GIT_INDEXWRITER_INIT,
-		two = GIT_INDEXWRITER_INIT;
+	git_transaction *one, *two;
 
 	repo = cl_git_sandbox_init("testrepo.git");
 
 	cl_git_pass(git_repository_index(&index, repo));
-	cl_git_pass(git_indexwriter_init(&one, index));
+	cl_git_pass(git_transaction_index_new(&one, index));
 
-	cl_git_fail_with(GIT_ELOCKED, git_indexwriter_init(&two, index));
+	cl_git_fail_with(GIT_ELOCKED, git_transaction_index_new(&two, index));
 	cl_git_fail_with(GIT_ELOCKED, git_index_write(index));
 
-	cl_git_pass(git_indexwriter_commit(&one));
+	cl_git_pass(git_transaction_commit(one));
 
 	cl_git_pass(git_index_write(index));
 
-	git_indexwriter_cleanup(&one);
-	git_indexwriter_cleanup(&two);
+	git_transaction_free(one);
+	git_transaction_free(two);
 	git_index_free(index);
 	cl_git_sandbox_cleanup();
 }

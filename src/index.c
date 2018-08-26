@@ -20,6 +20,7 @@
 #include "idxmap.h"
 #include "diff.h"
 #include "varint.h"
+#include "transaction.h"
 
 #include "git2/odb.h"
 #include "git2/oid.h"
@@ -143,7 +144,6 @@ static int read_header(struct index_header *dest, const void *buffer);
 
 static int parse_index(git_index *index, const char *buffer, size_t buffer_size);
 static bool is_index_extended(git_index *index);
-static int write_index(git_oid *checksum, git_index *index, git_filebuf *file);
 
 static void index_entry_free(git_index_entry *entry);
 static void index_entry_reuc_free(git_index_reuc_entry *reuc);
@@ -792,16 +792,16 @@ int git_index_set_version(git_index *index, unsigned int version)
 
 int git_index_write(git_index *index)
 {
-	git_indexwriter writer = GIT_INDEXWRITER_INIT;
+	git_transaction *tx = NULL;
 	int error;
 
 	truncate_racily_clean(index);
 
-	if ((error = git_indexwriter_init(&writer, index)) == 0 &&
-		(error = git_indexwriter_commit(&writer)) == 0)
+	if ((error = git_transaction_index_new(&tx, index)) == 0 &&
+		(error = git_transaction_commit(tx)) == 0)
 		index->dirty = 0;
 
-	git_indexwriter_cleanup(&writer);
+	git_transaction_free(tx);
 
 	return error;
 }
@@ -2993,7 +2993,7 @@ static void clear_uptodate(git_index *index)
 		entry->flags_extended &= ~GIT_INDEX_ENTRY_UPTODATE;
 }
 
-static int write_index(git_oid *checksum, git_index *index, git_filebuf *file)
+int write_index(git_oid *checksum, git_index *index, git_filebuf *file)
 {
 	git_oid hash_final;
 	struct index_header header;
@@ -3626,56 +3626,22 @@ int git_index_snapshot_find(
 	return index_find_in_entries(out, entries, entry_srch, path, path_len, stage);
 }
 
-int git_indexwriter_init(
-	git_indexwriter *writer,
-	git_index *index)
-{
-	int error;
-
-	GIT_REFCOUNT_INC(index);
-
-	writer->index = index;
-
-	if (!index->index_file_path)
-		return create_index_error(-1,
-			"failed to write index: The index is in-memory only");
-
-	if ((error = git_filebuf_open(
-		&writer->file, index->index_file_path, GIT_FILEBUF_HASH_CONTENTS, GIT_INDEX_FILE_MODE)) < 0) {
-
-		if (error == GIT_ELOCKED)
-			git_error_set(GIT_ERROR_INDEX, "the index is locked; this might be due to a concurrent or crashed process");
-
-		return error;
-	}
-
-	writer->should_write = 1;
-
-	return 0;
-}
-
-int git_indexwriter_init_for_operation(
-	git_indexwriter *writer,
-	git_repository *repo,
-	unsigned int *checkout_strategy)
-{
+typedef struct {
+	git_transaction parent;
 	git_index *index;
-	int error;
+	git_filebuf file;
+	int should_write;
+} git_transaction_index;
 
-	if ((error = git_repository_index__weakptr(&index, repo)) < 0 ||
-		(error = git_indexwriter_init(writer, index)) < 0)
-		return error;
+static void transaction_index_free(git_transaction *tx);
 
-	writer->should_write = (*checkout_strategy & GIT_CHECKOUT_DONT_WRITE_INDEX) == 0;
-	*checkout_strategy |= GIT_CHECKOUT_DONT_WRITE_INDEX;
-
-	return 0;
-}
-
-int git_indexwriter_commit(git_indexwriter *writer)
+static int transaction_index_commit(git_transaction *tx)
 {
+	git_transaction_index *writer;
 	int error;
 	git_oid checksum = {{ 0 }};
+
+	writer = (git_transaction_index *)tx;
 
 	if (!writer->should_write)
 		return 0;
@@ -3684,7 +3650,7 @@ int git_indexwriter_commit(git_indexwriter *writer)
 	git_vector_sort(&writer->index->reuc);
 
 	if ((error = write_index(&checksum, writer->index, &writer->file)) < 0) {
-		git_indexwriter_cleanup(writer);
+		transaction_index_free(tx);
 		return error;
 	}
 
@@ -3707,12 +3673,78 @@ int git_indexwriter_commit(git_indexwriter *writer)
 	return 0;
 }
 
-void git_indexwriter_cleanup(git_indexwriter *writer)
+static void transaction_index_free(git_transaction *tx)
 {
+	git_transaction_index *writer = GIT_CONTAINER_OF(tx, git_transaction_index, parent);
+
 	git_filebuf_cleanup(&writer->file);
 
 	git_index_free(writer->index);
 	writer->index = NULL;
+}
+
+int git_transaction_index_new(git_transaction **out, git_index *index)
+{
+	int error;
+	git_transaction_index *tx;
+
+	assert(out && index);
+
+	*out = NULL;
+
+	tx = (git_transaction_index *)git_transaction__alloc(GIT_TRANSACTION_INDEX, sizeof(*tx), transaction_index_commit, transaction_index_free);
+	GIT_ERROR_CHECK_ALLOC(tx);
+
+	GIT_REFCOUNT_INC(index);
+
+	tx->index = index;
+
+	if (!index->index_file_path)
+		return create_index_error(-1,
+			"failed to write index: The index is in-memory only");
+
+	if ((error = git_filebuf_open(&tx->file, index->index_file_path,
+		GIT_FILEBUF_HASH_CONTENTS, GIT_INDEX_FILE_MODE)) < 0) {
+
+		if (error == GIT_ELOCKED)
+			git_error_set(GIT_ERROR_INDEX, "the index is locked; this might be due to a concurrent or crashed process");
+
+		goto cleanup;
+	}
+
+	tx->should_write = 1;
+
+	*out = &tx->parent;
+
+	return 0;
+cleanup:
+	git_index_free(index);
+	git_transaction_free((git_transaction *)tx);
+	return error;
+}
+
+int git_transaction_index_for_operation(git_transaction **out, git_repository *repo, unsigned int *checkout_strategy)
+{
+	git_transaction *tx;
+	git_index *index;
+	int error;
+
+	assert(out && repo);
+
+	*out = NULL;
+
+	if ((error = git_repository_index__weakptr(&index, repo)) < 0 ||
+	    (error = git_transaction_index_new(&tx, index)) < 0)
+		return error;
+
+	if (checkout_strategy) {
+		((git_transaction_index *)tx)->should_write = (*checkout_strategy & GIT_CHECKOUT_DONT_WRITE_INDEX) == 0;
+		*checkout_strategy |= GIT_CHECKOUT_DONT_WRITE_INDEX;
+	}
+
+	*out = tx;
+
+	return 0;
 }
 
 /* Deprecated functions */
