@@ -9,6 +9,25 @@
 
 #include "common.h"
 
-int git_transaction_config_new(git_transaction **out, git_config *cfg);
+#include "pool.h"
+#include "git2/transaction.h"
+
+typedef enum {
+	GIT_TRANSACTION_NONE,
+	GIT_TRANSACTION_REFS,
+	GIT_TRANSACTION_CONFIG,
+} git_transaction_type;
+
+typedef int (*git_txn_commit_cb)(git_transaction *tx);
+typedef void (*git_txn_free_cb)(git_transaction *tx);
+
+struct git_transaction {
+	git_transaction_type type;
+	git_pool pool;
+	git_txn_commit_cb commit;
+	git_txn_free_cb free;
+};
+
+git_transaction *git_transaction__alloc(git_transaction_type type, size_t objsize, git_txn_commit_cb commit_cb, git_txn_free_cb free_cb);
 
 #endif

@@ -20,12 +20,6 @@
 #include "git2/sys/refs.h"
 #include "git2/sys/refdb_backend.h"
 
-typedef enum {
-	TRANSACTION_NONE,
-	TRANSACTION_REFS,
-	TRANSACTION_CONFIG,
-} transaction_t;
-
 typedef struct {
 	const char *name;
 	void *payload;
@@ -44,16 +38,6 @@ typedef struct {
 		remove :1;
 } transaction_node;
 
-typedef int (*txn_commit_cb)(git_transaction *tx);
-typedef void (*txn_free_cb)(git_transaction *tx);
-
-struct git_transaction {
-	transaction_t type;
-	git_pool pool;
-	txn_commit_cb commit;
-	txn_free_cb free;
-};
-
 typedef struct {
 	git_transaction parent;
 	git_repository *repo;
@@ -62,52 +46,10 @@ typedef struct {
 	git_strmap *locks;
 } git_transaction_refs;
 
-typedef struct {
-	git_transaction parent;
-	git_config *cfg;
-} git_transaction_config;
-
-static void *transaction_alloc(transaction_t type, size_t objsize, txn_commit_cb commit_cb, txn_free_cb free_cb);
-
-static int transaction_config_commit(git_transaction *txn)
-{
-	int error;
-
-	git_transaction_config *tx = (git_transaction_config *)txn;
-	error = git_config_unlock(tx->cfg, true);
-	tx->cfg = NULL;
-
-	return error;
-}
-
-static void transaction_config_free(git_transaction *txn)
-{
-	git_transaction_config *tx = (git_transaction_config *)txn;
-	if (tx->cfg) {
-		git_config_unlock(tx->cfg, false);
-		git_config_free(tx->cfg);
-	}
-}
-
-int git_transaction_config_new(git_transaction **out, git_config *cfg)
-{
-	git_transaction_config *tx;
-	assert(out && cfg);
-
-	tx = transaction_alloc(TRANSACTION_CONFIG, sizeof(*tx), transaction_config_commit, transaction_config_free);
-	GIT_ERROR_CHECK_ALLOC(tx);
-
-	tx->cfg = cfg;
-
-	*out = &tx->parent;
-
-	return 0;
-}
-
 static int transaction_refs_commit(git_transaction *tx);
 static void transaction_refs_free(git_transaction *tx);
 
-static void *transaction_alloc(transaction_t type, size_t objsize, txn_commit_cb commit_cb, txn_free_cb free_cb)
+git_transaction *git_transaction__alloc(git_transaction_type type, size_t objsize, git_txn_commit_cb commit_cb, git_txn_free_cb free_cb)
 {
 	git_transaction *tx;
 	git_pool pool;
@@ -148,7 +90,7 @@ int git_transaction_new(git_transaction **out, git_repository *repo)
 
 	assert(out && repo);
 
-	tx = transaction_alloc(TRANSACTION_REFS, sizeof(*tx), transaction_refs_commit, transaction_refs_free);
+	tx = (git_transaction_refs *)git_transaction__alloc(GIT_TRANSACTION_REFS, sizeof(*tx), transaction_refs_commit, transaction_refs_free);
 	GIT_ERROR_CHECK_ALLOC(tx);
 
 	if ((error = git_strmap_new(&tx->locks)) < 0) {
@@ -187,7 +129,7 @@ void git_transaction_free(git_transaction *tx)
 	git_transaction__free(tx);
 }
 
-static int ensure_transaction_type(git_transaction *tx, transaction_t type)
+static int ensure_transaction_type(git_transaction *tx, git_transaction_type type)
 {
 	assert(tx->type == type);
 
@@ -202,7 +144,7 @@ int git_transaction_lock_ref(git_transaction *txn, const char *refname)
 
 	assert(txn && refname);
 
-	if ((error = ensure_transaction_type(txn, TRANSACTION_REFS)) < 0)
+	if ((error = ensure_transaction_type(txn, GIT_TRANSACTION_REFS)) < 0)
 		return error;
 
 	node = git_pool_mallocz(&txn->pool, sizeof(transaction_node));
@@ -273,7 +215,7 @@ int git_transaction_set_target(git_transaction *txn, const char *refname, const 
 
 	assert(txn && refname && target);
 
-	if ((error = ensure_transaction_type(txn, TRANSACTION_REFS)) < 0)
+	if ((error = ensure_transaction_type(txn, GIT_TRANSACTION_REFS)) < 0)
 		return error;
 
 	tx = GIT_CONTAINER_OF(txn, git_transaction_refs, parent);
@@ -298,7 +240,7 @@ int git_transaction_set_symbolic_target(git_transaction *txn, const char *refnam
 
 	assert(txn && refname && target);
 
-	if ((error = ensure_transaction_type(txn, TRANSACTION_REFS)) < 0)
+	if ((error = ensure_transaction_type(txn, GIT_TRANSACTION_REFS)) < 0)
 		return error;
 
 	tx = GIT_CONTAINER_OF(txn, git_transaction_refs, parent);
@@ -322,7 +264,7 @@ int git_transaction_remove(git_transaction *txn, const char *refname)
 	transaction_node *node;
 	git_transaction_refs *tx;
 
-	if ((error = ensure_transaction_type(txn, TRANSACTION_REFS)) < 0)
+	if ((error = ensure_transaction_type(txn, GIT_TRANSACTION_REFS)) < 0)
 		return error;
 
 	tx = GIT_CONTAINER_OF(txn, git_transaction_refs, parent);
@@ -387,7 +329,7 @@ int git_transaction_set_reflog(git_transaction *txn, const char *refname, const 
 
 	assert(txn && refname && reflog);
 
-	if ((error = ensure_transaction_type(txn, TRANSACTION_REFS)) < 0)
+	if ((error = ensure_transaction_type(txn, GIT_TRANSACTION_REFS)) < 0)
 		return error;
 
 	tx = GIT_CONTAINER_OF(txn, git_transaction_refs, parent);

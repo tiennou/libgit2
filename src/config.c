@@ -1176,6 +1176,47 @@ int git_config_open_default(git_config **out)
 	return error;
 }
 
+typedef struct {
+	git_transaction parent;
+	git_config *cfg;
+} git_transaction_config;
+
+static int transaction_config_commit(git_transaction *txn)
+{
+	int error;
+
+	git_transaction_config *tx = (git_transaction_config *)txn;
+	error = git_config_unlock(tx->cfg, true);
+	tx->cfg = NULL;
+
+	return error;
+}
+
+static void transaction_config_free(git_transaction *txn)
+{
+	git_transaction_config *tx = (git_transaction_config *)txn;
+	if (tx->cfg) {
+		git_config_unlock(tx->cfg, false);
+		git_config_free(tx->cfg);
+	}
+}
+
+static int transaction_config_new(git_transaction **out, git_config *cfg)
+{
+	git_transaction_config *tx;
+
+	assert(out && cfg);
+
+	tx = (git_transaction_config *)git_transaction__alloc(GIT_TRANSACTION_CONFIG, sizeof(*tx), transaction_config_commit, transaction_config_free);
+	GIT_ERROR_CHECK_ALLOC(tx);
+
+	tx->cfg = cfg;
+
+	*out = &tx->parent;
+
+	return 0;
+}
+
 int git_config_lock(git_transaction **out, git_config *cfg)
 {
 	int error;
@@ -1194,7 +1235,7 @@ int git_config_lock(git_transaction **out, git_config *cfg)
 	if ((error = backend->lock(backend)) < 0)
 		return error;
 
-	return git_transaction_config_new(out, cfg);
+	return transaction_config_new(out, cfg);
 }
 
 int git_config_unlock(git_config *cfg, int commit)
