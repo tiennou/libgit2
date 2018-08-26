@@ -176,12 +176,22 @@ void git_transaction_free(git_transaction *tx)
 	git_transaction__free(tx);
 }
 
+static int ensure_transaction_type(git_transaction *tx, transaction_t type)
+{
+	assert(tx->type == type);
+
+	return 0;
+}
+
 int git_transaction_lock_ref(git_transaction *tx, const char *refname)
 {
 	int error;
 	transaction_node *node;
 
 	assert(tx && refname);
+
+	if ((error = ensure_transaction_type(tx, TRANSACTION_REFS)) < 0)
+		return error;
 
 	node = git_pool_mallocz(&tx->pool, sizeof(transaction_node));
 	GIT_ERROR_CHECK_ALLOC(node);
@@ -269,6 +279,9 @@ int git_transaction_set_symbolic_target(git_transaction *tx, const char *refname
 
 	assert(tx && refname && target);
 
+	if ((error = ensure_transaction_type(tx, TRANSACTION_REFS)) < 0)
+		return error;
+
 	if ((error = find_locked(&node, tx, refname)) < 0)
 		return error;
 
@@ -345,6 +358,9 @@ int git_transaction_set_reflog(git_transaction *tx, const char *refname, const g
 	transaction_node *node;
 
 	assert(tx && refname && reflog);
+
+	if ((error = ensure_transaction_type(tx, TRANSACTION_REFS)) < 0)
+		return error;
 
 	if ((error = find_locked(&node, tx, refname)) < 0)
 		return error;
