@@ -2020,11 +2020,15 @@ static void *threaded_checkout_create_the_new(void *arg)
 			return NULL;
 		}
 
-		/* We will retry failed operations in the calling thread to handle
-		* the case where might encounter a file locking error due to
-		* multithreading and name collisions.
-		*/
-		if (worker->actions[i] & CHECKOUT_ACTION__UPDATE_BLOB) {
+		/* We skip symlink operations, because we handle them
+		 * in the main thread to avoid a symlink security flaw.
+		 */
+		if (!S_ISLNK(delta->new_file.mode) &&
+		    worker->actions[i] & CHECKOUT_ACTION__UPDATE_BLOB) {
+			/* We will retry failed operations in the calling thread to handle
+			 * the case where might encounter a file locking error due to
+			 * multithreading and name collisions.
+			 */
 			progress_pair->index = i;
 			progress_pair->error = checkout_blob(worker->cd, &delta->new_file);
 			progress_pair->skipped = false;
@@ -2060,6 +2064,18 @@ static int ll_checkout_create_the_new(
 
 	if (num_threads <= 1) {
 		return checkout_create_the_new(actions, data);
+	}
+
+	/* Before we start creating, we need to create all the symlinks first
+	 * to ensure that we don't accidentally write data through symlinks into
+	 * the .git directory.
+	 */
+	git_vector_foreach(&data->diff->deltas, i, delta) {
+		if ((actions[i] & CHECKOUT_ACTION__DEFER_REMOVE) == 0 &&
+				S_ISLNK(delta->new_file.mode) &&
+				actions[i] & CHECKOUT_ACTION__UPDATE_BLOB &&
+				(ret = checkout_create_the_new_blob(data, actions[i], delta)) < 0)
+			return ret;
 	}
 
 	if (
