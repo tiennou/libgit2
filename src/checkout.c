@@ -1522,6 +1522,7 @@ static int blob_content_to_file(
 	git_filter_list *fl = NULL;
 	int fd;
 	int error = 0;
+	git_buf temp_buf = GIT_BUF_INIT;
 
 	if (hint_path == NULL)
 		hint_path = path;
@@ -1540,7 +1541,7 @@ static int blob_content_to_file(
 	}
 
 	filter_opts.attr_session = &data->attr_session;
-	filter_opts.temp_buf = &data->tmp;
+	filter_opts.temp_buf = &temp_buf;
 
 	if (!data->opts.disable_filters &&
 		(error = git_filter_list__load_ext(
@@ -1564,6 +1565,8 @@ static int blob_content_to_file(
 	assert(writer.open == 0);
 
 	git_filter_list_free(fl);
+
+	git_buf_dispose(&temp_buf);
 
 	if (error < 0)
 		return error;
