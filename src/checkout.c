@@ -1920,14 +1920,26 @@ static int checkout_deferred_remove(git_repository *repo, const char *path)
 #endif
 }
 
+enum {
+	GIT_CHECKOUT_SYMLINK_DEFAULT = 0,
+	GIT_CHECKOUT_SYMLINK_ONLY = 1,
+	GIT_CHECKOUT_SKIP_SYMLINK = 2,
+};
+
 static int checkout_create_perform(
+	int *skipped,
 	checkout_data *data,
 	unsigned int action,
-	git_diff_delta *delta)
+	git_diff_delta *delta,
+	int symlink_behavior)
 {
 	int error = 0;
 
-	if (action & CHECKOUT_ACTION__DEFER_REMOVE) {
+	if (skipped)
+		*skipped = 0;
+
+	if (action & CHECKOUT_ACTION__DEFER_REMOVE &&
+	    !(symlink_behavior & GIT_CHECKOUT_SYMLINK_ONLY)) {
 		/* this had a blocker directory that should only be removed iff
 		 * all of the contents of the directory were safely removed
 		 */
@@ -1936,12 +1948,16 @@ static int checkout_create_perform(
 	}
 
 	if (action & CHECKOUT_ACTION__UPDATE_BLOB) {
+		if (((symlink_behavior & GIT_CHECKOUT_SYMLINK_ONLY) && !S_ISLNK(delta->new_file.mode))
+		    || ((symlink_behavior & GIT_CHECKOUT_SKIP_SYMLINK) && S_ISLNK(delta->new_file.mode))) {
+			if (skipped)
+				*skipped = 1;
+			return 0;
+		}
+
 		error = checkout_blob(data, &delta->new_file);
 		if (error < 0)
 			return error;
-
-		data->completed_steps++;
-		report_progress(data, delta->new_file.path);
 	}
 
 	return 0;
@@ -1956,8 +1972,12 @@ static int checkout_create_the_new__single(
 	size_t i;
 
 	git_vector_foreach(&data->diff->deltas, i, delta) {
-		if ((error = checkout_create_perform(data, actions[i], delta)) < 0)
+		if ((error = checkout_create_perform(NULL, data, actions[i], delta, 0)) < 0)
 			return error;
+		if (actions[i] & CHECKOUT_ACTION__UPDATE_BLOB) {
+			data->completed_steps++;
+			report_progress(data, delta->new_file.path);
+		}
 	}
 
 	return 0;
@@ -1996,20 +2016,16 @@ static void *checkout_create_the_new__thread(void *arg)
 			git_vector_length(&worker->cd->diff->deltas)) {
 		checkout_progress_pair *progress_pair;
 		git_diff_delta *delta = git_vector_get(&worker->cd->diff->deltas, i);
+		int skipped;
 
 		if (delta == NULL || git_atomic_get(worker->error) != 0)
 			return NULL;
 
-		if (worker->actions[i] & CHECKOUT_ACTION__DEFER_REMOVE) {
-			/* this had a blocker directory that should only be removed iff
-			 * all of the contents of the directory were safely removed
-			 */
-			if (
-				(error = checkout_deferred_remove(worker->cd->repo, delta->old_file.path)) < 0) {
-				git_atomic_set(worker->error, error);
-				git_cond_signal(worker->cond);
-				return NULL;
-			}
+		error = checkout_create_perform(&skipped, worker->cd, worker->actions[i], delta, GIT_CHECKOUT_SKIP_SYMLINK);
+		if (error < 0 && worker->actions[i] & CHECKOUT_ACTION__DEFER_REMOVE) {
+			git_atomic_set(worker->error, error);
+			git_cond_signal(worker->cond);
+			return NULL;
 		}
 
 		progress_pair = (checkout_progress_pair *)git__malloc(
@@ -2020,17 +2036,13 @@ static void *checkout_create_the_new__thread(void *arg)
 			return NULL;
 		}
 
-		/* We skip symlink operations, because we handle them
-		 * in the main thread to avoid a symlink security flaw.
-		 */
-		if (!S_ISLNK(delta->new_file.mode) &&
-		    worker->actions[i] & CHECKOUT_ACTION__UPDATE_BLOB) {
+		if (worker->actions[i] & CHECKOUT_ACTION__UPDATE_BLOB) {
 			/* We will retry failed operations in the calling thread to handle
 			 * the case where might encounter a file locking error due to
 			 * multithreading and name collisions.
 			 */
 			progress_pair->index = i;
-			progress_pair->error = checkout_blob(worker->cd, &delta->new_file);
+			progress_pair->error = skipped ? -1 : error;
 			progress_pair->skipped = false;
 		} else {
 			progress_pair->index = i;
@@ -2067,10 +2079,7 @@ static int checkout_create_the_new__parallel(
 	 * the .git directory.
 	 */
 	git_vector_foreach(&data->diff->deltas, i, delta) {
-		if ((actions[i] & CHECKOUT_ACTION__DEFER_REMOVE) == 0 &&
-				S_ISLNK(delta->new_file.mode) &&
-				actions[i] & CHECKOUT_ACTION__UPDATE_BLOB &&
-				(ret = checkout_create_perform(data, actions[i], delta)) < 0)
+		if ((ret = checkout_create_perform(NULL, data, actions[i], delta, GIT_CHECKOUT_SYMLINK_ONLY)) < 0)
 			return ret;
 	}
 
@@ -2156,7 +2165,7 @@ static int checkout_create_the_new__parallel(
 
 	git_vector_foreach(&errored_pairs, i, progress_pair) {
 		delta = git_vector_get(&data->diff->deltas, progress_pair->index);
-		if ((ret = checkout_create_perform(data, actions[progress_pair->index], delta)) < 0)
+		if ((ret = checkout_create_perform(NULL, data, actions[progress_pair->index], delta, 0)) < 0)
 			goto cleanup;
 	}
 
