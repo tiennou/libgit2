@@ -66,7 +66,6 @@ typedef struct {
 	git_vector *update_reuc;
 	git_vector *update_names;
 	git_buf target_path;
-	size_t target_len;
 	git_buf tmp;
 	unsigned int strategy;
 	int can_symlink;
@@ -327,12 +326,10 @@ static int checkout_action_no_wd(
 static int build_target_fullpath(
 	git_buf *out, checkout_data *data, const char *path)
 {
-	git_buf_truncate(&data->target_path, data->target_len);
+	git_buf_set(out, git_buf_cstr(&data->target_path), git_buf_len(&data->target_path));
 
-	if (path && git_buf_puts(&data->target_path, path) < 0)
+	if (path && git_buf_puts(out, path) < 0)
 		return -1;
-
-	git_buf_attach_notowned(out, git_buf_cstr(&data->target_path), git_buf_len(&data->target_path));
 
 	return 0;
 }
@@ -2550,8 +2547,6 @@ static int checkout_data_init(
 		(error = git_path_to_dir(&data->target_path)) < 0 ||
 		(error = git_strmap_alloc(&data->mkdir_map)) < 0)
 		goto cleanup;
-
-	data->target_len = git_buf_len(&data->target_path);
 
 	git_attr_session__init(&data->attr_session, data->repo);
 
