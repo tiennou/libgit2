@@ -325,14 +325,14 @@ static int checkout_action_no_wd(
 }
 
 static int build_target_fullpath(
-	git_buf **out, checkout_data *data, const char *path)
+	git_buf *out, checkout_data *data, const char *path)
 {
 	git_buf_truncate(&data->target_path, data->target_len);
 
 	if (path && git_buf_puts(&data->target_path, path) < 0)
 		return -1;
 
-	*out = &data->target_path;
+	git_buf_attach_notowned(out, git_buf_cstr(&data->target_path), git_buf_len(&data->target_path));
 
 	return 0;
 }
@@ -340,15 +340,20 @@ static int build_target_fullpath(
 static bool wd_item_is_removable(
 	checkout_data *data, const git_index_entry *wd)
 {
-	git_buf *full;
+	git_buf fullpath = GIT_BUF_INIT;
+	bool removable = false;
 
 	if (wd->mode != GIT_FILEMODE_TREE)
 		return true;
 
-	if (build_target_fullpath(&full, data, wd->path) < 0)
+	if (build_target_fullpath(&fullpath, data, wd->path) < 0)
 		return false;
 
-	return !full || !git_path_contains(full, DOT_GIT);
+	removable = !git_path_contains(&fullpath, DOT_GIT);
+
+	git_buf_dispose(&fullpath);
+
+	return removable;
 }
 
 static int checkout_queue_remove(checkout_data *data, const char *path)
@@ -472,12 +477,16 @@ static bool submodule_is_config_only(
 
 static bool checkout_is_empty_dir(checkout_data *data, const char *path)
 {
-	git_buf *fullpath;
+	git_buf fullpath = GIT_BUF_INIT;
+	bool empty;
 
 	if (build_target_fullpath(&fullpath, data, path) < 0)
 		return false;
 
-	return git_path_is_empty_dir(fullpath->ptr);
+	empty = git_path_is_empty_dir(git_buf_cstr(&fullpath));
+
+	git_buf_dispose(&fullpath);
+	return empty;
 }
 
 static int checkout_action_with_wd(
@@ -1631,7 +1640,8 @@ static int checkout_submodule_update_index(
 	checkout_data *data,
 	const git_diff_file *file)
 {
-	git_buf *fullpath;
+	git_buf fullpath = GIT_BUF_INIT;
+	int error;
 	struct stat st;
 
 	/* update the index unless prevented */
@@ -1642,15 +1652,20 @@ static int checkout_submodule_update_index(
 		return -1;
 
 	data->perfdata.stat_calls++;
-	if (p_stat(fullpath->ptr, &st) < 0) {
+	if (p_stat(git_buf_cstr(&fullpath), &st) < 0) {
 		giterr_set(
 			GITERR_CHECKOUT, "could not stat submodule %s\n", file->path);
-		return GIT_ENOTFOUND;
+		error = GIT_ENOTFOUND;
+		goto cleanup;
 	}
 
 	st.st_mode = GIT_FILEMODE_COMMIT;
 
-	return checkout_update_index(data, file, &st);
+	error = checkout_update_index(data, file, &st);
+
+cleanup:
+	git_buf_dispose(&fullpath);
+	return error;
 }
 
 static int checkout_submodule(
@@ -1767,7 +1782,7 @@ static int checkout_blob(
 	checkout_data *data,
 	const git_diff_file *file)
 {
-	git_buf *fullpath;
+	git_buf fullpath = GIT_BUF_INIT;
 	struct stat st;
 	int error = 0;
 
@@ -1776,14 +1791,16 @@ static int checkout_blob(
 
 	if ((data->strategy & GIT_CHECKOUT_UPDATE_ONLY) != 0) {
 		int rval = checkout_safe_for_update_only(
-			data, fullpath->ptr, file->mode);
+			data, fullpath.ptr, file->mode);
 
-		if (rval <= 0)
+		if (rval <= 0) {
+			git_buf_dispose(&fullpath);
 			return rval;
+		}
 	}
 
 	error = checkout_write_content(
-		data, &file->id, fullpath->ptr, NULL, file->mode, &st);
+		data, &file->id, fullpath.ptr, NULL, file->mode, &st);
 
 	/* update the index unless prevented */
 	if (!error && (data->strategy & GIT_CHECKOUT_DONT_UPDATE_INDEX) == 0)
@@ -1793,6 +1810,7 @@ static int checkout_blob(
 	if (!error && strcmp(file->path, ".gitmodules") == 0)
 		data->reload_submodules = true;
 
+	git_buf_dispose(&fullpath);
 	return error;
 }
 
@@ -1804,7 +1822,7 @@ static int checkout_remove_the_old(
 	git_diff_delta *delta;
 	const char *str;
 	size_t i;
-	git_buf *fullpath;
+	git_buf fullpath = GIT_BUF_INIT;
 	uint32_t flg = GIT_RMDIR_EMPTY_PARENTS |
 		GIT_RMDIR_REMOVE_FILES | GIT_RMDIR_REMOVE_BLOCKERS;
 
@@ -1817,10 +1835,10 @@ static int checkout_remove_the_old(
 	git_vector_foreach(&data->diff->deltas, i, delta) {
 		if (actions[i] & CHECKOUT_ACTION__REMOVE) {
 			error = git_futils_rmdir_r(
-				delta->old_file.path, fullpath->ptr, flg);
+				delta->old_file.path, fullpath.ptr, flg);
 
 			if (error < 0)
-				return error;
+				goto cleanup;
 
 			data->completed_steps++;
 			report_progress(data, delta->old_file.path);
@@ -1835,9 +1853,9 @@ static int checkout_remove_the_old(
 	}
 
 	git_vector_foreach(&data->removes, i, str) {
-		error = git_futils_rmdir_r(str, fullpath->ptr, flg);
+		error = git_futils_rmdir_r(str, fullpath.ptr, flg);
 		if (error < 0)
-			return error;
+			goto cleanup;
 
 		data->completed_steps++;
 		report_progress(data, str);
@@ -1852,7 +1870,9 @@ static int checkout_remove_the_old(
 		}
 	}
 
-	return 0;
+cleanup:
+	git_buf_dispose(&fullpath);
+	return error;
 }
 
 static int checkout_deferred_remove(git_repository *repo, const char *path)
@@ -2002,9 +2022,9 @@ static int checkout_write_entry(
 	const git_index_entry *side)
 {
 	const char *hint_path = NULL, *suffix;
-	git_buf *fullpath;
+	git_buf fullpath = GIT_BUF_INIT;
 	struct stat st;
-	int error;
+	int error = 0;
 
 	assert (side == conflict->ours || side == conflict->theirs);
 
@@ -2022,20 +2042,23 @@ static int checkout_write_entry(
 			suffix = data->opts.their_label ? data->opts.their_label :
 				"theirs";
 
-		if (checkout_path_suffixed(fullpath, suffix) < 0)
-			return -1;
+		if ((error = checkout_path_suffixed(&fullpath, suffix)) < 0)
+			goto cleanup;
 
 		hint_path = side->path;
 	}
 
 	if ((data->strategy & GIT_CHECKOUT_UPDATE_ONLY) != 0 &&
-		(error = checkout_safe_for_update_only(data, fullpath->ptr, side->mode)) <= 0)
-		return error;
+		(error = checkout_safe_for_update_only(data, fullpath.ptr, side->mode)) <= 0)
+		goto cleanup;
 
-	if (!S_ISGITLINK(side->mode))
-		return checkout_write_content(data,
-					      &side->id, fullpath->ptr, hint_path, side->mode, &st);
+	if (!S_ISGITLINK(side->mode) &&
+	    (error = checkout_write_content(data,
+					    &side->id, fullpath.ptr, hint_path, side->mode, &st)) <= 0)
+	    goto cleanup;
 
+cleanup:
+	git_buf_dispose(&fullpath);
 	return 0;
 }
 
