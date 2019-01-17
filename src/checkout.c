@@ -74,7 +74,6 @@ typedef struct {
 	git_vector *update_reuc;
 	git_vector *update_names;
 	git_buf target_path;
-	git_buf tmp;
 	unsigned int strategy;
 	int can_symlink;
 	int respect_filemode;
@@ -381,12 +380,15 @@ static int checkout_action_wd_only(
 	bool remove = false;
 	git_checkout_notify_t notify = GIT_CHECKOUT_NOTIFY_NONE;
 	const git_index_entry *wd = *wditem;
+	git_buf temp_buf = GIT_BUF_INIT;
 
 	if (!git_pathspec__match(
 			pathspec, wd->path,
 			(data->strategy & GIT_CHECKOUT_DISABLE_PATHSPEC_MATCH) != 0,
-			git_iterator_ignore_case(workdir), NULL, NULL))
-		return git_iterator_advance(wditem, workdir);
+			git_iterator_ignore_case(workdir), NULL, NULL)) {
+		error = git_iterator_advance(wditem, workdir);
+		goto cleanup;
+	}
 
 	/* check if item is tracked in the index but not in the checkout diff */
 	if (data->index != NULL) {
@@ -400,7 +402,7 @@ static int checkout_action_wd_only(
 				notify = GIT_CHECKOUT_NOTIFY_DIRTY;
 				remove = ((data->strategy & GIT_CHECKOUT_FORCE) != 0);
 			} else if (error != GIT_ENOTFOUND)
-				return error;
+				goto cleanup;
 			else
 				error = 0; /* git_index__find_pos does not set error msg */
 		} else {
@@ -409,15 +411,17 @@ static int checkout_action_wd_only(
 			 */
 			const git_index_entry *e = git_index_get_byindex(data->index, pos);
 
-			if (e != NULL && data->diff->pfxcomp(e->path, wd->path) == 0)
-				return git_iterator_advance_into(wditem, workdir);
+			if (e != NULL && data->diff->pfxcomp(e->path, wd->path) == 0) {
+				error = git_iterator_advance_into(wditem, workdir);
+				goto cleanup;
+			}
 		}
 	}
 
 	if (notify != GIT_CHECKOUT_NOTIFY_NONE) {
 		/* if we found something in the index, notify and advance */
 		if ((error = checkout_notify(data, notify, NULL, wd)) != 0)
-			return error;
+			goto cleanup;
 
 		if (remove && wd_item_is_removable(data, wd))
 			error = checkout_queue_remove(data, wd->path);
@@ -431,15 +435,15 @@ static int checkout_action_wd_only(
 
 		/* copy the entry for issuing notification callback later */
 		git_index_entry saved_wd = *wd;
-		git_buf_sets(&data->tmp, wd->path);
-		saved_wd.path = data->tmp.ptr;
+		git_buf_sets(&temp_buf, wd->path);
+		saved_wd.path = git_buf_cstr(&temp_buf);
 
 		error = git_iterator_advance_over(
 			wditem, &untracked_state, workdir);
 		if (error == GIT_ITEROVER)
 			over = true;
 		else if (error < 0)
-			return error;
+			goto cleanup;
 
 		if (untracked_state == GIT_ITERATOR_STATUS_IGNORED) {
 			notify = GIT_CHECKOUT_NOTIFY_IGNORED;
@@ -450,7 +454,7 @@ static int checkout_action_wd_only(
 		}
 
 		if ((error = checkout_notify(data, notify, NULL, &saved_wd)) != 0)
-			return error;
+			goto cleanup;
 
 		if (remove && removable)
 			error = checkout_queue_remove(data, saved_wd.path);
@@ -459,6 +463,8 @@ static int checkout_action_wd_only(
 			error = GIT_ITEROVER;
 	}
 
+cleanup:
+	git_buf_dispose(&temp_buf);
 	return error;
 }
 
@@ -2378,6 +2384,7 @@ static int checkout_write_merge(
 	git_filter_list *fl = NULL;
 	git_filter_options filter_opts = GIT_FILTER_OPTIONS_INIT;
 	int error = 0;
+	git_buf temp_buf = GIT_BUF_INIT;
 
 	if (data->opts.checkout_strategy & GIT_CHECKOUT_CONFLICT_STYLE_DIFF3)
 		opts.flags |= GIT_MERGE_FILE_STYLE_DIFF3;
@@ -2427,7 +2434,7 @@ static int checkout_write_merge(
 		in_data.size = result.len;
 
 		filter_opts.attr_session = &data->attr_session;
-		filter_opts.temp_buf = &data->tmp;
+		filter_opts.temp_buf = &temp_buf;
 
 		if ((error = git_filter_list__load_ext(
 				&fl, data->repo, NULL, git_buf_cstr(&path_workdir),
@@ -2455,6 +2462,7 @@ done:
 	git_merge_file_result_free(&result);
 	git_buf_dispose(&path_workdir);
 	git_buf_dispose(&path_suffixed);
+	git_buf_dispose(&temp_buf);
 
 	return error;
 }
@@ -2635,7 +2643,6 @@ static void checkout_data_clear(checkout_data *data)
 	data->pfx = NULL;
 
 	git_buf_dispose(&data->target_path);
-	git_buf_dispose(&data->tmp);
 
 	git_index_free(data->index);
 	data->index = NULL;
