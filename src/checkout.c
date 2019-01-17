@@ -46,7 +46,6 @@ enum {
 	CHECKOUT_ACTION__REMOVE_CONFLICT = 16,
 	CHECKOUT_ACTION__UPDATE_CONFLICT = 32,
 	CHECKOUT_ACTION__MAX = 32,
-	CHECKOUT_ACTION__DEFER_REMOVE = 64,
 	CHECKOUT_ACTION__REMOVE_AND_UPDATE =
 		(CHECKOUT_ACTION__UPDATE_BLOB | CHECKOUT_ACTION__REMOVE),
 };
@@ -1908,40 +1907,12 @@ cleanup:
 	return error;
 }
 
-static int checkout_deferred_remove(git_repository *repo, const char *path)
-{
-#if 0
-	int error = git_futils_rmdir_r(
-		path, data->opts.target_directory, GIT_RMDIR_EMPTY_PARENTS);
-
-	if (error == GIT_ENOTFOUND) {
-		error = 0;
-		giterr_clear();
-	}
-
-	return error;
-#else
-	GIT_UNUSED(repo);
-	GIT_UNUSED(path);
-	assert(false);
-	return 0;
-#endif
-}
-
 static int checkout_create_perform(
 	checkout_data *data,
 	unsigned int action,
 	git_diff_delta *delta)
 {
 	int error = 0;
-
-	if (action & CHECKOUT_ACTION__DEFER_REMOVE) {
-		/* this had a blocker directory that should only be removed iff
-		 * all of the contents of the directory were safely removed
-		 */
-		if ((error = checkout_deferred_remove(data->repo, delta->old_file.path)) < 0)
-			return error;
-	}
 
 	if (action & CHECKOUT_ACTION__UPDATE_BLOB) {
 		error = checkout_blob(data, &delta->new_file);
@@ -1997,7 +1968,6 @@ typedef struct {
 static void *checkout_create_the_new__thread(void *arg)
 {
 	thread_params *worker = arg;
-	int error;
 	size_t i;
 
 	while ((i = git_atomic_inc(worker->delta_index)) <
@@ -2007,18 +1977,6 @@ static void *checkout_create_the_new__thread(void *arg)
 
 		if (delta == NULL || git_atomic_get(worker->error) != 0)
 			return NULL;
-
-		if (worker->actions[i] & CHECKOUT_ACTION__DEFER_REMOVE) {
-			/* this had a blocker directory that should only be removed iff
-			 * all of the contents of the directory were safely removed
-			 */
-			if (
-				(error = checkout_deferred_remove(worker->cd->repo, delta->old_file.path)) < 0) {
-				git_atomic_set(worker->error, error);
-				git_cond_signal(worker->cond);
-				return NULL;
-			}
-		}
 
 		progress_pair = (checkout_progress_pair *)git__malloc(
 			sizeof(checkout_progress_pair));
@@ -2075,8 +2033,7 @@ static int checkout_create_the_new__parallel(
 	 * the .git directory.
 	 */
 	git_vector_foreach(&data->diff->deltas, i, delta) {
-		if ((actions[i] & CHECKOUT_ACTION__DEFER_REMOVE) == 0 &&
-				S_ISLNK(delta->new_file.mode) &&
+		if (S_ISLNK(delta->new_file.mode) &&
 				actions[i] & CHECKOUT_ACTION__UPDATE_BLOB &&
 				(ret = checkout_create_perform(data, actions[i], delta)) < 0)
 			return ret;
@@ -2200,20 +2157,10 @@ static int checkout_create_submodules(
 	unsigned int *actions,
 	checkout_data *data)
 {
-	int error = 0;
 	git_diff_delta *delta;
 	size_t i;
 
 	git_vector_foreach(&data->diff->deltas, i, delta) {
-		if (actions[i] & CHECKOUT_ACTION__DEFER_REMOVE) {
-			/* this has a blocker directory that should only be removed iff
-			 * all of the contents of the directory were safely removed
-			 */
-			if ((error = checkout_deferred_remove(
-					data->repo, delta->old_file.path)) < 0)
-				return error;
-		}
-
 		if (actions[i] & CHECKOUT_ACTION__UPDATE_SUBMODULE) {
 			int error = checkout_submodule(data, &delta->new_file);
 			if (error < 0)
