@@ -2012,10 +2012,10 @@ static void *threaded_checkout_create_the_new(void *arg)
 			}
 		}
 
-		progress_pair = (checkout_progress_pair *)malloc(
+		progress_pair = (checkout_progress_pair *)git__malloc(
 			sizeof(checkout_progress_pair));
 		if (progress_pair == NULL) {
-			git_atomic_set(worker->error, error);
+			git_atomic_set(worker->error, -1);
 			git_cond_signal(worker->cond);
 			return NULL;
 		}
