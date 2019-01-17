@@ -334,7 +334,9 @@ static int checkout_action_no_wd(
 static int build_target_fullpath(
 	git_buf *out, checkout_data *data, const char *path)
 {
-	git_buf_set(out, git_buf_cstr(&data->target_path), git_buf_len(&data->target_path));
+	if (git_buf_set(out, git_buf_cstr(&data->target_path),
+			git_buf_len(&data->target_path)) < 0)
+		return -1;
 
 	if (path && git_buf_puts(out, path) < 0)
 		return -1;
