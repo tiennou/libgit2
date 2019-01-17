@@ -324,7 +324,7 @@ static int checkout_action_no_wd(
 	return checkout_action_common(action, data, delta, NULL);
 }
 
-static int checkout_target_fullpath(
+static int build_target_fullpath(
 	git_buf **out, checkout_data *data, const char *path)
 {
 	git_buf_truncate(&data->target_path, data->target_len);
@@ -345,7 +345,7 @@ static bool wd_item_is_removable(
 	if (wd->mode != GIT_FILEMODE_TREE)
 		return true;
 
-	if (checkout_target_fullpath(&full, data, wd->path) < 0)
+	if (build_target_fullpath(&full, data, wd->path) < 0)
 		return false;
 
 	return !full || !git_path_contains(full, DOT_GIT);
@@ -474,7 +474,7 @@ static bool checkout_is_empty_dir(checkout_data *data, const char *path)
 {
 	git_buf *fullpath;
 
-	if (checkout_target_fullpath(&fullpath, data, path) < 0)
+	if (build_target_fullpath(&fullpath, data, path) < 0)
 		return false;
 
 	return git_path_is_empty_dir(fullpath->ptr);
@@ -1638,7 +1638,7 @@ static int checkout_submodule_update_index(
 	if ((data->strategy & GIT_CHECKOUT_DONT_UPDATE_INDEX) != 0)
 		return 0;
 
-	if (checkout_target_fullpath(&fullpath, data, file->path) < 0)
+	if (build_target_fullpath(&fullpath, data, file->path) < 0)
 		return -1;
 
 	data->perfdata.stat_calls++;
@@ -1771,7 +1771,7 @@ static int checkout_blob(
 	struct stat st;
 	int error = 0;
 
-	if (checkout_target_fullpath(&fullpath, data, file->path) < 0)
+	if (build_target_fullpath(&fullpath, data, file->path) < 0)
 		return -1;
 
 	if ((data->strategy & GIT_CHECKOUT_UPDATE_ONLY) != 0) {
@@ -1811,7 +1811,7 @@ static int checkout_remove_the_old(
 	if (data->opts.checkout_strategy & GIT_CHECKOUT_SKIP_LOCKED_DIRECTORIES)
 		flg |= GIT_RMDIR_SKIP_NONEMPTY;
 
-	if (checkout_target_fullpath(&fullpath, data, NULL) < 0)
+	if (build_target_fullpath(&fullpath, data, NULL) < 0)
 		return -1;
 
 	git_vector_foreach(&data->diff->deltas, i, delta) {
@@ -2008,7 +2008,7 @@ static int checkout_write_entry(
 
 	assert (side == conflict->ours || side == conflict->theirs);
 
-	if (checkout_target_fullpath(&fullpath, data, side->path) < 0)
+	if (build_target_fullpath(&fullpath, data, side->path) < 0)
 		return -1;
 
 	if ((conflict->name_collision || conflict->directoryfile) &&
