@@ -1920,7 +1920,7 @@ static int checkout_deferred_remove(git_repository *repo, const char *path)
 #endif
 }
 
-static int checkout_create_the_new_blob(
+static int checkout_create_perform(
 	checkout_data *data,
 	unsigned int action,
 	git_diff_delta *delta)
@@ -1947,7 +1947,7 @@ static int checkout_create_the_new_blob(
 	return 0;
 }
 
-static int checkout_create_the_new(
+static int checkout_create_the_new__single(
 	unsigned int *actions,
 	checkout_data *data)
 {
@@ -1956,7 +1956,7 @@ static int checkout_create_the_new(
 	size_t i;
 
 	git_vector_foreach(&data->diff->deltas, i, delta) {
-		if ((error = checkout_create_the_new_blob(data, actions[i], delta)) < 0)
+		if ((error = checkout_create_perform(data, actions[i], delta)) < 0)
 			return error;
 	}
 
@@ -1986,7 +1986,7 @@ typedef struct {
 	git_vector *progress_pairs;
 } thread_params;
 
-static void *threaded_checkout_create_the_new(void *arg)
+static void *checkout_create_the_new__thread(void *arg)
 {
 	thread_params *worker = arg;
 	int error;
@@ -2047,7 +2047,7 @@ static void *threaded_checkout_create_the_new(void *arg)
 	return NULL;
 }
 
-static int ll_checkout_create_the_new(
+static int checkout_create_the_new__parallel(
 	unsigned int *actions,
 	checkout_data *data)
 {
@@ -2062,10 +2062,6 @@ static int ll_checkout_create_the_new(
 	git_cond cond;
 	git_mutex mutex;
 
-	if (num_threads <= 1) {
-		return checkout_create_the_new(actions, data);
-	}
-
 	/* Before we start creating, we need to create all the symlinks first
 	 * to ensure that we don't accidentally write data through symlinks into
 	 * the .git directory.
@@ -2074,7 +2070,7 @@ static int ll_checkout_create_the_new(
 		if ((actions[i] & CHECKOUT_ACTION__DEFER_REMOVE) == 0 &&
 				S_ISLNK(delta->new_file.mode) &&
 				actions[i] & CHECKOUT_ACTION__UPDATE_BLOB &&
-				(ret = checkout_create_the_new_blob(data, actions[i], delta)) < 0)
+				(ret = checkout_create_perform(data, actions[i], delta)) < 0)
 			return ret;
 	}
 
@@ -2106,7 +2102,7 @@ static int ll_checkout_create_the_new(
 
 	/* Start worker threads */
 	for (i = 0; i < num_threads; ++i) {
-		ret = git_thread_create(&p[i].thread, threaded_checkout_create_the_new, &p[i]);
+		ret = git_thread_create(&p[i].thread, checkout_create_the_new__thread, &p[i]);
 
 		/* On error, we will cleanly exit any started worker threads,
 		 * and then return with our error code */
@@ -2160,7 +2156,7 @@ static int ll_checkout_create_the_new(
 
 	git_vector_foreach(&errored_pairs, i, progress_pair) {
 		delta = git_vector_get(&data->diff->deltas, progress_pair->index);
-		if ((ret = checkout_create_the_new_blob(data, actions[progress_pair->index], delta)) < 0)
+		if ((ret = checkout_create_perform(data, actions[progress_pair->index], delta)) < 0)
 			goto cleanup;
 	}
 
@@ -2178,11 +2174,19 @@ cleanup:
 	return ret;
 }
 
-#else
-
-#define ll_checkout_create_the_new checkout_create_the_new
-
 #endif
+
+static int checkout_create_the_new(
+	unsigned int *actions,
+	checkout_data *data)
+{
+#ifdef GIT_THREADS
+	if (git_online_cpus() > 1)
+		return checkout_create_the_new__parallel(actions, data);
+	else
+#endif
+	return checkout_create_the_new__single(actions, data);
+}
 
 static int checkout_create_submodules(
 	unsigned int *actions,
@@ -2932,7 +2936,7 @@ int git_checkout_iterator(
 		goto cleanup;
 
 	if (counts[CHECKOUT_ACTION__UPDATE_BLOB] > 0 &&
-		(error = ll_checkout_create_the_new(actions, &data)) < 0)
+		(error = checkout_create_the_new(actions, &data)) < 0)
 		goto cleanup;
 
 	if (counts[CHECKOUT_ACTION__UPDATE_SUBMODULE] > 0 &&
