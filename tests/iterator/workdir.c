@@ -338,11 +338,12 @@ void test_iterator_workdir__handles_icase_range(void)
 void test_iterator_workdir__icase(void)
 {
 	git_iterator *i;
-	git_iterator_options i_opts = GIT_ITERATOR_OPTIONS_INIT | GIT_ITERATOR_HONOR_IGNORES;
+	git_iterator_options i_opts = GIT_ITERATOR_OPTIONS_INIT;
 
 	g_repo = cl_git_sandbox_init("icase");
 
 	/* auto expand with no tree entries */
+	i_opts.flags = GIT_ITERATOR_HONOR_IGNORES;
 	cl_git_pass(git_iterator_for_workdir(&i, g_repo, NULL, NULL, &i_opts));
 	expect_iterator_items(i, 20, NULL, 20, NULL);
 	git_iterator_free(i);
