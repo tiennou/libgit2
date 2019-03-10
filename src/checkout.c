@@ -2577,7 +2577,7 @@ int git_checkout_iterator(
 
 	workdir_opts.flags = git_iterator_ignore_case(target) ?
 		GIT_ITERATOR_IGNORE_CASE : GIT_ITERATOR_DONT_IGNORE_CASE;
-	workdir_opts.flags |= GIT_ITERATOR_DONT_AUTOEXPAND;
+	workdir_opts.flags |= GIT_ITERATOR_DONT_AUTOEXPAND | GIT_ITERATOR_HONOR_IGNORES;
 	workdir_opts.start = data.pfx;
 	workdir_opts.end = data.pfx;
 

@@ -10,10 +10,6 @@
 #include "tree.h"
 #include "index.h"
 
-#define GIT_ITERATOR_FIRST_ACCESS   (1 << 15)
-#define GIT_ITERATOR_HONOR_IGNORES  (1 << 16)
-#define GIT_ITERATOR_IGNORE_DOT_GIT (1 << 17)
-
 #define iterator__flag(I,F) ((((git_iterator *)(I))->flags & GIT_ITERATOR_ ## F) != 0)
 #define iterator__ignore_case(I)       iterator__flag(I,IGNORE_CASE)
 #define iterator__include_trees(I)     iterator__flag(I,INCLUDE_TREES)
@@ -1724,8 +1720,7 @@ GIT_INLINE(bool) filesystem_iterator_current_is_ignored(
 
 bool git_iterator_current_is_ignored(git_iterator *i)
 {
-	if (i->type != GIT_ITERATOR_TYPE_WORKDIR)
-		return false;
+	if (!iterator__honor_ignores(i)) return false;
 
 	return filesystem_iterator_current_is_ignored((filesystem_iterator *)i);
 }
@@ -1735,8 +1730,7 @@ bool git_iterator_current_tree_is_ignored(git_iterator *i)
 	filesystem_iterator *iter = (filesystem_iterator *)i;
 	filesystem_iterator_frame *frame;
 
-	if (i->type != GIT_ITERATOR_TYPE_WORKDIR)
-		return false;
+	if (!iterator__honor_ignores(i)) return false;
 
 	frame = filesystem_iterator_current_frame(iter);
 	return (frame->is_ignored == GIT_IGNORE_TRUE);
@@ -1990,8 +1984,7 @@ int git_iterator_for_workdir_ext(
 	if (given_opts)
 		memcpy(&options, given_opts, sizeof(git_iterator_options));
 
-	options.flags |= GIT_ITERATOR_HONOR_IGNORES |
-		GIT_ITERATOR_IGNORE_DOT_GIT;
+	options.flags |= GIT_ITERATOR_IGNORE_DOT_GIT;
 
 	return iterator_for_filesystem(out,
 		repo, repo_workdir, index, tree, GIT_ITERATOR_TYPE_WORKDIR, &options);

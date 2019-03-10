@@ -527,7 +527,7 @@ int git_pathspec_match_workdir(
 
 	assert(repo);
 
-	iter_opts.flags = pathspec_match_iter_flags(flags);
+	iter_opts.flags = pathspec_match_iter_flags(flags) | GIT_ITERATOR_HONOR_IGNORES;
 
 	if (!(error = git_iterator_for_workdir(&iter, repo, NULL, NULL, &iter_opts))) {
 		error = pathspec_match_from_iterator(out, iter, flags, ps);

@@ -43,6 +43,10 @@ typedef enum {
 	GIT_ITERATOR_DESCEND_SYMLINKS = (1u << 7),
 	/** hash files in workdir or filesystem iterators */
 	GIT_ITERATOR_INCLUDE_HASH = (1u << 8),
+
+	GIT_ITERATOR_FIRST_ACCESS = (1u << 15),
+	GIT_ITERATOR_HONOR_IGNORES = (1u << 16),
+	GIT_ITERATOR_IGNORE_DOT_GIT = (1u << 17)
 } git_iterator_flag_t;
 
 typedef enum {

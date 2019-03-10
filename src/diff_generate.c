@@ -1274,6 +1274,12 @@ cleanup:
 	b_opts.flags = FLAGS_SECOND; \
 	b_opts.start = pfx; \
 	b_opts.end = pfx; \
+	if (opts && opts->range_start && *opts->range_start && \
+			(!pfx || !*pfx || strcmp(opts->range_start, pfx) > 0)) \
+	  a_opts.start = b_opts.start = opts->range_start; \
+	if (opts && opts->range_end && *opts->range_end && \
+			(!pfx || !*pfx || strcmp(opts->range_end, pfx) < 0)) \
+	  a_opts.end = b_opts.end = opts->range_end; \
 	GIT_ERROR_CHECK_VERSION(opts, GIT_DIFF_OPTIONS_VERSION, "git_diff_options"); \
 	if (opts && (opts->flags & GIT_DIFF_DISABLE_PATHSPEC_MATCH)) { \
 		a_opts.pathlist.strings = opts->pathspec.strings; \
@@ -1375,6 +1381,7 @@ int git_diff_index_to_workdir(
 {
 	git_diff *diff = NULL;
 	int error = 0;
+	unsigned int dflags = GIT_ITERATOR_DONT_AUTOEXPAND;
 
 	assert(out && repo);
 
@@ -1383,12 +1390,21 @@ int git_diff_index_to_workdir(
 	if (!index && (error = diff_load_index(&index, repo)) < 0)
 		return error;
 
+	/* checking ignore rules is expensive, so we turn it on only if it
+	 * can make a difference */
+	if (opts && opts->flags & (GIT_DIFF_INCLUDE_IGNORED |
+														  GIT_DIFF_INCLUDE_UNTRACKED |
+															GIT_DIFF_RECURSE_UNTRACKED_DIRS |
+															GIT_DIFF_RECURSE_IGNORED_DIRS |
+															GIT_DIFF_ENABLE_FAST_UNTRACKED_DIRS))
+		dflags |= GIT_ITERATOR_HONOR_IGNORES;
+
 	DIFF_FROM_ITERATORS(
 		git_iterator_for_index(&a, repo, index, &a_opts),
 		GIT_ITERATOR_INCLUDE_CONFLICTS,
 
 		git_iterator_for_workdir(&b, repo, index, NULL, &b_opts),
-		GIT_ITERATOR_DONT_AUTOEXPAND
+		dflags
 	);
 
 	if (!error && (diff->opts.flags & GIT_DIFF_UPDATE_INDEX) != 0 &&
@@ -1419,8 +1435,10 @@ int git_diff_tree_to_workdir(
 		return error;
 
 	DIFF_FROM_ITERATORS(
-		git_iterator_for_tree(&a, old_tree, &a_opts), 0,
-		git_iterator_for_workdir(&b, repo, index, old_tree, &b_opts), GIT_ITERATOR_DONT_AUTOEXPAND
+		git_iterator_for_tree(&a, old_tree, &a_opts),
+		0,
+		git_iterator_for_workdir(&b, repo, index, old_tree, &b_opts),
+		GIT_ITERATOR_DONT_AUTOEXPAND | GIT_ITERATOR_HONOR_IGNORES
 	);
 
 	if (!error)

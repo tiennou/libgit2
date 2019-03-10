@@ -17,7 +17,7 @@ static void *run_workdir_iterator(void *arg)
 	git_iterator_options iter_opts = GIT_ITERATOR_OPTIONS_INIT;
 	const git_index_entry *entry = NULL;
 
-	iter_opts.flags = GIT_ITERATOR_DONT_AUTOEXPAND;
+	iter_opts.flags = GIT_ITERATOR_DONT_AUTOEXPAND | GIT_ITERATOR_HONOR_IGNORES;
 
 	cl_git_pass(git_repository_open(&repo, git_repository_path(_repo)));
 	cl_git_pass(git_iterator_for_workdir(

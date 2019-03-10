@@ -37,7 +37,7 @@ void validate_apply_workdir(
 	git_iterator_options opts = GIT_ITERATOR_OPTIONS_INIT;
 	struct iterator_compare_data data = { workdir_entries, workdir_cnt };
 
-	opts.flags |= GIT_ITERATOR_INCLUDE_HASH;
+	opts.flags |= GIT_ITERATOR_INCLUDE_HASH | GIT_ITERATOR_HONOR_IGNORES;
 
 	cl_git_pass(git_repository_index(&index, repo));
 	cl_git_pass(git_iterator_for_workdir(&iterator, repo, index, NULL, &opts));
@@ -117,7 +117,7 @@ void validate_workdir_unchanged(git_repository *repo)
 	cl_git_pass(git_repository_head_tree(&head, repo));
 	cl_git_pass(git_repository_index(&index, repo));
 
-	workdir_opts.flags |= GIT_ITERATOR_INCLUDE_HASH;
+	workdir_opts.flags |= GIT_ITERATOR_INCLUDE_HASH | GIT_ITERATOR_HONOR_IGNORES;
 
 	cl_git_pass(git_iterator_for_tree(&head_iterator, head, NULL));
 	cl_git_pass(git_iterator_for_workdir(&workdir_iterator, repo, index, NULL, &workdir_opts));
