@@ -361,7 +361,27 @@ static int parse_mode(uint16_t *mode_out, const char *buffer, size_t buffer_len,
 	int32_t mode;
 	int error;
 
-	if (!buffer_len || git__isspace(*buffer))
+  if (buffer_len >= 7) {
+    if (!memcmp(buffer, "100644 ", 7)) {
+      *mode_out = 0100644;
+      *buffer_out = buffer + 6;
+      return 0;
+    }
+    if (!memcmp(buffer, "100755 ", 7)) {
+      *mode_out = 0100755;
+      *buffer_out = buffer + 6;
+      return 0;
+    }
+  }
+  if (buffer_len >= 6) {
+    if (!memcmp(buffer, "40000 ", 6)) {
+      *mode_out = 040000;
+      *buffer_out = buffer + 5;
+      return 0;
+    }
+  }
+
+  if (!buffer_len || git__isspace(*buffer))
 		return -1;
 
 	if ((error = git__strntol32(&mode, buffer, buffer_len, buffer_out, 8)) < 0)
