@@ -989,9 +989,14 @@ static int handle_unmatched_new_item(
 	if (git_index_entry_is_conflict(nitem))
 		delta_type = GIT_DELTA_CONFLICTED;
 
-	/* update delta_type if this item is ignored */
-	else if (git_iterator_current_is_ignored(info->new_iter))
-		delta_type = GIT_DELTA_IGNORED;
+	/* update delta_type if this item is ignored but
+   * only if it makes a difference -- ignore checks are expensive
+   */
+  else if ((!contains_oitem ||
+            DIFF_FLAG_ISNT_SET(diff, GIT_DIFF_INCLUDE_IGNORED | GIT_DIFF_RECURSE_IGNORED_DIRS |
+                                        GIT_DIFF_ENABLE_FAST_UNTRACKED_DIRS)) &&
+            git_iterator_current_is_ignored(info->new_iter))
+    delta_type = GIT_DELTA_IGNORED;
 
 	if (nitem->mode == GIT_FILEMODE_TREE) {
 		bool recurse_into_dir = contains_oitem;
