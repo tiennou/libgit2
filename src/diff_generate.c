@@ -993,8 +993,8 @@ static int handle_unmatched_new_item(
    * only if it makes a difference -- ignore checks are expensive
    */
   else if ((!contains_oitem ||
-            DIFF_FLAG_ISNT_SET(diff, GIT_DIFF_INCLUDE_IGNORED | GIT_DIFF_RECURSE_IGNORED_DIRS |
-                                        GIT_DIFF_ENABLE_FAST_UNTRACKED_DIRS)) &&
+            DIFF_FLAG_IS_SET(diff, GIT_DIFF_INCLUDE_IGNORED | GIT_DIFF_RECURSE_IGNORED_DIRS |
+                                      GIT_DIFF_ENABLE_FAST_UNTRACKED_DIRS)) &&
             git_iterator_current_is_ignored(info->new_iter))
     delta_type = GIT_DELTA_IGNORED;
 
