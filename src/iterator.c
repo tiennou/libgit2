@@ -1128,14 +1128,14 @@ static int filesystem_iterator_is_submodule(
 
 static void filesystem_iterator_frame_push_ignores(
 	filesystem_iterator *iter,
-	filesystem_iterator_entry *frame_entry,
+	filesystem_iterator_frame *previous_frame,
 	filesystem_iterator_frame *new_frame)
 {
-	filesystem_iterator_frame *previous_frame;
-	const char *path = frame_entry ? frame_entry->path : "";
-
-	if (!iterator__honor_ignores(&iter->base))
-		return;
+  const char* path = "";
+  if (previous_frame) {
+    path = filesystem_iterator_current_entry(previous_frame)->path;
+    assert(path && *path);
+  }
 
 	if (git_ignore__lookup(&new_frame->is_ignored,
 			&iter->ignores, path, GIT_DIR_FLAG_TRUE) < 0) {
@@ -1144,13 +1144,11 @@ static void filesystem_iterator_frame_push_ignores(
 	}
 
 	/* if this is not the top level directory... */
-	if (frame_entry) {
+	if (previous_frame) {
 		const char *relative_path;
 
-		previous_frame = filesystem_iterator_parent_frame(iter);
-
 		/* push new ignores for files in this directory */
-		relative_path = frame_entry->path + previous_frame->path_len;
+		relative_path = path + previous_frame->path_len;
 
 		/* inherit ignored from parent if no rule specified */
 		if (new_frame->is_ignored <= GIT_IGNORE_NOTFOUND)
@@ -1158,13 +1156,19 @@ static void filesystem_iterator_frame_push_ignores(
 
 		git_ignore__push_dir(&iter->ignores, relative_path);
 	}
+
+  assert((size_t)iter->ignores.depth <= iter->frames.size);
 }
 
 static void filesystem_iterator_frame_pop_ignores(
 	filesystem_iterator *iter)
 {
-	if (iterator__honor_ignores(&iter->base))
-		git_ignore__pop_dir(&iter->ignores);
+	if (iterator__honor_ignores(&iter->base)) {
+    assert((size_t)iter->ignores.depth <= iter->frames.size + 1);
+    if ((size_t)iter->ignores.depth == iter->frames.size + 1) {
+		  git_ignore__pop_dir(&iter->ignores);
+    }
+  }
 }
 
 GIT_INLINE(bool) filesystem_iterator_examine_path(
@@ -1335,6 +1339,8 @@ static int filesystem_iterator_frame_push(
 	size_t path_len;
 	int error;
 
+  assert(!frame_entry == !iter->frames.size);
+
 	if (iter->frames.size == FILESYSTEM_MAX_DEPTH) {
 		git_error_set(GIT_ERROR_REPOSITORY,
 			"directory nesting too deep (%"PRIuZ")", iter->frames.size);
@@ -1345,6 +1351,7 @@ static int filesystem_iterator_frame_push(
 	GIT_ERROR_CHECK_ALLOC(new_frame);
 
 	memset(new_frame, 0, sizeof(filesystem_iterator_frame));
+  new_frame->is_ignored = GIT_IGNORE_UNCHECKED;
 
 	if (frame_entry)
 		git_buf_joinpath(&root, iter->root, frame_entry->path);
@@ -1372,9 +1379,6 @@ static int filesystem_iterator_frame_push(
 		goto done;
 
 	git_pool_init(&new_frame->entry_pool, 1);
-
-	/* check if this directory is ignored */
-	filesystem_iterator_frame_push_ignores(iter, frame_entry, new_frame);
 
 	while ((error = git_path_diriter_next(&diriter)) == 0) {
 		iterator_pathlist_search_t pathlist_match = ITERATOR_PATHLIST_FULL;
@@ -1693,8 +1697,20 @@ GIT_INLINE(git_dir_flag) entry_dir_flag(git_index_entry *entry)
 
 static void filesystem_iterator_update_ignored(filesystem_iterator *iter)
 {
+  size_t i;
 	filesystem_iterator_frame *frame;
 	git_dir_flag dir_flag = entry_dir_flag(&iter->entry);
+
+  for (i = iter->frames.size;
+       i && iter->frames.ptr[i - 1].is_ignored == GIT_IGNORE_UNCHECKED;
+       --i) {
+    // empty body
+  }
+
+  for (; i != iter->frames.size; ++i) {
+    frame = iter->frames.ptr + i;
+    filesystem_iterator_frame_push_ignores(iter, i ? frame - 1 : NULL, frame);
+  }
 
 	if (git_ignore__lookup(&iter->current_is_ignored,
 			&iter->ignores, iter->entry.path, dir_flag) < 0) {
