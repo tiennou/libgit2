@@ -25,11 +25,6 @@ int git_refdb_exists(
 	git_refdb *refdb,
 	const char *ref_name);
 
-int git_refdb_lookup(
-	git_reference **out,
-	git_refdb *refdb,
-	const char *ref_name);
-
 int git_refdb_rename(
 	git_reference **out,
 	git_refdb *db,
