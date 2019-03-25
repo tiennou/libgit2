@@ -57,6 +57,7 @@ static int index_apply_to_wd_diff(git_index *index, int action, const git_strarr
 #define minimal_entry_size (offsetof(struct entry_short, path))
 
 bool git_index_disable_checksum_verification = false;
+bool git_index_disable_path_validation = false;
 
 static const size_t INDEX_FOOTER_SIZE = GIT_OID_RAWSZ;
 static const size_t INDEX_HEADER_SIZE = 12;
@@ -901,30 +902,17 @@ static void index_entry_adjust_namemask(
 		entry->flags |= GIT_INDEX_ENTRY_NAMEMASK;
 }
 
-/* When `from_workdir` is true, we will validate the paths to avoid placing
- * paths that are invalid for the working directory on the current filesystem
- * (eg, on Windows, we will disallow `GIT~1`, `AUX`, `COM1`, etc).  This
- * function will *always* prevent `.git` and directory traversal `../` from
- * being added to the index.
- */
 static int index_entry_create(
 	git_index_entry **out,
 	git_repository *repo,
 	const char *path,
 	struct stat *st,
-	bool from_workdir)
+	unsigned int path_valid_flags)
 {
 	size_t pathlen = strlen(path), alloclen;
 	struct entry_internal *entry;
-	unsigned int path_valid_flags = GIT_PATH_REJECT_INDEX_DEFAULTS;
 	uint16_t mode = 0;
 
-	/* always reject placing `.git` in the index and directory traversal.
-	 * when requested, disallow platform-specific filenames and upgrade to
-	 * the platform-specific `.git` tests (eg, `git~1`, etc).
-	 */
-	if (from_workdir)
-		path_valid_flags |= GIT_PATH_REJECT_WORKDIR_DEFAULTS;
 	if (st)
 		mode = st->st_mode;
 
@@ -981,8 +969,10 @@ static int index_entry_init(
 	if (error < 0)
 		return error;
 
-	if (index_entry_create(&entry, INDEX_OWNER(index), rel_path, &st, true) < 0)
-		return -1;
+  if (index_entry_create(
+          &entry, INDEX_OWNER(index), rel_path, &st,
+          GIT_PATH_REJECT_INDEX_DEFAULTS | GIT_PATH_REJECT_WORKDIR_DEFAULTS) < 0)
+    return -1;
 
 	/* write the blob to disk and get the oid and stat info */
 	error = git_blob__create_from_paths(
@@ -1067,7 +1057,8 @@ static int index_entry_dup(
 	git_index *index,
 	const git_index_entry *src)
 {
-	if (index_entry_create(out, INDEX_OWNER(index), src->path, NULL, false) < 0)
+	if (index_entry_create(
+          out, INDEX_OWNER(index), src->path, NULL, GIT_PATH_REJECT_INDEX_DEFAULTS) < 0)
 		return -1;
 
 	index_entry_cpy(*out, src);
@@ -1089,7 +1080,8 @@ static int index_entry_dup_nocache(
 	git_index *index,
 	const git_index_entry *src)
 {
-	if (index_entry_create(out, INDEX_OWNER(index), src->path, NULL, false) < 0)
+	if (index_entry_create(
+          out, INDEX_OWNER(index), src->path, NULL, GIT_PATH_REJECT_INDEX_DEFAULTS) < 0)
 		return -1;
 
 	index_entry_cpy_nocache(*out, src);
@@ -1517,7 +1509,9 @@ static int add_repo_as_submodule(git_index_entry **out, git_index *index, const 
 		return -1;
 	}
 
-	if (index_entry_create(&entry, INDEX_OWNER(index), path, &st, true) < 0)
+	if (index_entry_create(
+          &entry, INDEX_OWNER(index), path, &st,
+          GIT_PATH_REJECT_INDEX_DEFAULTS | GIT_PATH_REJECT_WORKDIR_DEFAULTS) < 0)
 		return -1;
 
 	git_index_entry__init_from_stat(entry, &st, !index->distrust_filemode);
@@ -2503,10 +2497,13 @@ static int read_entry(
 	if (INDEX_FOOTER_SIZE + entry_size > buffer_size)
 		return -1;
 
-	if (index_entry_dup(out, index, &entry) < 0) {
-		git__free(tmp_path);
+  if (index_entry_create(
+          out, INDEX_OWNER(index), entry.path, NULL,
+          git_index_disable_path_validation ? 0 : GIT_PATH_REJECT_INDEX_DEFAULTS) < 0) {
+    git__free(tmp_path);
 		return -1;
-	}
+  }
+	index_entry_cpy(*out, &entry);
 
 	git__free(tmp_path);
 	*out_size = entry_size;
@@ -3078,7 +3075,8 @@ static int read_tree_cb(
 	if (git_buf_joinpath(&path, root, tentry->filename) < 0)
 		return -1;
 
-	if (index_entry_create(&entry, INDEX_OWNER(data->index), path.ptr, NULL, false) < 0)
+	if (index_entry_create(
+          &entry, INDEX_OWNER(data->index), path.ptr, NULL, GIT_PATH_REJECT_INDEX_DEFAULTS) < 0)
 		return -1;
 
 	entry->mode = tentry->attr;
