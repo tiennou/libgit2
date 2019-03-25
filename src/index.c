@@ -56,6 +56,8 @@ static int index_apply_to_wd_diff(git_index *index, int action, const git_strarr
 
 #define minimal_entry_size (offsetof(struct entry_short, path))
 
+bool git_index_disable_checksum_verification = false;
+
 static const size_t INDEX_FOOTER_SIZE = GIT_OID_RAWSZ;
 static const size_t INDEX_HEADER_SIZE = 12;
 
@@ -2593,9 +2595,11 @@ static int parse_index(git_index *index, const char *buffer, size_t buffer_size)
 	if (buffer_size < INDEX_HEADER_SIZE + INDEX_FOOTER_SIZE)
 		return index_error_invalid("insufficient buffer space");
 
-	/* Precalculate the SHA1 of the files's contents -- we'll match it to
-	 * the provided SHA1 in the footer */
-	git_hash_buf(&checksum_calculated, buffer, buffer_size - INDEX_FOOTER_SIZE);
+  if (!git_index_disable_checksum_verification) {
+    /* Precalculate the SHA1 of the files's contents -- we'll match it to
+    * the provided SHA1 in the footer */
+    git_hash_buf(&checksum_calculated, buffer, buffer_size - INDEX_FOOTER_SIZE);
+  }
 
 	/* Parse header */
 	if ((error = read_header(&header, buffer)) < 0)
@@ -2670,13 +2674,15 @@ static int parse_index(git_index *index, const char *buffer, size_t buffer_size)
 	/* 160-bit SHA-1 over the content of the index file before this checksum. */
 	git_oid_fromraw(&checksum_expected, (const unsigned char *)buffer);
 
-	if (git_oid__cmp(&checksum_calculated, &checksum_expected) != 0) {
-		error = index_error_invalid(
-			"calculated checksum does not match expected");
-		goto done;
-	}
+  if (!git_index_disable_checksum_verification) {
+    if (git_oid__cmp(&checksum_calculated, &checksum_expected) != 0) {
+      error = index_error_invalid(
+        "calculated checksum does not match expected");
+      goto done;
+    }
+  }
 
-	git_oid_cpy(&index->checksum, &checksum_calculated);
+  git_oid_cpy(&index->checksum, &checksum_expected);
 
 #undef seek_forward
 
