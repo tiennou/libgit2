@@ -56,9 +56,6 @@ static int index_apply_to_wd_diff(git_index *index, int action, const git_strarr
 
 #define minimal_entry_size (offsetof(struct entry_short, path))
 
-bool git_index_disable_checksum_verification = false;
-bool git_index_disable_path_validation = false;
-
 static const size_t INDEX_FOOTER_SIZE = GIT_OID_RAWSZ;
 static const size_t INDEX_HEADER_SIZE = 12;
 
@@ -139,6 +136,8 @@ struct reuc_entry_internal {
 };
 
 bool git_index__enforce_unsaved_safety = false;
+bool git_index__disable_checksum_verification = false;
+bool git_index__disable_filepath_validation = false;
 
 /* local declarations */
 static int read_extension(size_t *read_len, git_index *index, const char *buffer, size_t buffer_size);
@@ -2499,7 +2498,7 @@ static int read_entry(
 
   if (index_entry_create(
           out, INDEX_OWNER(index), entry.path, NULL,
-          git_index_disable_path_validation ? 0 : GIT_PATH_REJECT_INDEX_DEFAULTS) < 0) {
+          git_index__disable_filepath_validation ? 0 : GIT_PATH_REJECT_INDEX_DEFAULTS) < 0) {
     git__free(tmp_path);
 		return -1;
   }
@@ -2592,7 +2591,7 @@ static int parse_index(git_index *index, const char *buffer, size_t buffer_size)
 	if (buffer_size < INDEX_HEADER_SIZE + INDEX_FOOTER_SIZE)
 		return index_error_invalid("insufficient buffer space");
 
-  if (!git_index_disable_checksum_verification) {
+  if (!git_index__disable_checksum_verification) {
     /* Precalculate the SHA1 of the files's contents -- we'll match it to
     * the provided SHA1 in the footer */
     git_hash_buf(&checksum_calculated, buffer, buffer_size - INDEX_FOOTER_SIZE);
@@ -2671,7 +2670,7 @@ static int parse_index(git_index *index, const char *buffer, size_t buffer_size)
 	/* 160-bit SHA-1 over the content of the index file before this checksum. */
 	git_oid_fromraw(&checksum_expected, (const unsigned char *)buffer);
 
-  if (!git_index_disable_checksum_verification) {
+  if (!git_index__disable_checksum_verification) {
     if (git_oid__cmp(&checksum_calculated, &checksum_expected) != 0) {
       error = index_error_invalid(
         "calculated checksum does not match expected");

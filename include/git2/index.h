@@ -22,9 +22,6 @@
  */
 GIT_BEGIN_DECL
 
-extern bool git_index_disable_checksum_verification;
-extern bool git_index_disable_path_validation;
-
 /** Time structure used in a git index entry */
 typedef struct {
 	int32_t seconds;
