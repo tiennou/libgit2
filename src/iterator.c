@@ -2144,6 +2144,7 @@ static int index_iterator_advance(
 
   if (iter->end_idx == (size_t)-1) {
     if (iter->base.start_len && !iterator__include_trees(&iter->base)) {
+      memset(&key, 0, sizeof(key));
       if (iter->base.start[iter->base.start_len - 1] == '/') {
         git_buf_puts(&buf, iter->base.start);
         buf.ptr[buf.size - 1] = 0;
