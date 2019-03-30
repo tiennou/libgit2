@@ -288,6 +288,8 @@ GIT_EXTERN(int) git_index_read_ex(git_index *index, int force, int* read);
 GIT_EXTERN(int) git_index_entry_newer_than_index(
 	const git_index_entry *entry, git_index *index);
 
+GIT_EXTERN(int) git_index_is_case_sensitive(const git_index *index);
+
 /**
  * Write an existing index object from memory back to disk
  * using an atomic file lock.
