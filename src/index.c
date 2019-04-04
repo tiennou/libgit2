@@ -629,11 +629,14 @@ static int compare_checksum(git_index *index)
 	return !!git_oid_cmp(&checksum, &index->checksum);
 }
 
-int git_index_read(git_index *index, int force)
+int git_index_read_updated(int *read, git_index *index, int force)
 {
 	int error = 0, updated;
 	git_buf buffer = GIT_BUF_INIT;
 	git_futils_filestamp stamp = index->stamp;
+
+	if (read)
+		*read = false;
 
 	if (!index->index_file_path)
 		return create_index_error(-1,
@@ -642,8 +645,12 @@ int git_index_read(git_index *index, int force)
 	index->on_disk = git_path_exists(index->index_file_path);
 
 	if (!index->on_disk) {
-		if (force && (error = git_index_clear(index)) < 0)
-			return error;
+		if (force) {
+			if ((error = git_index_clear(index)) < 0)
+				return error;
+			if (read)
+				*read = true;
+		}
 
 		index->dirty = 0;
 		return 0;
@@ -665,6 +672,9 @@ int git_index_read(git_index *index, int force)
 	if (error < 0)
 		return error;
 
+	if (read)
+		*read = true;
+
 	index->tree = NULL;
 	git_pool_clear(&index->tree_pool);
 
@@ -680,6 +690,11 @@ int git_index_read(git_index *index, int force)
 
 	git_buf_dispose(&buffer);
 	return error;
+}
+
+int git_index_read(git_index *index, int force)
+{
+	return git_index_read_updated(NULL, index, force);
 }
 
 int git_index_has_newer_entry(git_index *index,
