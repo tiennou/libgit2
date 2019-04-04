@@ -1847,6 +1847,8 @@ bool git_path_isvalid(
 {
 	const char *start, *c;
 
+	if (flags == 0) return true;
+
 	/* Upgrade the ".git" checks based on platform */
 	if ((flags & GIT_PATH_REJECT_DOT_GIT))
 		flags = dotgit_flags(repo, flags);
