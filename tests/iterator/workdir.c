@@ -1078,7 +1078,7 @@ void test_iterator_workdir__pathlist_for_deeply_nested_item(void)
 
 		cl_git_pass(git_iterator_for_workdir(&i, g_repo, NULL, NULL, &i_opts));
 		expect_iterator_items(i, expected_len, expected, expected_len, expected);
-		cl_assert_equal_i(4, i->stat_calls);
+		cl_assert_in_range(1, i->stat_calls, 4);
 		git_iterator_free(i);
 	}
 
@@ -1103,7 +1103,7 @@ void test_iterator_workdir__pathlist_for_deeply_nested_item(void)
 
 		cl_git_pass(git_iterator_for_workdir(&i, g_repo, NULL, NULL, &i_opts));
 		expect_iterator_items(i, expected_len, expected, expected_len, expected);
-		cl_assert_equal_i(11, i->stat_calls);
+		cl_assert_in_range(8, i->stat_calls, 11);
 		git_iterator_free(i);
 	}
 
@@ -1144,7 +1144,7 @@ void test_iterator_workdir__pathlist_for_deeply_nested_item(void)
 
 		cl_git_pass(git_iterator_for_workdir(&i, g_repo, NULL, NULL, &i_opts));
 		expect_iterator_items(i, expected_len, expected, expected_len, expected);
-		cl_assert_equal_i(42, i->stat_calls);
+		cl_assert_in_range(36, i->stat_calls, 42);
 		git_iterator_free(i);
 	}
 
@@ -1176,7 +1176,7 @@ void test_iterator_workdir__pathlist_for_deeply_nested_item(void)
 
 		cl_git_pass(git_iterator_for_workdir(&i, g_repo, NULL, NULL, &i_opts));
 		expect_iterator_items(i, expected_len, expected, expected_len, expected);
-		cl_assert_equal_i(14, i->stat_calls);
+		cl_assert_in_range(7, i->stat_calls, 14);
 		git_iterator_free(i);
 	}
 
