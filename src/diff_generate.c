@@ -828,7 +828,7 @@ static int maybe_modified(
 			oitem->ino != nitem->ino ||
 			oitem->uid != nitem->uid ||
 			oitem->gid != nitem->gid ||
-			git_index_entry_newer_than_index(nitem, index))
+			git_index_has_newer_entry(index, nitem))
 		{
 			status = GIT_DELTA_MODIFIED;
 			modified_uncertain = true;

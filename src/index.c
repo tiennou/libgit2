@@ -682,6 +682,26 @@ int git_index_read(git_index *index, int force)
 	return error;
 }
 
+int git_index_has_newer_entry(git_index *index,
+	const git_index_entry *entry)
+{
+	/* If we never read the index, we can't have this race either */
+	if (!index || index->stamp.mtime.tv_sec == 0)
+		return false;
+
+	/* If the timestamp is the same or newer than the index, it's racy */
+#if defined(GIT_USE_NSEC)
+	if ((int32_t)index->stamp.mtime.tv_sec < entry->mtime.seconds)
+		return true;
+	else if ((int32_t)index->stamp.mtime.tv_sec > entry->mtime.seconds)
+		return false;
+	else
+		return (uint32_t)index->stamp.mtime.tv_nsec <= entry->mtime.nanoseconds;
+#else
+	return ((int32_t)index->stamp.mtime.tv_sec) <= entry->mtime.seconds;
+#endif
+}
+
 int git_index_read_safely(git_index *index)
 {
 	if (git_index__enforce_unsaved_safety && index->dirty) {
@@ -709,7 +729,7 @@ static bool is_racy_entry(git_index *index, const git_index_entry *entry)
 	if (S_ISGITLINK(entry->mode))
 		return false;
 
-	return git_index_entry_newer_than_index(entry, index);
+	return git_index_has_newer_entry(index, entry);
 }
 
 /*
