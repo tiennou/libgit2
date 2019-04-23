@@ -629,11 +629,14 @@ static int compare_checksum(git_index *index)
 	return !!git_oid_cmp(&checksum, &index->checksum);
 }
 
-int git_index_read(git_index *index, int force)
+int git_index_read_updated(int *read, git_index *index, int force)
 {
 	int error = 0, updated;
 	git_buf buffer = GIT_BUF_INIT;
 	git_futils_filestamp stamp = index->stamp;
+
+	if (read)
+		*read = false;
 
 	if (!index->index_file_path)
 		return create_index_error(-1,
@@ -642,8 +645,12 @@ int git_index_read(git_index *index, int force)
 	index->on_disk = git_path_exists(index->index_file_path);
 
 	if (!index->on_disk) {
-		if (force && (error = git_index_clear(index)) < 0)
-			return error;
+		if (force) {
+			if ((error = git_index_clear(index)) < 0)
+				return error;
+			if (read)
+				*read = true;
+		}
 
 		index->dirty = 0;
 		return 0;
@@ -665,6 +672,9 @@ int git_index_read(git_index *index, int force)
 	if (error < 0)
 		return error;
 
+	if (read)
+		*read = true;
+
 	index->tree = NULL;
 	git_pool_clear(&index->tree_pool);
 
@@ -680,6 +690,31 @@ int git_index_read(git_index *index, int force)
 
 	git_buf_dispose(&buffer);
 	return error;
+}
+
+int git_index_read(git_index *index, int force)
+{
+	return git_index_read_updated(NULL, index, force);
+}
+
+int git_index_has_newer_entry(git_index *index,
+	const git_index_entry *entry)
+{
+	/* If we never read the index, we can't have this race either */
+	if (!index || index->stamp.mtime.tv_sec == 0)
+		return false;
+
+	/* If the timestamp is the same or newer than the index, it's racy */
+#if defined(GIT_USE_NSEC)
+	if ((int32_t)index->stamp.mtime.tv_sec < entry->mtime.seconds)
+		return true;
+	else if ((int32_t)index->stamp.mtime.tv_sec > entry->mtime.seconds)
+		return false;
+	else
+		return (uint32_t)index->stamp.mtime.tv_nsec <= entry->mtime.nanoseconds;
+#else
+	return ((int32_t)index->stamp.mtime.tv_sec) <= entry->mtime.seconds;
+#endif
 }
 
 int git_index_read_safely(git_index *index)
@@ -709,7 +744,7 @@ static bool is_racy_entry(git_index *index, const git_index_entry *entry)
 	if (S_ISGITLINK(entry->mode))
 		return false;
 
-	return git_index_entry_newer_than_index(entry, index);
+	return git_index_has_newer_entry(index, entry);
 }
 
 /*

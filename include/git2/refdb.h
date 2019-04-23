@@ -62,6 +62,11 @@ GIT_EXTERN(int) git_refdb_compress(git_refdb *refdb);
  */
 GIT_EXTERN(void) git_refdb_free(git_refdb *refdb);
 
+GIT_EXTERN(int) git_refdb_lookup(
+	git_reference **out,
+	git_refdb *refdb,
+	const char *ref_name);
+
 /** @} */
 GIT_END_DECL
 

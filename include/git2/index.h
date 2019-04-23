@@ -278,6 +278,16 @@ GIT_EXTERN(int) git_index_set_version(git_index *index, unsigned int version);
  */
 GIT_EXTERN(int) git_index_read(git_index *index, int force);
 
+GIT_EXTERN(int) git_index_read_updated(int *read, git_index *index, int force);
+
+/**
+ * Test if the given index time is newer than the given existing index entry.
+ * If the timestamps are exactly equivalent, then the given index time is
+ * considered "racily newer" than the existing index entry.
+ */
+GIT_EXTERN(int) git_index_has_newer_entry(git_index *index,
+	const git_index_entry *entry);
+
 /**
  * Write an existing index object from memory back to disk
  * using an atomic file lock.
