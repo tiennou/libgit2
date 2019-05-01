@@ -703,9 +703,22 @@ static int set_transport_custom_headers(git_transport *t, const git_strarray *cu
 	return t->set_custom_headers(t, custom_headers);
 }
 
-int git_remote__connect(git_remote *remote, git_direction direction, const git_remote_callbacks *callbacks, const git_remote_connection_opts *conn)
+int git_struct__upgrade_remote_callbacks(
+	git_remote_callbacks *new,
+	const git_struct__version *old,
+	const char *name)
 {
-	git_transport *t;
+	GIT_UNUSED(new);
+	GIT_UNUSED(old);
+	GIT_UNUSED(name);
+
+	return -1;
+}
+
+int git_remote__connect(git_remote *remote, git_direction direction, const git_remote_callbacks *given_callbacks, const git_remote_connection_opts *conn)
+{
+	git_transport *t = NULL;
+	git_remote_callbacks callbacks = GIT_REMOTE_CALLBACKS_INIT;
 	git_buf url = GIT_BUF_INIT;
 	int flags = GIT_TRANSPORTFLAGS_NONE;
 	int error;
@@ -715,19 +728,17 @@ int git_remote__connect(git_remote *remote, git_direction direction, const git_r
 
 	assert(remote);
 
-	if (callbacks) {
-		GIT_ERROR_CHECK_VERSION(callbacks, GIT_REMOTE_CALLBACKS_VERSION, "git_remote_callbacks");
-		credentials = callbacks->credentials;
-		transport   = callbacks->transport;
-		payload     = callbacks->payload;
-	}
+	GIT_STRUCT_UPGRADE(&callbacks, sizeof(callbacks), given_callbacks, "git_remote_callbacks", git_struct__upgrade_remote_callbacks);
+	credentials = callbacks.credentials;
+	transport   = callbacks.transport;
+	payload     = callbacks.payload;
 
 	if (conn->proxy)
 		GIT_ERROR_CHECK_VERSION(conn->proxy, GIT_PROXY_OPTIONS_VERSION, "git_proxy_options");
 
 	t = remote->transport;
 
-	if ((error = git_remote__urlfordirection(&url, remote, direction, callbacks)) < 0)
+	if ((error = git_remote__urlfordirection(&url, remote, direction, &callbacks)))
 		goto on_error;
 
 	/* If we don't have a transport object yet, and the caller specified a
@@ -744,7 +755,7 @@ int git_remote__connect(git_remote *remote, git_direction direction, const git_r
 	if ((error = set_transport_custom_headers(t, conn->custom_headers)) != 0)
 		goto on_error;
 
-	if ((error = set_transport_callbacks(t, callbacks)) < 0 ||
+	if ((error = set_transport_callbacks(t, &callbacks)) < 0 ||
 	    (error = t->connect(t, url.ptr, credentials, payload, conn->proxy, direction, flags)) != 0)
 		goto on_error;
 
@@ -920,7 +931,7 @@ int git_remote_download(git_remote *remote, const git_strarray *refspecs, const 
 	int error = -1;
 	size_t i;
 	git_vector *to_active, specs = GIT_VECTOR_INIT, refs = GIT_VECTOR_INIT;
-	const git_remote_callbacks *cbs = NULL;
+	git_remote_callbacks cbs = GIT_REMOTE_CALLBACKS_INIT;
 	const git_strarray *custom_headers = NULL;
 	const git_proxy_options *proxy = NULL;
 
@@ -932,15 +943,14 @@ int git_remote_download(git_remote *remote, const git_strarray *refspecs, const 
 	}
 
 	if (opts) {
-		GIT_ERROR_CHECK_VERSION(&opts->callbacks, GIT_REMOTE_CALLBACKS_VERSION, "git_remote_callbacks");
-		cbs = &opts->callbacks;
+		GIT_STRUCT_UPGRADE(&cbs, sizeof(cbs), &opts->callbacks, "git_remote_callbacks", git_struct__upgrade_remote_callbacks);
 		custom_headers = &opts->custom_headers;
 		GIT_ERROR_CHECK_VERSION(&opts->proxy_opts, GIT_PROXY_OPTIONS_VERSION, "git_proxy_options");
 		proxy = &opts->proxy_opts;
 	}
 
 	if (!git_remote_connected(remote) &&
-	    (error = git_remote_connect(remote, GIT_DIRECTION_FETCH, cbs, proxy, custom_headers)) < 0)
+	    (error = git_remote_connect(remote, GIT_DIRECTION_FETCH, &cbs, proxy, custom_headers)) < 0)
 		goto on_error;
 
 	if (ls_to_vector(&refs, remote) < 0)
@@ -984,7 +994,7 @@ int git_remote_download(git_remote *remote, const git_strarray *refspecs, const 
 	if ((error = git_fetch_negotiate(remote, opts)) < 0)
 		return error;
 
-	return git_fetch_download_pack(remote, cbs);
+	return git_fetch_download_pack(remote, &cbs);
 
 on_error:
 	git_vector_free(&refs);
@@ -1003,12 +1013,11 @@ int git_remote_fetch(
 	git_remote_autotag_option_t tagopt = remote->download_tags;
 	bool prune = false;
 	git_buf reflog_msg_buf = GIT_BUF_INIT;
-	const git_remote_callbacks *cbs = NULL;
+	git_remote_callbacks cbs = GIT_REMOTE_CALLBACKS_INIT;
 	git_remote_connection_opts conn = GIT_REMOTE_CONNECTION_OPTIONS_INIT;
 
 	if (opts) {
-		GIT_ERROR_CHECK_VERSION(&opts->callbacks, GIT_REMOTE_CALLBACKS_VERSION, "git_remote_callbacks");
-		cbs = &opts->callbacks;
+		GIT_STRUCT_UPGRADE(&cbs, sizeof(cbs), &opts->callbacks, "git_remote_callbacks", git_struct__upgrade_remote_callbacks);
 		conn.custom_headers = &opts->custom_headers;
 		update_fetchhead = opts->update_fetchhead;
 		tagopt = opts->download_tags;
@@ -1017,7 +1026,7 @@ int git_remote_fetch(
 	}
 
 	/* Connect and download everything */
-	if ((error = git_remote__connect(remote, GIT_DIRECTION_FETCH, cbs, &conn)) != 0)
+	if ((error = git_remote__connect(remote, GIT_DIRECTION_FETCH, &cbs, &conn)) != 0)
 		return error;
 
 	error = git_remote_download(remote, refspecs, opts);
@@ -1038,7 +1047,7 @@ int git_remote_fetch(
 	}
 
 	/* Create "remote/foo" branches for all remote branches */
-	error = git_remote_update_tips(remote, cbs, update_fetchhead, tagopt, git_buf_cstr(&reflog_msg_buf));
+	error = git_remote_update_tips(remote, &cbs, update_fetchhead, tagopt, git_buf_cstr(&reflog_msg_buf));
 	git_buf_dispose(&reflog_msg_buf);
 	if (error < 0)
 		return error;
@@ -1053,7 +1062,7 @@ int git_remote_fetch(
 		prune = remote->prune_refs;
 
 	if (prune)
-		error = git_remote_prune(remote, cbs);
+		error = git_remote_prune(remote, &cbs);
 
 	return error;
 }
@@ -1256,11 +1265,11 @@ int git_remote_prune(git_remote *remote, const git_remote_callbacks *callbacks)
 	git_vector candidates = GIT_VECTOR_INIT;
 	const git_refspec *spec;
 	const char *refname;
+	git_remote_callbacks cbs = GIT_REMOTE_CALLBACKS_INIT;
 	int error;
 	git_oid zero_id = {{ 0 }};
 
-	if (callbacks)
-		GIT_ERROR_CHECK_VERSION(callbacks, GIT_REMOTE_CALLBACKS_VERSION, "git_remote_callbacks");
+	GIT_STRUCT_UPGRADE(&cbs, sizeof(cbs), callbacks, "git_remote_callbacks", git_struct__upgrade_remote_callbacks);
 
 	if ((error = ls_to_vector(&remote_refs, remote)) < 0)
 		goto cleanup;
@@ -2489,7 +2498,7 @@ cleanup:
 int git_remote_push(git_remote *remote, const git_strarray *refspecs, const git_push_options *opts)
 {
 	int error;
-	const git_remote_callbacks *cbs = NULL;
+	git_remote_callbacks cbs = GIT_REMOTE_CALLBACKS_INIT;
 	const git_strarray *custom_headers = NULL;
 	const git_proxy_options *proxy = NULL;
 
@@ -2501,8 +2510,7 @@ int git_remote_push(git_remote *remote, const git_strarray *refspecs, const git_
 	}
 
 	if (opts) {
-		GIT_ERROR_CHECK_VERSION(&opts->callbacks, GIT_REMOTE_CALLBACKS_VERSION, "git_remote_callbacks");
-		cbs = &opts->callbacks;
+		GIT_STRUCT_UPGRADE(&cbs, sizeof(cbs), &opts->callbacks, "git_remote_callbacks", git_struct__upgrade_remote_callbacks);
 		custom_headers = &opts->custom_headers;
 		GIT_ERROR_CHECK_VERSION(&opts->proxy_opts, GIT_PROXY_OPTIONS_VERSION, "git_proxy_options");
 		proxy = &opts->proxy_opts;
@@ -2510,13 +2518,13 @@ int git_remote_push(git_remote *remote, const git_strarray *refspecs, const git_
 
 	assert(remote);
 
-	if ((error = git_remote_connect(remote, GIT_DIRECTION_PUSH, cbs, proxy, custom_headers)) < 0)
+	if ((error = git_remote_connect(remote, GIT_DIRECTION_PUSH, &cbs, proxy, custom_headers)) < 0)
 		return error;
 
 	if ((error = git_remote_upload(remote, refspecs, opts)) < 0)
 		return error;
 
-	error = git_remote_update_tips(remote, cbs, 0, 0, NULL);
+	error = git_remote_update_tips(remote, &cbs, 0, 0, NULL);
 
 	git_remote_disconnect(remote);
 	return error;
