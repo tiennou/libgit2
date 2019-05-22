@@ -86,6 +86,7 @@ int main(int argc, char **argv)
 			continue;
 		} else if (!strcmp(a, "--")) {
 			/* arg separator */
+			args.opts_done = 1;
 			break;
 		}
 	}

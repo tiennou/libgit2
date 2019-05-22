@@ -65,7 +65,7 @@ static void parse_options(const char **repo_path, checkout_options *opts, struct
 		const char *curr = args->argv[args->pos];
 		int bool_arg;
 
-		if (strcmp(curr, "--") == 0) {
+		if (args->opts_done || strcmp(curr, "--") == 0) {
 			break;
 		} else if (!strcmp(curr, "--force")) {
 			opts->force = 1;
@@ -190,11 +190,7 @@ int lg2_checkout(git_repository *repo, int argc, char **argv)
 		goto cleanup;
 	}
 
-	if (args.pos >= args.argc) {
-		fprintf(stderr, "unhandled\n");
-		err = -1;
-		goto cleanup;
-	} else if (!strcmp("--", args.argv[args.pos])) {
+	if (args.opts_done || strcmp("--", args.argv[args.pos]) == 0) {
 		/**
 		 * Try to checkout the given path
 		 */
