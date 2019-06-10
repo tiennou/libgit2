@@ -107,6 +107,35 @@ static void print_perf_data(const git_checkout_perfdata *perfdata, void *payload
 	       perfdata->stat_calls, perfdata->mkdir_calls, perfdata->chmod_calls);
 }
 
+static int setup_tracking_branch(char *branch_name, git_reference *upstream)
+{
+	git_reference *tracking;
+	git_oid up_oid = git_reference_target_peel(upstream);
+	char *ui_name;
+
+#if 0
+	/* should be constructed from `upstream`. IIRC there are some
+	 * git_reference that can help (eg. `refs/remotes/origin/heads/master`
+	 * is `origin/master`).
+	 */
+#else
+	ui_name = "origin/master";
+#endif
+
+	if (git_reference_create_matching(&tracking,
+									  git_reference_owner(upstream),
+									  branch_name, up_oid, 0, NULL, "branch: created from %s", ui_name) < 0 ||
+		git_branch_set_upstream(tracking, git_reference_name(upstream)) < 0) {
+		printf("failed to create remote-tracking branch\n");
+		return -1;
+	}
+
+cleanup:
+	git_reference_free(tracking);
+
+	return 0;
+}
+
 /**
  * This is the main "checkout <branch>" function, responsible for performing
  * a branch-based checkout.
