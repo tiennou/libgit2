@@ -35,6 +35,8 @@ typedef enum {
 typedef struct {
 	const git_remote_head * const *refs;
 	size_t count;
+	git_grafts *shallow_roots;
+	int depth;
 } git_fetch_negotiation;
 
 struct git_transport {

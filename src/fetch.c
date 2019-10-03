@@ -12,6 +12,7 @@
 #include "git2/revwalk.h"
 #include "git2/transport.h"
 
+#include "grafts.h"
 #include "remote.h"
 #include "refspec.h"
 #include "pack.h"
@@ -127,6 +128,12 @@ int git_fetch_negotiate(git_remote *remote, const git_fetch_options *opts)
 	 */
 	remote->nego.refs = (const git_remote_head * const *)remote->refs.contents;
 	remote->nego.count = remote->refs.length;
+	remote->nego.depth = opts->depth;
+
+	if (git_repository__shallow_roots(&remote->nego.shallow_roots, remote->repo) < 0) {
+		git_error_set(GIT_ERROR_NET, "failed to get shadow roots from the repository");
+		return -1;
+	}
 
 	return t->negotiate_fetch(t,
 		remote->repo,
@@ -138,6 +145,7 @@ int git_fetch_download_pack(git_remote *remote, const git_remote_callbacks *call
 	git_transport *t = remote->transport;
 	git_indexer_progress_cb progress = NULL;
 	void *payload = NULL;
+	int error;
 
 	if (!remote->need_pack)
 		return 0;
@@ -147,7 +155,13 @@ int git_fetch_download_pack(git_remote *remote, const git_remote_callbacks *call
 		payload  = callbacks->payload;
 	}
 
-	return t->download_pack(t, remote->repo, &remote->stats, progress, payload);
+	if ((error = t->download_pack(t, remote->repo, &remote->stats, progress, payload)) < 0)
+		return error;
+
+	if ((error = git_repository__shallow_roots_write(remote->repo, remote->nego.shallow_roots)) < 0)
+		return error;
+
+	return 0;
 }
 
 int git_fetch_options_init(git_fetch_options *opts, unsigned int version)
