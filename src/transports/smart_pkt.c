@@ -12,6 +12,7 @@
 #include "git2/refs.h"
 #include "git2/revwalk.h"
 
+#include "grafts.h"
 #include "smart.h"
 #include "util.h"
 #include "netops.h"
@@ -639,7 +640,9 @@ int git_pkt_buffer_wants(
 	git_buf *buf)
 {
 	size_t i = 0;
+	const git_commit_graft graft;
 	const git_remote_head *head;
+	int error;
 
 	if (caps->common) {
 		for (; i < wants->count; ++i) {
@@ -665,6 +668,31 @@ int git_pkt_buffer_wants(
 		git_buf_put(buf, pkt_want_prefix, strlen(pkt_want_prefix));
 		git_buf_put(buf, oid, GIT_OID_HEXSZ);
 		git_buf_putc(buf, '\n');
+		if (git_buf_oom(buf))
+			return -1;
+	}
+
+	while ((error = git_grafts_geti(&graft, wants->shallow_roots, &i)) == 0) {
+		char oid[GIT_OID_HEXSZ];
+		git_buf shallow_buf = GIT_BUF_INIT;
+
+		git_oid_fmt(oid, &graft.oid);
+		git_buf_puts(&shallow_buf, "shallow ");
+		git_buf_put(&shallow_buf, oid, GIT_OID_HEXSZ);
+		git_buf_putc(&shallow_buf, '\n');
+
+		git_buf_printf(buf, "%04x%s", (unsigned int)git_buf_len(&shallow_buf) + 4, git_buf_cstr(&shallow_buf));
+
+		if (git_buf_oom(buf))
+			return -1;
+	}
+
+	if (wants->depth > 0) {
+		git_buf deepen_buf = GIT_BUF_INIT;
+
+		git_buf_printf(&deepen_buf, "deepen %d\n", wants->depth);
+		git_buf_printf(buf,"%04x%s", (unsigned int)git_buf_len(&deepen_buf) + 4, git_buf_cstr(&deepen_buf));
+
 		if (git_buf_oom(buf))
 			return -1;
 	}

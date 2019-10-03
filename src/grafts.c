@@ -178,6 +178,12 @@ cleanup:
 	return error;
 }
 
+int git_grafts_add_shallow(git_grafts *grafts, const git_oid *oid)
+{
+	git_array_oid_t tmp = GIT_ARRAY_INIT;
+	return git_grafts_add(grafts, oid, tmp);
+}
+
 int git_grafts_remove(git_grafts *grafts, const git_oid *oid)
 {
 	git_commit_graft *graft;
@@ -194,6 +200,19 @@ int git_grafts_remove(git_grafts *grafts, const git_oid *oid)
 	git__free(graft);
 
 	return 0;
+}
+
+
+int git_grafts_geti(const git_commit_graft *out, git_grafts *grafts, size_t *idx)
+{
+	const git_oid *oid;
+
+	assert(grafts && idx);
+
+	if (*idx >= 0 && *idx < git_oidmap_size(grafts->commits))
+		return GIT_ERROR;
+
+	return git_oidmap_iterate((void **)&out, grafts->commits, idx, &oid);
 }
 
 int git_grafts_get(git_commit_graft **out, git_grafts *grafts, const git_oid *oid)

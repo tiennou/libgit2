@@ -353,6 +353,9 @@ struct git_writestream {
 /** Representation of .mailmap file state. */
 typedef struct git_mailmap git_mailmap;
 
+/** Representation of a series of object grafts */
+typedef struct git_grafts git_grafts;
+
 /** @} */
 GIT_END_DECL
 
