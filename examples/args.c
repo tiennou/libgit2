@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "common.h"
 #include "args.h"
 
@@ -167,4 +169,18 @@ int match_int_arg(
 	if (!found)
 		return 0;
 	return match_int_internal(out, found, allow_negative, opt);
+}
+
+void strarray_from_args(git_strarray *array, struct args_info *args)
+{
+	size_t i;
+
+	array->count = args->argc - args->pos;
+	array->strings = calloc(array->count, sizeof(char *));
+	assert(array->strings != NULL);
+
+	for (i = 0; args->pos < args->argc; ++args->pos) {
+		array->strings[i++] = args->argv[args->pos];
+	}
+	args->pos = args->argc;
 }

@@ -10,7 +10,7 @@ struct {
 	git_command_fn fn;
 	char requires_repo;
 } commands[] = {
-	{ "add",          lg2_add,          1 },
+	{ "add",          lg2_add,    		1 },
 	{ "blame",        lg2_blame,        1 },
 	{ "cat-file",     lg2_cat_file,     1 },
 	{ "checkout",     lg2_checkout,     1 },
