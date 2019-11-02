@@ -140,6 +140,53 @@ GIT_EXTERN(int) git_hook_call_pre_rebase(
 	const git_annotated_commit *upstream,
 	const git_annotated_commit *rebased);
 
+#if 0
+
+GIT_EXTERN(int) git_hook_call_post_checkout(git_repository *repo, const char *orig_head, const char *head, int branch_change);
+
+GIT_EXTERN(int) git_hook_call_post_merge(git_repository *repo, int is_squash);
+
+typedef struct {
+	git_annotated_commit *local;
+	git_annotated_commit *remote;
+} git_hook_pre_push_payload;
+
+GIT_EXTERN(int) git_hook_call_pre_push(git_repository *repo, const git_hook_pre_push_payload *payload);
+
+typedef struct {
+	git_oid old;
+	git_oid new;
+	const char *ref_name;
+} git_hook_push_update;
+
+GIT_EXTERN(int) git_hook_call_pre_recieve(git_repository *repo, const git_hook_push_update payload[]);
+
+GIT_EXTERN(int) git_hook_call_update(git_repository *repo, const git_hook_push_update *payload);
+
+GIT_EXTERN(int) git_hook_call_post_recieve(git_repository *repo, const git_hook_push_update payload[]);
+
+#endif
+
+typedef enum {
+	GIT_HOOK_POSTREWRITE_MODE_AMEND,
+	GIT_HOOK_POSTREWRITE_MODE_REBASE,
+} git_hook_post_rewrite_mode;
+
+typedef struct {
+	git_oid old;
+	git_oid new;
+	const char *
+} git_hook_rewrite_update;
+
+GIT_EXTERN(int) git_hook_call_post_rewrite(git_repository *repo, );
+
+typedef enum {
+	GIT_HOOK_POSTINDEXCHANGE_WORKDIR_UPDATED,
+	GIT_HOOK_POSTINDEXCHANGE_WORKTREE_SKIPPED,
+} git_hook_post_index_update_flags;
+
+GIT_EXTERN(int) git_hook_call_post_index_change(git_repository *repo, uint32_t post_index_update_flags);
+
 /* @} */
 GIT_END_DECL
 #endif
