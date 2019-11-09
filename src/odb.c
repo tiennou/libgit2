@@ -1575,7 +1575,7 @@ int git_odb__error_ambiguous(const char *message)
 
 int git_odb_init_backend(git_odb_backend *backend, unsigned int version)
 {
-	GIT_INIT_STRUCTURE_FROM_TEMPLATE(
+	GIT_STRUCT_INIT_FROM_TEMPLATE(
 		backend, version, git_odb_backend, GIT_ODB_BACKEND_INIT);
 	return 0;
 }

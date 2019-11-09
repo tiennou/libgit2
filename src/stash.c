@@ -771,7 +771,7 @@ static void normalize_apply_options(
 
 int git_stash_apply_options_init(git_stash_apply_options *opts, unsigned int version)
 {
-	GIT_INIT_STRUCTURE_FROM_TEMPLATE(
+	GIT_STRUCT_INIT_FROM_TEMPLATE(
 		opts, version, git_stash_apply_options, GIT_STASH_APPLY_OPTIONS_INIT);
 	return 0;
 }

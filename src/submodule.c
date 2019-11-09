@@ -1235,7 +1235,7 @@ static int git_submodule_update_repo_init_cb(
 
 int git_submodule_update_options_init(git_submodule_update_options *opts, unsigned int version)
 {
-	GIT_INIT_STRUCTURE_FROM_TEMPLATE(
+	GIT_STRUCT_INIT_FROM_TEMPLATE(
 		opts, version, git_submodule_update_options, GIT_SUBMODULE_UPDATE_OPTIONS_INIT);
 	return 0;
 }

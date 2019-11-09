@@ -1040,6 +1040,6 @@ int git_filter_list_stream_blob(
 
 int git_filter_init(git_filter *filter, unsigned int version)
 {
-	GIT_INIT_STRUCTURE_FROM_TEMPLATE(filter, version, git_filter, GIT_FILTER_INIT);
+	GIT_STRUCT_INIT_FROM_TEMPLATE(filter, version, git_filter, GIT_FILTER_INIT);
 	return 0;
 }

@@ -247,7 +247,7 @@ int git_refdb_ensure_log(git_refdb *db, const char *refname)
 
 int git_refdb_init_backend(git_refdb_backend *backend, unsigned int version)
 {
-	GIT_INIT_STRUCTURE_FROM_TEMPLATE(
+	GIT_STRUCT_INIT_FROM_TEMPLATE(
 		backend, version, git_refdb_backend, GIT_REFDB_BACKEND_INIT);
 	return 0;
 }

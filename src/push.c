@@ -549,7 +549,7 @@ void git_push_free(git_push *push)
 
 int git_push_options_init(git_push_options *opts, unsigned int version)
 {
-	GIT_INIT_STRUCTURE_FROM_TEMPLATE(
+	GIT_STRUCT_INIT_FROM_TEMPLATE(
 		opts, version, git_push_options, GIT_PUSH_OPTIONS_INIT);
 	return 0;
 }

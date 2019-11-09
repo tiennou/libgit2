@@ -111,35 +111,44 @@
 	do { int _err = (code); if (_err) return _err; } while (0)
 
 /**
+ * Generic libgit2 option struct
+ */
+typedef struct {
+	unsigned int version;
+	char body[];
+} git_struct__version;
+
+/**
  * Check a versioned structure for validity
  */
-GIT_INLINE(int) git_error__check_version(const void *structure, unsigned int expected_max, const char *name)
+GIT_INLINE(int) git_struct__check_version(const git_struct__version *structure, unsigned int expected_max, const char *name)
 {
 	unsigned int actual;
 
 	if (!structure)
 		return 0;
 
-	actual = *(const unsigned int*)structure;
+	actual = structure->version;
 	if (actual > 0 && actual <= expected_max)
 		return 0;
 
 	git_error_set(GIT_ERROR_INVALID, "invalid version %d on %s", actual, name);
 	return -1;
 }
-#define GIT_ERROR_CHECK_VERSION(S,V,N) if (git_error__check_version(S,V,N) < 0) return -1
+
+#define GIT_ERROR_CHECK_VERSION(S,V,N) if (git_struct__check_version((git_struct__version *)S,V,N) < 0) return -1
 
 /**
  * Initialize a structure with a version.
  */
-GIT_INLINE(void) git__init_structure(void *structure, size_t len, unsigned int version)
+GIT_INLINE(void) git_struct__init(void *structure, size_t len, unsigned int version)
 {
 	memset(structure, 0, len);
 	*((int*)structure) = version;
 }
-#define GIT_INIT_STRUCTURE(S,V) git__init_structure(S, sizeof(*S), V)
+#define GIT_STRUCT_INIT(S,V) git_struct__init(S, sizeof(*S), V)
 
-#define GIT_INIT_STRUCTURE_FROM_TEMPLATE(PTR,VERSION,TYPE,TPL) do { \
+#define GIT_STRUCT_INIT_FROM_TEMPLATE(PTR,VERSION,TYPE,TPL) do { \
 	TYPE _tmpl = TPL; \
 	GIT_ERROR_CHECK_VERSION(&(VERSION), _tmpl.version, #TYPE);	\
 	memcpy((PTR), &_tmpl, sizeof(_tmpl)); } while (0)

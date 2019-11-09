@@ -150,7 +150,7 @@ int git_fetch_download_pack(git_remote *remote, const git_remote_callbacks *call
 
 int git_fetch_options_init(git_fetch_options *opts, unsigned int version)
 {
-	GIT_INIT_STRUCTURE_FROM_TEMPLATE(
+	GIT_STRUCT_INIT_FROM_TEMPLATE(
 		opts, version, git_fetch_options, GIT_FETCH_OPTIONS_INIT);
 	return 0;
 }

@@ -216,7 +216,7 @@ done:
 
 int git_transport_init(git_transport *opts, unsigned int version)
 {
-	GIT_INIT_STRUCTURE_FROM_TEMPLATE(
+	GIT_STRUCT_INIT_FROM_TEMPLATE(
 		opts, version, git_transport, GIT_TRANSPORT_INIT);
 	return 0;
 }

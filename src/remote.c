@@ -190,7 +190,7 @@ static int ensure_remote_doesnot_exist(git_repository *repo, const char *name)
 
 int git_remote_create_options_init(git_remote_create_options *opts, unsigned int version)
 {
-	GIT_INIT_STRUCTURE_FROM_TEMPLATE(
+	GIT_STRUCT_INIT_FROM_TEMPLATE(
 		opts, version, git_remote_create_options, GIT_REMOTE_CREATE_OPTIONS_INIT);
 	return 0;
 }
@@ -2201,7 +2201,7 @@ const git_refspec *git_remote_get_refspec(const git_remote *remote, size_t n)
 
 int git_remote_init_callbacks(git_remote_callbacks *opts, unsigned int version)
 {
-	GIT_INIT_STRUCTURE_FROM_TEMPLATE(
+	GIT_STRUCT_INIT_FROM_TEMPLATE(
 		opts, version, git_remote_callbacks, GIT_REMOTE_CALLBACKS_INIT);
 	return 0;
 }

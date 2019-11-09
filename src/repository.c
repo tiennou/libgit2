@@ -2878,7 +2878,7 @@ int git_repository_is_shallow(git_repository *repo)
 int git_repository_init_options_init(
 	git_repository_init_options *opts, unsigned int version)
 {
-	GIT_INIT_STRUCTURE_FROM_TEMPLATE(
+	GIT_STRUCT_INIT_FROM_TEMPLATE(
 		opts, version, git_repository_init_options,
 		GIT_REPOSITORY_INIT_OPTIONS_INIT);
 	return 0;

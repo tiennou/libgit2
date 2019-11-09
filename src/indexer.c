@@ -118,7 +118,7 @@ static int objects_cmp(const void *a, const void *b)
 
 int git_indexer_options_init(git_indexer_options *opts, unsigned int version)
 {
-	GIT_INIT_STRUCTURE_FROM_TEMPLATE(
+	GIT_STRUCT_INIT_FROM_TEMPLATE(
 		opts, version, git_indexer_options, GIT_INDEXER_OPTIONS_INIT);
 	return 0;
 }

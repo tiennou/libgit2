@@ -263,7 +263,7 @@ int git_worktree_validate(const git_worktree *wt)
 int git_worktree_add_options_init(git_worktree_add_options *opts,
 	unsigned int version)
 {
-	GIT_INIT_STRUCTURE_FROM_TEMPLATE(opts, version,
+	GIT_STRUCT_INIT_FROM_TEMPLATE(opts, version,
 		git_worktree_add_options, GIT_WORKTREE_ADD_OPTIONS_INIT);
 	return 0;
 }
@@ -488,7 +488,7 @@ int git_worktree_prune_options_init(
 	git_worktree_prune_options *opts,
 	unsigned int version)
 {
-	GIT_INIT_STRUCTURE_FROM_TEMPLATE(opts, version,
+	GIT_STRUCT_INIT_FROM_TEMPLATE(opts, version,
 		git_worktree_prune_options, GIT_WORKTREE_PRUNE_OPTIONS_INIT);
 	return 0;
 }

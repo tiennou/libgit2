@@ -24,7 +24,7 @@ void test_checkout_tree__initialize(void)
 {
 	g_repo = cl_git_sandbox_init("testrepo");
 
-	GIT_INIT_STRUCTURE(&g_opts, GIT_CHECKOUT_OPTIONS_VERSION);
+	GIT_STRUCT_INIT(&g_opts, GIT_CHECKOUT_OPTIONS_VERSION);
 	g_opts.checkout_strategy = GIT_CHECKOUT_FORCE;
 }
 

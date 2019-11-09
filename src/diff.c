@@ -352,7 +352,7 @@ int git_diff_commit_as_email(
 
 int git_diff_options_init(git_diff_options *opts, unsigned int version)
 {
-	GIT_INIT_STRUCTURE_FROM_TEMPLATE(
+	GIT_STRUCT_INIT_FROM_TEMPLATE(
 		opts, version, git_diff_options, GIT_DIFF_OPTIONS_INIT);
 	return 0;
 }
@@ -365,7 +365,7 @@ int git_diff_init_options(git_diff_options *opts, unsigned int version)
 int git_diff_find_options_init(
 	git_diff_find_options *opts, unsigned int version)
 {
-	GIT_INIT_STRUCTURE_FROM_TEMPLATE(
+	GIT_STRUCT_INIT_FROM_TEMPLATE(
 		opts, version, git_diff_find_options, GIT_DIFF_FIND_OPTIONS_INIT);
 	return 0;
 }
@@ -379,7 +379,7 @@ int git_diff_find_init_options(
 int git_diff_format_email_options_init(
 	git_diff_format_email_options *opts, unsigned int version)
 {
-	GIT_INIT_STRUCTURE_FROM_TEMPLATE(
+	GIT_STRUCT_INIT_FROM_TEMPLATE(
 		opts, version, git_diff_format_email_options,
 		GIT_DIFF_FORMAT_EMAIL_OPTIONS_INIT);
 	return 0;
@@ -508,7 +508,7 @@ out:
 
 int git_diff_patchid_options_init(git_diff_patchid_options *opts, unsigned int version)
 {
-	GIT_INIT_STRUCTURE_FROM_TEMPLATE(
+	GIT_STRUCT_INIT_FROM_TEMPLATE(
 		opts, version, git_diff_patchid_options, GIT_DIFF_PATCHID_OPTIONS_INIT);
 	return 0;
 }

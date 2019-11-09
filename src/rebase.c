@@ -496,7 +496,7 @@ static int rebase_setupfiles(git_rebase *rebase)
 
 int git_rebase_options_init(git_rebase_options *opts, unsigned int version)
 {
-	GIT_INIT_STRUCTURE_FROM_TEMPLATE(
+	GIT_STRUCT_INIT_FROM_TEMPLATE(
 		opts, version, git_rebase_options, GIT_REBASE_OPTIONS_INIT);
 	return 0;
 }

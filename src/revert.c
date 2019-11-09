@@ -226,7 +226,7 @@ done:
 
 int git_revert_options_init(git_revert_options *opts, unsigned int version)
 {
-	GIT_INIT_STRUCTURE_FROM_TEMPLATE(
+	GIT_STRUCT_INIT_FROM_TEMPLATE(
 		opts, version, git_revert_options, GIT_REVERT_OPTIONS_INIT);
 	return 0;
 }

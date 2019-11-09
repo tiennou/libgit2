@@ -543,7 +543,7 @@ int git_status_should_ignore(
 
 int git_status_options_init(git_status_options *opts, unsigned int version)
 {
-	GIT_INIT_STRUCTURE_FROM_TEMPLATE(
+	GIT_STRUCT_INIT_FROM_TEMPLATE(
 		opts, version, git_status_options, GIT_STATUS_OPTIONS_INIT);
 	return 0;
 }
