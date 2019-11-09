@@ -138,6 +138,52 @@ GIT_INLINE(int) git_struct__check_version(const git_struct__version *structure, 
 
 #define GIT_ERROR_CHECK_VERSION(S,V,N) if (git_struct__check_version((git_struct__version *)S,V,N) < 0) return -1
 
+typedef int (*git_struct__upgrade_cb)(git_struct__version *new_struct, const git_struct__version *structure, const char *name);
+
+GIT_INLINE(int) git_struct__upgrade(
+	git_struct__version *structure,
+	size_t struct_len,
+	const git_struct__version *user_struct,
+	const char *name,
+	git_struct__upgrade_cb upgrader)
+{
+	unsigned int max_version;
+
+	assert(structure);
+
+	if (!user_struct)
+		return 0;
+
+	max_version = structure->version;
+	GIT_ERROR_CHECK_VERSION(user_struct, max_version, name);
+
+	if (user_struct->version == structure->version) {
+		memcpy(structure, user_struct, struct_len);
+		return 0;
+	}
+
+	if (!upgrader) {
+		git_error_set(GIT_ERROR_INVALID, "cannot upgrade older version %d of struct %s", user_struct->version, name);
+		return -1;
+	}
+
+	if (upgrader(structure, user_struct, name) < 0) {
+		git_error_set(GIT_ERROR_INVALID, "failed to upgrade older version %d of struct %s", user_struct->version, name);
+		return -1;
+	}
+
+	/* post-check that the upgrader did something */
+	assert(structure->version == max_version);
+
+	return 1;
+}
+
+#define GIT_STRUCT_UPGRADE(struct, struct_len, user_struct, struct_name, upgrade_func) \
+	if (git_struct__upgrade((void *)struct, struct_len, \
+	    (void *)user_struct, struct_name, \
+		(git_struct__upgrade_cb)upgrade_func) < 0) \
+		return -1;
+
 /**
  * Initialize a structure with a version.
  */
