@@ -19,8 +19,6 @@ struct git_pool_page {
 	GIT_ALIGN(char data[GIT_FLEX_ARRAY], 8);
 };
 
-static void *pool_alloc_page(git_pool *pool, size_t size);
-
 size_t git_pool__system_page_size(void)
 {
 	static size_t size = 0;
@@ -37,6 +35,9 @@ size_t git_pool__system_page_size(void)
 }
 
 #ifndef GIT_DEBUG_POOL
+
+static void *pool_alloc_page(git_pool *pool, size_t size);
+
 void git_pool_init(git_pool *pool, size_t item_size)
 {
 	assert(pool);
