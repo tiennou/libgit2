@@ -84,7 +84,7 @@ static const IID IID_IInternetSecurityManager_mingw =
 # define IID_IInternetSecurityManager IID_IInternetSecurityManager_mingw
 #endif
 
-#define OWNING_SUBTRANSPORT(s) ((winhttp_subtransport *)(s)->parent.subtransport)
+#define OWNING_SUBTRANSPORT(s) GIT_CONTAINER_OF(s->parent.subtransport, winhttp_subtransport, parent)
 
 typedef enum {
 	GIT_WINHTTP_AUTH_BASIC = 1,

@@ -14,7 +14,7 @@
 #include "stream.h"
 #include "streams/socket.h"
 
-#define OWNING_SUBTRANSPORT(s) ((git_subtransport *)(s)->parent.subtransport)
+#define OWNING_SUBTRANSPORT(s) GIT_CONTAINER_OF(s->parent.subtransport, git_subtransport, parent)
 
 static const char prefix_git[] = "git://";
 static const char cmd_uploadpack[] = "git-upload-pack";

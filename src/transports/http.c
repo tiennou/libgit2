@@ -46,7 +46,7 @@ static const char *post_verb = "POST";
 #define SERVER_TYPE_REMOTE "remote"
 #define SERVER_TYPE_PROXY  "proxy"
 
-#define OWNING_SUBTRANSPORT(s) ((http_subtransport *)(s)->parent.subtransport)
+#define OWNING_SUBTRANSPORT(s) GIT_CONTAINER_OF(s->parent.subtransport, http_subtransport, parent)
 
 #define PARSE_ERROR_GENERIC	-1
 #define PARSE_ERROR_REPLAY	-2
